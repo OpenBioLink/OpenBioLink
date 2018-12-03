@@ -1,9 +1,7 @@
 class SourceDB:
-    url=""
-    ofile_name=""
-    ofile_dir =""
-    csv_name=""
-    csv_file_dir=""
-    cols=[]
-    use_cols =[]
-    nr_lines_header=0
+
+    def __init__(self, url, ofile_name, csv_name, use_cols ):
+        self.url = url
+        self.ofile_name = ofile_name
+        self.csv_name = csv_name
+        self.use_cols = use_cols

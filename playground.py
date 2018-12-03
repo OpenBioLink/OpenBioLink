@@ -24,17 +24,18 @@ def url_to_json(base_url, page_url, pages, out_file):
     f.close()
     return
 
+#todo create folder
 
 base_url ='http://data.bioontology.org/mappings?ontologies=OMIM,DOID&apikey=541ff25a-641f-4963-b774-81df7d39e956'
 page_url = '&page='
 pages = 41
-out_file1 = 'E:\\Anna Breit\\master thesis\\playground\\do_omim.json'
+out_file1 = 'D:\\Anna Breit\\master thesis\\playground\\do_omim.json'
 url_to_json(base_url, page_url, pages, out_file1)
 
 base_url ='http://data.bioontology.org/mappings?ontologies=ORDO,DOID&apikey=541ff25a-641f-4963-b774-81df7d39e956'
 page_url = '&page='
 pages = 25
-out_file = 'E:\\Anna Breit\\master thesis\\playground\\do_orpha.json'
+out_file = 'D:\\Anna Breit\\master thesis\\playground\\do_orpha.json'
 url_to_json(base_url, page_url, pages, out_file)
 
 
@@ -52,7 +53,7 @@ for page in data['mappings']:
             no_entry += 1
 
 df = pandas.DataFrame.from_records(list(dic.items()), columns=['OMIM', 'DOID'] )
-df.to_csv('E:\\Anna Breit\\master thesis\\playground\\omim_do.csv', sep=';', index=None, header=None)
+df.to_csv('D:\\Anna Breit\\master thesis\\playground\\omim_do.csv', sep=';', index=None, header=None)
 print(no_entry)
 
 
@@ -67,6 +68,6 @@ for page in data['mappings']:
 
 
 df = pandas.DataFrame.from_records(list(dic.items()), columns=['ORPHA', 'DOID'] )
-df.to_csv('E:\\Anna Breit\\master thesis\\playground\\orpha_do.csv', sep=';', index=None, header=None)
+df.to_csv('D:\\Anna Breit\\master thesis\\playground\\orpha_do.csv', sep=';', index=None, header=None)
 print(no_entry)
 
