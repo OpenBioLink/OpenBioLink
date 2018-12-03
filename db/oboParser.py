@@ -39,6 +39,9 @@ class OboParser(object):
                 if line.startswith('xref: UMLS_CUI:'):
                     elements = line.split(':')
                     do_term.umls_links.append(elements[2].strip())
+                if line.startswith('xref: OMIM:'):
+                    elements = line.split(' ')
+                    do_term.omim_links.append(elements[1].strip())
                 if line.startswith('is_a'):
                     elements = line.split(' ')
                     do_term.is_a_links.append(elements[1].strip())
@@ -77,16 +80,19 @@ class OboParser(object):
 class OboTerm():
     ids = []
     umls_links = []
+    omim_links=[]
     is_a_links = []
     def __init__(self):
         self.ids = []
         self.umls_links = []
+        self.omim_links = []
         self.is_a_links = []
 
     def to_dict(self):
         return {
             'ID': self.to_string(self.ids),
             'UMLS': self.to_string(self.umls_links),
+            'OMIM': self.to_string(self.omim_links),
             'IS_A': self.to_string(self.is_a_links)
         }
 
@@ -98,6 +104,7 @@ class OboTerm():
             else:
                 string = string + ';' + e
         return string
+
 
 
 

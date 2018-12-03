@@ -12,7 +12,7 @@ pr.enable()
 dbManager = DbManager("D:\Anna Breit\master thesis\databases")
 
 #dbManager.download_resources()
-dbManager.create_db_files()
+#dbManager.create_db_files()
 dbManager.create_graph()
 
 
