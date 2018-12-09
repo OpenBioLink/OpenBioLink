@@ -7,19 +7,19 @@ import urllib.request
 
 
 def url_to_json(base_url, page_url, pages, out_file):
-    f = open(out_file, 'a' )
+    f = open(out_file, 'w+' )
     f.write('{"mappings":[' )
-    f.close()
-    for page in range (1,pages+1):
+    page=0
+    while True:
+        page += 1
         url = base_url+page_url+str(page)
         page_content = urllib.request.urlopen(url).read()
-        print(page_content)
-        f = open(out_file, 'a' )
-        f.write(page_content.decode("utf-8") )
-        if page != pages:
+        if not json.loads(page_content)['collection']:
+            break
+        if page != 1:
             f.write(',')
-        f.close()
-    f = open(out_file, 'a' )
+        print(page_content)
+        f.write(page_content.decode("utf-8") )
     f.write(']}')
     f.close()
     return
@@ -71,6 +71,17 @@ df = pandas.DataFrame.from_records(list(dic.items()), columns=['ORPHA', 'DOID'] 
 df.to_csv('D:\\Anna Breit\\master thesis\\playground\\orpha_do.csv', sep=';', index=None, header=None)
 print(no_entry)
 
+
+
+
+
+
+
+
+
+
+
+
 def create_db_file(in_file_path, id1_prefix,id2_prefix, cols, extract_id1_lambda, extract_id2_lambda, out_file_path):
     with open(in_file_path) as json_file:
         data = json.load(json_file)
@@ -87,5 +98,6 @@ def create_db_file(in_file_path, id1_prefix,id2_prefix, cols, extract_id1_lambda
     df.to_csv(out_file_path, sep=';', index=None, header=None)
     print(no_entry)
 
+extract_do_id = lambda a : a.split('_')[1]
 extract_orpha_id = lambda a : a.split('_')[1]
 extract_omim_id = lambda a : (a.split('/')[-1].find('MTHU') == -1) if a.split('/')[-1] else None

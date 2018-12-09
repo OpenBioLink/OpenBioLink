@@ -10,3 +10,6 @@ class Node :
         if isinstance(other, Node):
             return self.id == other.id
         return False
+
+    def __hash__(self):
+        return hash( (self.id, self.type))

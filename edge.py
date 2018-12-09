@@ -1,12 +1,11 @@
 from edgeTypes import EdgeType
 
 class Edge:
-    def __init__(self, id1: str, type : EdgeType, id2: str, source: "", weight= None, qScore = None):
+    def __init__(self, id1: str, type : EdgeType, id2: str, source: "", qScore = None):
         self.id1 = id1
         self.type = type
         self.id2 = id2
         self.source = source
-        self.weight = weight
         self.qScore = qScore
 
     def __eq__(self, other):
@@ -15,4 +14,4 @@ class Edge:
         return False
 
     def __iter__(self):
-        return iter([self.id1, self.type, self.id2, self.source, self.weight, self.qScore])
+        return iter([self.id1, self.type, self.id2, self.source, self.qScore])
