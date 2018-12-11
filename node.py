@@ -13,3 +13,6 @@ class Node :
 
     def __hash__(self):
         return hash( (self.id, self.type))
+
+    def __iter__(self):
+        return iter([self.id, self.type, self.name])

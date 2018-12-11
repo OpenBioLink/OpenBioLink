@@ -14,4 +14,4 @@ class Edge:
         return False
 
     def __iter__(self):
-        return iter([self.id1, self.type, self.id2, self.source, self.qScore])
+        return iter([self.id1, self.type, self.id2, self.qScore])
