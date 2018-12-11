@@ -32,8 +32,15 @@ class DbManager(object):
 
         self.folder_path = folder_path
         self.oFiles_path = os.path.join(self.folder_path, 'oFiles')
+        self.dbFiles_path = os.path.join(self.folder_path, 'dbFiles')
         if not os.path.exists(self.oFiles_path):
             os.makedirs(self.oFiles_path)
+        if not os.path.exists(self.dbFiles_path):
+            os.makedirs(self.dbFiles_path)
+
+        self.edges_file_prefix = "edges"
+        self.nodes_file_prefix = "nodes"
+
 
         # _________________________________________________________________________
         # |
@@ -230,20 +237,20 @@ class DbManager(object):
         # |________________________________________________________________________
 
         # ---- Ontologies ----
-        self.dbFile_go = DbFile(edges_file_path=os.path.join (self.folder_path, self.source_onto_go.csv_name),
+        self.dbFile_go = DbFile(edges_file_path=os.path.join (self.dbFiles_path, self.source_onto_go.csv_name),
                                 colindex1=0,colindex2=1,edgeType=EdgeType.IS_A,
                                 node1_type=NodeType.GO, node2_type=NodeType.GO)
-        self.dbFile_do = DbFile(edges_file_path=os.path.join(self.folder_path, self.source_onto_do.csv_name),
+        self.dbFile_do = DbFile(edges_file_path=os.path.join(self.dbFiles_path, self.source_onto_do.csv_name),
                                 colindex1=0, colindex2=1, edgeType=EdgeType.IS_A,
                                 node1_type=NodeType.DIS, node2_type=NodeType.DIS)
-        self.dbFile_hpo = DbFile(edges_file_path= os.path.join(self.folder_path, self.source_onto_hpo.csv_name),
+        self.dbFile_hpo = DbFile(edges_file_path= os.path.join(self.dbFiles_path, self.source_onto_hpo.csv_name),
                                  colindex1=0, colindex2=1, edgeType=EdgeType.IS_A,
                                  node1_type=NodeType.PHENOTYPE, node2_type=NodeType.PHENOTYPE)
 
         # --- Edges ---
         # --- gene - gene ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_gene_gene.csv_name)
-        mapping_file1 = os.path.join(self.folder_path, self.source_mapping_string_ncbi_string.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_gene_gene.csv_name)
+        mapping_file1 = os.path.join(self.dbFiles_path, self.source_mapping_string_ncbi_string.csv_name)
         self.dbFile_gene_gene = DbFile( edges_file_path=edges_file_path,
                                         colindex1=0, colindex2=1, edgeType=EdgeType.GENE_GENE,
                                         node1_type=NodeType.GENE, node2_type=NodeType.GENE,
@@ -251,62 +258,62 @@ class DbManager(object):
                                         mapping1_file=mapping_file1, map1_sourceindex=1, map1_targetindex=0,
                                         mapping2_file=mapping_file1, map2_sourceindex=1, map2_targetindex=0)
         # --- gene - go ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_gene_go.csv_name)
-        mapping_file1 = os.path.join(self.folder_path, self.source_mapping_uniprot_uniprot_ncbi.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_gene_go.csv_name)
+        mapping_file1 = os.path.join(self.dbFiles_path, self.source_mapping_uniprot_uniprot_ncbi.csv_name)
         self.dbFile_gene_go = DbFile( edges_file_path=edges_file_path,
                                       colindex1=0, colindex2=1, edgeType=EdgeType.GENE_GO,
                                       node1_type=NodeType.GENE, node2_type=NodeType.GO,
                                       colindex_qscore=2,cutoff_txt=['IEA'],
                                       mapping1_file=mapping_file1, map1_sourceindex=0, map1_targetindex=1)
         #  --- gene - dis ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_gene_dis.csv_name)
-        mapping_file2 = os.path.join(self.folder_path, self.source_mapping_disgenet_umls_do.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_gene_dis.csv_name)
+        mapping_file2 = os.path.join(self.dbFiles_path, self.source_mapping_disgenet_umls_do.csv_name)
         self.dbFile_gene_dis = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.GENE_DIS,
                                       node1_type=NodeType.GENE, node2_type=NodeType.DIS, colindex_qscore=2, cutoff_num=0.7,  # from 0 to 1
                                       mapping2_file=mapping_file2, map2_sourceindex=0, map2_targetindex=2,
                                       db2_index=1,db2_name='DO')
 
         #  --- gene - drug ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_gene_drug.csv_name)
-        mapping_file1 = os.path.join(self.folder_path, self.source_mapping_string_ncbi_string.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_gene_drug.csv_name)
+        mapping_file1 = os.path.join(self.dbFiles_path, self.source_mapping_string_ncbi_string.csv_name)
         self.dbFile_gene_drug = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.GENE_DRUG,
                                        node1_type=NodeType.GENE, node2_type=NodeType.DRUG,
                                        colindex_qscore=2, cutoff_num=700,
                                        mapping1_file=mapping_file1, map1_sourceindex=1, map1_targetindex=0)
 
         # --- gene - phenotype ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_gene_pheno.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_gene_pheno.csv_name)
         self.dbFile_gene_pheno = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.GENE_PHENOTYPE,
                                         node1_type=NodeType.GENE, node2_type=NodeType.PHENOTYPE)
 
         # --- gene - pathway ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_gene_path.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_gene_path.csv_name)
         self.dbFile_gene_pathway = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.GENE_PATHWAY,
                                           node1_type=NodeType.GENE, node2_type=NodeType.PATHWAY)
         # --- gene - anatomy ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_gene_anatomy.csv_name)
-        mapping_file1 = os.path.join(self.folder_path, self.source_mapping_uniprot_ensembl_ncbi.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_gene_anatomy.csv_name)
+        mapping_file1 = os.path.join(self.dbFiles_path, self.source_mapping_uniprot_ensembl_ncbi.csv_name)
         self.dbFile_gene_anatomy = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.GENE_ANATOMY,
                                           node1_type=NodeType.GENE, node2_type=NodeType.ANATOMY,
                                           colindex_qscore=2,             # todo ms expression score
                                           mapping1_file=mapping_file1, map1_sourceindex=0, map1_targetindex=1)
         # --- dis - phenotype ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_dis_pheno.csv_name)
-        mapping_file1 = os.path.join(self.folder_path, self.source_onto_mapping_do_omim.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_dis_pheno.csv_name)
+        mapping_file1 = os.path.join(self.dbFiles_path, self.source_onto_mapping_do_omim.csv_name)
         self.dbFile_dis_pheno = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.DIS_PHENOTYPE,
                                        node1_type=NodeType.DIS, node2_type=NodeType.PHENOTYPE,
                                        colindex_qscore=2, # todo check licenses / if IEA ok
                                        mapping1_file=mapping_file1, map1_sourceindex=1, map1_targetindex=0)
         # --- dis - drug ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_dis_drug.csv_name)
-        mapping_file1 = os.path.join(self.folder_path, self.source_onto_mapping_do_umls.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_dis_drug.csv_name)
+        mapping_file1 = os.path.join(self.dbFiles_path, self.source_onto_mapping_do_umls.csv_name)
         self.dbFile_dis_drug = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.DIS_DRUG,
                                       node1_type=NodeType.DIS, node2_type=NodeType.DRUG,
                                       colindex_qscore=2,        # todo read sider paper
                                       mapping1_file=mapping_file1, map1_sourceindex=1, map1_targetindex=0)
         # --- drug - phenotype ---
-        edges_file_path = os.path.join(self.folder_path, self.source_edge_drug_pheno.csv_name)
-        mapping_file2 = os.path.join(self.folder_path, self.source_onto_mapping_hpo_umls.csv_name)
+        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_drug_pheno.csv_name)
+        mapping_file2 = os.path.join(self.dbFiles_path, self.source_onto_mapping_hpo_umls.csv_name)
         self.dbFile_drug_pheno = DbFile(edges_file_path=edges_file_path,
                                         colindex1=0, colindex2=1, edgeType=EdgeType.DRUG_PHENOTYPE,
                                         node1_type=NodeType.DRUG, node2_type=NodeType.PHENOTYPE,
@@ -369,9 +376,8 @@ class DbManager(object):
 
 
     def create_db_files(self):
-        # ###### ontologies and onto mappings#######
+        # ontologies and onto mappings
         oboParser = OboParser()
-
         for o in self.source_onto_list:
             in_path = os.path.join(self.oFiles_path, o.ofile_name)
             df = oboParser.obo_to_df(in_path, o.quadruple_list)
@@ -380,47 +386,17 @@ class DbManager(object):
                 for m in o.onto_mapping:
                     self.create_db_file_from_df(os.path.join(self.folder_path,m.csv_name), m.use_cols, df, ';')
 
-        # ##### edges #####
+        # edges
         for e in self.source_edge_list:
             self.create_db_file(os.path.join(self.oFiles_path,e.ofile_name),
-                                os.path.join(self.folder_path,e.csv_name), e.cols, e.use_cols, e.nr_lines_header)
+                                os.path.join(self.dbFiles_path,e.csv_name), e.cols, e.use_cols, e.nr_lines_header)
 
-        # ###### mapping ######
+        # mapping
         for m in self.source_mapping_list:
             self.create_db_file(os.path.join(self.oFiles_path,m.ofile_name),
-                                os.path.join(self.folder_path,m.csv_name), m.cols, m.use_cols, m.nr_lines_header, m.mapping_sep, m.dtypes)
+                                os.path.join(self.dbFiles_path,m.csv_name), m.cols, m.use_cols, m.nr_lines_header, m.mapping_sep, m.dtypes)
 
         self.individual_preprocessing_for_db_files()
-
-
-    def individual_preprocessing_for_db_files(self):
-        # making ids unique in HPO file (db:id); remove DB column
-        in_file = open(os.path.join(self.folder_path, self.source_edge_dis_pheno.csv_name))
-        cols = self.source_edge_dis_pheno.use_cols
-        data = pandas.read_csv(in_file, sep=';', names=cols, dtype={cols[0]: str, cols[3]: str})
-        in_file.close()
-        data[cols[0]] = data[cols[3]] + ':' + data[cols[0]]
-        data = data.drop(cols[3], axis=1)
-        del self.source_edge_dis_pheno.use_cols[3]
-        out_file = open(os.path.join(self.folder_path, self.source_edge_dis_pheno.csv_name), 'w')
-        data[self.source_edge_dis_pheno.use_cols].to_csv(out_file, sep=';', index=False, header=False)
-        out_file.close()
-
-        # making ids unique in DisGeNet mapping file for DO and OMIM (db:id)
-        in_file = open(os.path.join(self.folder_path, self.source_mapping_disgenet_umls_do.csv_name))
-        cols = self.source_mapping_disgenet_umls_do.use_cols
-        data = pandas.read_csv(in_file, sep=';', names=cols, dtype={cols[1]: str, cols[2]: str})
-        in_file.close()
-        data.loc[data[cols[1]]=='OMIM',cols[2]] = 'OMIM:' + data[data[cols[1]]=='OMIM'][cols[2]]
-        data.loc[data[cols[1]]=='DO',cols[2]] = 'DO:' + data[data[cols[1]]=='DO'][cols[2]]
-        out_file = open(os.path.join(self.folder_path, self.source_mapping_disgenet_umls_do.csv_name), 'w')
-        data[self.source_mapping_disgenet_umls_do.use_cols].to_csv(out_file, sep=';', index=False, header=False)
-        out_file.close()
-
-        # converting stitch id to pubchem
-        self.stitch_to_pubchem_id(self.source_edge_gene_drug, 1)  # todo performance
-        self.stitch_to_pubchem_id(self.source_edge_dis_drug, 1)
-        self.stitch_to_pubchem_id(self.source_edge_drug_pheno, 0)
 
 
     def create_db_file_from_df(self, out_path, use_cols, data, mapping_sep= None):
@@ -480,38 +456,126 @@ class DbManager(object):
         return data
 
 
-    def create_graph(self):
-        open(os.path.join(self.folder_path, 'edges.tsv'), 'w').close()
-        open(os.path.join(self.folder_path, 'nodes.tsv'), 'w').close()
+    def individual_preprocessing_for_db_files(self):
+        """individual further preprocessing steps should be handled here only"""
 
-        open(os.path.join(self.folder_path, 'ids_no_mapping.tsv'), 'w').close()
-
-        nodes = set()
-        for d in self.dbFile_list:
-            nodes.update(self.create_edges(d))
-        with open(os.path.join(self.folder_path, 'nodes.tsv'), 'w') as out_file:
-            writer = csv.writer(out_file, delimiter='\t', lineterminator='\n')
-            for node in nodes:
-                writer.writerow(list(node))
+        # making ids unique in HPO file (db:id); remove DB column
+        if self.source_edge_dis_pheno in self.source_edge_list:
+            in_file = open(os.path.join(self.dbFiles_path, self.source_edge_dis_pheno.csv_name))
+            cols = self.source_edge_dis_pheno.use_cols
+            data = pandas.read_csv(in_file, sep=';', names=cols, dtype={cols[0]: str, cols[3]: str})
+            in_file.close()
+            data[cols[0]] = data[cols[3]] + ':' + data[cols[0]]
+            data = data.drop(cols[3], axis=1)
+            del self.source_edge_dis_pheno.use_cols[3]
+            out_file = open(os.path.join(self.dbFiles_path, self.source_edge_dis_pheno.csv_name), 'w')
+            data[self.source_edge_dis_pheno.use_cols].to_csv(out_file, sep=';', index=False, header=False)
             out_file.close()
+
+        # making ids unique in DisGeNet mapping file for DO and OMIM (db:id)
+        if self.source_mapping_disgenet_umls_do in self.source_mapping_list:
+            in_file = open(os.path.join(self.dbFiles_path, self.source_mapping_disgenet_umls_do.csv_name))
+            cols = self.source_mapping_disgenet_umls_do.use_cols
+            data = pandas.read_csv(in_file, sep=';', names=cols, dtype={cols[1]: str, cols[2]: str})
+            in_file.close()
+            data.loc[data[cols[1]] == 'OMIM', cols[2]] = 'OMIM:' + data[data[cols[1]] == 'OMIM'][cols[2]]
+            data.loc[data[cols[1]] == 'DO', cols[2]] = 'DO:' + data[data[cols[1]] == 'DO'][cols[2]]
+            out_file = open(os.path.join(self.dbFiles_path, self.source_mapping_disgenet_umls_do.csv_name), 'w')
+            data[self.source_mapping_disgenet_umls_do.use_cols].to_csv(out_file, sep=';', index=False, header=False)
+            out_file.close()
+
+        # converting stitch id to pubchem
+        if self.source_edge_gene_drug in self.source_edge_list:
+            self.stitch_to_pubchem_id(self.source_edge_gene_drug, 1)  # todo performance
+        if self.source_edge_dis_drug in self.source_edge_list:
+            self.stitch_to_pubchem_id(self.source_edge_dis_drug, 1)
+        if self.source_edge_drug_pheno in self.source_edge_list:
+            self.stitch_to_pubchem_id(self.source_edge_drug_pheno, 0)
+
+
+    def stitch_to_pubchem_id(self, source_obj, id_col):
+        """converts stitch id to pubchem id (removing the first 4 characters, i.e. CID and 1 or 0;
+        then remove leading zeros"""
+        in_file = open(os.path.join(self.dbFiles_path, source_obj.csv_name))
+        cols = source_obj.use_cols
+        data = pandas.read_csv(in_file, sep=';', names=cols, dtype={cols[id_col]: str})
+        in_file.close()
+        data[cols[id_col]] = data[cols[id_col]].str[4:]
+        data[cols[id_col]].astype(int) # todo performance
+        out_file = open(os.path.join(self.dbFiles_path, source_obj.csv_name), 'w')
+        data.to_csv(out_file, sep=';', index=False, header=False)
+        out_file.close()
+
+
+    def create_graph(self):
+        open(os.path.join(self.folder_path, 'ids_no_mapping.tsv'), 'w').close()
+        open(os.path.join(self.folder_path, 'stats.txt'), 'w').close()
+
+        edges_dic = {}
+        nodes_dic = {}
+        for d in self.dbFile_list:
+            nodes1, nodes2, edges = self.create_nodes_and_edges(d)
+            edges_dic[str(d.edgeType)] = edges
+            if str(d.node1_type) in nodes_dic :
+                nodes_dic[str(d.node1_type)].update(nodes1)
+            else:
+                nodes_dic[str(d.node1_type)] = nodes1
+            if str(d.node2_type) in nodes_dic :
+                nodes_dic[str(d.node2_type)].update(nodes2)
+            else:
+                nodes_dic[str(d.node2_type)] = nodes2
+        self.output_graph(nodes_dic, edges_dic, '\t')
         return
 
 
-    def create_edges (self, dbFile):
+    def output_graph(self, nodes_dic: dict, edges_dic : dict, one_file_sep = ';', multi_file_sep = None):
+        # one file
+        if one_file_sep is not None:
+            with open(os.path.join(self.folder_path, self.nodes_file_prefix + '.csv'), 'w') as out_file:
+                writer = csv.writer(out_file, delimiter=one_file_sep, lineterminator='\n')
+                for key, value in nodes_dic.items():
+                    for node in value:
+                        writer.writerow(list(node))
+                out_file.close()
+            with open(os.path.join(self.folder_path, self.edges_file_prefix + '.csv'), 'w') as out_file:
+                writer = csv.writer(out_file, delimiter=one_file_sep, lineterminator='\n')
+                for key, value in edges_dic.items():
+                    for edge in value:
+                        writer.writerow(list(edge))
+                out_file.close()
+        # separate files
+        if multi_file_sep is not None:
+            for key, value in nodes_dic.items():
+                with open(os.path.join(self.folder_path, self.nodes_file_prefix + '_' + key +  '.csv'), 'w') as out_file:
+                    writer = csv.writer(out_file, delimiter=multi_file_sep, lineterminator='\n')
+                    for node in value:
+                        writer.writerow(list(node))
+                out_file.close()
+            for key, value in edges_dic.items():
+                with open(os.path.join(self.folder_path, self.edges_file_prefix + '_' + key + '.csv'), 'w') as out_file:
+                    writer = csv.writer(out_file, delimiter=multi_file_sep, lineterminator='\n')
+                    for edge in value:
+                        writer.writerow(list(edge))
+                out_file.close()
+
+
+    def create_nodes_and_edges (self, dbFile):
         # --- mapping ---
         mapping1 = self.db_mapping_file_to_dic(dbFile.mapping1_file, dbFile.map1_sourceindex, dbFile.map1_targetindex, dbFile.db1_index, dbFile.db1_name)
         mapping2 = self.db_mapping_file_to_dic(dbFile.mapping2_file, dbFile.map2_sourceindex, dbFile.map2_targetindex, dbFile.db2_index, dbFile.db2_name)
 
         # --- edges ---
         with open(dbFile.edges_file_path, "r", encoding="utf8") as edge_content:
-            nodes = set()
-            edges = []
+            nodes1 = set()
+            nodes2 = set()
+            edges = set()
             ids1_no_mapping = set()
             ids2_no_mapping = set()
             ids1 = set()
             ids2 = set()
             nr_edges=0
             nr_edges_after_mapping = 0
+            nr_edges_with_dup = 0
             nr_edges_below_cutoff = 0
             nr_edges_no_mapping = 0
 
@@ -547,12 +611,10 @@ class DbManager(object):
                             if (dbFile.cutoff_num is None and dbFile.cutoff_txt is None) or \
                                      (dbFile.cutoff_num is not None and float(qscore) > dbFile.cutoff_num) or \
                                      (dbFile.cutoff_txt is not None and qscore not in dbFile.cutoff_txt):
-                                edge = Edge(id1, dbFile.edgeType, id2, None, qscore)
-                                edges.append(edge)
-                                nodes.add(Node(id1, dbFile.node1_type))
-                                nodes.add(Node(id2, dbFile.node2_type))
-
-                                nr_edges_after_mapping += 1
+                                edges.add(Edge(id1, dbFile.edgeType, id2, None, qscore))
+                                nodes1.add(Node(id1, dbFile.node1_type))
+                                nodes2.add(Node(id2, dbFile.node2_type))
+                                nr_edges_with_dup +=1
                             else:
                                 nr_edges_below_cutoff+=1
                 else:
@@ -563,16 +625,11 @@ class DbManager(object):
                         ids2_no_mapping.add(raw_id2)
                 nr_edges += 1
 
+        nr_edges_after_mapping =len(edges)
         edge_content.close()
 
-
-        # write output
+        # print statistics
         edgeType = dbFile.edgeType
-        with open(os.path.join(self.folder_path, 'edges.tsv'), 'a') as out_file: #fixme seperate output wirter
-            writer = csv.writer(out_file, delimiter='\t', lineterminator='\n')
-            for edge in edges:
-                writer.writerow(list(edge))
-            out_file.close()
         with open(os.path.join(self.folder_path, 'ids_no_mapping.tsv'), 'a') as out_file:
             for id in ids1_no_mapping:
                 out_file.write('%s\t%s\n' %(id, edgeType))
@@ -580,24 +637,43 @@ class DbManager(object):
                 out_file.write('%s\t%s\n' % (id, edgeType))
             out_file.close()
 
+        out_string = 'Edge Type: ' + str(edgeType) + '\n' + \
+                     'Nr edges: ' + str(nr_edges) + '\n' + \
+                     'Nr edges no mapping: ' + str(nr_edges_no_mapping) + '\n' + \
+                     'Nr edges below cutoff: ' + str(nr_edges_below_cutoff) + '\n' + \
+                     'Edges coverage: ' + str(1-(nr_edges_no_mapping/ nr_edges)) + '\n' + \
+                     'Duplicated edges: ' + str(nr_edges_with_dup-nr_edges_after_mapping) + '\n' + \
+                     'Nr edges after mapping (final nr): ' + str(nr_edges_after_mapping) + '\n' + \
+                     'Nr nodes1 no mapping: ' + str(len(ids1_no_mapping)) + '\n' + \
+                     'Nr nodes2 no mapping: ' + str(len(ids2_no_mapping)) + '\n' + \
+                     'Nr nodes1: ' + str(len(ids1)) + '\n' + \
+                     'Nr nodes2: ' + str(len(ids2)) + '\n' + \
+                     'nodes1 coverage: ' + str(1-(len(ids1_no_mapping)/ len(ids1))) + '\n' + \
+                     'nodes2 coverage: ' + str(1-(len(ids2_no_mapping)/ len(ids2))) + '\n' + \
+                     '######################################################################################'
+        print(out_string)
+        with open(os.path.join(self.folder_path, 'stats.txt'), 'a') as out_file:
+            out_file.write(out_string)
 
-        print('Nr edges '  + str(edgeType) + ': ' + str(nr_edges))
-        print('Nr edges no mapping for ' + str(edgeType) + ': ' + str(nr_edges_no_mapping))
-        print('Nr edges below cutoff for ' + str(edgeType) + ': ' + str(nr_edges_below_cutoff))
+        #print('Edge Type: ' + str(edgeType))
+        #print('Nr edges: ' + str(nr_edges))
+        #print('Nr edges no mapping: ' + str(nr_edges_no_mapping))
+        #print('Nr edges below cutoff: ' + str(nr_edges_below_cutoff))
+#
+        #print('Edges coverage: ' + str(1-(nr_edges_no_mapping/ nr_edges)))
+        #print('Duplicated edges: ' + str(nr_edges_with_dup-nr_edges_after_mapping))
+        #print('Nr edges after mapping (final nr): ' + str(nr_edges_after_mapping))
+        #print('Nr nodes1 no mapping: ' + str(len(ids1_no_mapping)))
+        #print('Nr nodes2 no mapping: ' + str(len(ids2_no_mapping)))
+#
+        #print('Nr nodes1: ' + str(len(ids1)))
+        #print('Nr nodes2: ' + str(len(ids2)))
+#
+        #print('nodes1 coverage: ' + str(1-(len(ids1_no_mapping)/ len(ids1))))
+        #print('nodes2 coverage: ' + str(1-(len(ids2_no_mapping)/ len(ids2))))
+        #print('######################################################################################')
 
-        print('Edges coverage ' + str(edgeType) + ': ' + str(1-(nr_edges_no_mapping/ nr_edges)))
-        print('Nr edges after mapping (final nr) ' + str(edgeType) + ': ' + str(nr_edges_after_mapping))
-        print('Nr nodes1 no mapping for ' + str(edgeType) + ': ' + str(len(ids1_no_mapping)))
-        print('Nr nodes2 no mapping for ' + str(edgeType) + ': ' + str(len(ids2_no_mapping)))
-
-        print('Nr nodes1  ' + str(edgeType) + ': ' + str(len(ids1)))
-        print('Nr nodes2  ' + str(edgeType) + ': ' + str(len(ids2)))
-
-        print('nodes1 coverage ' + str(edgeType) + ': ' + str(1-(len(ids1_no_mapping)/ len(ids1))))
-        print('nodes2 coverage ' + str(edgeType) + ': ' + str(1-(len(ids2_no_mapping)/ len(ids2))))
-        print('######################################################################################')
-
-        return nodes
+        return nodes1, nodes2, edges
 
 
     def db_mapping_file_to_dic(self, mapping_file, map_sourceindex, map_targetindex, db_index, db_name):
@@ -615,17 +691,3 @@ class DbManager(object):
                             mapping[row[map_sourceindex]] = [row[map_targetindex]]
                 mapping_content1.close()
             return mapping
-
-
-    def stitch_to_pubchem_id(self, source_obj, id_col):
-        """converts stitch id to pubchem id (removing the first 4 characters, i.e. CID and 1 or 0;
-        then remove leading zeros"""
-        in_file = open(os.path.join(self.folder_path, source_obj.csv_name))  # todo performance
-        cols = source_obj.use_cols
-        data = pandas.read_csv(in_file, sep=';', names=cols, dtype={cols[id_col]: str})
-        in_file.close()
-        data[cols[id_col]] = data[cols[id_col]].str[4:]
-        data[cols[id_col]].astype(int)
-        out_file = open(os.path.join(self.folder_path, source_obj.csv_name), 'w')
-        data.to_csv(out_file, sep=';', index=False, header=False)
-        out_file.close()

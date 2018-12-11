@@ -13,5 +13,8 @@ class Edge:
             return ((self.id1 == other.id1 and self.id2 == other.id2) or (self.id1 == other.id2 and self.id2 == other.id1))
         return False
 
+    def __hash__(self):
+        return hash((self.id1, self.type, self.id2))
+
     def __iter__(self):
         return iter([self.id1, self.type, self.id2, self.qScore])
