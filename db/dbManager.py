@@ -166,7 +166,7 @@ class DbManager(object):
                                       cols=['DB', 'DOI', 'DBname', 'qulifier', 'HPO_ID', 'DB_ref',
                                             'evidence_code', 'onsetMod', 'freq', 'sex',
                                             'mod', 'aspect', 'date', 'assigned_by'],
-                                      use_cols = ['DOI', 'HPO_ID', 'evidence_code', 'DB'],
+                                      use_cols = ['DB_ref', 'HPO_ID', 'evidence_code'],
                                       nr_lines_header=0)
         self.source_edge_drug_pheno = SourceEdgeDB(url="http://sideeffects.embl.de/media/download/meddra_all_se.tsv.gz",
                                       ofile_name="SIDER_se.tsv.gz",
@@ -381,10 +381,10 @@ class DbManager(object):
         for o in self.source_onto_list:
             in_path = os.path.join(self.oFiles_path, o.ofile_name)
             df = oboParser.obo_to_df(in_path, o.quadruple_list)
-            self.create_db_file_from_df(os.path.join(self.folder_path,o.csv_name), o.use_cols, df, ';')    # ';' sep is created while parsing
+            self.create_db_file_from_df(os.path.join(self.dbFiles_path,o.csv_name), o.use_cols, df, ';')    # ';' sep is created while parsing
             if o.onto_mapping:
                 for m in o.onto_mapping:
-                    self.create_db_file_from_df(os.path.join(self.folder_path,m.csv_name), m.use_cols, df, ';')
+                    self.create_db_file_from_df(os.path.join(self.dbFiles_path,m.csv_name), m.use_cols, df, ';')
 
         # edges
         for e in self.source_edge_list:
@@ -459,19 +459,6 @@ class DbManager(object):
     def individual_preprocessing_for_db_files(self):
         """individual further preprocessing steps should be handled here only"""
 
-        # making ids unique in HPO file (db:id); remove DB column
-        if self.source_edge_dis_pheno in self.source_edge_list:
-            in_file = open(os.path.join(self.dbFiles_path, self.source_edge_dis_pheno.csv_name))
-            cols = self.source_edge_dis_pheno.use_cols
-            data = pandas.read_csv(in_file, sep=';', names=cols, dtype={cols[0]: str, cols[3]: str})
-            in_file.close()
-            data[cols[0]] = data[cols[3]] + ':' + data[cols[0]]
-            data = data.drop(cols[3], axis=1)
-            del self.source_edge_dis_pheno.use_cols[3]
-            out_file = open(os.path.join(self.dbFiles_path, self.source_edge_dis_pheno.csv_name), 'w')
-            data[self.source_edge_dis_pheno.use_cols].to_csv(out_file, sep=';', index=False, header=False)
-            out_file.close()
-
         # making ids unique in DisGeNet mapping file for DO and OMIM (db:id)
         if self.source_mapping_disgenet_umls_do in self.source_mapping_list:
             in_file = open(os.path.join(self.dbFiles_path, self.source_mapping_disgenet_umls_do.csv_name))
@@ -494,14 +481,13 @@ class DbManager(object):
 
 
     def stitch_to_pubchem_id(self, source_obj, id_col):
-        """converts stitch id to pubchem id (removing the first 4 characters, i.e. CID and 1 or 0;
+        """converts stitch id to pubchem id (removing the first 4 characters, i.e. CID1, CID0, CISm or CIDs;
         then remove leading zeros"""
         in_file = open(os.path.join(self.dbFiles_path, source_obj.csv_name))
         cols = source_obj.use_cols
         data = pandas.read_csv(in_file, sep=';', names=cols, dtype={cols[id_col]: str})
         in_file.close()
-        data[cols[id_col]] = data[cols[id_col]].str[4:]
-        data[cols[id_col]].astype(int) # todo performance
+        data[cols[id_col]] = data[cols[id_col]].str[4:].str.lstrip("0")
         out_file = open(os.path.join(self.dbFiles_path, source_obj.csv_name), 'w')
         data.to_csv(out_file, sep=';', index=False, header=False)
         out_file.close()
@@ -557,6 +543,9 @@ class DbManager(object):
                     for edge in value:
                         writer.writerow(list(edge))
                 out_file.close()
+        #adjacency matrix
+        key, value = nodes_dic
+        d = {x: i for i, x in enumerate(value)} #fixme continue here
 
 
     def create_nodes_and_edges (self, dbFile):
@@ -654,24 +643,6 @@ class DbManager(object):
         print(out_string)
         with open(os.path.join(self.folder_path, 'stats.txt'), 'a') as out_file:
             out_file.write(out_string)
-
-        #print('Edge Type: ' + str(edgeType))
-        #print('Nr edges: ' + str(nr_edges))
-        #print('Nr edges no mapping: ' + str(nr_edges_no_mapping))
-        #print('Nr edges below cutoff: ' + str(nr_edges_below_cutoff))
-#
-        #print('Edges coverage: ' + str(1-(nr_edges_no_mapping/ nr_edges)))
-        #print('Duplicated edges: ' + str(nr_edges_with_dup-nr_edges_after_mapping))
-        #print('Nr edges after mapping (final nr): ' + str(nr_edges_after_mapping))
-        #print('Nr nodes1 no mapping: ' + str(len(ids1_no_mapping)))
-        #print('Nr nodes2 no mapping: ' + str(len(ids2_no_mapping)))
-#
-        #print('Nr nodes1: ' + str(len(ids1)))
-        #print('Nr nodes2: ' + str(len(ids2)))
-#
-        #print('nodes1 coverage: ' + str(1-(len(ids1_no_mapping)/ len(ids1))))
-        #print('nodes2 coverage: ' + str(1-(len(ids2_no_mapping)/ len(ids2))))
-        #print('######################################################################################')
 
         return nodes1, nodes2, edges
 

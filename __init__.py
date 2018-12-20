@@ -9,11 +9,11 @@ pr.enable()
 #dbManager = DbManager("C:\\Users\\annab\\Box Sync\\Masterarbeit\\DB\\databases")
 #dbManager = DbManager("E:\\Master Thesis")
 
-dbManager = DbManager("E:\Anna_Breit\master_thesis\databases")
+dbManager = DbManager("D:\Anna Breit\master thesis\databases")
 
 #dbManager.download_resources()
-#dbManager.create_db_files()
-dbManager.create_graph()
+dbManager.create_db_files()
+#dbManager.create_graph()
 
 
 
