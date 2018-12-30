@@ -1,21 +1,24 @@
-import urllib.request
-import os
-import sys
 import csv
 import gzip
+import os
+import sys
+import urllib.request
 import zipfile
-import json
+
 import pandas
-from edge import Edge
-from node import Node
-from nodeType import NodeType
-from edgeTypes import EdgeType
-from db.oboParser import OboParser
-from db.sourceOntoDB import SourceOntoDB
-from db.sourceOntoMappingDB import SourceOntoMappingDB
 from db.sourceEdgeDB import SourceEdgeDB
 from db.sourceMappingDB import SourceMappingDB
+from db.sourceOntoMappingDB import SourceOntoMappingDB
+
 from db.dbFile import DbFile
+from db.oboParser import OboParser
+from db.postgresDumpParser import PostgresDumpParser as dcp
+from db.sourceDB.sourceOntoDB import SourceOntoDB
+from edge import Edge
+from edgeTypes import EdgeType
+from node import Node
+from nodeType import NodeType
+
 
 class DbManager(object):
     """This class is responsible for downloading original (source) database files,
@@ -134,6 +137,13 @@ class DbManager(object):
                                      cols=['chemID', 'stringID', 'qscore'],
                                      use_cols = ['stringID', 'chemID', 'qscore'],
                                      nr_lines_header=1)
+        self.source_edge_gene_drug_action = SourceEdgeDB(
+            url="http://stitch.embl.de/download/protein_chemical.links.v5.0/9606.protein_chemical.links.v5.0.tsv.gz",
+            ofile_name="STITCH_gene_drug_actions.tsv.gz",
+            csv_name="DB_STITCH_gene_drug_actions.csv",
+            cols=['item_a', 'item_b', 'mode', 'action','a_is_acting', 'score'], #TODO ms action?
+            use_cols=['item_a', 'item_b', 'mode','a_is_acting', 'score'],
+            nr_lines_header=1)
         self.source_edge_gene_pheno = SourceEdgeDB( url="http://compbio.charite.de/jenkins/job/hpo.annotations.monthly/lastSuccessfulBuild/artifact/annotation/ALL_SOURCES_ALL_FREQUENCIES_genes_to_phenotype.txt",
                                      ofile_name="HPO_gene_phenotype.tsv",
                                      csv_name="DB_HPO_gene_phenotype.csv",
@@ -152,13 +162,16 @@ class DbManager(object):
                                      cols=['geneID', 'geneName', 'anatomy', 'expressionValue', 'Unit'],
                                      use_cols=['geneID', 'anatomy', 'expressionValue'],
                                      nr_lines_header=1)
-        self.source_edge_dis_drug = SourceEdgeDB(url="http://sideeffects.embl.de/media/download/meddra_all_indications.tsv.gz",
-                                     ofile_name="SIDER_dis_drug.tsv.gz",
-                                     csv_name="DB_SIDER_dis_drug.csv",
-                                     cols=['stichID', 'umlsID', 'method', 'umlsName', 'medDRAumlsType',
-                                           'medDRAumlsID', 'medDRAumlsName'],
-                                     use_cols=['umlsID', 'stichID', 'method'],
-                                     nr_lines_header=0)
+        self.source_edge_dis_drug = SourceEdgeDB(url="http://unmtid-shinyapps.net/download/drugcentral.dump.08262018.sql.gz", ofile_name="sql_dump.sql.gz",csv_name="DB_DrugCentral_dis_drug.csv",cols=[],use_cols=[],nr_lines_header=None)
+        #FIXME continue here!!!
+
+        #self.source_edge_dis_drug = SourceEdgeDB(url="http://sideeffects.embl.de/media/download/meddra_all_indications.tsv.gz",
+        #                             ofile_name="SIDER_dis_drug.tsv.gz",
+        #                             csv_name="DB_SIDER_dis_drug.csv",
+        #                             cols=['stichID', 'umlsID', 'method', 'umlsName', 'medDRAumlsType',
+        #                                   'medDRAumlsID', 'medDRAumlsName'],
+        #                             use_cols=['umlsID', 'stichID', 'method'],
+        #                             nr_lines_header=0)
         self.source_edge_dis_pheno = SourceEdgeDB(url="http://compbio.charite.de/jenkins/job/hpo.annotations/lastStableBuild/" \
                                           "artifact/misc/phenotype_annotation_hpoteam.tab",
                                       ofile_name="HPO_disease_phenotype.tab",
@@ -304,13 +317,15 @@ class DbManager(object):
                                        node1_type=NodeType.DIS, node2_type=NodeType.PHENOTYPE,
                                        colindex_qscore=2, # todo check licenses / if IEA ok
                                        mapping1_file=mapping_file1, map1_sourceindex=1, map1_targetindex=0)
-        # --- dis - drug ---
-        edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_dis_drug.csv_name)
-        mapping_file1 = os.path.join(self.dbFiles_path, self.source_onto_mapping_do_umls.csv_name)
-        self.dbFile_dis_drug = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.DIS_DRUG,
-                                      node1_type=NodeType.DIS, node2_type=NodeType.DRUG,
-                                      colindex_qscore=2,        # todo read sider paper
-                                      mapping1_file=mapping_file1, map1_sourceindex=1, map1_targetindex=0)
+        ## --- dis - drug ---
+        #edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_dis_drug.csv_name)
+        #mapping_file1 = os.path.join(self.dbFiles_path, self.source_onto_mapping_do_umls.csv_name)
+        #self.dbFile_dis_drug = DbFile(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.DIS_DRUG,
+        #                              node1_type=NodeType.DIS, node2_type=NodeType.DRUG,
+        #                              colindex_qscore=2,        # todo read sider paper
+        #                              mapping1_file=mapping_file1, map1_sourceindex=1, map1_targetindex=0)
+
+
         # --- drug - phenotype ---
         edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_drug_pheno.csv_name)
         mapping_file2 = os.path.join(self.dbFiles_path, self.source_onto_mapping_hpo_umls.csv_name)
@@ -336,31 +351,32 @@ class DbManager(object):
 
     # ##################################################################################################################################################
 
+    # ----- DOWNLOAD RECOURCES --------
     def download_resources(self):
         opener = urllib.request.build_opener()
         opener.addheaders = [('User-agent', 'Mozilla/5.0')]
         urllib.request.install_opener(opener)
-        ignore_present_files = False
+        ignore_existing_files = False
 
         for onto in self.source_onto_list:
             if onto.url is not None:
                 file_path = os.path.join(self.oFiles_path, onto.ofile_name)
-                if not ignore_present_files:
-                    ignore_present_files = self.check_if_file_exisits(file_path)
+                if not ignore_existing_files:
+                    ignore_existing_files = self.check_if_file_exisits(file_path)
                 urllib.request.urlretrieve(onto.url, file_path )
 
         for edge in self.source_edge_list:
             if edge.url is not None:
                 file_path = os.path.join(self.oFiles_path, edge.ofile_name)
-                if not ignore_present_files:
-                    ignore_present_files = self.check_if_file_exisits(file_path)
+                if not ignore_existing_files:
+                    ignore_existing_files = self.check_if_file_exisits(file_path)
                 urllib.request.urlretrieve(edge.url, file_path )
 
         for mapping in self.source_mapping_list:
             if mapping.url is not None:
                 file_path = os.path.join(self.oFiles_path, mapping.ofile_name)
-                if not ignore_present_files:
-                    ignore_present_files = self.check_if_file_exisits(file_path)
+                if not ignore_existing_files:
+                    ignore_existing_files = self.check_if_file_exisits(file_path)
                 urllib.request.urlretrieve(mapping.url, file_path)
 
 
@@ -375,6 +391,7 @@ class DbManager(object):
         return False
 
 
+    # ----- CREATE DB FILES --------
     def create_db_files(self):
         # ontologies and onto mappings
         oboParser = OboParser()
@@ -399,14 +416,7 @@ class DbManager(object):
         self.individual_preprocessing_for_db_files()
 
 
-    def create_db_file_from_df(self, out_path, use_cols, data, mapping_sep= None):
-        if mapping_sep is not None:
-            data = self.flat_df(data, use_cols, mapping_sep)
-        #data = data[data[data.columns[1]] != ''] #todo good?
-        data[use_cols].to_csv(out_path, sep=';', index=False,header=False)
-
-
-    def create_db_file(self, in_path, out_path, col_names, use_cols, skiprows, mapping_sep =None, dtype=None):
+    def create_db_file(self, in_path, out_path, col_names, use_cols, skiprows, mapping_sep=None, dtype=None):
         data = self.read_in_file_as_df(in_path, col_names, use_cols, skiprows, dtype)
         self.create_db_file_from_df(out_path, use_cols, data, mapping_sep)
 
@@ -417,12 +427,6 @@ class DbManager(object):
         file is taken into account"""
 
         path_parts = in_path.split('.')
-        if (path_parts[1] == "txt"):
-            sep = " "
-        elif (path_parts[1] == "tsv" or path_parts[1] == "gaf" or path_parts[1] == "tab"):
-            sep = "\t"
-        else:
-            sep = ","
         if (path_parts[-1] == "gz"):
             in_file = gzip.open(in_path, "rt", encoding="utf8")
         elif (path_parts[-1] == "zip"):
@@ -431,9 +435,27 @@ class DbManager(object):
         else:
             in_file = open(in_path)
 
+        if (path_parts[1] == "txt"):
+            sep = " "
+        elif (path_parts[1] == "tsv" or path_parts[1] == "gaf" or path_parts[1] == "tab"):
+            sep = "\t"
+        elif (path_parts[1] == "sql"):
+            data = dcp.table_to_df(in_file, "omop_relationship")
+            in_file.close()
+            return data
+        else:
+            sep = ","
+
         data = pandas.read_csv(in_file, sep=sep, names=col_names, usecols=use_cols, skiprows=skiprows, dtype=dtype)
         in_file.close()
         return data
+
+
+    def create_db_file_from_df(self, out_path, use_cols, data, mapping_sep= None):
+        if mapping_sep is not None:
+            data = self.flat_df(data, use_cols, mapping_sep)
+        #data = data[data[data.columns[1]] != ''] #todo good?
+        data[use_cols].to_csv(out_path, sep=';', index=False,header=False)
 
 
     def flat_df(self, data, use_cols, mapping_sep =None):
@@ -474,8 +496,8 @@ class DbManager(object):
         # converting stitch id to pubchem
         if self.source_edge_gene_drug in self.source_edge_list:
             self.stitch_to_pubchem_id(self.source_edge_gene_drug, 1)  # todo performance
-        if self.source_edge_dis_drug in self.source_edge_list:
-            self.stitch_to_pubchem_id(self.source_edge_dis_drug, 1)
+        #if self.source_edge_dis_drug in self.source_edge_list:         #todo check
+        #    self.stitch_to_pubchem_id(self.source_edge_dis_drug, 1)
         if self.source_edge_drug_pheno in self.source_edge_list:
             self.stitch_to_pubchem_id(self.source_edge_drug_pheno, 0)
 
@@ -493,6 +515,7 @@ class DbManager(object):
         out_file.close()
 
 
+    # ----- CREATE GRAPH --------
     def create_graph(self):
         open(os.path.join(self.folder_path, 'ids_no_mapping.tsv'), 'w').close()
         open(os.path.join(self.folder_path, 'stats.txt'), 'w').close()
