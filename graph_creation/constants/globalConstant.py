@@ -1,0 +1,5 @@
+FILE_PATH = ""
+O_FILE_PATH =""
+IN_FILE_PATH=""
+EDGES_FILE_PREFIX = "edges"
+NODES_FILE_PREFIX = "nodes"

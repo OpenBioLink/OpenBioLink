@@ -1,0 +1,21 @@
+from enum import Enum
+
+class DbType(Enum):
+    DB_ONTO_GO = 0
+    DB_ONTO_DO = 1
+    DB_ONTO_HPO = 2
+
+    DB_EDGE_CDT_PATH = 100
+    DB_EDGE_DISGENET = 101
+    DB_EDGE_GO = 102
+    DB_EDGE_HPA = 103
+    DB_EDGE_HPO_DIS = 104
+    DB_EDGE_HPO_GENE = 105
+    DB_EDGE_SIDER_IND = 106
+    DB_EDGE_SIDER_SE =107
+    DB_EDGE_STITCH = 108
+    DB_EDGE_STRING = 109
+
+    DB_MAP_DISGENET = 10
+    DB_MAP_STRING = 11
+    DB_MAP_UNIPROT= 12
