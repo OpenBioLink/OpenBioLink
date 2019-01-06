@@ -1,31 +1,40 @@
 import os
-import graph_creation.constants.globalConstant as glob
 
-import graph_creation.constants.in_file.edge.inEdgeHpoGeneConstant as edgeConst
-import graph_creation.constants.edge_file.edge.edgeEdgeGenePhenoConstant as const
-
+import graph_creation.globalConstant as glob
+from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
+from graph_creation.metadata_infile.edge.inMetaEdgeHpoGene import InMetaEdgeHpoGene
 from graph_creation.qualityType import QualityType
 
-from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
-from edgeType import EdgeType
-from nodeType import NodeType
 
 class EdgeMetaGenePheno(EdgeMetadata):
+    LQ_CUTOFF = None
+    MQ_CUTOFF = None
+    HQ_CUTOFF = None
+    LQ_CUTOFF_TEXT = None
+    MQ_CUTOFF_TEXT = None
+    HQ_CUTOFF_TEXT = None
+
     def __init__(self, quality : QualityType= None):
         if quality is QualityType.HQ:
-            cutoff_txt = const.HQ_CUTOFF_TEXT
-            cutoff_num = const.HQ_CUTOFF
+            cutoff_txt = EdgeMetaGenePheno.HQ_CUTOFF_TEXT
+            cutoff_num = EdgeMetaGenePheno.HQ_CUTOFF
         elif quality is QualityType.MQ:
-            cutoff_txt = const.MQ_CUTOFF_TEXT
-            cutoff_num = const.MQ_CUTOFF
+            cutoff_txt = EdgeMetaGenePheno.MQ_CUTOFF_TEXT
+            cutoff_num = EdgeMetaGenePheno.MQ_CUTOFF
         elif quality is QualityType.LQ:
-            cutoff_txt = const.LQ_CUTOFF_TEXT
-            cutoff_num = const.LQ_CUTOFF
+            cutoff_txt = EdgeMetaGenePheno.LQ_CUTOFF_TEXT
+            cutoff_num = EdgeMetaGenePheno.LQ_CUTOFF
         else:
             cutoff_txt = None
             cutoff_num = None
 
-        edges_file_path = os.path.join(glob.IN_FILE_PATH, edgeConst.CSV_NAME)
+        self.EdgesMetaClass = InMetaEdgeHpoGene
+        self.Map1MetaClass = None
+        self.Map2MetaClass = None
+
+        edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EdgesMetaClass.CSV_NAME)
         super().__init__(edges_file_path=edges_file_path,
-                         colindex1=0, colindex2=1, edgeType=EdgeType.GENE_PHENOTYPE,
-                         node1_type=NodeType.GENE, node2_type=NodeType.PHENOTYPE)
+                         colindex1=self.EdgesMetaClass.NODE1_COL, colindex2=self.EdgesMetaClass.NODE2_COL,
+                         edgeType=self.EdgesMetaClass.EDGE_TYPE,
+                         node1_type=self.EdgesMetaClass.NODE1_TYPE, node2_type=self.EdgesMetaClass.NODE2_TYPE,
+                         colindex_qscore=self.EdgesMetaClass.QSCORE_COL)

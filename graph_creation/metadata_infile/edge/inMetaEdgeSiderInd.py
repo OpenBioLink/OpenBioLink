@@ -1,10 +1,23 @@
-from graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from edgeType import EdgeType
 from graph_creation.infileType import InfileType
-import graph_creation.constants.in_file.edge.inEdgeSiderIndConstant as constant
+from graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from nodeType import NodeType
+
 
 class InMetaEdgeSiderInd(InfileMetadata):
+    CSV_NAME = "DB_SIDER_dis_drug.csv"
+    USE_COLS = ['umlsID', 'stichID', 'method']
+    NODE1_COL = 0
+    NODE2_COL = 1
+    QSCORE_COL = 2
+    NODE1_TYPE = NodeType.DIS
+    NODE2_TYPE = NodeType.DRUG
+    EDGE_TYPE = EdgeType.DIS_DRUG
+    INFILE_TYPE = InfileType.IN_EDGE_SIDER_IND
 
+
+    MAPPING_SEP = None
     def __init__(self, folder_path):
-        super().__init__(csv_name=constant.CSV_NAME,
+        super().__init__(csv_name=InMetaEdgeSiderInd.CSV_NAME,
                          folder_path=folder_path,
-                         infileType=InfileType.IN_EDGE_SIDER_IND)
+                         infileType=InMetaEdgeSiderInd.INFILE_TYPE)

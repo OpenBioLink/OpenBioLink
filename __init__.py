@@ -18,8 +18,8 @@ pr.enable()
 
 graph_creator = GraphCreator("D:\Anna Breit\master thesis\databases")
 
-
-graph_creator.create_input_files()
+#graph_creator.download_db_files()
+#graph_creator.create_input_files()
 graph_creator.create_graph()
 
 pr.disable()

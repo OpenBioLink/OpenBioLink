@@ -1,6 +1,6 @@
 import csv
 import os
-import graph_creation.constants.globalConstant as glob
+import graph_creation.globalConstant as glob
 from edge import Edge
 from graph_creation.qualityType import QualityType
 from node import Node
@@ -121,8 +121,8 @@ class GraphCreator():
 
     def create_nodes_and_edges (self, dbFile):
         # --- mapping ---
-        mapping1 = self.db_mapping_file_to_dic(dbFile.mapping1_file, dbFile.map1_sourceindex, dbFile.map1_targetindex, dbFile.db1_index)
-        mapping2 = self.db_mapping_file_to_dic(dbFile.mapping2_file, dbFile.map2_sourceindex, dbFile.map2_targetindex, dbFile.db2_index)
+        mapping1 = self.db_mapping_file_to_dic(dbFile.mapping1_file, dbFile.map1_sourceindex, dbFile.map1_targetindex)
+        mapping2 = self.db_mapping_file_to_dic(dbFile.mapping2_file, dbFile.map2_sourceindex, dbFile.map2_targetindex)
 
         # --- edges ---
         with open(dbFile.edges_file_path, "r", encoding="utf8") as edge_content:
@@ -218,7 +218,7 @@ class GraphCreator():
         return nodes1, nodes2, edges
 
 
-    def db_mapping_file_to_dic(self, mapping_file, map_sourceindex, map_targetindex, db_index):
+    def db_mapping_file_to_dic(self, mapping_file, map_sourceindex, map_targetindex):
         """creates a dic out of a metadata_db_file mapping file (source_id to list of target_ids)"""
         if (mapping_file is not None):
             mapping = {}

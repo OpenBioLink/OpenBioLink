@@ -1,21 +1,4 @@
 import pandas
-from graph_creation.dbType import DbType
-from graph_creation.infileType import InfileType
-import graph_creation.constants.in_file.edge.inEdgeCdtPathConstant as inEdgeCdtPathConstant
-import graph_creation.constants.in_file.edge.inEdgeDisGeNetConstant as inEdgeDisGeNetConstant
-import graph_creation.constants.in_file.edge.inEdgeGoConstant as inEdgeGoConstant
-import graph_creation.constants.in_file.edge.inEdgeHpaConstant as inEdgeHpaConstant
-import graph_creation.constants.in_file.edge.inEdgeHpoDisConstant as inEdgeHpoDisConstant
-import graph_creation.constants.in_file.edge.inEdgeHpoGeneConstant as inEdgeHpoGeneConstant
-import graph_creation.constants.in_file.edge.inEdgeSiderIndConstant as inEdgeSiderIndConstant
-import graph_creation.constants.in_file.edge.inEdgeSiderSeConstant as inEdgeSiderSeConstant
-import graph_creation.constants.in_file.edge.inEdgeStitchConstant as inEdgeStitchConstant
-import graph_creation.constants.in_file.edge.inEdgeStringConstant as inEdgeStringConstant
-import graph_creation.constants.in_file.mapping.inMapDisGeNetConstant as inMapDisGeNetConstant
-
-
-
-
 
 
 class FileProcessor():

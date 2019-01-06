@@ -1,11 +1,26 @@
-from graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from edgeType import EdgeType
 from graph_creation.infileType import InfileType
-import graph_creation.constants.in_file.onto.inOntoHpoConstant as constant
+from graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from graph_creation.ontoType import OntoType
+from nodeType import NodeType
 
 
 class InMetaOntoHpo(InfileMetadata):
 
+    CSV_NAME = "DB_ONTO_HPO_ontology.csv"
+    USE_COLS = ['ID', 'IS_A']
+    NODE1_COL = 0
+    NODE2_COL = 1
+    QSCORE_COL = None
+    NODE1_TYPE = NodeType.PHENOTYPE
+    NODE2_TYPE = NodeType.PHENOTYPE
+    EDGE_TYPE = EdgeType.IS_A
+    MAPPING_SEP = ';'
+    INFILE_TYPE = InfileType.IN_ONTO_HPO
+    ONTO_TYPE = OntoType.PHENOTYPE
+
+
     def __init__(self, folder_path):
-        super().__init__(csv_name=constant.CSV_NAME,
+        super().__init__(csv_name=InMetaOntoHpo.CSV_NAME,
                          folder_path=folder_path,
-                         infileType=InfileType.IN_ONTO_HPO)
+                         infileType=InMetaOntoHpo.INFILE_TYPE)

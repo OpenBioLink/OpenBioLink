@@ -1,36 +1,45 @@
 import os
-import graph_creation.constants.globalConstant as glob
+import graph_creation.globalConstant as glob
 
-import graph_creation.constants.in_file.edge.inEdgeGoConstant as edgeConst
-import graph_creation.constants.in_file.mapping.inMapUniUniNcbiConstant as map1Const
-import graph_creation.constants.edge_file.edge.edgeEdgeGeneGoConstant as const
+from graph_creation.metadata_infile.edge.inMetaEdgeGo import InMetaEdgeGo
+from graph_creation.metadata_infile.mapping.inMetaMapUniUniNcbi import InMetaMapUniUniNcbi
 
 from graph_creation.qualityType import QualityType
 
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
-from edgeType import EdgeType
-from nodeType import NodeType
+
 
 class EdgeMetaGeneGo(EdgeMetadata):
+    LQ_CUTOFF = None
+    MQ_CUTOFF = None
+    HQ_CUTOFF = None
+    LQ_CUTOFF_TEXT = []
+    MQ_CUTOFF_TEXT = []
+    HQ_CUTOFF_TEXT = ['IEA']
+
     def __init__(self, quality : QualityType= None):
         if quality is QualityType.HQ:
-            cutoff_txt = const.HQ_CUTOFF_TEXT
-            cutoff_num = const.HQ_CUTOFF
+            cutoff_txt = EdgeMetaGeneGo.HQ_CUTOFF_TEXT
+            cutoff_num = EdgeMetaGeneGo.HQ_CUTOFF
         elif quality is QualityType.MQ:
-            cutoff_txt = const.MQ_CUTOFF_TEXT
-            cutoff_num = const.MQ_CUTOFF
+            cutoff_txt = EdgeMetaGeneGo.MQ_CUTOFF_TEXT
+            cutoff_num = EdgeMetaGeneGo.MQ_CUTOFF
         elif quality is QualityType.LQ:
-            cutoff_txt = const.LQ_CUTOFF_TEXT
-            cutoff_num = const.LQ_CUTOFF
+            cutoff_txt = EdgeMetaGeneGo.LQ_CUTOFF_TEXT
+            cutoff_num = EdgeMetaGeneGo.LQ_CUTOFF
         else:
             cutoff_txt = None
             cutoff_num = None
 
+        self.EdgesMetaClass = InMetaEdgeGo
+        self.Map1MetaClass = InMetaMapUniUniNcbi
+        self.Map2MetaClass = None
 
-        edges_file_path = os.path.join(glob.IN_FILE_PATH, edgeConst.CSV_NAME)
-        mapping_file1 = os.path.join(glob.IN_FILE_PATH, map1Const.CSV_NAME)
+        edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EdgesMetaClass.CSV_NAME)
+        mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.Map1MetaClass.CSV_NAME)
         super().__init__(edges_file_path=edges_file_path,
-                         colindex1=0, colindex2=1, edgeType=EdgeType.GENE_GO,
-                         node1_type=NodeType.GENE, node2_type=NodeType.GO,
-                         colindex_qscore=2, cutoff_num=cutoff_num, cutoff_txt=cutoff_txt,
-                         mapping1_file=mapping_file1, map1_sourceindex=0, map1_targetindex=1)
+                         colindex1=self.EdgesMetaClass.NODE1_COL, colindex2=self.EdgesMetaClass.NODE2_COL,
+                         edgeType=self.EdgesMetaClass.EDGE_TYPE,
+                         node1_type=self.EdgesMetaClass.NODE1_TYPE, node2_type=self.EdgesMetaClass.NODE2_TYPE,
+                         colindex_qscore=self.EdgesMetaClass.QSCORE_COL, cutoff_num=cutoff_num, cutoff_txt=cutoff_txt,
+                         mapping1_file=mapping_file1, map1_sourceindex=self.Map1MetaClass.SOURCE_COL, map1_targetindex=self.Map1MetaClass.TARGET_COL)

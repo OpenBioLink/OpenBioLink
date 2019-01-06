@@ -1,12 +1,11 @@
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
-from edgeType import EdgeType
-from nodeType import NodeType
 import os
-import graph_creation.constants.globalConstant as glob
-import graph_creation.constants.in_file.onto.inOntoHpoConstant as edgeConst
+import graph_creation.globalConstant as glob
+from graph_creation.metadata_infile.onto.inMetaOntoHpo import InMetaOntoHpo
 
 class EdgeMetaPhenoOnto(EdgeMetadata):
     def __init__(self, quality = None):
-        super().__init__(edges_file_path= os.path.join(glob.IN_FILE_PATH, edgeConst.CSV_NAME),
-                                       colindex1=0, colindex2=1, edgeType=EdgeType.IS_A,
-                                       node1_type=NodeType.PHENOTYPE, node2_type=NodeType.PHENOTYPE)
+        super().__init__(edges_file_path= os.path.join(glob.IN_FILE_PATH, InMetaOntoHpo.CSV_NAME),
+                         colindex1=InMetaOntoHpo.NODE1_COL, colindex2=InMetaOntoHpo.NODE2_COL,
+                         edgeType=InMetaOntoHpo.EDGE_TYPE,
+                         node1_type=InMetaOntoHpo.NODE1_TYPE, node2_type=InMetaOntoHpo.NODE2_TYPE)

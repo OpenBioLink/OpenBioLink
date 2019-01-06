@@ -1,8 +1,0 @@
-
-LQ_CUTOFF       = 0
-MQ_CUTOFF       = 0
-HQ_CUTOFF       = 0.7
-LQ_CUTOFF_TEXT  = None
-MQ_CUTOFF_TEXT  = None
-HQ_CUTOFF_TEXT  = None
-
