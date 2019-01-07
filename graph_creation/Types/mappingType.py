@@ -7,3 +7,4 @@ class MappingType(Enum):
     STRING_NCBI = 3
     ENSEMBL_NCBI = 4
     UNIPRO_NCBI = 5
+    DRUGCENTRAL_PUBCHEM = 6

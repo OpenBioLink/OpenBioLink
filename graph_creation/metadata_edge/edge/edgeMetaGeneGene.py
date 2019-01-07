@@ -2,7 +2,7 @@ import os
 import graph_creation.globalConstant as glob
 from graph_creation.metadata_infile.edge.inMetaEdgeString import InMetaEdgeString
 from graph_creation.metadata_infile.mapping.inMetaMapString import InMetaMapString
-from graph_creation.qualityType import QualityType
+from graph_creation.Types.qualityType import QualityType
 
 
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata

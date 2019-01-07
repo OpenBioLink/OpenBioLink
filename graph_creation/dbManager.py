@@ -161,7 +161,9 @@ class DbManager(object):
                                      cols=['geneID', 'geneName', 'anatomy', 'expressionValue', 'Unit'],
                                      use_cols=['geneID', 'anatomy', 'expressionValue'],
                                      nr_lines_header=1)
-        #self.source_edge_dis_drug = DbMetadataEdge(url="http://unmtid-shinyapps.net/download/drugcentral.dump.08262018.sql.gz", ofile_name="sql_dump.sql.gz",csv_name="DB_DrugCentral_dis_drug.csv",cols=[],use_cols=[],nr_lines_header=None)
+        self.source_edge_dis_drug = DbMetadataEdge(url="http://unmtid-shinyapps.net/download/drugcentral.dump.08262018.sql.gz",
+                                                   ofile_name="sql_dump.sql.gz",
+                                                   csv_name="DB_DrugCentral_dis_drug.csv",cols=[],use_cols=[],nr_lines_header=None)
         # FIXME continue here!!!
 
         self.source_edge_dis_drug = DbMetadataEdge(url="http://sideeffects.embl.de/media/download/meddra_all_indications.tsv.gz",
@@ -305,7 +307,7 @@ class DbManager(object):
         # --- gene - anatomy ---
         edges_file_path = os.path.join(self.dbFiles_path, self.source_edge_gene_anatomy.csv_name)
         mapping_file1 = os.path.join(self.dbFiles_path, self.source_mapping_uniprot_ensembl_ncbi.csv_name)
-        self.dbFile_gene_anatomy = EdgeMetadata(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.GENE_ANATOMY,
+        self.dbFile_gene_anatomy = EdgeMetadata(edges_file_path=edges_file_path, colindex1=0, colindex2=1, edgeType=EdgeType.GENE_EXPRESSED_ANATOMY,
                                                 node1_type=NodeType.GENE, node2_type=NodeType.ANATOMY,
                                                 colindex_qscore=2,  # todo ms expression score
                                                 mapping1_file=mapping_file1, map1_sourceindex=0, map1_targetindex=1)

@@ -1,5 +1,5 @@
 from graph_creation.file_reader.csvReader import CsvReader
-from graph_creation.dbType import DbType
+from graph_creation.Types.readerType import ReaderType
 from graph_creation.metadata_db_file.mapping.dbMetaMapUniprot import DbMetaMapUniprot
 import graph_creation.globalConstant as g
 import os
@@ -8,13 +8,15 @@ import os
 class MapUniprotReader(CsvReader):
 
     def __init__(self):
+        self.dbMetaClass = DbMetaMapUniprot
+
         super().__init__(
-        in_path = os.path.join(g.O_FILE_PATH, DbMetaMapUniprot.OFILE_NAME),
+        in_path = os.path.join(g.O_FILE_PATH, self.dbMetaClass.OFILE_NAME),
         sep = None,
-            cols=DbMetaMapUniprot.COLS,
-            use_cols=DbMetaMapUniprot.FILTER_COLS,
-            nr_lines_header=DbMetaMapUniprot.HEADER,
-            dtypes=DbMetaMapUniprot.DTYPES,
-            dbType= DbType.DB_MAP_UNIPROT
+            cols=self.dbMetaClass.COLS,
+            use_cols=self.dbMetaClass.FILTER_COLS,
+            nr_lines_header=self.dbMetaClass.HEADER,
+            dtypes=self.dbMetaClass.DTYPES,
+            readerType= ReaderType.READER_MAP_UNIPROT
         )
 

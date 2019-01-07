@@ -1,17 +1,17 @@
 import csv
 import os
+
 import graph_creation.globalConstant as glob
 from edge import Edge
-from graph_creation.qualityType import QualityType
+from graph_creation.Types.qualityType import QualityType
 from node import Node
+from .file_downloader.fileDownloader import *
+from .file_processor.fileProcessor import *
 from .file_reader.fileReader import *
 from .file_writer.fileWriter import *
-from .file_processor.fileProcessor import *
 from .metadata_db_file import *
-from .metadata_infile import *
 from .metadata_edge import *
-from .file_downloader.fileDownloader import *
-
+from .metadata_infile import *
 
 
 class GraphCreator():
@@ -30,15 +30,14 @@ class GraphCreator():
         self.infile_metadata = [x(glob.IN_FILE_PATH) for x in self.get_leaf_subclasses(InfileMetadata)]
         self.edge_metadata = [x(quality) for x in self.get_leaf_subclasses(EdgeMetadata)]
 
-
         #self.db_file_map = {x.dbType: x for x in self.db_file_metadata }
         #self.file_reader_map = {x.dbType: x for x in self.file_readers }
         self.file_processor_db_map={}
         for x in self.file_processors:
-            if x.dbType in self.file_processor_db_map:
-                self.file_processor_db_map[x.dbType].append(x)
+            if x.readerType in self.file_processor_db_map:
+                self.file_processor_db_map[x.readerType].append(x)
             else:
-                self.file_processor_db_map[x.dbType]= [x]
+                self.file_processor_db_map[x.readerType]= [x]
 
         #self.file_processor_in_map = {x.infileType: x for x in self.file_processors}
         self.in_file_metadata_map = {x.infileType: x for x in self.infile_metadata}
@@ -55,9 +54,9 @@ class GraphCreator():
         if not os.path.exists(glob.IN_FILE_PATH):
             os.makedirs(glob.IN_FILE_PATH)
         for reader in self.file_readers:
-            if reader.dbType in self.file_processor_db_map:             #todo thorw error or so if not? "there is no processor for this db type"
+            if reader.readerType in self.file_processor_db_map:             #todo thorw error or so if not? "there is no processor for this db type"
                 in_data = reader.read_file()
-                for processor in self.file_processor_db_map[reader.dbType]:
+                for processor in self.file_processor_db_map[reader.readerType]:
                     out_data = processor.process(in_data)
                     FileWriter.wirte_to_file(out_data, os.path.join(glob.IN_FILE_PATH, (self.in_file_metadata_map[processor.infileType]).csv_name))
 
@@ -80,9 +79,6 @@ class GraphCreator():
             else:
                 nodes_dic[str(d.node2_type)] = nodes2
         self.output_graph(nodes_dic, edges_dic, '\t')
-        return
-
-
 
 
     def output_graph(self, nodes_dic: dict, edges_dic : dict, one_file_sep = ';', multi_file_sep = None):
@@ -232,7 +228,6 @@ class GraphCreator():
                         mapping[row[map_sourceindex]] = [row[map_targetindex]]
                 mapping_content1.close()
             return mapping
-
 
 
     def get_all_subclasses(self, cls):

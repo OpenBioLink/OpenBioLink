@@ -3,7 +3,7 @@ import os
 import graph_creation.globalConstant as glob
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 from graph_creation.metadata_infile.edge.inMetaEdgeHpoGene import InMetaEdgeHpoGene
-from graph_creation.qualityType import QualityType
+from graph_creation.Types.qualityType import QualityType
 
 
 class EdgeMetaGenePheno(EdgeMetadata):

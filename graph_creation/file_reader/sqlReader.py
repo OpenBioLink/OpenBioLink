@@ -3,12 +3,13 @@ from graph_creation.file_reader.parser.postgresDumpParser import PostgresDumpPar
 
 class SqlReader(FileReader):
 
-    def __init__(self, in_path, table_name, dbType):
+    def __init__(self, in_path, table_name, cols, readerType):
         self.in_path = in_path
         self.table_name = table_name
-        self.dbType = dbType
+        self.cols= cols
+        self.readerType = readerType
 
     def read_file(self):
         file = FileReader.open_file(self.in_path)
-        df = dcp.table_to_df(file, self.table_name)
+        df = dcp.table_to_df(file, self.table_name, self.cols)
         return df

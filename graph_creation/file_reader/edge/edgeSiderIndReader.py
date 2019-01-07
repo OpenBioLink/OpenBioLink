@@ -1,5 +1,5 @@
 from graph_creation.file_reader.csvReader import CsvReader
-from graph_creation.dbType import DbType
+from graph_creation.Types.readerType import ReaderType
 from graph_creation.metadata_db_file.edge.dbMetaEdgeSiderInd import DbMetaEdgeSiderInd
 import graph_creation.globalConstant as g
 import os
@@ -8,13 +8,14 @@ import os
 class EdgeSiderIndReader(CsvReader):
 
     def __init__(self):
+        self.dbMetaClass = DbMetaEdgeSiderInd
         super().__init__(
-        in_path = os.path.join(g.O_FILE_PATH, DbMetaEdgeSiderInd.OFILE_NAME),
+        in_path = os.path.join(g.O_FILE_PATH, self.dbMetaClass.OFILE_NAME),
         sep = None,
-        cols=DbMetaEdgeSiderInd.COLS,
-        use_cols=DbMetaEdgeSiderInd.FILTER_COLS,
-        nr_lines_header=DbMetaEdgeSiderInd.HEADER,
+        cols=self.dbMetaClass.COLS,
+        use_cols=self.dbMetaClass.FILTER_COLS,
+        nr_lines_header=self.dbMetaClass.HEADER,
         dtypes = None,
-            dbType= DbType.DB_EDGE_SIDER_IND
+            readerType= ReaderType.READER_EDGE_SIDER_IND
         )
 

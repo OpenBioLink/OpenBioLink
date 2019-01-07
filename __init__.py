@@ -16,11 +16,11 @@ pr.enable()
 #dbManager.create_db_files()
 #dbManager.create_graph()
 
-graph_creator = GraphCreator("D:\Anna Breit\master thesis\databases")
+graph_creator = GraphCreator("D:\Anna Breit\master thesis\\tests")
 
 #graph_creator.download_db_files()
-#graph_creator.create_input_files()
-graph_creator.create_graph()
+graph_creator.create_input_files()
+#graph_creator.create_graph()
 
 pr.disable()
 # after your program ends

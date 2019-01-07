@@ -1,5 +1,5 @@
-from graph_creation.infileType import InfileType
-from graph_creation.mappingType import MappingType
+from graph_creation.Types.infileType import InfileType
+from graph_creation.Types.mappingType import MappingType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
 
 

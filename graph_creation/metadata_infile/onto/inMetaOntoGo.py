@@ -1,7 +1,7 @@
 from edgeType import EdgeType
-from graph_creation.infileType import InfileType
+from graph_creation.Types.infileType import InfileType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
-from graph_creation.ontoType import OntoType
+from graph_creation.Types.ontoType import OntoType
 from nodeType import NodeType
 
 

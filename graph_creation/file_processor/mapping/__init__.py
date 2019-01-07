@@ -2,3 +2,4 @@ from .mapDisGeNetProcessor import MapDisGeNetProcessor
 from .mapStringProcessor import MapStringProcessor
 from .mapUniEnsNcbiProcessor import MapUniEnsNcbiProcessor
 from .mapUniUniNcbiProcessor import MapUniUniNcbiProcessor
+from .mapDrugCentralPubchemProcessor import MapDrugCentralPubchemProcessor

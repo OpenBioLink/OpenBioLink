@@ -4,7 +4,7 @@ import graph_creation.globalConstant as glob
 from graph_creation.metadata_infile.edge.inMetaEdgeGo import InMetaEdgeGo
 from graph_creation.metadata_infile.mapping.inMetaMapUniUniNcbi import InMetaMapUniUniNcbi
 
-from graph_creation.qualityType import QualityType
+from graph_creation.Types.qualityType import QualityType
 
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 

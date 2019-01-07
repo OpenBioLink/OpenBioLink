@@ -1,15 +1,15 @@
 from graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
 
-from graph_creation.dbType import DbType
+from graph_creation.Types.readerType import ReaderType
 from graph_creation.file_processor.fileProcessor import FileProcessor
-from graph_creation.infileType import InfileType
+from graph_creation.Types.infileType import InfileType
 
 
 class MapDisGeNetProcessor(FileProcessor):
 
     def __init__(self):
         self.use_cols = InMetaMapDisGeNet.USE_COLS
-        super().__init__(self.use_cols, dbType=DbType.DB_MAP_DISGENET,
+        super().__init__(self.use_cols, readerType=ReaderType.READER_MAP_DISGENET,
                          infileType=InfileType.IN_MAP_DISGENET, mapping_sep=InMetaMapDisGeNet.MAPPING_SEP)
 
 

@@ -5,7 +5,7 @@ from graph_creation.metadata_infile.edge.inMetaEdgeSiderSe import InMetaEdgeSide
 from graph_creation.metadata_infile.mapping.inMetaMapOntoHpoUmls import InMetaMapOntoHpoUmls
 
 
-from graph_creation.qualityType import QualityType
+from graph_creation.Types.qualityType import QualityType
 
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 

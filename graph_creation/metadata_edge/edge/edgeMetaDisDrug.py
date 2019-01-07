@@ -2,10 +2,10 @@ import os
 import graph_creation.globalConstant as glob
 
 from graph_creation.metadata_infile.edge.inMetaEdgeSiderInd import InMetaEdgeSiderInd
-from graph_creation.metadata_infile.mapping.inMetaMapOntoDoUmls import InMetaMapOntoDoUmls
+from graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
 
 
-from graph_creation.qualityType import QualityType
+from graph_creation.Types.qualityType import QualityType
 
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 
@@ -32,7 +32,7 @@ class EdgeMetaDisDrug(EdgeMetadata):
             cutoff_num = None #todo error handling
 
         self.EdgesMetaClass = InMetaEdgeSiderInd
-        self.Map1MetaClass = InMetaMapOntoDoUmls
+        self.Map1MetaClass = InMetaMapDisGeNet
         self.Map2MetaClass = None
         
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EdgesMetaClass.CSV_NAME)

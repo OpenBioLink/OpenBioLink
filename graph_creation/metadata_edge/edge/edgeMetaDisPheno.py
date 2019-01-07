@@ -5,7 +5,7 @@ from graph_creation.metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDi
 from graph_creation.metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
 
 
-from graph_creation.qualityType import QualityType
+from graph_creation.Types.qualityType import QualityType
 
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 

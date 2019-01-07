@@ -1,5 +1,5 @@
 from graph_creation.metadata_db_file.mapping.dbMetadataMapping import DbMetadataMapping
-from graph_creation.dbType import DbType
+from graph_creation.Types.dbType import DbType
 
 class DbMetaMapString(DbMetadataMapping):
     URL = "http://string-db.org/mapping_files/entrez_mappings//entrez_gene_id.vs.string.v10.28042015.tsv"

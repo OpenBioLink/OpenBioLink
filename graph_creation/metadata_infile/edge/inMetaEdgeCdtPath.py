@@ -1,5 +1,5 @@
 from edgeType import EdgeType
-from graph_creation.infileType import InfileType
+from graph_creation.Types.infileType import InfileType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from nodeType import NodeType
 

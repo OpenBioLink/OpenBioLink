@@ -4,7 +4,7 @@ import graph_creation.globalConstant as glob
 from graph_creation.metadata_infile.edge.inMetaEdgeDisGeNet import InMetaEdgeDisGeNet
 from graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
 
-from graph_creation.qualityType import QualityType
+from graph_creation.Types.qualityType import QualityType
 
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 from edgeType import EdgeType

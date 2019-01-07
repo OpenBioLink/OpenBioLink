@@ -3,9 +3,9 @@ import pandas
 
 class FileProcessor():
 
-    def __init__(self, use_cols, dbType, infileType, mapping_sep = None):
+    def __init__(self, use_cols, readerType, infileType, mapping_sep = None):
         self.use_cols = use_cols
-        self.dbType = dbType
+        self.readerType = readerType
         self.infileType = infileType
         self.mapping_sep = mapping_sep
 

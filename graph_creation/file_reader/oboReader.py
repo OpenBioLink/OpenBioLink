@@ -3,7 +3,7 @@ from graph_creation.file_reader.parser.oboParser import OboParser
 
 class OboReader(FileReader):
 
-    def __init__(self, in_path,dbType, quadruple_list = None):
+    def __init__(self, in_path, readerType, quadruple_list = None):
         ''' quadruple_list should contain all quadruples incl. mappings
         each quadruple consists of
         (1) beginning of the line,
@@ -20,7 +20,7 @@ class OboReader(FileReader):
                                    ('xref: OMIM:', ' ', 1, 'OMIM')]
         else:
             self.quadruple_list = quadruple_list
-        self.dbType = dbType
+        self.readerType = readerType
 
     def read_file(self):
         oboParser = OboParser()

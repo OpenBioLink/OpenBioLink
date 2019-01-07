@@ -8,3 +8,5 @@ from .inMetaEdgeSiderInd  import InMetaEdgeSiderInd
 from .inMetaEdgeHpoDis    import InMetaEdgeHpoDis
 from .inMetaEdgeHpa       import InMetaEdgeHpa
 from .inMetaEdgeGo        import InMetaEdgeGo
+from .inMetaEdgeDrugCentral import InMetaEdgeDrugCentral
+from .inMetaEdgeBgeeOverExpr import InMetaEdgeBgeeOverExpr
