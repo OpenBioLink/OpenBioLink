@@ -2,12 +2,12 @@ import os
 
 import graph_creation.globalConstant as glob
 from graph_creation.Types.qualityType import QualityType
-from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
-from graph_creation.metadata_infile.edge.inMetaEdgeBgeeExpr import InMetaEdgeBgeeExpr
+from graph_creation.metadata_edge.tnEdgeMetadata import TnEdgeMetadata
+from graph_creation.metadata_infile.edge.inMetaEdgeBgeeNoExpr import InMetaEdgeBgeeNoExpr
 from graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMapUniEnsNcbi
 
 
-class EdgeMetaGeneAna(EdgeMetadata):
+class TnEdgeMetaGeneAna(TnEdgeMetadata):
     LQ_CUTOFF = None
     MQ_CUTOFF = None
     HQ_CUTOFF = None
@@ -16,19 +16,19 @@ class EdgeMetaGeneAna(EdgeMetadata):
     HQ_CUTOFF_TEXT = 'high quality'
     def __init__(self, quality : QualityType= None):
         if quality is QualityType.HQ:
-            cutoff_txt = EdgeMetaGeneAna.HQ_CUTOFF_TEXT
-            cutoff_num = EdgeMetaGeneAna.HQ_CUTOFF
+            cutoff_txt = TnEdgeMetaGeneAna.HQ_CUTOFF_TEXT
+            cutoff_num = TnEdgeMetaGeneAna.HQ_CUTOFF
         elif quality is QualityType.MQ:
-            cutoff_txt = EdgeMetaGeneAna.MQ_CUTOFF_TEXT
-            cutoff_num = EdgeMetaGeneAna.MQ_CUTOFF
+            cutoff_txt = TnEdgeMetaGeneAna.MQ_CUTOFF_TEXT
+            cutoff_num = TnEdgeMetaGeneAna.MQ_CUTOFF
         elif quality is QualityType.LQ:
-            cutoff_txt = EdgeMetaGeneAna.LQ_CUTOFF_TEXT
-            cutoff_num = EdgeMetaGeneAna.LQ_CUTOFF
+            cutoff_txt = TnEdgeMetaGeneAna.LQ_CUTOFF_TEXT
+            cutoff_num = TnEdgeMetaGeneAna.LQ_CUTOFF
         else:
             cutoff_txt = None
             cutoff_num = None
 
-        self.EdgesMetaClass = InMetaEdgeBgeeExpr
+        self.EdgesMetaClass = InMetaEdgeBgeeNoExpr
         self.Map1MetaClass = InMetaMapUniEnsNcbi
         self.Map2MetaClass = None
 

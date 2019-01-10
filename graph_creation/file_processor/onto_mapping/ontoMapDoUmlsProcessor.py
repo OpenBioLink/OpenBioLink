@@ -9,5 +9,5 @@ class OntoMapDoUmlsProcessor(FileProcessor):
 
     def __init__(self):
         self.use_cols =  InMetaMapOntoDoUmls.USE_COLS
-        super().__init__(self.use_cols, dbType=DbType.DB_ONTO_DO,
+        super().__init__(self.use_cols, readerType=ReaderType.READER_ONTO_DO,
                          infileType=InfileType.IN_MAP_ONTO_DO_UMLS, mapping_sep=InMetaMapOntoDoUmls.MAPPING_SEP)

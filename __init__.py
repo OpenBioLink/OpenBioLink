@@ -18,9 +18,14 @@ pr.enable()
 
 graph_creator = GraphCreator("D:\Anna Breit\master thesis\\tests")
 
-#graph_creator.download_db_files()
+print ("\n\n############### downloading files #################################")
+graph_creator.download_db_files()
+
+print ("\n\n############### creating graph input files #################################")
 graph_creator.create_input_files()
-#graph_creator.create_graph()
+
+print ("\n\n############### creating graph #################################")
+graph_creator.create_graph()
 
 pr.disable()
 # after your program ends

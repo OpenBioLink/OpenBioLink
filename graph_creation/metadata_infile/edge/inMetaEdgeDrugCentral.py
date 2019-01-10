@@ -11,11 +11,11 @@ class InMetaEdgeDrugCentral(InfileMetadata):
         "struct_id",
         "umls_cui",
     ]
-    NODE1_COL = 0
-    NODE2_COL = 1
+    NODE1_COL = 1
+    NODE2_COL = 0
     QSCORE_COL = None
-    NODE1_TYPE = NodeType.DRUG
-    NODE2_TYPE = NodeType.DIS
+    NODE1_TYPE = NodeType.DIS
+    NODE2_TYPE = NodeType.DRUG
     EDGE_TYPE = EdgeType.DIS_DRUG
     INFILE_TYPE = InfileType.IN_EDGE_DRUGCENTRAL_IND
     MAPPING_SEP = None

@@ -8,3 +8,5 @@ from .edgeMetaGeneGene    import EdgeMetaGeneGene
 from .edgeMetaGeneDis     import EdgeMetaGeneDis
 from .edgeMetaGenePath    import EdgeMetaGenePath
 from .edgeMetaDrugPheno   import EdgeMetaDrugPheno
+from .tnEdgeMetaDisDrug import TnEdgeMetaDisDrug
+from .tnEdgeMetaGeneAna import TnEdgeMetaGeneAna

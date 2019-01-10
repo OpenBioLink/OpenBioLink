@@ -4,7 +4,3 @@ class DbMetadataEdge (DbMetadata):
 
     def __init__(self, url, ofile_name, dbType):
         super().__init__(url, ofile_name, dbType )
-
-
-
-

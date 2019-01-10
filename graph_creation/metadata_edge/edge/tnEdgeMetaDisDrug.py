@@ -1,16 +1,14 @@
 import os
-import graph_creation.globalConstant as glob
 
-from graph_creation.metadata_infile.edge.inMetaEdgeDrugCentral import InMetaEdgeDrugCentral
+import graph_creation.globalConstant as glob
+from graph_creation.Types.qualityType import QualityType
+from graph_creation.metadata_edge.tnEdgeMetadata import TnEdgeMetadata
+from graph_creation.metadata_infile.edge.inMetaEdgeDrugCentralContraInd import InMetaEdgeDrugCentralContraInd
 from graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
 from graph_creation.metadata_infile.mapping.inMetaMapDrugCentralPubchem import InMetaMapDrugCentralPubchem
 
 
-from graph_creation.Types.qualityType import QualityType
-
-from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
-
-class EdgeMetaDisDrug(EdgeMetadata):
+class TnEdgeMetaDisDrug(TnEdgeMetadata):
     LQ_CUTOFF = None
     MQ_CUTOFF = None
     HQ_CUTOFF = None
@@ -19,19 +17,19 @@ class EdgeMetaDisDrug(EdgeMetadata):
     HQ_CUTOFF_TEXT = None
     def __init__(self, quality : QualityType = None):
         if quality is QualityType.HQ:
-            cutoff_txt = EdgeMetaDisDrug.HQ_CUTOFF_TEXT
-            cutoff_num = EdgeMetaDisDrug.HQ_CUTOFF
+            cutoff_txt = TnEdgeMetaDisDrug.HQ_CUTOFF_TEXT
+            cutoff_num = TnEdgeMetaDisDrug.HQ_CUTOFF
         elif quality is QualityType.MQ:
-            cutoff_txt = EdgeMetaDisDrug.MQ_CUTOFF_TEXT
-            cutoff_num = EdgeMetaDisDrug.MQ_CUTOFF
+            cutoff_txt = TnEdgeMetaDisDrug.MQ_CUTOFF_TEXT
+            cutoff_num = TnEdgeMetaDisDrug.MQ_CUTOFF
         elif quality is QualityType.LQ:
-            cutoff_txt = EdgeMetaDisDrug.LQ_CUTOFF_TEXT
-            cutoff_num = EdgeMetaDisDrug.LQ_CUTOFF
+            cutoff_txt = TnEdgeMetaDisDrug.LQ_CUTOFF_TEXT
+            cutoff_num = TnEdgeMetaDisDrug.LQ_CUTOFF
         else:
             cutoff_txt = None
             cutoff_num = None #todo error handling
 
-        self.EdgesMetaClass = InMetaEdgeDrugCentral
+        self.EdgesMetaClass = InMetaEdgeDrugCentralContraInd
         self.Map1MetaClass = InMetaMapDisGeNet
         self.Map2MetaClass = InMetaMapDrugCentralPubchem
         

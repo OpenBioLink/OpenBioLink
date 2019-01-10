@@ -18,7 +18,6 @@ class DbMetaEdgeDrugCentral(DbMetadataEdge):
         "cui_semantic_type",
         "snomed_conceptid"
     ]
-    DB_TYPE_IND = DbType.DB_EDGE_DRUGCENTRAL
 
     TABLE_NAME_MAP_PUBCHEM = "identifier"
     COLS_MAP_PUBCHEM = [
@@ -28,9 +27,11 @@ class DbMetaEdgeDrugCentral(DbMetadataEdge):
         "struct_id",
         "parent_match"
     ]
-    DB_TYPE_MAP_PUBCHEM = DbType.DB_EDGE_DRUGCENTRAL
+
+    DB_TYPE = DbType.DB_EDGE_DRUGCENTRAL
+
 
     def __init__(self):
         super().__init__(url=DbMetaEdgeDrugCentral.URL,
                          ofile_name=DbMetaEdgeDrugCentral.OFILE_NAME,
-                         dbType=DbMetaEdgeDrugCentral.DB_TYPE_IND)
+                         dbType=DbMetaEdgeDrugCentral.DB_TYPE)

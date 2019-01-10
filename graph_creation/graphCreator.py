@@ -1,9 +1,13 @@
 import csv
 import os
+import sys
+from tqdm import tqdm
 
 import graph_creation.globalConstant as glob
 from edge import Edge
 from graph_creation.Types.qualityType import QualityType
+from graph_creation.graphWriter import GraphWriter
+from graph_creation.metadata_edge.tnEdgeMetadata import TnEdgeMetadata
 from node import Node
 from .file_downloader.fileDownloader import *
 from .file_processor.fileProcessor import *
@@ -29,6 +33,7 @@ class GraphCreator():
         self.file_processors = [x() for x in self.get_leaf_subclasses(FileProcessor)]
         self.infile_metadata = [x(glob.IN_FILE_PATH) for x in self.get_leaf_subclasses(InfileMetadata)]
         self.edge_metadata = [x(quality) for x in self.get_leaf_subclasses(EdgeMetadata)]
+        self.tn_edge_metadata = [x(quality) for x in self.get_leaf_subclasses(TnEdgeMetadata)]
 
         #self.db_file_map = {x.dbType: x for x in self.db_file_metadata }
         #self.file_reader_map = {x.dbType: x for x in self.file_readers }
@@ -44,31 +49,62 @@ class GraphCreator():
 
 
     def download_db_files(self):
+        skip = None
+        for_all = False
         if not os.path.exists(glob.O_FILE_PATH):
             os.makedirs(glob.O_FILE_PATH)
-        for db_file in self.db_file_metadata:
-            FileDownloader.download(db_file.url, os.path.join(glob.O_FILE_PATH, db_file.ofile_name))
+        for db_file in tqdm(self.db_file_metadata):
+            o_file_path = os.path.join(glob.O_FILE_PATH, db_file.ofile_name)
+            if not for_all:
+                skip, for_all = self.check_if_file_exisits(o_file_path)
+            if not skip:
+                FileDownloader.download(db_file.url, o_file_path)
 
 
     def create_input_files(self):
+        skip = None
+        for_all = False
         if not os.path.exists(glob.IN_FILE_PATH):
             os.makedirs(glob.IN_FILE_PATH)
-        for reader in self.file_readers:
-            if reader.readerType in self.file_processor_db_map:             #todo thorw error or so if not? "there is no processor for this db type"
-                in_data = reader.read_file()
+        for reader in tqdm(self.file_readers):
+            if reader.readerType in self.file_processor_db_map:
+
+                #check beforehand if read in content is processed as parsing can be time consuming
+                all_files_exist = True
                 for processor in self.file_processor_db_map[reader.readerType]:
-                    out_data = processor.process(in_data)
-                    FileWriter.wirte_to_file(out_data, os.path.join(glob.IN_FILE_PATH, (self.in_file_metadata_map[processor.infileType]).csv_name))
+                    if not os.path.isfile(os.path.join(glob.IN_FILE_PATH, (self.in_file_metadata_map[processor.infileType]).csv_name)):
+                        all_files_exist = False
+                if all_files_exist and not for_all and self.file_processor_db_map[reader.readerType]:
+                    first_processor = self.file_processor_db_map[reader.readerType][0]
+                    first_processor_out_path = os.path.join(glob.IN_FILE_PATH, (self.in_file_metadata_map[first_processor.infileType]).csv_name)
+                    skip, for_all = self.check_if_file_exisits(first_processor_out_path)
+                if not (skip and all_files_exist):
+
+                    in_data = reader.read_file()
+                    for processor in tqdm(self.file_processor_db_map[reader.readerType]):
+                        out_file_path = os.path.join(glob.IN_FILE_PATH, (self.in_file_metadata_map[processor.infileType]).csv_name)
+                        if not for_all:
+                            skip, for_all = self.check_if_file_exisits(out_file_path)
+                        if not (skip and os.path.isfile(out_file_path)):
+                            out_data = processor.process(in_data)
+                            FileWriter.wirte_to_file(out_data, out_file_path)
+
+            else:
+                print ('\nWARNING: There is no processor for the Reader '+ str(reader.readerType))
 
     
-    def create_graph(self, ):
-        open(os.path.join(glob.FILE_PATH, 'ids_no_mapping.tsv'), 'w').close()
-        open(os.path.join(glob.FILE_PATH, 'stats.txt'), 'w').close()
+    def create_graph(self):
+        nodes_dic, edges_dic = self.meta_edges_to_graph(self.edge_metadata)
+        GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep='\t')
+        tn_nodes_dic, tn_edges_dic = self.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
+        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, multi_file_sep='\t', prefix='TN_')
 
+
+    def meta_edges_to_graph(self, edge_metadata_list, tn = None):
         edges_dic = {}
         nodes_dic = {}
-        for d in self.edge_metadata:
-            nodes1, nodes2, edges = self.create_nodes_and_edges(d)
+        for d in tqdm(edge_metadata_list):
+            nodes1, nodes2, edges = self.create_nodes_and_edges(d, tn)
             edges_dic[str(d.edgeType)] = edges
             if str(d.node1_type) in nodes_dic :
                 nodes_dic[str(d.node1_type)].update(nodes1)
@@ -78,50 +114,21 @@ class GraphCreator():
                 nodes_dic[str(d.node2_type)].update(nodes2)
             else:
                 nodes_dic[str(d.node2_type)] = nodes2
-        self.output_graph(nodes_dic, edges_dic, '\t')
+        return nodes_dic, edges_dic
 
 
-    def output_graph(self, nodes_dic: dict, edges_dic : dict, one_file_sep = ';', multi_file_sep = None):
-        # one file
-        if one_file_sep is not None:
-            with open(os.path.join(glob.FILE_PATH, glob.NODES_FILE_PREFIX + '.csv'), 'w') as out_file:
-                writer = csv.writer(out_file, delimiter=one_file_sep, lineterminator='\n')
-                for key, value in nodes_dic.items():
-                    for node in value:
-                        writer.writerow(list(node))
-                out_file.close()
-            with open(os.path.join(glob.FILE_PATH, glob.EDGES_FILE_PREFIX + '.csv'), 'w') as out_file:
-                writer = csv.writer(out_file, delimiter=one_file_sep, lineterminator='\n')
-                for key, value in edges_dic.items():
-                    for edge in value:
-                        writer.writerow(list(edge))
-                out_file.close()
-        # separate files
-        if multi_file_sep is not None:
-            for key, value in nodes_dic.items():
-                with open(os.path.join(glob.FILE_PATH, glob.NODES_FILE_PREFIX + '_' + key +  '.csv'), 'w') as out_file:
-                    writer = csv.writer(out_file, delimiter=multi_file_sep, lineterminator='\n')
-                    for node in value:
-                        writer.writerow(list(node))
-                out_file.close()
-            for key, value in edges_dic.items():
-                with open(os.path.join(glob.FILE_PATH, glob.EDGES_FILE_PREFIX + '_' + key + '.csv'), 'w') as out_file:
-                    writer = csv.writer(out_file, delimiter=multi_file_sep, lineterminator='\n')
-                    for edge in value:
-                        writer.writerow(list(edge))
-                out_file.close()
-        #adjacency matrix
-        #key, value = nodes_dic
-        #d = {x: i for i, x in enumerate(value)} #fixme continue here
+    def create_nodes_and_edges (self, edge_metadata, tn= None):
 
-
-    def create_nodes_and_edges (self, dbFile):
+        if not os.path.isfile(edge_metadata.edges_file_path):
+            print('\nFile does not exist: ' + edge_metadata.edges_file_path)
+            sys.exit() #todo also fo mapping files
         # --- mapping ---
-        mapping1 = self.db_mapping_file_to_dic(dbFile.mapping1_file, dbFile.map1_sourceindex, dbFile.map1_targetindex)
-        mapping2 = self.db_mapping_file_to_dic(dbFile.mapping2_file, dbFile.map2_sourceindex, dbFile.map2_targetindex)
+        mapping1 = self.db_mapping_file_to_dic(edge_metadata.mapping1_file, edge_metadata.map1_sourceindex, edge_metadata.map1_targetindex)
+        mapping2 = self.db_mapping_file_to_dic(edge_metadata.mapping2_file, edge_metadata.map2_sourceindex, edge_metadata.map2_targetindex)
 
         # --- edges ---
-        with open(dbFile.edges_file_path, "r", encoding="utf8") as edge_content:
+
+        with open(edge_metadata.edges_file_path, "r", encoding="utf8") as edge_content:
             nodes1 = set()
             nodes2 = set()
             edges = set()
@@ -138,10 +145,10 @@ class GraphCreator():
             reader = csv.reader(edge_content, delimiter = ";")
 
             for row in reader:
-                raw_id1 = row[dbFile.colindex1]
-                raw_id2 = row[dbFile.colindex2]
-                if dbFile.colindex_qscore is not None:
-                    qscore = row[dbFile.colindex_qscore]
+                raw_id1 = row[edge_metadata.colindex1]
+                raw_id2 = row[edge_metadata.colindex2]
+                if edge_metadata.colindex_qscore is not None:
+                    qscore = row[edge_metadata.colindex_qscore]
                 else:
                     qscore = None
                 edge_id1 = None
@@ -149,35 +156,35 @@ class GraphCreator():
                 ids1.add(raw_id1)
                 ids2.add(raw_id2)
 
-                if (dbFile.mapping1_file is not None and raw_id1 in mapping1):
+                if (edge_metadata.mapping1_file is not None and raw_id1 in mapping1):
                     edge_id1 = mapping1.get(raw_id1)
-                if (dbFile.mapping2_file is not None and raw_id2 in mapping2):
+                if (edge_metadata.mapping2_file is not None and raw_id2 in mapping2):
                     edge_id2 = mapping2.get(raw_id2)
 
                 if ((edge_id1 is not None and edge_id2 is not None) or
-                    (edge_id1 is not None and dbFile.mapping2_file is None) or
-                    (edge_id2 is not None and dbFile.mapping1_file is None) or
-                    (dbFile.mapping1_file is None and dbFile.mapping2_file is None)):
+                    (edge_id1 is not None and edge_metadata.mapping2_file is None) or
+                    (edge_id2 is not None and edge_metadata.mapping1_file is None) or
+                    (edge_metadata.mapping1_file is None and edge_metadata.mapping2_file is None)):
                     if (edge_id1 is None):
                         edge_id1 = [raw_id1]
                     if (edge_id2 is None):
                         edge_id2 = [raw_id2]
                     for id1 in edge_id1:
                         for id2 in edge_id2:
-                            if (dbFile.cutoff_num is None and dbFile.cutoff_txt is None) or \
-                                     (dbFile.cutoff_num is not None and float(qscore) > dbFile.cutoff_num) or \
-                                     (dbFile.cutoff_txt is not None and qscore not in dbFile.cutoff_txt):
-                                edges.add(Edge(id1, dbFile.edgeType, id2, None, qscore))
-                                nodes1.add(Node(id1, dbFile.node1_type))
-                                nodes2.add(Node(id2, dbFile.node2_type))
+                            if (edge_metadata.cutoff_num is None and edge_metadata.cutoff_txt is None) or \
+                                     (edge_metadata.cutoff_num is not None and float(qscore) > edge_metadata.cutoff_num) or \
+                                     (edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt):
+                                edges.add(Edge(id1, edge_metadata.edgeType, id2, None, qscore))
+                                nodes1.add(Node(id1, edge_metadata.node1_type))
+                                nodes2.add(Node(id2, edge_metadata.node2_type))
                                 nr_edges_with_dup +=1
                             else:
                                 nr_edges_below_cutoff+=1
                 else:
                     nr_edges_no_mapping += 1
-                    if (edge_id1 is None and dbFile.mapping1_file is not None):
+                    if (edge_id1 is None and edge_metadata.mapping1_file is not None):
                         ids1_no_mapping.add(raw_id1 )
-                    if (edge_id2 is None and dbFile.mapping2_file is not None):
+                    if (edge_id2 is None and edge_metadata.mapping2_file is not None):
                         ids2_no_mapping.add(raw_id2)
                 nr_edges += 1
 
@@ -185,31 +192,43 @@ class GraphCreator():
         edge_content.close()
 
         # print statistics
-        edgeType = dbFile.edgeType
-        with open(os.path.join(glob.FILE_PATH, 'ids_no_mapping.tsv'), 'a') as out_file:
+        edgeType = edge_metadata.edgeType
+        if tn:
+            path_no_mappings = os.path.join(glob.FILE_PATH, 'tn_ids_no_mapping.tsv')
+            path_stats = os.path.join(glob.FILE_PATH, 'tn_stats.txt')
+        else:
+            path_no_mappings = os.path.join(glob.FILE_PATH, 'ids_no_mapping.tsv')
+            path_stats = os.path.join(glob.FILE_PATH, 'stats.txt')
+        if not os.path.isfile(path_no_mappings):
+            open(path_no_mappings, 'w').close()
+        if not os.path.isfile(path_stats):
+            open(path_stats, 'w').close()
+        with open(path_no_mappings, 'a') as out_file:
             for id in ids1_no_mapping:
                 out_file.write('%s\t%s\n' %(id, edgeType))
             for id in ids2_no_mapping:
                 out_file.write('%s\t%s\n' % (id, edgeType))
             out_file.close()
 
-        out_string = 'Edge Type: ' + str(edgeType) + '\n' + \
-                     'Nr edges: ' + str(nr_edges) + '\n' + \
-                     'Nr edges no mapping: ' + str(nr_edges_no_mapping) + '\n' + \
-                     'Nr edges below cutoff: ' + str(nr_edges_below_cutoff) + '\n' + \
-                     'Edges coverage: ' + str(1-(nr_edges_no_mapping/ nr_edges)) + '\n' + \
-                     'Duplicated edges: ' + str(nr_edges_with_dup-nr_edges_after_mapping) + '\n' + \
-                     'Nr edges after mapping (final nr): ' + str(nr_edges_after_mapping) + '\n' + \
-                     'Nr nodes1 no mapping: ' + str(len(ids1_no_mapping)) + '\n' + \
-                     'Nr nodes2 no mapping: ' + str(len(ids2_no_mapping)) + '\n' + \
-                     'Nr nodes1: ' + str(len(ids1)) + '\n' + \
-                     'Nr nodes2: ' + str(len(ids2)) + '\n' + \
-                     'nodes1 coverage: ' + str(1-(len(ids1_no_mapping)/ len(ids1))) + '\n' + \
-                     'nodes2 coverage: ' + str(1-(len(ids2_no_mapping)/ len(ids2))) + '\n' + \
-                     '######################################################################################'
-        print(out_string)
-        with open(os.path.join(glob.FILE_PATH, 'stats.txt'), 'a') as out_file:
-            out_file.write(out_string)
+        stats_string = '\nEdge Type: ' + str(edgeType) + '\n' + \
+                       'Node1 Type: ' + str(edge_metadata.node1_type) + '\n' + \
+                       'Node1 Type: ' + str(edge_metadata.node2_type) + '\n' + \
+                       'Nr edges: ' + str(nr_edges) + '\n' + \
+                       'Nr edges no mapping: ' + str(nr_edges_no_mapping) + '\n' + \
+                       'Nr edges below cutoff: ' + str(nr_edges_below_cutoff) + '\n' + \
+                       'Edges coverage: ' + str(1-(nr_edges_no_mapping/ nr_edges)) + '\n' + \
+                       'Duplicated edges: ' + str(nr_edges_with_dup-nr_edges_after_mapping) + '\n' + \
+                       'Nr edges after mapping (final nr): ' + str(nr_edges_after_mapping) + '\n' + \
+                       'Nr nodes1 no mapping: ' + str(len(ids1_no_mapping)) + '\n' + \
+                       'Nr nodes2 no mapping: ' + str(len(ids2_no_mapping)) + '\n' + \
+                       'Nr nodes1: ' + str(len(ids1)) + '\n' + \
+                       'Nr nodes2: ' + str(len(ids2)) + '\n' + \
+                       'nodes1 coverage: ' + str(1-(len(ids1_no_mapping)/ len(ids1))) + '\n' + \
+                       'nodes2 coverage: ' + str(1-(len(ids2_no_mapping)/ len(ids2))) + '\n' + \
+                       '######################################################################################\n'
+        # print(stats_string)
+        with open(path_stats, 'a') as out_file:
+            out_file.write(stats_string)
 
         return nodes1, nodes2, edges
 
@@ -230,8 +249,8 @@ class GraphCreator():
             return mapping
 
 
-    def get_all_subclasses(self, cls):
-        return set(cls.__subclasses__()).union([x for c in cls.__subclasses__() for x in self.get_all_subclasses(c)])
+    #def get_all_subclasses(self, cls):
+    #    return set(cls.__subclasses__()).union([x for c in cls.__subclasses__() for x in self.get_all_subclasses(c)])
 
 
     def get_leaf_subclasses(self, cls, classSet=None):
@@ -242,3 +261,27 @@ class GraphCreator():
         else:
             classSet.union(x for c in cls.__subclasses__() for x in self.get_leaf_subclasses(c, classSet))
         return classSet
+
+    def check_if_file_exisits(self, file_path): #todo naming
+        skip = None
+        for_all = False
+        if os.path.isfile(file_path):
+            user_input = input(
+                '\nThe file ' + file_path + ' already exists. \n'
+                                          'Do you want to \n'
+                                          ' [y] continue anyways\n'
+                                          ' [c] continue anyways for all files\n'
+                                          ' [n] skip this file\n'
+                                          ' [s] skip all existing files\n'
+                                          ' [x] chancel \n')
+            if user_input == 'x':
+                sys.exit()
+            elif user_input == 'c':
+                skip = False
+                for_all = True
+            elif user_input == 'n':
+                skip = True
+            elif user_input == 's':
+                skip = True
+                for_all = True
+        return skip, for_all

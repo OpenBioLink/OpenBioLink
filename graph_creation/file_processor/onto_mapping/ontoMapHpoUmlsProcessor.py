@@ -8,5 +8,5 @@ class OntoMapHpoUmlsProcessor(FileProcessor):
 
     def __init__(self):
         self.use_cols =   InMetaMapOntoHpoUmls.USE_COLS
-        super().__init__(self.use_cols, dbType=DbType.DB_ONTO_HPO,
+        super().__init__(self.use_cols, readerType=ReaderType.READER_ONTO_HPO,
                          infileType=InfileType.IN_MAP_ONTO_HPO_UMLS, mapping_sep= InMetaMapOntoHpoUmls.MAPPING_SEP)
