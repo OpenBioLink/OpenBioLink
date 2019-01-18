@@ -2,8 +2,8 @@ from graph_creation.file_reader.fileReader import FileReader
 import pandas
 
 class CsvReader (FileReader):
-    def __init__(self, in_path, readerType, sep = None, cols = None, use_cols = None, nr_lines_header = 0, dtypes=None):
-        self.in_path = in_path
+    def __init__(self, in_path, readerType, dbType, sep = None, cols = None, use_cols = None, nr_lines_header = 0, dtypes=None):
+        super().__init__(in_path, readerType, dbType)
         if sep is None:
             self.sep = CsvReader.get_sep(self.in_path)
         else:
@@ -12,7 +12,6 @@ class CsvReader (FileReader):
         self.use_cols = use_cols
         self.nr_lines_header = nr_lines_header
         self.dtype = dtypes
-        self.readerType = readerType
 
     @staticmethod
     def get_sep(in_path):

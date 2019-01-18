@@ -1,3 +1,4 @@
+from graph_creation.Types.dbType import DbType
 from graph_creation.file_reader.csvReader import CsvReader
 from graph_creation.Types.readerType import ReaderType
 from graph_creation.metadata_db_file.edge.dbMetaEdgeBgeeExpr import DbMetaEdgeBgeeExpr
@@ -6,15 +7,16 @@ import os
 
 
 class EdgeBgeeReader(CsvReader):
+    DB_META_CLASS = DbMetaEdgeBgeeExpr
 
     def __init__(self):
-        self.dbMetaClass = DbMetaEdgeBgeeExpr
         super().__init__(
-        in_path = os.path.join(g.O_FILE_PATH, self.dbMetaClass.OFILE_NAME),
+        in_path = os.path.join(g.O_FILE_PATH, self.DB_META_CLASS.OFILE_NAME),
         sep = None,
-        cols = self.dbMetaClass.COLS,
-        use_cols = self.dbMetaClass.FILTER_COLS,
-        nr_lines_header = self.dbMetaClass.HEADER,
-            readerType= ReaderType.READER_EDGE_BGEE
+        cols = self.DB_META_CLASS.COLS,
+        use_cols = self.DB_META_CLASS.FILTER_COLS,
+        nr_lines_header = self.DB_META_CLASS.HEADER,
+            readerType= ReaderType.READER_EDGE_BGEE,
+        dbType = DbType.DB_EDGE_BGEE
         )
 

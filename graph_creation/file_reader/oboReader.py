@@ -3,7 +3,7 @@ from graph_creation.file_reader.parser.oboParser import OboParser
 
 class OboReader(FileReader):
 
-    def __init__(self, in_path, readerType, quadruple_list = None):
+    def __init__(self, in_path, readerType, dbType, quadruple_list = None):
         ''' quadruple_list should contain all quadruples incl. mappings
         each quadruple consists of
         (1) beginning of the line,
@@ -11,7 +11,7 @@ class OboReader(FileReader):
         (3) index of split element being the id,
         (4) the name of dict entry (must be same as in use_fields)'''
 
-        self.in_path = in_path
+        super().__init__(in_path, readerType, dbType)
         if quadruple_list is None:
             self.quadruple_list = [('id', ' ', 1, 'ID'),
                               ('alt_id', ' ', 1, 'ID'),
@@ -20,7 +20,7 @@ class OboReader(FileReader):
                                    ('xref: OMIM:', ' ', 1, 'OMIM')]
         else:
             self.quadruple_list = quadruple_list
-        self.readerType = readerType
+
 
     def read_file(self):
         oboParser = OboParser()

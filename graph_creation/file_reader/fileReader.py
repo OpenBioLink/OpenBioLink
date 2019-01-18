@@ -5,6 +5,11 @@ from abc import ABC, abstractmethod
 
 class FileReader (ABC):
 
+    def __init__(self, in_path, readerType, dbType,):
+        self.in_path = in_path
+        self.readerType = readerType
+        self.dbType = dbType
+
     @staticmethod
     def open_file(in_path):
         path_parts = in_path.split('.')

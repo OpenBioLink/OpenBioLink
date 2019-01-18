@@ -11,4 +11,4 @@ from .dbMetaEdgeDisGeNet import   DbMetaEdgeDisGeNet
 from .dbMetaEdgeCtdPath import    DbMetaEdgeCtdPath
 from .dbMetaEdgeDrugCentral import DbMetaEdgeDrugCentral
 from .dbMetaEdgeBgeeExpr import DbMetaEdgeBgeeExpr
-from .dbMetaEdgeBgeeOverExpr import DbMetaEdgeBgeeOverExpr
+from .dbMetaEdgeBgeeDiffExpr import DbMetaEdgeBgeeDiffExpr

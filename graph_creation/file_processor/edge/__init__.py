@@ -13,3 +13,4 @@ from .edgeDrugCentralContraIndProcessor import EdgeDrugCentralIndProcessor
 from .edgeBgeeExprProcessor import EdgeBgeeExprProcessor
 from .edgeBgeeNoExprProcessor import EdgeBgeeNoExprProcessor
 from .edgeBgeeOverExprProcessor import EdgeBgeeOverExprProcessor
+from .edgeBgeeUnderExprProcessor import EdgeBgeeUnderExprProcessor

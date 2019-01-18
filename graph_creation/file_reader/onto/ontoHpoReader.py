@@ -1,3 +1,4 @@
+from graph_creation.Types.dbType import DbType
 from graph_creation.file_reader.oboReader import OboReader
 from graph_creation.Types.readerType import ReaderType
 from graph_creation.metadata_db_file.onto.dbMetaOntoHpo import DbMetaOntoHpo
@@ -6,12 +7,13 @@ import os
 
 
 class OntoHpoReader(OboReader):
-    def __init__(self):
-        self.dbMetaClass = DbMetaOntoHpo
+    DB_META_CLASS = DbMetaOntoHpo
 
+    def __init__(self):
         super().__init__(
-        in_path = os.path.join(g.O_FILE_PATH, self.dbMetaClass.OFILE_NAME),
-            quadruple_list= self.dbMetaClass.QUADRUPLES,
-            readerType= ReaderType.READER_ONTO_HPO
+        in_path = os.path.join(g.O_FILE_PATH, self.DB_META_CLASS.OFILE_NAME),
+            quadruple_list= self.DB_META_CLASS.QUADRUPLES,
+            readerType= ReaderType.READER_ONTO_HPO,
+        dbType = DbType.DB_ONTO_HPO
         )
 

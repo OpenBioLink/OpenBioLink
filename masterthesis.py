@@ -1,32 +1,30 @@
-from graph_creation.dbManager import DbManager
 from graph_creation.graphCreator import GraphCreator
 import cProfile
 
 pr = cProfile.Profile()
-pr.enable()
-
-
-
-#dbManager = DbManager("C:\\Users\\annab\\Box Sync\\Masterarbeit\\DB\\databases")
-#dbManager = DbManager("E:\\Master Thesis")
-
-#dbManager = DbManager("D:\Anna Breit\master thesis\databases")
+#pr.enable()
 
 #dbManager.download_resources()
 #dbManager.create_db_files()
 #dbManager.create_graph()
 
-graph_creator = GraphCreator("D:\Anna Breit\master thesis\\tests")
+graph_creator = GraphCreator("D:\Anna Breit\master thesis\\databases")
 
 print ("\n\n############### downloading files #################################")
-graph_creator.download_db_files()
+pr.run('graph_creator.download_db_files()')
+pr.print_stats()
+
 
 print ("\n\n############### creating graph input files #################################")
-graph_creator.create_input_files()
+pr.run('graph_creator.create_input_files()')
+pr.print_stats()
+
 
 print ("\n\n############### creating graph #################################")
-graph_creator.create_graph()
+pr.run('graph_creator.create_graph()')
+pr.print_stats()
 
-pr.disable()
+#pr.disable()
 # after your program ends
-pr.print_stats(sort="time")
+
+#pr.print_stats(.1, sort="time")

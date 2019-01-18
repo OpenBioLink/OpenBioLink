@@ -9,6 +9,7 @@ from graph_creation.Types.qualityType import QualityType
 from graph_creation.graphWriter import GraphWriter
 from graph_creation.metadata_edge.tnEdgeMetadata import TnEdgeMetadata
 from node import Node
+from graph_creation.utils import get_leaf_subclasses
 from .file_downloader.fileDownloader import *
 from .file_processor.fileProcessor import *
 from .file_reader.fileReader import *
@@ -28,12 +29,12 @@ class GraphCreator():
         if not os.path.exists(glob.FILE_PATH):
             os.makedirs(glob.FILE_PATH)
 
-        self.db_file_metadata = [x() for x in self.get_leaf_subclasses(DbMetadata)]
-        self.file_readers = [x() for x in self.get_leaf_subclasses(FileReader)]
-        self.file_processors = [x() for x in self.get_leaf_subclasses(FileProcessor)]
-        self.infile_metadata = [x(glob.IN_FILE_PATH) for x in self.get_leaf_subclasses(InfileMetadata)]
-        self.edge_metadata = [x(quality) for x in self.get_leaf_subclasses(EdgeMetadata)]
-        self.tn_edge_metadata = [x(quality) for x in self.get_leaf_subclasses(TnEdgeMetadata)]
+        self.db_file_metadata = [x() for x in get_leaf_subclasses(DbMetadata)]
+        self.file_readers = [x() for x in get_leaf_subclasses(FileReader)]
+        self.file_processors = [x() for x in get_leaf_subclasses(FileProcessor)]
+        self.infile_metadata = [x(glob.IN_FILE_PATH) for x in get_leaf_subclasses(InfileMetadata)]
+        self.edge_metadata = [x(quality) for x in get_leaf_subclasses(EdgeMetadata)]
+        self.tn_edge_metadata = [x(quality) for x in get_leaf_subclasses(TnEdgeMetadata)]
 
         #self.db_file_map = {x.dbType: x for x in self.db_file_metadata }
         #self.file_reader_map = {x.dbType: x for x in self.file_readers }
@@ -247,20 +248,6 @@ class GraphCreator():
                         mapping[row[map_sourceindex]] = [row[map_targetindex]]
                 mapping_content1.close()
             return mapping
-
-
-    #def get_all_subclasses(self, cls):
-    #    return set(cls.__subclasses__()).union([x for c in cls.__subclasses__() for x in self.get_all_subclasses(c)])
-
-
-    def get_leaf_subclasses(self, cls, classSet=None):
-        if classSet is None:
-            classSet = set()
-        if len(cls.__subclasses__()) == 0:
-            classSet.add(cls)
-        else:
-            classSet.union(x for c in cls.__subclasses__() for x in self.get_leaf_subclasses(c, classSet))
-        return classSet
 
     def check_if_file_exisits(self, file_path): #todo naming
         skip = None

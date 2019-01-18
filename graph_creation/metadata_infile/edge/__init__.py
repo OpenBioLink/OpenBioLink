@@ -13,3 +13,4 @@ from .inMetaEdgeDrugCentralContraInd import InMetaEdgeDrugCentralContraInd
 from .inMetaEdgeBgeeExpr import InMetaEdgeBgeeExpr
 from .inMetaEdgeBgeeNoExpr import InMetaEdgeBgeeNoExpr
 from .inMetaEdgeBgeeOverExpr import InMetaEdgeBgeeOverExpr
+from .inMetaEdgeBgeeUnderExpr import InMetaEdgeBgeeUnderExpr

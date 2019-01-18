@@ -5,9 +5,8 @@ from graph_creation.Types.dbType import DbType
 class DbMetaEdgeGo(DbMetadataEdge):
     URL = "http://geneontology.org/gene-associations/goa_human.gaf.gz"
     OFILE_NAME = "GO_annotations.gaf.gz"
-    COLS = ['DB', 'DOI', 'qulifier', 'none13', 'GO_ID', 'DB_ref', 'evidence_code',
-            'with_from', 'taxon', 'date', 'assigned_by', 'ann_ext', 'ann_prop',
-            'none14', 'none15', 'none16', 'none17']
+    COLS = ['DB', 'DOI', 'DB_symbol', 'qulifier', 'GO_ID', 'DB_ref', 'evidence_code',
+            'with_from', 'aspect', 'DB_obj_name', 'DB_obj_syn','DB_obj_type', 'taxon', 'date', 'assigned_by', 'ann_ext', 'ann_prop']
     FILTER_COLS = ['DOI', 'GO_ID', 'evidence_code']
     HEADER = 30
     DB_TYPE = DbType.DB_EDGE_GO

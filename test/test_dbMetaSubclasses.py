@@ -1,14 +1,15 @@
 import unittest
 
 from graph_creation.Types.dbType import DbType
+from graph_creation.file_reader import *
 from graph_creation.metadata_db_file import *
+from graph_creation import utils
 
 
 class TestDbMetaSubclasses(unittest.TestCase):
 
-
     def test_general_variables(self):
-        leaf_classes = self.get_leaf_subclasses(DbMetadata)
+        leaf_classes = utils.get_leaf_subclasses(DbMetadata)
         for subclass in leaf_classes:
             with self.subTest(subclass = subclass):
                 with self.subTest():
@@ -18,17 +19,31 @@ class TestDbMetaSubclasses(unittest.TestCase):
                 with self.subTest():
                     self.assertTrue(hasattr(subclass, 'DB_TYPE'))
 
-    def check_csv_variables(self, cls): # TODO hwo to get scv dbs
-        self.assertTrue(hasattr(cls, 'COLS'))
-        self.assertTrue(hasattr(cls, 'FILTER_COLS'))
-        self.assertTrue(hasattr(cls, 'HEADER'))
+    def test_csv_variables(self):
+        leaf_classes_csv_reader = utils.get_leaf_subclasses(CsvReader)
+        csv_subclasses = set()
+        for csv_reader_subclass in leaf_classes_csv_reader:
+            csv_subclasses.add(csv_reader_subclass.DB_META_CLASS)
+        for subclass in csv_subclasses:
+                with self.subTest(subclass=subclass):
+                    self.assertTrue(hasattr(subclass, 'COLS'))
+                    self.assertTrue(hasattr(subclass, 'FILTER_COLS'))
+                    self.assertTrue(hasattr(subclass, 'HEADER'))
 
-    def check_obo_variables(self, cls): # TODO how to get sql dbs
-        self.assertTrue(hasattr(cls, 'QUADRUPLES'))
+    def test_obo_variables(self):
+        leaf_classes_obo_reader = utils.get_leaf_subclasses(OboReader)
+        obo_subclasses = set()
+        for obo_reader_subclass in leaf_classes_obo_reader:
+            obo_subclasses.add(obo_reader_subclass.DB_META_CLASS)
+        for subclass in obo_subclasses:
+                with self.subTest(subclass=subclass):
+                    self.assertTrue(hasattr(subclass, 'QUADRUPLES'))
+
+    # TODO test for sql ??
 
     def test_db_types(self):
         self.assertTrue(DbMetaEdgeBgeeExpr.DB_TYPE ==  DbType.DB_EDGE_BGEE)
-        self.assertTrue(DbMetaEdgeBgeeOverExpr.DB_TYPE ==  DbType.DB_EDGE_BGEE_OVER)
+        self.assertTrue(DbMetaEdgeBgeeDiffExpr.DB_TYPE == DbType.DB_EDGE_BGEE_DIFF)
         self.assertTrue(DbMetaEdgeCtdPath.DB_TYPE ==  DbType.DB_EDGE_CDT_PATH)
         self.assertTrue(DbMetaEdgeDisGeNet.DB_TYPE ==  DbType.DB_EDGE_DISGENET)
         self.assertTrue(DbMetaEdgeDrugCentral.DB_TYPE ==  DbType.DB_EDGE_DRUGCENTRAL)
@@ -43,18 +58,6 @@ class TestDbMetaSubclasses(unittest.TestCase):
         self.assertTrue(DbMetaOntoGo.DB_TYPE ==  DbType.DB_ONTO_GO)
         self.assertTrue(DbMetaOntoHpo.DB_TYPE ==  DbType.DB_ONTO_HPO)
 
-        self.assertTrue(DbMetaMapString ==  DbType.DB_MAP_STRING)
+        self.assertTrue(DbMetaMapString.DB_TYPE ==  DbType.DB_MAP_STRING)
         self.assertTrue(DbMetaMapDisGeNet.DB_TYPE ==  DbType.DB_MAP_DISGENET)
         self.assertTrue(DbMetaMapUniprot.DB_TYPE ==  DbType.DB_MAP_UNIPROT)
-
-
-
-    def get_leaf_subclasses(self, cls, classSet=None):
-        if classSet is None:
-            classSet = set()
-        if len(cls.__subclasses__()) == 0:
-            classSet.add(cls)
-        else:
-            classSet.union(x for c in cls.__subclasses__() for x in self.get_leaf_subclasses(c, classSet))
-        return classSet
-

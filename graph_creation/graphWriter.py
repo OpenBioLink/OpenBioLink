@@ -28,7 +28,7 @@ class GraphWriter ():
         # separate files
         if multi_file_sep is not None:
             for key, value in nodes_dic.items():
-                with open(os.path.join(glob.FILE_PATH, prefix + glob.NODES_FILE_PREFIX + '_' + key +  '.csv'), 'w') as out_file:
+                with open(os.path.join(glob.FILE_PATH, prefix + glob.NODES_FILE_PREFIX + '_' + key +  '.csv'), 'a') as out_file:
                     writer = csv.writer(out_file, delimiter=multi_file_sep, lineterminator='\n')
                     for node in value:
                         writer.writerow(list(node))

@@ -4,8 +4,8 @@ from graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from nodeType import NodeType
 
 
-class InMetaEdgeBgeeOverExpr(InfileMetadata):
-    CSV_NAME = "DB_Bgee_gene_anatomy_overexpr.csv"
+class InMetaEdgeBgeeUnderExpr(InfileMetadata):
+    CSV_NAME = "DB_Bgee_gene_anatomy_underexpr.csv"
     USE_COLS = ['gene_id', 'anatomical_entity', 'call_quality' ]
     NODE1_COL = 0
     NODE2_COL = 1
@@ -13,10 +13,10 @@ class InMetaEdgeBgeeOverExpr(InfileMetadata):
     NODE1_TYPE = NodeType.GENE
     NODE2_TYPE = NodeType.ANATOMY
     EDGE_TYPE = EdgeType.GENE_DIFFEXPRESSED_ANATOMY
-    INFILE_TYPE = InfileType.IN_EDGE_BGEE_OVEREXPR
+    INFILE_TYPE = InfileType.IN_EDGE_BGEE_UNDEREXPR
     MAPPING_SEP = None
 
     def __init__(self, folder_path):
-        super().__init__(csv_name=InMetaEdgeBgeeOverExpr.CSV_NAME,
+        super().__init__(csv_name=InMetaEdgeBgeeUnderExpr.CSV_NAME,
                          folder_path=folder_path,
-                         infileType=InMetaEdgeBgeeOverExpr.INFILE_TYPE)
+                         infileType=InMetaEdgeBgeeUnderExpr.INFILE_TYPE)
