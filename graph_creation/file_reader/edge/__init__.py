@@ -10,4 +10,6 @@ from .edgeHpoGeneReader import   EdgeHpoGeneReader
 from .edgeSiderSeReader import   EdgeSiderSeReader
 from .edgeDrugCentralReader import EdgeDrugCentralReader
 from .edgeBgeeReader import EdgeBgeeReader
-from .edgeBgeeDiffReader import DbMetaEdgeBgeeDiffExpr
+from .edgeBgeeDiffReader import EdgeBgeeDiffReader
+from .edgeStitchActionReader import EdgeStitchActionReader
+from .edgeStringActionReader import EdgeStringActionReader

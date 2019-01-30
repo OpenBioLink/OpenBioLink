@@ -13,5 +13,5 @@ class EdgeSiderSeProcessor(FileProcessor):
 
 
     def individual_postprocessing(self, data):
-        self.stitch_to_pubchem_id(data, 0)
+        self.stitch_to_pubchem_id(data, self.use_cols.index('stitchID_stereo')) #todo ms
         return data

@@ -2,7 +2,6 @@ import inspect
 from unittest import TestCase
 
 from graph_creation import utils
-from graph_creation.metadata_db_file import DbMetadata
 from graph_creation.metadata_infile import *
 
 

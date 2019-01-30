@@ -16,6 +16,7 @@ class OboParser(object):
                     term = self.dic_list_to_dic_string(term)
                     terms.append(term)
                 term = {}
+                continue
             for tuple in quadruple_list:
                 if line.startswith(tuple[0]):
                     elements = line.split(tuple[1])

@@ -19,7 +19,7 @@ class FileReader (ABC):
             zf = zipfile.ZipFile(in_path)
             in_file = zf.open(zf.namelist()[0])
         else:
-            in_file = open(in_path)
+            in_file = open(in_path, encoding="utf8")
         return in_file
 
     @abstractmethod

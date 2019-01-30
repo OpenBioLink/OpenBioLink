@@ -10,68 +10,98 @@
 #
 #df = dcp.table_to_df(file, "omop_relationship")
 #print(df)
-
-class A():
-    def __init__(self, a, b):
-        self.a = a
-        self.b = b
-
-    def get(self):
-        print(self.a)
-        print(self.b)
-
-
-class B(A):
-    def __init__(self, a, b):
-        super().__init__(a, b)
-
-
-class C():
-    def __init__(self, a, b):
-        self.a = 5
-        self.b = 5
-
-
-class X(B, C):
-    def __init__(self, a, b):
-        super().__init__(a, b)
-
-
-class D(B):
-    def __init__(self, a, b):
-        super().__init__(66, 66)
-
-
-def allClass (cls):
-    return set(cls.__subclasses__()).union([x for c in cls.__subclasses__() for x in allClass(c)])
-
-def leaf (cls, classSet = None):
-    if classSet is None:
-        classSet = set()
-    if len(cls.__subclasses__()) == 0:
-        classSet.add(cls)
-    else:
-        classSet.union(x for c in cls.__subclasses__() for x in  leaf(c, classSet))
-    return classSet
-
-b=B(1,2)
-print(b.a)
-
-#z= [x(1,2) for x in allClass(B)]
-#y= [x for x in leaf(B)]
-#print(z)
-#print(y)
-
-#CONSTANT = "bar"
 #
-#def setConstant(a):
-#    CONSTANT = a
 #
-#print(CONSTANT)
-#setConstant('foo')
-#print(CONSTANT)
+#import tkinter as tk
+#from tkinter import simpledialog
 #
-#import graph_creation.constants.globalConstant as c
-#print(c.FILE_PATH)
-#c.FILE_PATH = 'another'
-#print(c.FILE_PATH)
+#application_window = tk.Tk()
+#application_window.withdraw()
+#
+#answer = simpledialog.askstring("Input", "What is your first name?",
+#                                parent=application_window)
+#if answer is not None:
+#    print("Your first name is ", answer)
+#else:
+#    print("You don't have a first name?")
+#
+#answer = simpledialog.askinteger("Input", "What is your age?",
+#                                 parent=application_window,
+#                                 minvalue=0, maxvalue=100)
+#if answer is not None:
+#    print("Your age is ", answer)
+#else:
+#    print("You don't have an age?")
+#
+#answer = simpledialog.askfloat("Input", "What is your salary?",
+#                               parent=application_window,
+#                               minvalue=0.0, maxvalue=100000.0)
+#if answer is not None:
+#    print("Your salary is ", answer)
+#else:
+#    print("You don't have a salary?")
+#
+#import tkinter as tk
+#from tkinter import filedialog
+#
+#
+#
+#filename = filedialog.askdirectory() #show an "Open" dialog box and return the path to the selected file
+#print(filename)
+#
+#class Application(tk.Frame):
+#    def __init__(self, master=None):
+#        super().__init__(master)
+#        self.master = master
+#        self.pack()
+#        self.create_widgets()
+#
+#    def create_widgets(self):
+#        self.hi_there = tk.Button(self)
+#        self.hi_there["text"] = "Hello World\n(click me)"
+#        self.hi_there["command"] = self.say_hi
+#        self.hi_there.pack(side="top")
+#
+#        self.quit = tk.Button(self, text="QUIT", fg="red",
+#                              command=self.master.destroy)
+#        self.quit.pack(side="bottom")
+#
+#    def say_hi(self):
+#        print("hi there, everyone!")
+#
+#root = tk.Tk()
+#app = Application(master=root)
+##app.mainloop()
+
+import cProfile
+s = ['AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF',
+ 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF',
+ 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF',
+ 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT',
+ 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST',
+ 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF',
+ 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF',
+ 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF',
+ 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY',
+ 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'one', 'two', 'one', 'two', 'one', 'two', 'one', 'two', 'one', 'two', 'one', 'two', 'three', 'four']
+
+strings = ['AACAF','AACAY','AACTF'
+'AAGC','AAGIY','AAIGF',
+'AAMAF','AAPH','AAPT',
+'AAST','AATDF','AATGF',
+'AATRL','AAUKF','AAWC',
+'AABY','ABCAF','ABCCF',
+'ABCE','ABCFF','ABCZF',
+'ABCZY','ABEPF','ABHD',
+'ABHI','ABLT','ABLYF',
+'ABNAF','ABNK','ABNRY']
+
+
+def function():
+    list = []
+    for i in range (len(s)-1):
+        y= s[i]+ s[i+1]
+        list.append(y)
+    print(len(list))
+
+cProfile.run('function()')

@@ -6,3 +6,6 @@ from .inMetaMapString         import InMetaMapString
 from .inMetaMapUniEnsNcbi     import InMetaMapUniEnsNcbi
 from .inMetaMapOntoDoUmls     import InMetaMapOntoDoUmls
 from .inMetaMapDrugCentralPubchem import InMetaMapDrugCentralPubchem
+from .inMetaMapOntoDoAltid import InMetaMapOntoDoAltid
+from .inMetaMapOntoGoAltid import InMetaMapOntoGoAltid
+from .inMetaMapOntoHpoAltid import InMetaMapOntoHpoAltid

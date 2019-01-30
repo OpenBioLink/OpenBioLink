@@ -11,7 +11,7 @@ from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 
 class EdgeMetaGeneDrug(EdgeMetadata):
     LQ_CUTOFF = 0
-    MQ_CUTOFF = 0
+    MQ_CUTOFF = 400
     HQ_CUTOFF = 700
     LQ_CUTOFF_TEXT = None
     MQ_CUTOFF_TEXT = None
@@ -37,7 +37,8 @@ class EdgeMetaGeneDrug(EdgeMetadata):
 
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EdgesMetaClass.CSV_NAME)
         mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.Map1MetaClass.CSV_NAME)
-        super().__init__(edges_file_path=edges_file_path,
+        super().__init__(is_directional=True,
+                         edges_file_path=edges_file_path,
                          colindex1=self.EdgesMetaClass.NODE1_COL, colindex2=self.EdgesMetaClass.NODE2_COL,
                          edgeType=self.EdgesMetaClass.EDGE_TYPE,
                          node1_type=self.EdgesMetaClass.NODE1_TYPE, node2_type=self.EdgesMetaClass.NODE2_TYPE,

@@ -2,6 +2,7 @@ import os
 
 import graph_creation.globalConstant as glob
 from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
+from graph_creation.metadata_infile import InMetaMapOntoHpoAltid
 from graph_creation.metadata_infile.edge.inMetaEdgeHpoGene import InMetaEdgeHpoGene
 from graph_creation.Types.qualityType import QualityType
 
@@ -31,10 +32,20 @@ class EdgeMetaGenePheno(EdgeMetadata):
         self.EdgesMetaClass = InMetaEdgeHpoGene
         self.Map1MetaClass = None
         self.Map2MetaClass = None
+        self.MapAltId2MetaClass = InMetaMapOntoHpoAltid
+
 
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EdgesMetaClass.CSV_NAME)
-        super().__init__(edges_file_path=edges_file_path,
+        altid_mapping_file2 = os.path.join(glob.IN_FILE_PATH, self.MapAltId2MetaClass.CSV_NAME)
+
+        super().__init__(is_directional=True,
+                         edges_file_path=edges_file_path,
                          colindex1=self.EdgesMetaClass.NODE1_COL, colindex2=self.EdgesMetaClass.NODE2_COL,
                          edgeType=self.EdgesMetaClass.EDGE_TYPE,
                          node1_type=self.EdgesMetaClass.NODE1_TYPE, node2_type=self.EdgesMetaClass.NODE2_TYPE,
-                         colindex_qscore=self.EdgesMetaClass.QSCORE_COL)
+                         colindex_qscore=self.EdgesMetaClass.QSCORE_COL,
+                         altid_mapping2_file=altid_mapping_file2,
+                         altid_map2_sourceindex=self.MapAltId2MetaClass.SOURCE_COL,
+                         altid_map2_targetindex=self.MapAltId2MetaClass.TARGET_COL
+
+                         )

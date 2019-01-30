@@ -14,7 +14,7 @@ class OboReader(FileReader):
         super().__init__(in_path, readerType, dbType)
         if quadruple_list is None:
             self.quadruple_list = [('id', ' ', 1, 'ID'),
-                              ('alt_id', ' ', 1, 'ID'),
+                              ('alt_id', ' ', 1, 'ALT_ID'),
                               ('is_a', ' ', 1, 'IS_A'),
                                    ('xref: UMLS:', ':', 2, 'UMLS'),
                                    ('xref: OMIM:', ' ', 1, 'OMIM')]

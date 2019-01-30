@@ -6,7 +6,7 @@ from nodeType import NodeType
 
 class InMetaEdgeSiderSe(InfileMetadata):
     CSV_NAME = "DB_SIDER_se.csv"
-    USE_COLS = ['stitchID_flat', 'umlsID']
+    USE_COLS = ['stitchID_stereo', 'umlsID']
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None

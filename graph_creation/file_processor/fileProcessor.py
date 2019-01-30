@@ -1,3 +1,5 @@
+import cProfile
+
 import pandas
 
 
@@ -18,14 +20,14 @@ class FileProcessor():
         if self.mapping_sep is not None:
             #todo performance
             temp = data[data[self.use_cols[0]].str.contains(self.mapping_sep)]
-            for index, line in temp.iterrows():
-                for alt in line[0].split(self.mapping_sep):
-                    data = data.append(pandas.DataFrame([[alt.lstrip(), line[1]]], columns=self.use_cols))
+            for row in temp.itertuples(): #fixme USE itertuples
+                for alt in row[1].split(self.mapping_sep):
+                    data = data.append(pandas.DataFrame([[alt.lstrip(), row[2]]], columns=self.use_cols))
             data = data[~data[self.use_cols[0]].str.contains(self.mapping_sep)]
             temp = data[data[self.use_cols[1]].str.contains(self.mapping_sep)]
-            for index, line in temp.iterrows():
-                for alt in line[1].split(self.mapping_sep):
-                    data = data.append(pandas.DataFrame([[line[0], alt.lstrip()]], columns=self.use_cols))
+            for row in temp.itertuples():
+                for alt in row[2].split(self.mapping_sep):
+                    data = data.append(pandas.DataFrame([[row[1], alt.lstrip()]], columns=self.use_cols))
             data = data[~data[self.use_cols[1]].str.contains(self.mapping_sep)]
         return data
 
@@ -38,8 +40,9 @@ class FileProcessor():
 
     def stitch_to_pubchem_id(self, data, id_col):
         data[data.columns[id_col]] = data[data.columns[id_col]].str[4:].str.lstrip("0")
+        #todo faster if via int?
+        #fixme A value is trying to be set on a copy of a slice from a DataFrame. Try using .loc[row_indexer,col_indexer] = value instead
         return data
-
 
 
     def process(self, data):

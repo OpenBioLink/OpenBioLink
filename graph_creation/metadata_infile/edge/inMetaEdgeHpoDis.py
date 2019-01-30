@@ -10,7 +10,7 @@ class InMetaEdgeHpoDis(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
-    NODE1_TYPE = NodeType.DIS  # fixme false use_cols
+    NODE1_TYPE = NodeType.DIS
     NODE2_TYPE = NodeType.PHENOTYPE
     EDGE_TYPE = EdgeType.DIS_PHENOTYPE
     INFILE_TYPE = InfileType.IN_EDGE_HPO_DIS

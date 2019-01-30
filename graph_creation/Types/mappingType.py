@@ -8,3 +8,7 @@ class MappingType(Enum):
     ENSEMBL_NCBI = 4
     UNIPRO_NCBI = 5
     DRUGCENTRAL_PUBCHEM = 6
+
+    ALT_DO_DO =10
+    ALT_GO_GO =11
+    ALT_HPO_HPO =12

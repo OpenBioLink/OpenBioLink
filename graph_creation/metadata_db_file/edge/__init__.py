@@ -12,3 +12,5 @@ from .dbMetaEdgeCtdPath import    DbMetaEdgeCtdPath
 from .dbMetaEdgeDrugCentral import DbMetaEdgeDrugCentral
 from .dbMetaEdgeBgeeExpr import DbMetaEdgeBgeeExpr
 from .dbMetaEdgeBgeeDiffExpr import DbMetaEdgeBgeeDiffExpr
+from .dbMetaEdgeStitchAction import DbMetaEdgeStitchAction
+from .dbMetaEdgeStringAction import DbMetaEdgeStringAction
