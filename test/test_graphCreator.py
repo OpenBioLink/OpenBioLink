@@ -49,7 +49,6 @@ class TestGraphCreator(TestCase):
         dbMetaEdgeSiderSe.OFILE_NAME = 'SIDER_se.tsv'
         manual_db_file_metadata.append(dbMetaEdgeSiderSe)
 
-
         dbMetaEdgeStitch = DbMetaEdgeStitch
         dbMetaEdgeStitch.OFILE_NAME = 'STITCH_gene_drug.tsv'
         manual_db_file_metadata.append(dbMetaEdgeStitch)
@@ -57,6 +56,14 @@ class TestGraphCreator(TestCase):
         dbMetaEdgeString = DbMetaEdgeString
         dbMetaEdgeString.OFILE_NAME = 'STRING_gene_gene.txt'
         manual_db_file_metadata.append(dbMetaEdgeString)
+
+        dbMetaEdgeStitchAction = DbMetaEdgeStitchAction
+        dbMetaEdgeStitchAction.OFILE_NAME = 'STITCH_gene_drug_actions.tsv'
+        manual_db_file_metadata.append(dbMetaEdgeStitchAction)
+
+        dbMetaEdgeStringAction = DbMetaEdgeStringAction
+        dbMetaEdgeStringAction.OFILE_NAME = 'STRING_gene_gene_actions.tsv'
+        manual_db_file_metadata.append(dbMetaEdgeStringAction)
 
         #MAPPINGS --------------------------------------------------
         dbMetaMapDisGeNet = DbMetaMapDisGeNet
@@ -84,6 +91,10 @@ class TestGraphCreator(TestCase):
         dbMetaOntoHpo.OFILE_NAME = 'HPO_ontology.obo'
         manual_db_file_metadata.append(dbMetaOntoHpo)
 
+        dbMetaOntoUberon = DbMetaOntoUberon
+        dbMetaOntoUberon.OFILE_NAME = 'UBERON_ontology.obo'
+        manual_db_file_metadata.append(dbMetaOntoUberon)
+
         test_folder = os.path.dirname(os.path.realpath(__file__))
         test_data_folder = os.path.join(test_folder, 'test_data')
 
@@ -92,9 +103,9 @@ class TestGraphCreator(TestCase):
         glob.INTERACTIVE_MODE = False
         glob.SKIP_EXISTING_FILES = False
 
-        directed_tuple =  True, 'TR_DIR_'
+        #directed_tuple =  True, 'TR_DIR_'
         undirected_tuple =  False, 'TR_NOT_'
-        cases = [directed_tuple, undirected_tuple]
+        cases = [undirected_tuple]#, undirected_tuple]
 
         for case in cases:
             graph_is_directed, true_ref_file_prefix = case

@@ -9,8 +9,7 @@ glob.DIRECTED = True
 glob.QUALITY = None
 glob.INTERACTIVE_MODE = False
 glob.SKIP_EXISTING_FILES = True
-graph_creator = GraphCreator("C:\\Users\\anna\\Desktop")
-#fixme define quality
+graph_creator = GraphCreator("C:\\Users\\anna\\Desktop\\master")
 
 print ("\n\n############### downloading files #################################")
 graph_creator.download_db_files()
@@ -18,9 +17,8 @@ graph_creator.download_db_files()
 print ("\n\n############### creating graph input files #################################")
 graph_creator.create_input_files()
 
-#print ("\n\n############### creating graph #################################")
-#pr.run('graph_creator.create_graph()')
-#pr.print_stats()
+print ("\n\n############### creating graph #################################")
+graph_creator.create_graph()
 
 pr.disable()
 

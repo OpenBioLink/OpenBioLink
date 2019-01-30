@@ -1,0 +1,5 @@
+geneId	geneSymbol	diseaseId	diseaseName	score	NofPmids	NofSnps	source
+1	NAT2	C0005000	Bladder Neoplasm	0.245871429880008	5	0	CTD_human
+10	NAT2	C0000002	Drug Allergy	0.202681755307501	3	0	CTD_human
+10	NAT2	C0000001	Precursor Cell Lymphoblastic Leukemia Lymphoma	0.204814057046576	1	0	CTD_human
+2	ADA	C0000002	Drug Allergy	0.2	0	0	HPO

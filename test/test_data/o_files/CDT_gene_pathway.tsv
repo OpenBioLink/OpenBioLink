@@ -1,0 +1,32 @@
+# The Comparative Toxicogenomics Database (CTD) - http://ctdbase.org/			
+#   Copyright 2002-2012 MDI Biological Laboratory. All rights reserved.			
+#   Copyright 2012-2018 MDI Biological Laboratory & NC State University. All rights reserved.			
+#  			
+# 			
+# Use is subject to the terms set forth at http://ctdbase.org/about/legal.jsp			
+# These terms include:			
+# 			
+#   1. All forms of publication (e.g., web sites, research papers, databases,			
+#      software applications, etc.) that use or rely on CTD data must cite CTD.			
+#      Citation guidelines: http://ctdbase.org/about/publications/#citing			
+# 			
+#   2. All electronic or online applications must include hyperlinks from 			
+#      contexts that use CTD data to the applicable CTD data pages.			
+#      Linking instructions: http://ctdbase.org/help/linking.jsp			
+# 			
+#   3. You must notify CTD, and describe your use of our data:			
+#      http://ctdbase.org/help/contact.go			
+# 			
+#   4. For quality control purposes, you must provide CTD with periodic 			
+#      access to your publication of our data.			
+# 			
+# More information: http://ctdbase.org/downloads/			
+# 			
+# Report created: Mon Dec 10 11:54:19 EST 2018			
+#			
+# Fields:			
+# GeneSymbol	GeneID	PathwayName	PathwayID
+#			
+A1CF	29994	Metabolism	REACT:R-HSA-1000008
+A2M	2	Complement and coagulation cascades	KEGG:hsa04000
+A2M	2	Metabolism	REACT:R-HSA-1000008

@@ -1,0 +1,100 @@
+CID100000085	C0015544	text_mention	Failure to Thrive	LLT	C0015544	Failure to thrive
+CID100000085	C0015544	text_mention	Failure to Thrive	PT	C0015544	Failure to thrive
+CID100000085	C0020615	text_mention	Hypoglycemia	LLT	C0020615	Hypoglycaemia
+CID100000085	C0020615	text_mention	Hypoglycemia	PT	C0020615	Hypoglycaemia
+CID100000085	C0022661	NLP_indication	Kidney Failure, Chronic	LLT	C0022661	Renal failure chronic
+CID100000085	C0022661	NLP_indication	Kidney Failure, Chronic	PT	C0022661	Renal failure chronic
+CID100000085	C0025521	NLP_indication	Inborn Errors of Metabolism	LLT	C0025521	Inborn error of metabolism
+CID100000085	C0025521	NLP_indication	Inborn Errors of Metabolism	PT	C0025521	Inborn error of metabolism
+CID100000085	C0026827	text_mention	Muscle hypotonia	LLT	C0026827	Hypotonia
+CID100000085	C0026827	text_mention	Muscle hypotonia	PT	C0026827	Hypotonia
+CID100000085	C0026827	text_mention	Muscle hypotonia	PT	C1142135	Muscle relaxant therapy
+CID100000085	C0085584	text_mention	Encephalopathies	LLT	C0085584	Encephalopathy
+CID100000085	C0085584	text_mention	Encephalopathies	PT	C0085584	Encephalopathy
+CID100000085	C0151786	text_mention	Muscle Weakness	LLT	C0151786	Muscular weakness
+CID100000085	C0151786	text_mention	Muscle Weakness	PT	C0151786	Muscular weakness
+CID100000085	C0878544	text_mention	Cardiomyopathies	LLT	C0878544	Cardiomyopathy
+CID100000085	C0878544	text_mention	Cardiomyopathies	PT	C0878544	Cardiomyopathy
+CID100000085	C1142132	NLP_indication	Carnitine deficiency	LLT	C1142132	Carnitine deficiency
+CID100000085	C1142132	NLP_indication	Carnitine deficiency	PT	C1142132	Carnitine deficiency
+CID100000119	C0001768	text_mention	Agammaglobulinemia	LLT	C0001768	Agammaglobulinemia
+CID100000119	C0001768	text_mention	Agammaglobulinemia	PT	C0086438	Hypogammaglobulinaemia
+CID100000119	C0008049	text_mention	Chickenpox	LLT	C0008049	Varicella
+CID100000119	C0008049	text_mention	Chickenpox	PT	C0008049	Varicella
+CID100000119	C0009447	text_mention	Common Variable Immunodeficiency	LLT	C0009447	Immunodeficiency common variable
+CID100000119	C0009447	text_mention	Common Variable Immunodeficiency	PT	C0009447	Immunodeficiency common variable
+CID100000119	C0009450	NLP_indication	Communicable Diseases	LLT	C0009450	Infection
+CID100000119	C0009450	NLP_indication	Communicable Diseases	PT	C0009450	Infection
+CID100000119	C0019158	NLP_indication	Hepatitis	LLT	C0019158	Hepatitis
+CID100000119	C0019158	NLP_indication	Hepatitis	PT	C0019158	Hepatitis
+CID100000119	C0019159	text_mention	Hepatitis A	LLT	C0019159	Hepatitis A
+CID100000119	C0019159	text_mention	Hepatitis A	PT	C0019159	Hepatitis A
+CID100000119	C0019163	text_mention	Hepatitis B	LLT	C0019163	Hepatitis B
+CID100000119	C0019163	text_mention	Hepatitis B	PT	C0019163	Hepatitis B
+CID100000119	C0025007	NLP_indication	Measles	LLT	C0025007	Measles
+CID100000119	C0025007	NLP_indication	Measles	PT	C0025007	Measles
+CID100000119	C0035920	NLP_indication	Rubella	LLT	C0035920	Rubella
+CID100000119	C0035920	NLP_indication	Rubella	PT	C0035920	Rubella
+CID100000119	C0040100	text_mention	Thymoma	LLT	C0040100	Thymoma
+CID100000119	C0040100	text_mention	Thymoma	PT	C0040100	Thymoma
+CID100000119	C0042721	text_mention	Viral hepatitis	LLT	C0042721	Hepatitis viral
+CID100000119	C0042721	text_mention	Viral hepatitis	PT	C0042721	Hepatitis viral
+CID100000119	C0085393	text_mention	Immunocompromised Host	LLT	C0085393	Immunocompromised
+CID100000119	C0085393	text_mention	Immunocompromised Host	PT	C0021051	Immunodeficiency
+CID100000119	C0086438	text_mention	Hypogammaglobulinemia	LLT	C0086438	Hypogammaglobulinaemia
+CID100000119	C0086438	text_mention	Hypogammaglobulinemia	PT	C0086438	Hypogammaglobulinaemia
+CID100000119	C0221026	text_mention	X-linked agammaglobulinemia	LLT	C0221026	Bruton's agammaglobulinaemia
+CID100000119	C0221026	text_mention	X-linked agammaglobulinemia	PT	C0221026	Bruton's agammaglobulinaemia
+CID100000119	C0740380	text_mention	Varicella zoster	LLT	C0740380	Varicella zoster
+CID100000119	C0740380	text_mention	Varicella zoster	PT	C0019360	Herpes zoster
+CID100000119	C0854268	text_mention	Foetal damage	LLT	C0854268	Foetal damage
+CID100000119	C0854268	text_mention	Foetal damage	PT	C0854268	Foetal damage
+CID100000119	C0917801	NLP_indication	Sleeplessness	LLT	C0917801	Insomnia
+CID100000119	C0917801	NLP_indication	Sleeplessness	PT	C0917801	Insomnia
+CID100000137	C0022602	NLP_indication	Actinic keratosis	LLT	C0022602	Actinic keratosis
+CID100000137	C0022602	NLP_indication	Actinic keratosis	PT	C0022602	Actinic keratosis
+CID100000137	C0022602	NLP_indication	Actinic keratosis	PT	C0022603	Seborrhoeic keratosis
+CID100000137	C0162568	NLP_precondition	Erythropoietic Protoporphyria	LLT	C0162568	Erythropoietic protoporphyria
+CID100000137	C0162568	NLP_precondition	Erythropoietic Protoporphyria	PT	C0853026	Porphyria non-acute
+CID100000137	C0555198	NLP_indication	Malignant Glioma	LLT	C0555198	Malignant glioma
+CID100000137	C0555198	NLP_indication	Malignant Glioma	PT	C0555198	Malignant glioma
+CID100000143	C0002871	NLP_indication	Anemia	LLT	C0002871	Anaemia
+CID100000143	C0002871	NLP_indication	Anemia	PT	C0002871	Anaemia
+CID100000143	C0002888	NLP_indication	Anemia, Megaloblastic	LLT	C0002888	Anaemia megaloblastic
+CID100000143	C0002888	NLP_indication	Anemia, Megaloblastic	PT	C0002888	Anaemia megaloblastic
+CID100000143	C0002892	text_mention	Anemia, Pernicious	LLT	C0002892	Pernicious anaemia
+CID100000143	C0002892	text_mention	Anemia, Pernicious	PT	C0002892	Pernicious anaemia
+CID100000143	C0006826	NLP_precondition	Malignant Neoplasms	LLT	C0006826	Neoplasm malignant
+CID100000143	C0006826	NLP_precondition	Malignant Neoplasms	PT	C0006826	Neoplasm malignant
+CID100000143	C0009402	NLP_indication	Colorectal Carcinoma	LLT	C0009402	Colorectal carcinoma
+CID100000143	C0009402	NLP_indication	Colorectal Carcinoma	PT	C0007102	Colon cancer
+CID100000143	C0009402	NLP_indication	Colorectal Carcinoma	PT	C1527249	Colorectal cancer
+CID100000143	C0016412	NLP_indication	Folic Acid Deficiency	LLT	C0016412	Folate deficiency
+CID100000143	C0016412	NLP_indication	Folic Acid Deficiency	PT	C0016412	Folate deficiency
+CID100000143	C0023895	text_mention	Liver diseases	LLT	C0023895	Liver disorder
+CID100000143	C0023895	text_mention	Liver diseases	PT	C0151763	Hepatocellular injury
+CID100000143	C0023895	text_mention	Liver diseases	PT	C0023895	Liver disorder
+CID100000143	C0023895	text_mention	Liver diseases	PT	C0239571	Foetor hepaticus
+CID100000143	C0024523	text_mention	Malabsorption Syndrome	LLT	C0024523	Malabsorption
+CID100000143	C0024523	text_mention	Malabsorption Syndrome	PT	C0024523	Malabsorption
+CID100000143	C0029463	NLP_indication	Osteosarcoma	LLT	C0029463	Osteosarcoma
+CID100000143	C0029463	NLP_indication	Osteosarcoma	PT	C0029463	Osteosarcoma
+CID100000143	C0162429	text_mention	Malnutrition	LLT	C0162429	Malnutrition
+CID100000143	C0162429	text_mention	Malnutrition	PT	C0162429	Malnutrition
+CID100000143	C0205707	text_mention	Sprue	LLT	C0205707	Sprue
+CID100000143	C0205707	text_mention	Sprue	PT	C0024523	Malabsorption
+CID100000143	C0948380	NLP_indication	Colorectal cancer metastatic	LLT	C0948380	Colorectal cancer metastatic
+CID100000143	C0948380	NLP_indication	Colorectal cancer metastatic	PT	C0948380	Colorectal cancer metastatic
+CID100000143	C1527249	NLP_indication	Colorectal Cancer	LLT	C1527249	Colorectal cancer
+CID100000143	C1527249	NLP_indication	Colorectal Cancer	PT	C1527249	Colorectal cancer
+CID100000158	C0000729	text_mention	Abdominal Cramps	LLT	C0000729	Abdominal cramps
+CID100000158	C0000729	text_mention	Abdominal Cramps	PT	C0000737	Abdominal pain
+CID100000158	C0000814	NLP_indication	Missed abortion	LLT	C0000814	Abortion missed
+CID100000158	C0000814	NLP_indication	Missed abortion	PT	C0000814	Abortion missed
+CID100000158	C0007222	NLP_precondition	Cardiovascular Diseases	LLT	C0007222	Cardiovascular disorder
+CID100000158	C0007222	NLP_precondition	Cardiovascular Diseases	PT	C0007222	Cardiovascular disorder
+CID100000158	C0011849	text_mention	Diabetes Mellitus	LLT	C0011849	Diabetes mellitus
+CID100000158	C0011849	text_mention	Diabetes Mellitus	PT	C0011849	Diabetes mellitus
+CID100000158	C0013274	NLP_indication	Patent ductus arteriosus	LLT	C0013274	Patent ductus arteriosus
+CID100000158	C0013274	NLP_indication	Patent ductus arteriosus	PT	C0013274	Patent ductus arteriosus
+CID100000158	C0015927	NLP_indication	Fetal Death	LLT	C0015927	Foetal death

@@ -1,0 +1,71 @@
+format-version: 1.2
+data-version: releases/2018-10-09
+saved-by: Peter Robinson, Sebastian Koehler, Sandra Doelken, Chris Mungall, Melissa Haendel, Nicole Vasilevsky, Monarch Initiative, et al.
+subsetdef: hposlim_core "Core clinical terminology"
+subsetdef: secondary_consequence "Consequence of a disorder in another organ system."
+synonymtypedef: HP:0031859 "obsolete"
+synonymtypedef: HP:0045076 "UK spelling"
+synonymtypedef: HP:0045077 "abbreviation"
+synonymtypedef: HP:0045078 "plural form"
+synonymtypedef: layperson "layperson term"
+default-namespace: human_phenotype
+ontology: hp
+property_value: http://purl.org/dc/elements/1.1/contributor "Chris Mungall" xsd:string
+property_value: http://purl.org/dc/elements/1.1/contributor "Courtney Hum" xsd:string
+property_value: http://purl.org/dc/elements/1.1/contributor "Joie Davis" xsd:string
+property_value: http://purl.org/dc/elements/1.1/contributor "Mark Engelstad" xsd:string
+property_value: http://purl.org/dc/elements/1.1/contributor "Melissa Haendel" xsd:string
+property_value: http://purl.org/dc/elements/1.1/contributor "Nicole Vasilevsky" xsd:string
+property_value: http://purl.org/dc/elements/1.1/contributor "Sandra Doelken" xsd:string
+property_value: http://purl.org/dc/elements/1.1/creator "Peter N Robinson" xsd:string
+property_value: http://purl.org/dc/elements/1.1/creator "Sebastian Koehler" xsd:string
+property_value: http://purl.org/dc/elements/1.1/creator "The Human Phenotype Ontology Consortium" xsd:string
+property_value: http://purl.org/dc/elements/1.1/creator "The Monarch Initiative" xsd:string
+property_value: http://purl.org/dc/elements/1.1/license "see http://www.human-phenotype-ontology.org" xsd:string
+property_value: http://purl.org/dc/elements/1.1/rights "Peter Robinson, Sebastian Koehler, The Human Phenotype Ontology Consortium, and The Monarch Initiative" xsd:string
+property_value: http://purl.org/dc/elements/1.1/subject "Phenotypic abnormalities encountered in human disease" xsd:string
+owl-axioms: Prefix(owl:=<http://www.w3.org/2002/07/owl#>)\nPrefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)\nPrefix(xml:=<http://www.w3.org/XML/1998/namespace>)\nPrefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)\nPrefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)\n\n\nOntology(\nAnnotationAssertion(<http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym> <http://purl.obolibrary.org/obo/HP_0000991> \"\")\nAnnotationAssertion(<http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym> <http://purl.obolibrary.org/obo/HP_0000510> \"\")\nAnnotationAssertion(<http://www.geneontology.org/formats/oboInOwl#hasOBONamespace> <http://purl.obolibrary.org/obo/HP_0030243> \"\")\nAnnotationAssertion(<http://www.geneontology.org/formats/oboInOwl#hasOBONamespace> <http://purl.obolibrary.org/obo/HP_0030370> \"\")\nAnnotationAssertion(rdfs:comment <http://purl.obolibrary.org/obo/HP_0040081> \"\")\nAnnotationAssertion(<http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym> <http://purl.obolibrary.org/obo/HP_0012377> \"\"^^xsd:string)\n)
+logical-definition-view-relation: has_part
+
+[Term]
+id: HP:0000001
+name: All
+comment: Root of all terms in the Human Phenotype Ontology.
+
+[Term]
+id: HP:0000002
+name: Abnormality of body height
+def: "Deviation from the norm of height with respect to that which is expected according to age and gender norms." [HPO:probinson]
+synonym: "Abnormality of body height" EXACT layperson []
+is_a: HP:0000003 ! Growth abnormality
+is_a: HP:0000005 ! Growth abnormality
+created_by: peter
+creation_date: 2008-02-27T02:20:00Z
+
+[Term]
+id: HP:0000003
+name: Multicystic kidney dysplasia
+alt_id: HP:0001003
+def: "Multicystic dysplasia of the kidney is characterized by multiple cysts of varying size in the kidney and the absence of a normal pelvicaliceal system. The condition is associated with ureteral or ureteropelvic atresia, and the affected kidney is nonfunctional." [HPO:curators]
+comment: Multicystic kidney dysplasia is the result of abnormal fetal renal development in which the affected kidney is replaced by multiple cysts and has little or no residual function. The vast majority of multicystic kidneys are unilateral. Multicystic kidney can be diagnosed on prenatal ultrasound.
+synonym: "Multicystic dysplastic kidney" EXACT []
+synonym: "Multicystic kidneys" EXACT []
+synonym: "Multicystic renal dysplasia" EXACT []
+xref: MSH:D021782
+xref: SNOMEDCT_US:204962002
+xref: SNOMEDCT_US:82525005
+is_a: HP:0000001 ! Renal cyst
+
+[Term]
+id: HP:0000005
+name: Mode of inheritance
+def: "The pattern in which a particular genetic trait or disorder is passed from one generation to the next." [HPO:probinson]
+synonym: "Inheritance" EXACT []
+xref: UMLS:C0900001
+is_a: HP:0000001 ! All
+
+[Term]
+id: HP:0000057
+name: obsolete Clitoromegaly
+is_obsolete: true
+replaced_by: HP:0008665

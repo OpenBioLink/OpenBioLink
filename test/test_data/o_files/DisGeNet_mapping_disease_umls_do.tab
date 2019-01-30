@@ -1,0 +1,9 @@
+diseaseId	name	vocabulary	code	vocabularyName
+C4025901	Abnormality of body height	HPO	HP:0000002	Abnormality of body height
+C3714581	Multicystic Dysplastic Kidney	HPO	HP:0000003	Multicystic kidney dysplasia
+C4020899	Autosomal recessive predisposition	HPO	HP:0000007	Autosomal recessive predisposition
+C0043167	Pertussis	ICD9CM	033.0	Bordetella pertussis
+C0000001	Combined Oxidative Phosphorylation Deficiency 1	DO	1000001	combined oxidative phosphorylation deficiency
+C0005000	Combined Oxidative Phosphorylation Deficiency 4	DO	0000002	combined oxidative phosphorylation deficiency
+C6666661	Combined Oxidative Phosphorylation Deficiency 3	DO	175	combined oxidative phosphorylation deficiency
+C1999999	Combined Oxidative Phosphorylation Deficiency 2	DO	99999	combined oxidative phosphorylation deficiency

@@ -19,5 +19,8 @@ class EdgeStringPtmodeProcessor(FileProcessor):
         #ptmod is an undirectional link --> take only the undirectional cases and only in one direction
         data = data[data['mode'] == 'ptmod']
         data = data[data['is_directional']=='f']
-        data = utils.remove_bidir_edges_from_df(data)
         return data
+
+    def individual_postprocessing(self, data):
+        return utils.remove_bidir_edges_from_df(data)
+

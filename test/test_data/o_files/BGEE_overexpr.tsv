@@ -1,0 +1,8 @@
+Gene ID	Gene name	Anatomical entity ID	Anatomical entity name	Developmental stage ID	Developmental stage name	Differential expression	Call quality
+ENSG00000000001	TSPAN6	UBERON:0000001	testis	UBERON:0000113	post-juvenile adult stage	over-expression	high quality
+ENSG00000000010	TSPAN6	UBERON:0000001	heart	UBERON:0000113	post-juvenile adult stage	under-expression	high quality
+ENSG00000000002	TSPAN6	UBERON:0000955	brain	UBERON:0000113	post-juvenile adult stage	low ambiguity	NA
+ENSG00000000460	C1orf112	UBERON:0002048	lung	UBERON:0000113	post-juvenile adult stage	low ambiguity	NA
+ENSG00000000460	C1orf112	UBERON:0002107	liver	UBERON:0000113	post-juvenile adult stage	high ambiguity	NA
+ENSG00000006662	C1orf112	UBERON:0006661	bone marrow	UBERON:0000113	post-juvenile adult stage	over-expression	high quality
+ENSG00000000666	FGR	CL:0000665	male germ cell	UBERON:0000113	post-juvenile adult stage	under-expression	high quality

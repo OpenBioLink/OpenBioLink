@@ -1,0 +1,5 @@
+Gene ID	Gene name	Anatomical entity ID	Anatomical entity name	Expression	Call quality	Expression rank
+ENSG00000000001	TSPAN6	UBERON:0000001	male germ cell	present	gold quality	5.94e3
+ENSG00000006662	TSPAN6	UBERON:0006661	sperm	present	silver quality	23.0
+ENSG00000000010	TSPAN6	UBERON:0000001	oocyte	absent	silver quality	2.05e4
+ENSG00000000666	TSPAN6	CL:0000665	epithelial cell of pancreas	absent	gold quality	6.05e3

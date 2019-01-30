@@ -20,5 +20,7 @@ class EdgeStringBindingProcessor(FileProcessor):
         #data = data[data['action'].isnull()]
         data = data[data['mode'] == 'binding']
         data = data[data['is_directional']=='f']
-        data = utils.remove_bidir_edges_from_df(data)
         return data
+
+    def individual_postprocessing(self, data):
+        return utils.remove_bidir_edges_from_df(data)
