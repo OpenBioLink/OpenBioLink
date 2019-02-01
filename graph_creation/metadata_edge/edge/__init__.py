@@ -8,6 +8,7 @@ from .edgeMetaGeneGene    import EdgeMetaGeneGene
 from .edgeMetaGeneDis     import EdgeMetaGeneDis
 from .edgeMetaGenePath    import EdgeMetaGenePath
 from .edgeMetaDrugPheno   import EdgeMetaDrugPheno
+from .edgeMetaGeneOverAna import EdgeMetaGeneOverAna
 
 from .edgeMetaDrugActivationGene import EdgeMetaDrugActivationGene
 from .edgeMetaDrugBindActGene import EdgeMetaDrugBindActGene
@@ -31,3 +32,4 @@ from .edgeMetaGeneReactionGene import EdgeMetaGeneReactionGene
 
 from .tnEdgeMetaDisDrug import TnEdgeMetaDisDrug
 from .tnEdgeMetaGeneAna import TnEdgeMetaGeneAna
+from .tnEdgeMetaGeneOverAna import TnEdgeMetaGeneOverAna

@@ -7,6 +7,7 @@ class GraphWriter ():
 
     @staticmethod
     def output_graph(nodes_dic: dict, edges_dic : dict, one_file_sep = None, multi_file_sep = None, prefix= None, without_onto=None):
+        #fixme doppelt --> onto can be removed at beginning
         if without_onto is None:
             without_onto = False
         if prefix is None:

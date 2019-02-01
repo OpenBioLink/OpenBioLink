@@ -1,6 +1,10 @@
 class EdgeMetadata:
+        Map1MetaClass = None
+        Map2MetaClass = None
+        MapAltId1MetaClass = None
+        MapAltId2MetaClass = None
 
-    def __init__(self, is_directional, edges_file_path, colindex1, colindex2, edgeType, node1_type, node2_type, colindex_qscore = None, cutoff_num = None, cutoff_txt = None,
+        def __init__(self, is_directional, edges_file_path, colindex1, colindex2, edgeType, node1_type, node2_type, colindex_qscore = None, cutoff_num = None, cutoff_txt = None,
                  mapping1_file = None, map1_sourceindex = None, map1_targetindex = None,
                  altid_mapping1_file = None, altid_map1_sourceindex = None, altid_map1_targetindex = None,
                  mapping2_file = None, map2_sourceindex = None, map2_targetindex = None,
@@ -32,3 +36,4 @@ class EdgeMetadata:
             self.altid_mapping2_file = altid_mapping2_file
             self.altid_map2_sourceindex = altid_map2_sourceindex
             self.altid_map2_targetindex = altid_map2_targetindex
+

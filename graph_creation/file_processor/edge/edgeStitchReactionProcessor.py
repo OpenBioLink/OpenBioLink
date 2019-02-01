@@ -16,7 +16,7 @@ class EdgeStitchReactionProcessor(FileProcessor):
 
     def individual_preprocessing(self, data):
         # only drug -> protein connections of single compounds (no merged)
-        drug_protein = data.item_id_a.str.startswith('CIDs')  # todo ms
+        drug_protein = data.item_id_a.str.startswith('CIDs')
         mode = data['mode'] == 'reaction'
         data = data[drug_protein & mode]
         self.stitch_to_pubchem_id(data,self.use_cols.index('item_id_a'))

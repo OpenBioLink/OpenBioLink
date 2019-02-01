@@ -13,6 +13,6 @@ class EdgeStitchProcessor(FileProcessor):
 
 
     def individual_postprocessing(self, data):
-        data = data[data.chemID.str.startswith('CIDs')] #todo ms
+        data = data[data.chemID.str.startswith('CIDs')]
         self.stitch_to_pubchem_id(data,self.use_cols.index('chemID'))
         return data

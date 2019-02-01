@@ -103,9 +103,9 @@ class TestGraphCreator(TestCase):
         glob.INTERACTIVE_MODE = False
         glob.SKIP_EXISTING_FILES = False
 
-        #directed_tuple =  True, 'TR_DIR_'
+        directed_tuple =  True, 'TR_DIR_'
         undirected_tuple =  False, 'TR_NOT_'
-        cases = [undirected_tuple]#, undirected_tuple]
+        cases = [directed_tuple, undirected_tuple]
 
         for case in cases:
             graph_is_directed, true_ref_file_prefix = case
