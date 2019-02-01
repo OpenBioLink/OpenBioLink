@@ -8,14 +8,15 @@ import graph_creation.globalConstant as glob
 import graph_creation.utils as utils
 from edge import Edge
 from graph_creation.graphWriter import GraphWriter
-from graph_creation.metadata_edge.tnEdgeMetadata import TnEdgeMetadata
+from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
 from node import Node
 from .file_downloader.fileDownloader import *
 from .file_processor.fileProcessor import *
 from .file_reader.fileReader import *
 from .file_writer.fileWriter import *
 from .metadata_db_file import *
-from .metadata_edge import *
 from .metadata_infile import *
 from .userInteractor import UserInteractor
 
@@ -33,8 +34,8 @@ class GraphCreator():
         self.file_readers = [x() for x in utils.get_leaf_subclasses(FileReader)]
         self.file_processors = [x() for x in utils.get_leaf_subclasses(FileProcessor)]
         self.infile_metadata = [x(glob.IN_FILE_PATH) for x in utils.get_leaf_subclasses(InfileMetadata)]
-        self.edge_metadata = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeMetadata)]
-        self.tn_edge_metadata = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(TnEdgeMetadata)]
+        self.edge_metadata = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)] + [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeOntoMetadata)]
+        self.tn_edge_metadata = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(TnEdgeRegularMetadata)]
 
         self.dbType_reader_map = self.cls_list_to_dic(self.file_readers, 'dbType')
         self.readerType_processor_map = self.cls_list_to_dic(self.file_processors, 'readerType')
@@ -48,9 +49,19 @@ class GraphCreator():
          #                             not issubclass(x, DbMetadataOnto)]
 
         # remove onto
-            if use_edge_metadata_classes is None:
-                use_edge_metadata_classes = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeMetadata)]
-            use_edge_metadata_classes = [x for x in use_edge_metadata_classes if not hasattr(x.EdgesMetaClass, "ONTO_TYPE")] #todo better way to identify onto edges?
+            if use_edge_metadata_classes is None: #todo test
+                use_edge_metadata_classes = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)]
+            else:
+                temp_use_edge_metadata_classes =[]
+                for edge_class in use_edge_metadata_classes:
+                    if inspect.isclass(edge_class):
+                        if not issubclass(edge_class, EdgeOntoMetadata):
+                            temp_use_edge_metadata_classes.append(edge_class())
+                    else:
+                        if not issubclass(type(edge_class), EdgeOntoMetadata):
+                            temp_use_edge_metadata_classes.append(edge_class)
+                use_edge_metadata_classes = temp_use_edge_metadata_classes
+                #use_edge_metadata_classes = [x for x in use_edge_metadata_classes if not issubclass(type(x), EdgeOntoMetadata)] #todo better way to identify onto edges?
 
         # only use the desired sources
         if use_db_metadata_classes is not None:
@@ -343,17 +354,16 @@ class GraphCreator():
         self.infileType_inMetadata_map = {x.infileType: x for x in self.infile_metadata}
 
         # remove edge metadata
-        print('edges removed: ' + str( [x.__class__.__name__ for x in self.edge_metadata + self.tn_edge_metadata if x.EdgesMetaClass.INFILE_TYPE in keep_infileType]))
-
-        self.edge_metadata = [x for x in self.edge_metadata if x.EdgesMetaClass.INFILE_TYPE in keep_infileType]
-        self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x.EdgesMetaClass.INFILE_TYPE in keep_infileType]
+        print('edges removed: ' + str( [x.__class__.__name__ for x in self.edge_metadata + self.tn_edge_metadata if x.EDGE_INMETA_CLASS.INFILE_TYPE not in keep_infileType]))
+        self.edge_metadata = [x for x in self.edge_metadata if x.EDGE_INMETA_CLASS.INFILE_TYPE in keep_infileType]
+        self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x.EDGE_INMETA_CLASS.INFILE_TYPE in keep_infileType]
 
         # check for deleted dependencies of mappings
         additional_remove_metaEdges = []
         additional_remove_mapping_infileType = []
         for metaEdge in self.edge_metadata + self.tn_edge_metadata:
-            mappings = [metaEdge.Map1MetaClass, metaEdge.Map2MetaClass, metaEdge.MapAltId1MetaClass,
-                        metaEdge.MapAltId2MetaClass]
+            mappings = [metaEdge.MAP1_META_CLASS, metaEdge.MAP2_META_CLASS, metaEdge.MAP1_ALT_ID_META_CLASS,
+                        metaEdge.MAP2_ALT_ID_META_CLASS]
             for mapping in mappings:
 
                 if mapping is not None and mapping.INFILE_TYPE not in keep_infileType:
@@ -373,7 +383,7 @@ class GraphCreator():
     def init_custom_sources_top_down(self, use_edge_metdata_classes):
 
         #remove all edge_metadata
-        print ('Edge Metadata removed: ' + str([x.__class__.__name__ for x in self.edge_metadata if x.EdgesMetaClass not in [y.EdgesMetaClass for y in use_edge_metdata_classes]]))
+        print ('Edge Metadata removed: ' + str([x.__class__.__name__ for x in self.edge_metadata if x.EDGE_INMETA_CLASS not in [y.EDGE_INMETA_CLASS for y in use_edge_metdata_classes]]))
         self.edge_metadata = []
 
         for x in use_edge_metdata_classes:
@@ -383,17 +393,17 @@ class GraphCreator():
                 self.edge_metadata.append(x)
 
         # remove inMetadata
-        infileType_edgeMetadata_map = self.cls_list_to_dic(self.edge_metadata, 'EdgesMetaClass.INFILE_TYPE')
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.edge_metadata,'Map1MetaClass.INFILE_TYPE', lambda a: a.Map1MetaClass is not None ))
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.edge_metadata,'Map2MetaClass.INFILE_TYPE', lambda a: a.Map2MetaClass is not None ))
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.edge_metadata,'MapAltId1MetaClass.INFILE_TYPE', lambda a: a.MapAltId1MetaClass is not None ))
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.edge_metadata,'MapAltId2MetaClass.INFILE_TYPE', lambda a: a.MapAltId2MetaClass is not None ))
+        infileType_edgeMetadata_map = self.cls_list_to_dic(self.edge_metadata, 'EDGE_INMETA_CLASS.INFILE_TYPE')
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.edge_metadata,'MAP1_META_CLASS.INFILE_TYPE', lambda a: a.MAP1_META_CLASS is not None ))
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.edge_metadata,'MAP2_META_CLASS.INFILE_TYPE', lambda a: a.MAP2_META_CLASS is not None ))
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.edge_metadata,'MAP1_ALT_ID_META_CLASS.INFILE_TYPE', lambda a: a.MAP1_ALT_ID_META_CLASS is not None ))
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.edge_metadata,'MAP2_ALT_ID_META_CLASS.INFILE_TYPE', lambda a: a.MAP2_ALT_ID_META_CLASS is not None ))
 
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata, 'EdgesMetaClass.INFILE_TYPE'))
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata,'Map1MetaClass.INFILE_TYPE', lambda a: a.Map1MetaClass is not None ))
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata,'Map2MetaClass.INFILE_TYPE', lambda a: a.Map2MetaClass is not None ))
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata,'MapAltId1MetaClass.INFILE_TYPE', lambda a: a.MapAltId1MetaClass is not None ))
-        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata,'MapAltId2MetaClass.INFILE_TYPE', lambda a: a.MapAltId2MetaClass is not None ))
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata, 'EDGE_INMETA_CLASS.INFILE_TYPE'))
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata,'MAP1_META_CLASS.INFILE_TYPE', lambda a: a.MAP1_META_CLASS is not None ))
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata,'MAP2_META_CLASS.INFILE_TYPE', lambda a: a.MAP2_META_CLASS is not None ))
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata,'MAP1_ALT_ID_META_CLASS.INFILE_TYPE', lambda a: a.MAP1_ALT_ID_META_CLASS is not None ))
+        infileType_edgeMetadata_map.update(self.cls_list_to_dic(self.tn_edge_metadata,'MAP2_ALT_ID_META_CLASS.INFILE_TYPE', lambda a: a.MAP2_ALT_ID_META_CLASS is not None ))
 
         keep_infileTypes = list(infileType_edgeMetadata_map.keys())
         print('Infile Metadata removed: ' + str([x.__class__.__name__ for x in self.infile_metadata if x.infileType not in keep_infileTypes]))

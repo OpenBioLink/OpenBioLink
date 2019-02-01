@@ -12,7 +12,7 @@ class InMetaEdgeBgeeUnderExpr(InfileMetadata):
     QSCORE_COL = None
     NODE1_TYPE = NodeType.GENE
     NODE2_TYPE = NodeType.ANATOMY
-    EDGE_TYPE = EdgeType.GENE_DIFFEXPRESSED_ANATOMY
+    EDGE_TYPE = EdgeType.GENE_UNDEREXPRESSED_ANATOMY
     INFILE_TYPE = InfileType.IN_EDGE_BGEE_UNDEREXPR
     MAPPING_SEP = None
 

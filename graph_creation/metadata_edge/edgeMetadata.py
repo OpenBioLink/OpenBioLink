@@ -1,8 +1,8 @@
 class EdgeMetadata:
-        Map1MetaClass = None
-        Map2MetaClass = None
-        MapAltId1MetaClass = None
-        MapAltId2MetaClass = None
+        MAP1_META_CLASS = None
+        MAP2_META_CLASS = None
+        MAP1_ALT_ID_META_CLASS = None
+        MAP2_ALT_ID_META_CLASS = None
 
         def __init__(self, is_directional, edges_file_path, colindex1, colindex2, edgeType, node1_type, node2_type, colindex_qscore = None, cutoff_num = None, cutoff_txt = None,
                  mapping1_file = None, map1_sourceindex = None, map1_targetindex = None,

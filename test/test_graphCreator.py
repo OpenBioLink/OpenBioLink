@@ -108,7 +108,11 @@ class TestGraphCreator(TestCase):
         cases = [directed_tuple, undirected_tuple]
 
         for case in cases:
+
             graph_is_directed, true_ref_file_prefix = case
+            print('##########################################\n')
+            print('GRAPH IS DIRECTED: ' + str(graph_is_directed))
+
             with self.subTest():
 
                 glob.DIRECTED = graph_is_directed

@@ -1,13 +1,15 @@
-from graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 import os
+
 import graph_creation.globalConstant as glob
+from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
 from graph_creation.metadata_infile.onto.inMetaOntoHpo import InMetaOntoHpo
 
-class EdgeMetaPhenoOnto(EdgeMetadata):
-    def __init__(self, quality = None):
-        self.EdgesMetaClass = InMetaOntoHpo
 
-        super().__init__(is_directional=True, edges_file_path= os.path.join(glob.IN_FILE_PATH, self.EdgesMetaClass.CSV_NAME),
-                         colindex1=self.EdgesMetaClass.NODE1_COL, colindex2=self.EdgesMetaClass.NODE2_COL,
-                         edgeType=self.EdgesMetaClass.EDGE_TYPE,
-                         node1_type=self.EdgesMetaClass.NODE1_TYPE, node2_type=self.EdgesMetaClass.NODE2_TYPE)
+class EdgeMetaPhenoOnto(EdgeOntoMetadata):
+    def __init__(self, quality = None):
+        self.EDGE_INMETA_CLASS = InMetaOntoHpo
+
+        super().__init__(is_directional=True, edges_file_path= os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME),
+                         colindex1=self.EDGE_INMETA_CLASS.NODE1_COL, colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
+                         edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
+                         node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE, node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE)
