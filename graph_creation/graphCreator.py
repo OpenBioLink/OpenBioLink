@@ -1,8 +1,6 @@
 import csv
 import inspect
 import os
-import sys
-from functools import reduce
 
 from tqdm import tqdm
 
@@ -44,10 +42,15 @@ class GraphCreator():
 
 
         if not glob.DIRECTED:
+         #   if use_db_metadata_classes is None:
+         #       use_db_metadata_classes = [x for x in utils.get_leaf_subclasses(DbMetadata)]
+         #   use_db_metadata_classes = [x for x in use_db_metadata_classes if
+         #                             not issubclass(x, DbMetadataOnto)]
+
         # remove onto
             if use_edge_metadata_classes is None:
                 use_edge_metadata_classes = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeMetadata)]
-            use_edge_metadata_classes = [x for x in use_edge_metadata_classes if not hasattr(x.EdgesMetaClass, "ONTO_TYPE")] #fixme should be top down
+            use_edge_metadata_classes = [x for x in use_edge_metadata_classes if not hasattr(x.EdgesMetaClass, "ONTO_TYPE")] #todo better way to identify onto edges?
 
         # only use the desired sources
         if use_db_metadata_classes is not None:
@@ -302,7 +305,7 @@ class GraphCreator():
         dic = {}
         for cls in clsList:
             if condition(cls):
-                key = self.rgetattr(cls, keyAttr)
+                key = utils.rgetattr(cls, keyAttr)
                 if key in dic:
                     dic[key].append(cls)
                 elif key is not None:
@@ -320,76 +323,51 @@ class GraphCreator():
                 self.db_file_metadata.append(x())
             else:
                 self.db_file_metadata.append(x)
+
+        # remove readers
         keep_dbType = [x.dbType for x in self.db_file_metadata]
+        print('readers removed: ' + str( [x.__class__.__name__ for x in self.file_readers if x.dbType not in keep_dbType]))
+        self.file_readers = [x for x in self.file_readers if x.dbType in keep_dbType]
+        self.dbType_reader_map = self.cls_list_to_dic(self.file_readers, 'dbType')
 
-        # remove readers from map
-        #self.file_readers = [x for x in self.file_readers if x.dbType in keep_dbType]
-        keep_readerType = []
-        new_dbType_reader_map = {}
-        for key in self.dbType_reader_map.keys():
-            if key in keep_dbType:
-                new_dbType_reader_map[key] = self.dbType_reader_map[key]
-                keep_readerType.extend([x.readerType for x in self.dbType_reader_map[key]])
-            else:
-                print('removed reader: ' + str(key))
-        self.dbType_reader_map = new_dbType_reader_map
+        #remove processors
+        keep_readerType = [x.readerType for x in self.file_readers]
+        print('processors removed: ' + str( [x.__class__.__name__ for x in self.file_processors if x.readerType not in keep_readerType]))
+        self.file_processors = [x for x in self.file_processors if x.readerType in keep_readerType]
+        self.readerType_processor_map = self.cls_list_to_dic(self.file_processors, 'readerType')
 
-        # remove processors from map
-        keep_infileType = []
-        new_readerType_processor_map = {}
-        for key in self.readerType_processor_map.keys():
-            if key in keep_readerType:
-                new_readerType_processor_map[key] = self.readerType_processor_map[key]
-                keep_infileType.extend([x.infileType for x in self.readerType_processor_map[key]])
-            else:
-                print('removed processor: ' + str(key))
-        self.readerType_processor_map = new_readerType_processor_map
+        #remove infile metadata
+        keep_infileType = [x.infileType for x in self.file_processors]
+        print('processors removed: ' + str( [x.__class__.__name__ for x in self.infile_metadata if x.infileType not in keep_infileType]))
+        self.infile_metadata = [x for x in self.infile_metadata if x.infileType in keep_infileType]
+        self.infileType_inMetadata_map = {x.infileType: x for x in self.infile_metadata}
 
-        # remove inMetadata from map
-        keep_infile = []
-        new_infileType_inMetadata_map = {}
-        for key in self.infileType_inMetadata_map.keys():
-            if key in keep_infileType:
-                new_infileType_inMetadata_map[key] = self.infileType_inMetadata_map[key]
-                keep_infile.extend([type(self.infileType_inMetadata_map[key])])
-            else:
-                print('removed inMetadata: ' + str(key))
-        self.infileType_inMetadata_map = new_infileType_inMetadata_map
+        # remove edge metadata
+        print('edges removed: ' + str( [x.__class__.__name__ for x in self.edge_metadata + self.tn_edge_metadata if x.EdgesMetaClass.INFILE_TYPE in keep_infileType]))
 
-        print('keep infile: ' + str(keep_infile))
+        self.edge_metadata = [x for x in self.edge_metadata if x.EdgesMetaClass.INFILE_TYPE in keep_infileType]
+        self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x.EdgesMetaClass.INFILE_TYPE in keep_infileType]
 
-        # remove from lists
-        self.file_readers = [x for sublist in self.dbType_reader_map.values() for x in sublist]
-        self.file_processors = [x for sublist in self.readerType_processor_map.values() for x in sublist]
-        self.infile_metadata = list(self.infileType_inMetadata_map.values())
-        temp_edge_metadata = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeMetadata)]
-        temp_tn_edge_metadata = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(TnEdgeMetadata)]
-        self.edge_metadata = [x for x in temp_edge_metadata if x.EdgesMetaClass in keep_infile]
-        self.tn_edge_metadata = [x for x in temp_tn_edge_metadata if x.EdgesMetaClass in keep_infile]
-
-        # check for upstream dependencies
-        infileType_processor_map = {x.infileType: x for x in self.file_processors}
-        readerType_reader_map = {x.readerType: x for x in self.file_readers}
-
-        for metaEdge in self.edge_metadata:
-            deleted_upstream_dependency = False
-            mappings = [metaEdge.Map1MetaClass, metaEdge.Map2MetaClass, metaEdge.MapAltId1MetaClass, metaEdge.MapAltId2MetaClass]
+        # check for deleted dependencies of mappings
+        additional_remove_metaEdges = []
+        additional_remove_mapping_infileType = []
+        for metaEdge in self.edge_metadata + self.tn_edge_metadata:
+            mappings = [metaEdge.Map1MetaClass, metaEdge.Map2MetaClass, metaEdge.MapAltId1MetaClass,
+                        metaEdge.MapAltId2MetaClass]
             for mapping in mappings:
-                if mapping is not None:
-                    infileType = mapping.INFILE_TYPE
-                    if infileType not in self.infileType_inMetadata_map.keys():
-                        deleted_upstream_dependency = True
-                        break
-                    readerType = infileType_processor_map[infileType].readerType
-                    if readerType not in self.readerType_processor_map:
-                        deleted_upstream_dependency = True
-                        break
-                    dbType = readerType_reader_map[readerType].dbType
-                    if dbType not in self.dbType_reader_map:
-                        deleted_upstream_dependency = True
-                        break
-            if deleted_upstream_dependency:
-                sys.exit('ERROR: the db source of a mapping in ' + metaEdge.__class__.__name__ + ' was deleted. Please use another mapping and try again.')
+
+                if mapping is not None and mapping.INFILE_TYPE not in keep_infileType:
+                    additional_remove_metaEdges.append(metaEdge)
+                    additional_remove_mapping_infileType.append(mapping.INFILE_TYPE)
+        if len(additional_remove_metaEdges)>0:
+            UserInteractor.ask_for_exit('\nWARNING: Due to manual exclusion of DB resources, also the edges: ' +
+                                        str([x.__class__.__name__ for x in additional_remove_metaEdges]) +
+                                        '\n will be removed due to deleted dependencies of used mappings (i.e. ' +
+                                        str([str(x) for x in additional_remove_mapping_infileType])+
+                                        '\n Consider manually exclude edges instead of DB resources.')
+
+            self.edge_metadata = [x for x in self.edge_metadata if x not in additional_remove_metaEdges]
+            self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x not in additional_remove_metaEdges]
 
 
     def init_custom_sources_top_down(self, use_edge_metdata_classes):
@@ -440,8 +418,4 @@ class GraphCreator():
         self.db_file_metadata = [x for x in self.db_file_metadata if x.dbType in keep_dbType]
 
 
-    # source: https://gist.github.com/wonderbeyond/d293e7a2af1de4873f2d757edd580288#file-rgetattr-py
-    def rgetattr(self,obj, attr, *args):
-        def _getattr(obj, attr):
-            return getattr(obj, attr, *args)
-        return reduce(_getattr, [obj] + attr.split('.'))
+

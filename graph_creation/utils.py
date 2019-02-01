@@ -1,4 +1,6 @@
 import pandas
+from functools import reduce
+
 
 def get_leaf_subclasses(cls, classSet=None):
     if classSet is None:
@@ -43,3 +45,10 @@ def remove_bidir_edges_from_df (data):
 
     new_data = pandas.DataFrame.from_dict(temp_dic, columns=list(data), orient='index')
     return new_data
+
+
+ # source: https://gist.github.com/wonderbeyond/d293e7a2af1de4873f2d757edd580288#file-rgetattr-py
+def rgetattr(obj, attr, *args):
+    def _getattr(obj, attr):
+        return getattr(obj, attr, *args)
+    return reduce(_getattr, [obj] + attr.split('.'))

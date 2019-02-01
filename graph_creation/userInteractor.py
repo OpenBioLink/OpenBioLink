@@ -4,6 +4,14 @@ import sys
 class UserInteractor():
 
     @staticmethod
+    def ask_for_exit(message):
+        user_input = input(message + '\nDo you want to \n'
+                                          ' [c] continue \n'
+                                          ' [x] exit \n')
+        if user_input =='x':
+            sys.exit()
+
+    @staticmethod
     def check_if_file_exisits(file_path): #todo naming
         skip = None
         for_all = False
@@ -15,7 +23,7 @@ class UserInteractor():
                                           ' [c] continue anyways for all files\n'
                                           ' [n] skip this file\n'
                                           ' [s] skip all existing files\n'
-                                          ' [x] chancel \n')
+                                          ' [x] exit \n')
             if user_input == 'x':
                 sys.exit()
             elif user_input == 'c':
