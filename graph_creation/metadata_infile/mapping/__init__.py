@@ -9,3 +9,4 @@ from .inMetaMapDrugCentralPubchem import InMetaMapDrugCentralPubchem
 from .inMetaMapOntoDoAltid import InMetaMapOntoDoAltid
 from .inMetaMapOntoGoAltid import InMetaMapOntoGoAltid
 from .inMetaMapOntoHpoAltid import InMetaMapOntoHpoAltid
+from .inMetaMapOntoUberonAltid import InMetaMapOntoUberonAltid

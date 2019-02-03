@@ -17,7 +17,7 @@ class FileProcessor():
         drop_list = sorted(set(list(data))-set(self.use_cols))
         data = data.drop(drop_list, axis=1)
         data = data.dropna()
-        if self.mapping_sep is not None:
+        if self.mapping_sep is not None and not data.empty:
             temp = data[data[self.use_cols[0]].str.contains(self.mapping_sep)]
             for row in temp.itertuples():
                 for alt in row[1].split(self.mapping_sep):

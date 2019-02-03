@@ -4,3 +4,4 @@ from .ontoMapHpoUmlsProcessor import OntoMapHpoUmlsProcessor
 from .ontoMapDoAltidProcessor import OntoMapDoAltidProcessor
 from .ontoMapGoAltidProcessor import OntoMapGoAltidProcessor
 from .ontoMapHpoAltidProcessor import OntoMapHpoAltidProcessor
+from .ontoMapUberonAltidProcessor import OntoMapUberonAltidProcessor

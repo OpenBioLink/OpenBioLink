@@ -8,7 +8,7 @@ from graph_creation.metadata_db_file import *
 
 class TestGraphCreator(TestCase):
 
-    def test_graph_creation(self):
+    def tes_graph_creation(self):
 
         manual_db_file_metadata = []
 
@@ -100,7 +100,7 @@ class TestGraphCreator(TestCase):
 
         # global variables
         glob.QUALITY = None
-        glob.INTERACTIVE_MODE = False
+        glob.INTERACTIVE_MODE = True
         glob.SKIP_EXISTING_FILES = False
 
         directed_tuple =  True, 'TR_DIR_'
@@ -143,6 +143,11 @@ class TestGraphCreator(TestCase):
 
                         assert (j == i)
                         assert (all_lines_in_comp_file)
+
+
+
+t = TestGraphCreator()
+t.tes_graph_creation()
 
 
 

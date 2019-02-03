@@ -12,3 +12,4 @@ class MappingType(Enum):
     ALT_DO_DO =10
     ALT_GO_GO =11
     ALT_HPO_HPO =12
+    ALT_UBERON_UBERON = 13
