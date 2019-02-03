@@ -9,6 +9,6 @@ class SqlReader(FileReader):
         self.cols= cols
 
     def read_file(self):
-        file = FileReader.open_file(self.in_path)
-        df = dcp.table_to_df(file, self.table_name, self.cols)
-        return df
+        with FileReader.open_file(self.in_path) as file:
+            df = dcp.table_to_df(file, self.table_name, self.cols)
+            return df

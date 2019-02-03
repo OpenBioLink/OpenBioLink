@@ -25,6 +25,6 @@ class CsvReader (FileReader):
         return sep
 
     def read_file(self):
-        in_file = FileReader.open_file(self.in_path)
-        data = pandas.read_csv(in_file, sep=self.sep, names=self.cols, usecols=self.use_cols, skiprows=self.nr_lines_header, dtype=self.dtype)
-        return data
+        with FileReader.open_file(self.in_path) as in_file:
+            data = pandas.read_csv(in_file, sep=self.sep, names=self.cols, usecols=self.use_cols, skiprows=self.nr_lines_header, dtype=self.dtype)
+            return data

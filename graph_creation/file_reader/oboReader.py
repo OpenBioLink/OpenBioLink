@@ -24,6 +24,6 @@ class OboReader(FileReader):
 
     def read_file(self):
         oboParser = OboParser()
-        file = FileReader.open_file(self.in_path)
-        df = oboParser.obo_to_df(file, self.quadruple_list)
-        return df
+        with FileReader.open_file(self.in_path) as file:
+            df = oboParser.obo_to_df(file, self.quadruple_list)
+            return df
