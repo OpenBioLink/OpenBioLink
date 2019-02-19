@@ -1,13 +1,13 @@
 from graph_creation.file_processor.fileProcessor import FileProcessor
 from graph_creation.Types.readerType import ReaderType
 from graph_creation.Types.infileType import InfileType
-from graph_creation.metadata_infile.onto.inMetaOntoGo import InMetaOntoGo
+from graph_creation.metadata_infile.onto.inMetaOntoGoIsA import InMetaOntoGoIsA
 
 
 
-class OntoGoProcessor(FileProcessor):
+class OntoGoIsAProcessor(FileProcessor):
 
     def __init__(self):
-        self.use_cols = InMetaOntoGo.USE_COLS
+        self.use_cols = InMetaOntoGoIsA.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_ONTO_GO,
-                         infileType=InfileType.IN_ONTO_GO, mapping_sep=InMetaOntoGo.MAPPING_SEP)
+                         infileType=InfileType.IN_ONTO_GO_IS_A, mapping_sep=InMetaOntoGoIsA.MAPPING_SEP)

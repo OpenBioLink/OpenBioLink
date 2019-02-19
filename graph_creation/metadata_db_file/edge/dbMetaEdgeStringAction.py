@@ -3,6 +3,7 @@ from graph_creation.Types.dbType import DbType
 
 
 class DbMetaEdgeStringAction(DbMetadataEdge):
+    #current link can be extracted from https://stringdb-static.org/cgi/download.pl?sessionId=FuXJ9a0fkSMB&species_text=Homo+sapiens
     URL = "https://stringdb-static.org/download/protein.actions.v11.0/9606.protein.actions.v11.0.txt.gz"
     OFILE_NAME = "STRING_gene_gene_actions.tsv.gz" # tab separated txt file
     COLS = ['item_id_a', 'item_id_b','mode','action', 'is_directional', 'a_is_acting', 'score']

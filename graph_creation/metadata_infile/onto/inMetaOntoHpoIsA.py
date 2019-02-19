@@ -5,19 +5,19 @@ from graph_creation.Types.ontoType import OntoType
 from nodeType import NodeType
 
 
-class InMetaOntoUberon(InfileMetadata):
+class InMetaOntoHpoIsA(InfileMetadata):
 
-    CSV_NAME = "DB_ONTO_UBERON_ontology.csv"
+    CSV_NAME = "DB_ONTO_HPO__IS_Aontology.csv"
     USE_COLS = ['ID', 'IS_A']
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
-    NODE1_TYPE = NodeType.ANATOMY
-    NODE2_TYPE = NodeType.ANATOMY
+    NODE1_TYPE = NodeType.PHENOTYPE
+    NODE2_TYPE = NodeType.PHENOTYPE
     EDGE_TYPE = EdgeType.IS_A
     MAPPING_SEP = ';'
-    INFILE_TYPE = InfileType.IN_ONTO_UBERON
-    ONTO_TYPE = OntoType.ANATOMY
+    INFILE_TYPE = InfileType.IN_ONTO_HPO_IS_A
+    ONTO_TYPE = OntoType.PHENOTYPE
 
 
     def __init__(self, folder_path):

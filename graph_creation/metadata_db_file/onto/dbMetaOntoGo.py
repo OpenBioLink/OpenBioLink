@@ -7,7 +7,8 @@ class DbMetaOntoGo (DbMetadataOnto):
     OFILE_NAME = "GO_ontology.obo"
     QUADRUPLES = [('id', ' ', 1, 'ID'),
                   ('alt_id', ' ', 1, 'ALT_ID'),
-                  ('is_a', ' ', 1, 'IS_A')]
+                  ('is_a', ' ', 1, 'IS_A'),
+                  ('relationship: part_of', ' ', 2, 'PART_OF')]
     DB_TYPE = DbType.DB_ONTO_GO
 
     def __init__(self):

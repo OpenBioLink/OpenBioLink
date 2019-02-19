@@ -10,7 +10,7 @@ class Edge:
 
     def __eq__(self, other):
         if isinstance(other, Edge):
-            return ((self.id1 == other.id1 and self.id2 == other.id2) or (self.id1 == other.id2 and self.id2 == other.id1))
+            return self.type == other.type and self.id1 == other.id1 and self.id2 == other.id2 #todo only if not directional
         return False
 
     def __hash__(self):

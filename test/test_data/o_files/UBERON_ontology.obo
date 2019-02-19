@@ -81,18 +81,6 @@ synonym: "olfactory apparatus" RELATED [UBERON:cjm]
 synonym: "peripheral olfactory organ" EXACT [ZFA:0000047]
 synonym: "proboscis" RELATED []
 xref: BTO:0000840
-xref: CALOHA:TS-2037
-xref: EHDAA2:0001274
-xref: EHDAA:1502
-xref: EMAPA:16542
-xref: EV:0100037
-xref: EV:0100370
-xref: FMA:46472
-xref: GAID:77
-xref: galen:Nose
-xref: http://en.wikipedia.org/wiki/Nose
-xref: http://linkedlifedata.com/resource/umls/id/C0028429
-xref: http://www.snomedbrowser.com/Codes/Details/181195007
 xref: MA:0000281
 xref: MAT:0000139
 xref: MESH:D009666
@@ -109,13 +97,8 @@ relationship: contributes_to_morphology_of UBERON:0001456 ! face
 relationship: develops_from UBERON:0003050 {source="ZFA"} ! olfactory placode
 relationship: has_skeleton UBERON:0006813 ! nasal skeleton
 relationship: only_in_taxon NCBITaxon:7742 ! Vertebrata <Metazoa>
-relationship: part_of UBERON:0001004 {gci_relation="part_of", gci_filler="NCBITaxon:32523", source="http://www.ncbi.nlm.nih.gov/pubmed/25312359"} ! respiratory system
-relationship: part_of UBERON:0001456 {source="FMA", source="ZFA-def"} ! face
-relationship: part_of UBERON:0004089 {gci_relation="part_of", gci_filler="NCBITaxon:7776", notes="midface division only makes sense for gnathostomes"} ! midface
+relationship: part_of UBERON:0001062 {gci_relation="part_of", gci_filler="NCBITaxon:32523", source="http://www.ncbi.nlm.nih.gov/pubmed/25312359"} ! respiratory system
 property_value: depicted:by http://upload.wikimedia.org/wikipedia/commons/d/d0/Canine-nose.jpg
-property_value: external_definition "a protuberance in vertebrates that houses the nostrils, or nares, which admit and expel air for respiration in conjunction with the mouth. Behind the nose are the olfactory mucosa and the sinuses. Behind the nasal cavity, air next passes through the pharynx, shared with the digestive system, and then into the rest of the respiratory system. In humans, the nose is located centrally on the face; on most other mammals, it is on the upper tip of the snout[WP]. GO: The nose is the specialized structure of the face that serves as the organ of the sense of smell and as part of the respiratory system. Includes the nasi externus (external nose) and cavitas nasi (nasal cavity)[Wikipedia:Nose]." xsd:string {source="http://en.wikipedia.org/wiki/Nose"}
-property_value: external_definition "Organ that is the specialized structure of the face that contains olfactory neurons. The peripheral olfactory organ is paired[ZFA:0000047]." xsd:string {source="ZFA:0000047"}
-property_value: external_definition "the organ that is specialized for smell and is part of the respiratory system" xsd:string {source="MP:0002233"}
 property_value: taxon_notes "the structure of the nose varies across vertebrates. In tetrapods the nose is part of the respiratory system.[PMID:25312359]" xsd:string
 
 

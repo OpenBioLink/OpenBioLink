@@ -12,7 +12,7 @@ class UserInteractor():
             sys.exit()
 
     @staticmethod
-    def check_if_file_exisits(file_path): #todo naming
+    def skip_existing_files(file_path):
         skip = None
         for_all = False
         if os.path.isfile(file_path):
@@ -35,3 +35,8 @@ class UserInteractor():
                 skip = True
                 for_all = True
         return skip, for_all
+
+    @staticmethod
+    def print_verbose(message):
+
+        print(message)

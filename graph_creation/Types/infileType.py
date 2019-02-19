@@ -1,10 +1,12 @@
 from enum import Enum
 
 class InfileType(Enum):
-    IN_ONTO_GO = 0
-    IN_ONTO_DO = 1
-    IN_ONTO_HPO = 2
-    IN_ONTO_UBERON = 3
+    IN_ONTO_GO_IS_A = 0
+    IN_ONTO_DO_IS_A = 1
+    IN_ONTO_HPO_IS_A = 2
+    IN_ONTO_UBERON_IS_A = 3
+    IN_ONTO_GO_PART_OF = 4
+    IN_ONTO_UBERON_PART_OF = 5
 
     IN_EDGE_CDT_PATH = 100
     IN_EDGE_DISGENET = 101

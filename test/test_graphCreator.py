@@ -8,7 +8,7 @@ from graph_creation.metadata_db_file import *
 
 class TestGraphCreator(TestCase):
 
-    def tes_graph_creation(self):
+    def test_graph_creation(self):
 
         manual_db_file_metadata = []
 
@@ -146,8 +146,7 @@ class TestGraphCreator(TestCase):
 
 
 
-t = TestGraphCreator()
-t.tes_graph_creation()
+
 
 
 

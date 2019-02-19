@@ -3,7 +3,7 @@ from enum import Enum
 
 class EdgeType (Enum):
     IS_A = 0
-    HAS_A = 1
+    PART_OF = 1
 
     GENE_GENE = 10
     GENE_GO = 11

@@ -12,8 +12,8 @@ glob.SKIP_EXISTING_FILES = True
 graph_creator = GraphCreator("C:\\Users\\anna\\Desktop\\master")
 #graph_creator = GraphCreator("test_data")
 
-#print ("\n\n############### downloading files #################################")
-#graph_creator.download_db_files()
+print ("\n\n############### downloading files #################################")
+graph_creator.download_db_files()
 
 print ("\n\n############### creating graph input files #################################")
 graph_creator.create_input_files()

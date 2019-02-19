@@ -5,22 +5,22 @@ from graph_creation.Types.ontoType import OntoType
 from nodeType import NodeType
 
 
-class InMetaOntoHpo(InfileMetadata):
+class InMetaOntoGoIsA(InfileMetadata):
 
-    CSV_NAME = "DB_ONTO_HPO_ontology.csv"
+    CSV_NAME = "DB_ONTO_GO_IS_A_ontology.csv"
     USE_COLS = ['ID', 'IS_A']
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
-    NODE1_TYPE = NodeType.PHENOTYPE
-    NODE2_TYPE = NodeType.PHENOTYPE
+    NODE1_TYPE = NodeType.GO
+    NODE2_TYPE = NodeType.GO
     EDGE_TYPE = EdgeType.IS_A
     MAPPING_SEP = ';'
-    INFILE_TYPE = InfileType.IN_ONTO_HPO
-    ONTO_TYPE = OntoType.PHENOTYPE
+    INFILE_TYPE = InfileType.IN_ONTO_GO_IS_A
+    ONTO_TYPE = OntoType.GO
 
 
     def __init__(self, folder_path):
-        super().__init__(csv_name=InMetaOntoHpo.CSV_NAME,
+        super().__init__(csv_name=self.CSV_NAME,
                          folder_path=folder_path,
-                         infileType=InMetaOntoHpo.INFILE_TYPE)
+                         infileType=self.INFILE_TYPE)

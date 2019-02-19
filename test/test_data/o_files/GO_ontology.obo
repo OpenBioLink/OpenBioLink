@@ -30,6 +30,9 @@ def: "The distribution of mitochondria, including the mitochondrial genome, into
 synonym: "mitochondrial inheritance" EXACT []
 is_a: GO:0000002 ! organelle inheritance
 is_a: GO:0000003 ! mitochondrion distribution
+relationship: part_of GO:0000002 ! organelle inheritance
+relationship: part_of GO:0000003 ! mitochondrion distribution
+
 
 [Term]
 id: GO:0000002
@@ -53,6 +56,7 @@ subset: goslim_plant
 synonym: "reproductive physiological process" EXACT []
 xref: Wikipedia:Reproduction
 is_a: GO:0000006 ! biological_process
+relationship: part_of GO:0000006 ! biological_process
 
 [Term]
 id: GO:0000005

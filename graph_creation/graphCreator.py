@@ -43,11 +43,6 @@ class GraphCreator():
 
 
         if not glob.DIRECTED:
-         #   if use_db_metadata_classes is None:
-         #       use_db_metadata_classes = [x for x in utils.get_leaf_subclasses(DbMetadata)]
-         #   use_db_metadata_classes = [x for x in use_db_metadata_classes if
-         #                             not issubclass(x, DbMetadataOnto)]
-
         # remove onto
             if use_edge_metadata_classes is None: #todo test
                 use_edge_metadata_classes = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)]
@@ -63,7 +58,7 @@ class GraphCreator():
                 use_edge_metadata_classes = temp_use_edge_metadata_classes
                 #use_edge_metadata_classes = [x for x in use_edge_metadata_classes if not issubclass(type(x), EdgeOntoMetadata)] #todo better way to identify onto edges?
 
-        # only use the desired sources
+        # use only the desired sources
         if use_db_metadata_classes is not None:
             self.init_custom_sources_bottom_up(use_db_metadata_classes)
         if use_edge_metadata_classes is not None:
@@ -82,7 +77,7 @@ class GraphCreator():
         for db_file in tqdm(self.db_file_metadata):
             o_file_path = os.path.join(glob.O_FILE_PATH, db_file.ofile_name)
             if not for_all:
-                skip, for_all = UserInteractor.check_if_file_exisits(o_file_path)
+                skip, for_all = UserInteractor.skip_existing_files(o_file_path)
             if not (skip and os.path.isfile(o_file_path)):
                 FileDownloader.download(db_file.url, o_file_path)
 
@@ -106,7 +101,7 @@ class GraphCreator():
                 if all_files_exist and not for_all and self.readerType_processor_map[reader.readerType]:
                     first_processor = self.readerType_processor_map[reader.readerType][0]
                     first_processor_out_path = os.path.join(glob.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name)
-                    skip, for_all = UserInteractor.check_if_file_exisits(first_processor_out_path)
+                    skip, for_all = UserInteractor.skip_existing_files(first_processor_out_path)
                 if not (skip and all_files_exist): #fixme test skip
 
                     #execute processors
@@ -115,7 +110,7 @@ class GraphCreator():
                     for processor in self.readerType_processor_map[reader.readerType]:
                         out_file_path = os.path.join(glob.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name)
                         if not for_all:
-                            skip, for_all = UserInteractor.check_if_file_exisits(out_file_path)
+                            skip, for_all = UserInteractor.skip_existing_files(out_file_path)
                         if not (skip and os.path.isfile(out_file_path)):
                             out_data = processor.process(in_data)
                             FileWriter.wirte_to_file(out_data, out_file_path)
@@ -125,6 +120,7 @@ class GraphCreator():
     
     def create_graph(self):
         #create and empty stat files
+        #todo check for existing files, ask for exit
         tn_path_no_mappings = os.path.join(glob.FILE_PATH, glob.TN_ID_NO_MAPPING_FILE_NAME)
         tn_path_stats = os.path.join(glob.FILE_PATH, glob.TN_STATS_FILE_NAME)
         path_no_mappings = os.path.join(glob.FILE_PATH, glob.ID_NO_MAPPING_FILE_NAME)
@@ -138,7 +134,8 @@ class GraphCreator():
         GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep='\t')
         #create TN edges
         tn_nodes_dic, tn_edges_dic = self.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
-        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, multi_file_sep='\t', prefix='TN_')
+        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, multi_file_sep='\t', prefix='TN_') #todo btter one?
+
 
 
     def meta_edges_to_graph(self, edge_metadata_list, tn = None):
@@ -175,7 +172,7 @@ class GraphCreator():
         altid_mapping2 = self.db_mapping_file_to_dic(edge_metadata.altid_mapping2_file, edge_metadata.altid_map2_sourceindex, edge_metadata.altid_map2_targetindex)
 
         # --- edges ---
-        nodes1 = set()
+        nodes1 = set() #todo list and only before return set?
         nodes2 = set()
         edges = set()
         ids1_no_mapping = set()
@@ -250,7 +247,7 @@ class GraphCreator():
 
         nr_edges_after_mapping = len(edges)
 
-        # print statistics
+        # print statistics #todo not here
         edgeType = edge_metadata.edgeType
         if tn:
             path_no_mappings = os.path.join(glob.FILE_PATH, glob.TN_ID_NO_MAPPING_FILE_NAME)
@@ -295,7 +292,7 @@ class GraphCreator():
 # ----------- helper functions ----------
 
     def db_mapping_file_to_dic(self, mapping_file, map_sourceindex, map_targetindex):
-        """creates a dic out of a metadata_db_file mapping file (source_id to list of target_ids)"""
+        """creates a dic out of a metadata_db_file mapping file {source_id : [target_ids]}"""
         if (mapping_file is not None):
             mapping = {}
             with open(mapping_file, mode="r") as mapping_content1:
@@ -311,6 +308,7 @@ class GraphCreator():
 
 
     def cls_list_to_dic(self, clsList, keyAttr, condition = None):
+        """creates a attribute dic out of a class list {keyAttribute : [classes]}"""
         if condition is None:
             condition = lambda a:True
         dic = {}
@@ -325,6 +323,8 @@ class GraphCreator():
 
 
     def init_custom_sources_bottom_up(self, use_db_metdata_classes):
+        """hepler __init__ function for costum db_metadata_classes"""
+
         self.db_file_metadata = []
 
         # remove dbMetadata from list
@@ -343,7 +343,7 @@ class GraphCreator():
 
         #remove processors
         keep_readerType = [x.readerType for x in self.file_readers]
-        print('processors removed: ' + str( [x.__class__.__name__ for x in self.file_processors if x.readerType not in keep_readerType]))
+        print('processors removed: %s' %(str( [x.__class__.__name__ for x in self.file_processors if x.readerType not in keep_readerType])))
         self.file_processors = [x for x in self.file_processors if x.readerType in keep_readerType]
         self.readerType_processor_map = self.cls_list_to_dic(self.file_processors, 'readerType')
 
@@ -380,9 +380,11 @@ class GraphCreator():
             self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x not in additional_remove_metaEdges]
 
 
-    def init_custom_sources_top_down(self, use_edge_metdata_classes):
 
-        #remove all edge_metadata
+    def init_custom_sources_top_down(self, use_edge_metdata_classes):
+        """hepler __init__ function for custom edge_metadata_classes"""
+
+        #remove edge_metadata
         print ('Edge Metadata removed: ' + str([x.__class__.__name__ for x in self.edge_metadata if x.EDGE_INMETA_CLASS not in [y.EDGE_INMETA_CLASS for y in use_edge_metdata_classes]]))
         self.edge_metadata = []
 
@@ -426,6 +428,3 @@ class GraphCreator():
         print('DB_source removed: ' + str([x.__class__.__name__ for x in self.db_file_metadata if x.dbType not in keep_dbType]))
 
         self.db_file_metadata = [x for x in self.db_file_metadata if x.dbType in keep_dbType]
-
-
-
