@@ -13,7 +13,7 @@ class FileProcessor():
 
 
     def flat_df(self, data):
-        """creates a 'flat' df, i.e. no NAN columns and one relationship per row (a -> b,c) becomes (a -> b ; a -> c)"""
+        """creates a 'flat' df, i.e. no NAN columns and one relationship per row (a -> b,c) becomes (a -> b ; a -> c) and (a,b -> c) becomes (a->c; b->c)"""
         drop_list = sorted(set(list(data))-set(self.use_cols))
         data = data.drop(drop_list, axis=1)
         data = data.dropna()
