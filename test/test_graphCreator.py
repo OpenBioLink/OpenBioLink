@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-import graph_creation.globalConstant as glob
+import graph_creation.graphCreationConfig as glob
 from graph_creation.graphCreator import GraphCreator
 from graph_creation.metadata_db_file import *
 
@@ -117,7 +117,7 @@ class TestGraphCreator(TestCase):
 
                 glob.DIRECTED = graph_is_directed
 
-                graph_creator = GraphCreator("test_data", manual_db_file_metadata)
+                graph_creator = GraphCreator(test_data_folder, manual_db_file_metadata)
                 graph_creator.create_input_files()
                 graph_creator.create_graph()
 

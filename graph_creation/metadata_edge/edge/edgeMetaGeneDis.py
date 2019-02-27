@@ -1,6 +1,6 @@
 import os
 
-import graph_creation.globalConstant as glob
+import graph_creation.graphCreationConfig as glob
 from edgeType import EdgeType
 from graph_creation.Types.qualityType import QualityType
 from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata

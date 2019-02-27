@@ -1,7 +1,7 @@
 from graph_creation.file_reader.fileReader import FileReader
 from graph_creation.file_reader.parser.oboParser import OboParser
 from graph_creation.userInteractor import UserInteractor
-import graph_creation.globalConstant as glob
+import graph_creation.graphCreationConfig as glob
 import numpy as np
 import sys
 

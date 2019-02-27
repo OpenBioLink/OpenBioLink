@@ -1,6 +1,7 @@
 from graph_creation.graphCreator import GraphCreator
 import cProfile
-import graph_creation.globalConstant as glob
+import graph_creation.graphCreationConfig as graphConfig
+from train_test_set_creation import train_test_splitter as tts
 
 pr = cProfile.Profile()
 pr.enable()

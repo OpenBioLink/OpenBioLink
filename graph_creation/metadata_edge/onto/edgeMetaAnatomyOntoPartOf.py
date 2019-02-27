@@ -1,13 +1,14 @@
 import os
 
-import graph_creation.globalConstant as glob
+import graph_creation.graphCreationConfig as glob
 from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
 from graph_creation.metadata_infile import InMetaOntoUberonPartOf
 
 
 class EdgeMetaAnatomyOntoPartOf(EdgeOntoMetadata):
+    EDGE_INMETA_CLASS = InMetaOntoUberonPartOf
+
     def __init__(self, quality = None):
-        self.EDGE_INMETA_CLASS = InMetaOntoUberonPartOf
 
         super().__init__(is_directional=True, edges_file_path= os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME),
                          colindex1=self.EDGE_INMETA_CLASS.NODE1_COL, colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,

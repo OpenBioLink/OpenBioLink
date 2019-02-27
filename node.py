@@ -4,7 +4,6 @@ class Node :
     def __init__(self, id: str, type : NodeType, name = "" ):
         self.id = id
         self.type = type
-        self.name = name
 
     def __eq__(self, other):
         if isinstance(other, Node):
@@ -15,4 +14,4 @@ class Node :
         return hash( (self.id, self.type))
 
     def __iter__(self):
-        return iter([self.id, self.type, self.name])
+        return iter([self.id, self.type])

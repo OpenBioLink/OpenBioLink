@@ -1,6 +1,6 @@
 import csv
 import os
-import graph_creation.globalConstant as glob
+import graph_creation.graphCreationConfig as glob
 
 
 class GraphWriter ():

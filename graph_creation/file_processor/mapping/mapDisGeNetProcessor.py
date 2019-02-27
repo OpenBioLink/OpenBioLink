@@ -15,7 +15,7 @@ class MapDisGeNetProcessor(FileProcessor):
 
     def individual_preprocessing(self, data):
         # making ids unique in DisGeNet mapping file for DO and OMIM (metadata_db_file:id)
-        data.loc[data['voc'] == 'DO', 'code'] = 'DOID:' + data[data['voc'] == 'DO']['code'] #fixme wäh strings
+        data.loc[data['voc'] == 'DO', 'code'] = 'DOID:' + data[data['voc'] == 'DO']['code']
         data = data[data['voc'] == 'DO']
 
         return data

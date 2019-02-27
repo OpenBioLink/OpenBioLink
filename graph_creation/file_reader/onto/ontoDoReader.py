@@ -2,7 +2,7 @@ from graph_creation.Types.dbType import DbType
 from graph_creation.file_reader.oboReader import OboReader
 from graph_creation.Types.readerType import ReaderType
 from graph_creation.metadata_db_file.onto.dbMetaOntoDo import DbMetaOntoDo
-import graph_creation.globalConstant as g
+import graph_creation.graphCreationConfig as g
 import os
 
 class OntoDoReader(OboReader):
