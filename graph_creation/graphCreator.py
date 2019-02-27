@@ -4,7 +4,7 @@ import os
 
 from tqdm import tqdm
 
-import graph_creation.globalConstant as glob
+import graph_creation.graphCreationConfig as glob
 import graph_creation.utils as utils
 from edge import Edge
 from graph_creation.graphWriter import GraphWriter
@@ -23,6 +23,7 @@ from .userInteractor import UserInteractor
 
 class GraphCreator():
     def __init__(self, folder_path, use_db_metadata_classes = None, use_edge_metadata_classes = None):
+        #fixme how to decouple directed?
         glob.FILE_PATH = folder_path
         glob.O_FILE_PATH = os.path.join(folder_path, 'o_files')
         glob.IN_FILE_PATH = os.path.join(folder_path, 'in_files')
@@ -65,6 +66,7 @@ class GraphCreator():
             self.init_custom_sources_top_down(use_edge_metadata_classes)
 
 
+# ----------- download ----------
 
     def download_db_files(self):
         skip = None
@@ -81,6 +83,8 @@ class GraphCreator():
             if not (skip and os.path.isfile(o_file_path)):
                 FileDownloader.download(db_file.url, o_file_path)
 
+
+# ----------- create input files ----------
 
     def create_input_files(self):
         skip = None
@@ -117,7 +121,9 @@ class GraphCreator():
             else:
                 print ('\nWARNING: There is no processor for the Reader '+ str(reader.readerType))
 
-    
+
+# ----------- create graph ----------
+
     def create_graph(self):
         #create and empty stat files
         #todo check for existing files, ask for exit
@@ -134,7 +140,7 @@ class GraphCreator():
         GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep='\t')
         #create TN edges
         tn_nodes_dic, tn_edges_dic = self.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
-        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, multi_file_sep='\t', prefix='TN_') #todo btter one?
+        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, one_file_sep='\t', prefix='TN_') #todo btter one?
 
 
 
@@ -225,12 +231,14 @@ class GraphCreator():
                             if (edge_metadata.cutoff_num is None and edge_metadata.cutoff_txt is None) or \
                                      (edge_metadata.cutoff_num is not None and float(qscore) > edge_metadata.cutoff_num) or \
                                      (edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt):
-                                edges.add(Edge(id1, edge_metadata.edgeType, id2, None, qscore))
+                                bimeg_id1 = edge_metadata.node1_type.name + '_' + id1
+                                bimeg_id2 = edge_metadata.node2_type.name + '_' + id2
+                                edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore))
                                 # add an edge in the other direction when edge is undirectional and graph is directional
                                 if not edge_metadata.is_directional and glob.DIRECTED:
-                                    edges.add(Edge(id2, edge_metadata.edgeType, id1, None, qscore)) #todo test
-                                nodes1.add(Node(id1, edge_metadata.node1_type))
-                                nodes2.add(Node(id2, edge_metadata.node2_type))
+                                    edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore)) #todo test
+                                nodes1.add(Node(bimeg_id1, edge_metadata.node1_type)) #fixme add prefix to id
+                                nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))
 
                                 nr_edges_with_dup += 1
                             else:
@@ -240,7 +248,7 @@ class GraphCreator():
                 else:
                     nr_edges_no_mapping += 1
                     if (edge_id1 is None and edge_metadata.mapping1_file is not None):
-                        ids1_no_mapping.add(raw_id1 )
+                        ids1_no_mapping.add(raw_id1)
                     if (edge_id2 is None and edge_metadata.mapping2_file is not None):
                         ids2_no_mapping.add(raw_id2)
                 nr_edges += 1
