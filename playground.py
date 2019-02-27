@@ -1,107 +1,62 @@
-#import urllib.request
+import os
+import sys
+import argparse
+
+basic_path= 'C:\\Users\\anna\\PycharmProjects\\knowledge-graph-embeddings\\src'
+
+sys.path.insert(0, os.path.join(basic_path, 'models'))
+
+import base_model
 
 
-#url = "http://unmtid-shinyapps.net/download/drugcentral.dump.08262018.sql.gz"
-#file_folder = "D:\Anna_Breit\master_thesis\playground"
-#file_name = "sql_dump.sql.gz"
-#file = os.path.join(file_folder, file_name)
-#
-#urllib.request.urlretrieve(url, file)
-#
-#df = dcp.table_to_df(file, "omop_relationship")
-#print(df)
-#
-#
-#import tkinter as tk
-#from tkinter import simpledialog
-#
-#application_window = tk.Tk()
-#application_window.withdraw()
-#
-#answer = simpledialog.askstring("Input", "What is your first name?",
-#                                parent=application_window)
-#if answer is not None:
-#    print("Your first name is ", answer)
-#else:
-#    print("You don't have a first name?")
-#
-#answer = simpledialog.askinteger("Input", "What is your age?",
-#                                 parent=application_window,
-#                                 minvalue=0, maxvalue=100)
-#if answer is not None:
-#    print("Your age is ", answer)
-#else:
-#    print("You don't have an age?")
-#
-#answer = simpledialog.askfloat("Input", "What is your salary?",
-#                               parent=application_window,
-#                               minvalue=0.0, maxvalue=100000.0)
-#if answer is not None:
-#    print("Your salary is ", answer)
-#else:
-#    print("You don't have a salary?")
-#
-#import tkinter as tk
-#from tkinter import filedialog
-#
-#
-#
-#filename = filedialog.askdirectory() #show an "Open" dialog box and return the path to the selected file
-#print(filename)
-#
-#class Application(tk.Frame):
-#    def __init__(self, master=None):
-#        super().__init__(master)
-#        self.master = master
-#        self.pack()
-#        self.create_widgets()
-#
-#    def create_widgets(self):
-#        self.hi_there = tk.Button(self)
-#        self.hi_there["text"] = "Hello World\n(click me)"
-#        self.hi_there["command"] = self.say_hi
-#        self.hi_there.pack(side="top")
-#
-#        self.quit = tk.Button(self, text="QUIT", fg="red",
-#                              command=self.master.destroy)
-#        self.quit.pack(side="bottom")
-#
-#    def say_hi(self):
-#        print("hi there, everyone!")
-#
-#root = tk.Tk()
-#app = Application(master=root)
-##app.mainloop()
+def do_print(args):
+    print(args.a)
+    print(args.b)
+    print(args)
 
-import cProfile
-s = ['AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF',
- 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF',
- 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF',
- 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT',
- 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST',
- 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF',
- 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF',
- 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF',
- 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY',
- 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'AACAF', 'AACAY', 'AACTFAAGC', 'AAGIY', 'AAIGF', 'AAMAF', 'AAPH', 'AAPT', 'AAST', 'AATDF', 'AATGF', 'AATRL', 'AAUKF', 'AAWC', 'AABY', 'ABCAF', 'ABCCF', 'ABCE', 'ABCFF', 'ABCZF', 'ABCZY', 'ABEPF', 'ABHD', 'ABHI', 'ABLT', 'ABLYF', 'ABNAF', 'ABNK', 'ABNRY', 'one', 'two', 'one', 'two', 'one', 'two', 'one', 'two', 'one', 'two', 'one', 'two', 'three', 'four']
+def get_args_parser ():
+    p = argparse.ArgumentParser('Link prediction models')
+    p.add_argument('--a', default='foo', type=str, help='training mode ["pairwise", "single"]')
+    p.add_argument('--b')
+    p.add_argument('--c', default='bar')
+    return p
 
-strings = ['AACAF','AACAY','AACTF'
-'AAGC','AAGIY','AAIGF',
-'AAMAF','AAPH','AAPT',
-'AAST','AATDF','AATGF',
-'AATRL','AAUKF','AAWC',
-'AABY','ABCAF','ABCCF',
-'ABCE','ABCFF','ABCZF',
-'ABCZY','ABEPF','ABHD',
-'ABHI','ABLT','ABLYF',
-'ABNAF','ABNK','ABNRY']
+def man_arg_parse(args_list= None):
+    p = get_args_parser()
+    if args_list:
+        args= p.parse_args(args_list)
+    else:
+        args = p.parse_args()
+    do_print(args)
 
 
-def function():
-    list = []
-    for i in range (len(s)-1):
-        y= s[i]+ s[i+1]
-        list.append(y)
-    print(len(list))
 
-cProfile.run('function()')
+def do_stuff(args):
+    print(args.u)
+    print(args.p)
+
+
+def main(args_list=None):
+    parser = argparse.ArgumentParser(description='get data', add_help=False,
+                                     usage='this_script.py -u username -p password [options]')
+    parser.add_argument('-u', type=bool, help='username')
+    parser.add_argument('-p', type=str, help='password')
+    parser.add_argument('-i', nargs='+', type=str, help='List of IDs')
+    ...
+
+    if args_list:
+        args = parser.parse_args(args_list)
+    else:
+        args = parser.parse_args()
+
+    do_stuff(args)
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+

@@ -100,18 +100,18 @@ class TestGraphCreator(TestCase):
 
         # global variables
         glob.QUALITY = None
-        glob.INTERACTIVE_MODE = True
+        glob.INTERACTIVE_MODE = False
         glob.SKIP_EXISTING_FILES = False
 
         directed_tuple =  True, 'TR_DIR_'
         undirected_tuple =  False, 'TR_NOT_'
-        cases = [directed_tuple, undirected_tuple]
+        cases = [directed_tuple]#, undirected_tuple]
 
         for case in cases:
 
             graph_is_directed, true_ref_file_prefix = case
-            print('##########################################\n')
-            print('GRAPH IS DIRECTED: ' + str(graph_is_directed))
+            print('\n##########################################')
+            print('GRAPH IS DIRECTED: ' + str(graph_is_directed) + '\n')
 
             with self.subTest():
 
