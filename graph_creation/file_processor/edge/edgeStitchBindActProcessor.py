@@ -6,12 +6,12 @@ from graph_creation.metadata_infile import InMetaEdgeStitchBindAct
 
 class EdgeStitchBindActProcessor(FileProcessor):
 
-    META_EDGE_CLASS = InMetaEdgeStitchBindAct
+    IN_META_CLASS = InMetaEdgeStitchBindAct
 
     def __init__(self):
-        self.use_cols = self.META_EDGE_CLASS.USE_COLS
+        self.use_cols = self.IN_META_CLASS.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_EDGE_STITCH_ACTION,
-                         infileType=InfileType.IN_EDGE_STITCH_BINDACT, mapping_sep=self.META_EDGE_CLASS.MAPPING_SEP)
+                         infileType=InfileType.IN_EDGE_STITCH_BINDACT, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)
 
 
     def individual_preprocessing(self, data):

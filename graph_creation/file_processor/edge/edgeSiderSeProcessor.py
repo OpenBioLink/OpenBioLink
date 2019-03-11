@@ -5,11 +5,12 @@ from graph_creation.metadata_infile.edge.inMetaEdgeSiderSe import InMetaEdgeSide
 
 
 class EdgeSiderSeProcessor(FileProcessor):
+    IN_META_CLASS = InMetaEdgeSiderSe
 
     def __init__(self):
-        self.use_cols = InMetaEdgeSiderSe.USE_COLS
+        self.use_cols = self.IN_META_CLASS.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_EDGE_SIDER_SE,
-                         infileType=InfileType.IN_EDGE_SIDER_SE, mapping_sep=InMetaEdgeSiderSe.MAPPING_SEP)
+                         infileType=InfileType.IN_EDGE_SIDER_SE, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)
 
 
     def individual_postprocessing(self, data):

@@ -6,12 +6,12 @@ from graph_creation.metadata_infile.edge.inMetaEdgeDrugCentralContraInd import I
 
 
 class EdgeDrugCentralIndProcessor(FileProcessor):
+    IN_META_CLASS = InMetaEdgeDrugCentralContraInd
 
     def __init__(self):
-        self.inMetaClass = InMetaEdgeDrugCentralContraInd
-        self.use_cols = self.inMetaClass.USE_COLS
+        self.use_cols = self.IN_META_CLASS.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_EDGE_DRUGCENTRAL_IND,
-                         infileType=InfileType.IN_EDGE_DRUGCENTRAL_CONTRA_IND, mapping_sep=self.inMetaClass.MAPPING_SEP)
+                         infileType=InfileType.IN_EDGE_DRUGCENTRAL_CONTRA_IND, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)
 
     def individual_preprocessing(self, data):
         data = data[data.relationship_name == 'contraindication']

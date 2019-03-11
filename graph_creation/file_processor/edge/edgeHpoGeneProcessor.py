@@ -5,8 +5,9 @@ from graph_creation.metadata_infile.edge.inMetaEdgeHpoGene import InMetaEdgeHpoG
 
 
 class EdgeHpoGeneProcessor(FileProcessor):
+    IN_META_CLASS = InMetaEdgeHpoGene
 
     def __init__(self):
-        self.use_cols = InMetaEdgeHpoGene.USE_COLS
+        self.use_cols = self.IN_META_CLASS.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_EDGE_HPO_GENE,
-                         infileType=InfileType.IN_EDGE_HPO_GENE, mapping_sep=InMetaEdgeHpoGene.MAPPING_SEP)
+                         infileType=InfileType.IN_EDGE_HPO_GENE, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)

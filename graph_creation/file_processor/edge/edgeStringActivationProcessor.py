@@ -7,12 +7,12 @@ from graph_creation.metadata_infile.edge.inMetaEdgeStitchActivation import InMet
 
 class EdgeStringActivationProcessor(FileProcessor):
 
-    META_EDGE_CLASS = InMetaEdgeStringActivation
+    IN_META_CLASS = InMetaEdgeStringActivation
 
     def __init__(self):
-        self.use_cols = self.META_EDGE_CLASS.USE_COLS
+        self.use_cols = self.IN_META_CLASS.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_EDGE_STRING_ACTION,
-                         infileType=InfileType.IN_EDGE_STRING_ACTIVATION, mapping_sep=self.META_EDGE_CLASS.MAPPING_SEP)
+                         infileType=InfileType.IN_EDGE_STRING_ACTIVATION, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)
 
 
     def individual_preprocessing(self, data):

@@ -43,21 +43,21 @@ class GraphCreator():
         self.infileType_inMetadata_map = {x.infileType: x for x in self.infile_metadata}
 
 
-        if not glob.DIRECTED:
-        # remove onto
-            if use_edge_metadata_classes is None: #todo test
-                use_edge_metadata_classes = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)]
-            else:
-                temp_use_edge_metadata_classes =[]
-                for edge_class in use_edge_metadata_classes:
-                    if inspect.isclass(edge_class):
-                        if not issubclass(edge_class, EdgeOntoMetadata):
-                            temp_use_edge_metadata_classes.append(edge_class())
-                    else:
-                        if not issubclass(type(edge_class), EdgeOntoMetadata):
-                            temp_use_edge_metadata_classes.append(edge_class)
-                use_edge_metadata_classes = temp_use_edge_metadata_classes
-                #use_edge_metadata_classes = [x for x in use_edge_metadata_classes if not issubclass(type(x), EdgeOntoMetadata)] #todo better way to identify onto edges?
+        #if not glob.DIRECTED:
+        ## remove onto
+        #    if use_edge_metadata_classes is None: #todo test
+        #        use_edge_metadata_classes = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)]
+        #    else:
+        #        temp_use_edge_metadata_classes =[]
+        #        for edge_class in use_edge_metadata_classes:
+        #            if inspect.isclass(edge_class):
+        #                if not issubclass(edge_class, EdgeOntoMetadata):
+        #                    temp_use_edge_metadata_classes.append(edge_class())
+        #            else:
+        #                if not issubclass(type(edge_class), EdgeOntoMetadata):
+        #                    temp_use_edge_metadata_classes.append(edge_class)
+        #        use_edge_metadata_classes = temp_use_edge_metadata_classes
+        #        #use_edge_metadata_classes = [x for x in use_edge_metadata_classes if not issubclass(type(x), EdgeOntoMetadata)] #todo better way to identify onto edges?
 
         # use only the desired sources
         if use_db_metadata_classes is not None:

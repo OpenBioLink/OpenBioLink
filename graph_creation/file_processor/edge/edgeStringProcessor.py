@@ -9,11 +9,12 @@ from graph_creation.metadata_infile.edge.inMetaEdgeString import InMetaEdgeStrin
 
 
 class EdgeStringProcessor(FileProcessor):
+    IN_META_CLASS = InMetaEdgeString
 
     def __init__(self):
-        self.use_cols = InMetaEdgeString.USE_COLS
+        self.use_cols = self.IN_META_CLASS.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_EDGE_STRING,
-                         infileType=InfileType.IN_EDGE_STRING, mapping_sep=InMetaEdgeString.MAPPING_SEP)
+                         infileType=InfileType.IN_EDGE_STRING, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)
 
 
     def individual_postprocessing(self, data):
