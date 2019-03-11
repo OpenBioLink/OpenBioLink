@@ -1,7 +1,7 @@
 from graph_creation.file_reader.fileReader import FileReader
 from graph_creation.file_reader.parser.postgresDumpParser import PostgresDumpParser as dcp
 
-class SqlReader(FileReader):
+class PostgresDumpReader(FileReader):
 
     def __init__(self, in_path, table_name, cols, readerType, dbType):
         super().__init__(in_path, readerType, dbType)

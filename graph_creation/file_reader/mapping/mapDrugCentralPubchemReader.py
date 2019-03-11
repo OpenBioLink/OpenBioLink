@@ -3,11 +3,11 @@ import os
 import graph_creation.graphCreationConfig as g
 from graph_creation.Types.dbType import DbType
 from graph_creation.Types.readerType import ReaderType
-from graph_creation.file_reader.sqlReader import SqlReader
+from graph_creation.file_reader.postgresDumpReader import PostgresDumpReader
 from graph_creation.metadata_db_file.edge.dbMetaEdgeDrugCentral import DbMetaEdgeDrugCentral
 
 
-class MapDrugCentralPubchemReader(SqlReader):
+class MapDrugCentralPubchemReader(PostgresDumpReader):
 
     DB_META_CLASS = DbMetaEdgeDrugCentral
 

@@ -1,10 +1,10 @@
 from .edgeCdtPathProcessor import EdgeCdtPathProcessor
 from .edgeDisGeNetProcessor import EdgeDisGeNetProcessor
 from .edgeGoProcessor import EdgeGoProcessor
-#from .edgeHpaProcessor import EdgeHpaProcessor
+#from .edgeHpaProcessor import EdgeHpaProcessor --> replaced by bgee
 from .edgeHpoDisProcessor import EdgeHpoDisProcessor
 from .edgeHpoGeneProcessor import EdgeHpoGeneProcessor
-#from .edgeSiderIndProcessor import EdgeSiderIndProcessor
+#from .edgeSiderIndProcessor import EdgeSiderIndProcessor --> replaced by drugcentral
 from .edgeSiderSeProcessor import EdgeSiderSeProcessor
 from .edgeStitchProcessor import EdgeStitchProcessor
 from .edgeStringProcessor import EdgeStringProcessor

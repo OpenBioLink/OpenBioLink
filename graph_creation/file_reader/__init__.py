@@ -4,4 +4,4 @@ from .onto import *
 from .fileReader import FileReader
 from .csvReader import CsvReader
 from .oboReader import OboReader
-from .sqlReader import SqlReader
+from .postgresDumpReader import PostgresDumpReader

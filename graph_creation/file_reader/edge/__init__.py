@@ -1,11 +1,11 @@
 from .edgeCdtPathReader import   EdgeCdtPathReader
-#from .edgeHpaReader import       EdgeHpaReader
+#from .edgeHpaReader import       EdgeHpaReader --> replaced by bgee
 from .edgeHpoDisReader import    EdgeHpoDisReader
 from .edgeDisGeNetReader import  EdgeDisGeNetReader
 from .edgeStringReader import    EdgeStringReader
 from .edgeGoReader import        EdgeGoReader
 from .edgeStitchReader import    EdgeStitchReader
-#from .edgeSiderIndReader import  EdgeSiderIndReader
+#from .edgeSiderIndReader import  EdgeSiderIndReader --> replaced by drugcentral
 from .edgeHpoGeneReader import   EdgeHpoGeneReader
 from .edgeSiderSeReader import   EdgeSiderSeReader
 from .edgeDrugCentralReader import EdgeDrugCentralReader

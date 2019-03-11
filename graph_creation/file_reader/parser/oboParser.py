@@ -17,8 +17,6 @@ class OboParser(object):
                     terms.append(term)
                 term = {}
                 continue
-            if line.startswith('id: UBERON:0000044'):
-                print('here')
             for tuple in quadruple_list:
                 if line.startswith(tuple[0]):
                     elements = line.split(tuple[1])
