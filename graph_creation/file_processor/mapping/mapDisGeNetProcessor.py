@@ -6,11 +6,12 @@ from graph_creation.Types.infileType import InfileType
 
 
 class MapDisGeNetProcessor(FileProcessor):
+    IN_META_CLASS = InMetaMapDisGeNet
 
     def __init__(self):
-        self.use_cols = InMetaMapDisGeNet.USE_COLS
+        self.use_cols = self.IN_META_CLASS.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_MAP_DISGENET,
-                         infileType=InfileType.IN_MAP_DISGENET, mapping_sep=InMetaMapDisGeNet.MAPPING_SEP)
+                         infileType=InfileType.IN_MAP_DISGENET, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)
 
 
     def individual_preprocessing(self, data):

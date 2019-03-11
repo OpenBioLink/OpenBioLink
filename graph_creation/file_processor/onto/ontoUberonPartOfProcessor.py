@@ -5,12 +5,12 @@ from graph_creation.metadata_infile import InMetaOntoUberonIsA, InMetaOntoUberon
 
 
 class OntoUberonPartOfProcessor(FileProcessor):
+    IN_META_CLASS = InMetaOntoUberonPartOf
 
     def __init__(self):
-        self.MetaInfileClass = InMetaOntoUberonPartOf
-        self.use_cols = self.MetaInfileClass.USE_COLS
+        self.use_cols = self.IN_META_CLASS.USE_COLS
         super().__init__(self.use_cols, readerType=ReaderType.READER_ONTO_UBERON,
-                         infileType=InfileType.IN_ONTO_UBERON_PART_OF, mapping_sep=self.MetaInfileClass.MAPPING_SEP)
+                         infileType=InfileType.IN_ONTO_UBERON_PART_OF, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)
 
 
     def individual_postprocessing(self, data):
