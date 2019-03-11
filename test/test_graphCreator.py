@@ -105,7 +105,7 @@ class TestGraphCreator(TestCase):
 
         directed_tuple =  True, 'TR_DIR_'
         undirected_tuple =  False, 'TR_NOT_'
-        cases = [directed_tuple]#, undirected_tuple]
+        cases = [directed_tuple, undirected_tuple]
 
         for case in cases:
 
@@ -121,15 +121,15 @@ class TestGraphCreator(TestCase):
                 graph_creator.create_input_files()
                 graph_creator.create_graph()
 
-
+                #fixme either create all types of output or delete wrong TR
                 true_ref_files = [f for f in os.listdir(test_data_folder) if f.startswith(true_ref_file_prefix)]# os.path.isfile(f) ]
                 for ref_file_name in true_ref_files:
                     with self.subTest(ref_file_name):
                         all_lines_in_comp_file = True
                         with open(os.path.join(test_data_folder,ref_file_name)) as f:
-                            ref_file = f.read()
+                            ref_file = f.readlines()
                         with open(os.path.join(test_data_folder,ref_file_name[7:])) as f:
-                            comp_file = f.read()
+                            comp_file = f.readlines()
                         comp_dict = {}
                         j = 0
                         for row in comp_file:
