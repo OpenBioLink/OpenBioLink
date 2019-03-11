@@ -9,10 +9,15 @@ from graph_creation.metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMap
 
 
 class EdgeMetaDisPheno(EdgeRegularMetadata):
+    LQ_CUTOFF_TEXT = []
+    MQ_CUTOFF_TEXT = []
+    HQ_CUTOFF_TEXT = ['IEA']
+
     EDGE_INMETA_CLASS = InMetaEdgeHpoDis
     MAP1_META_CLASS = InMetaMapOntoDoOmim
     MAP1_ALT_ID_META_CLASS = InMetaMapOntoDoAltid
     MAP2_ALT_ID_META_CLASS = InMetaMapOntoHpoAltid
+
 
     def __init__(self, quality : QualityType = None):
 
@@ -26,7 +31,7 @@ class EdgeMetaDisPheno(EdgeRegularMetadata):
                          colindex1=self.EDGE_INMETA_CLASS.NODE1_COL, colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
                          edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
                          node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE, node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
-                         colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL,  # todo check licenses / if IEA ok
+                         colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL, quality=quality, # todo check licenses / if IEA ok
                          mapping1_file=mapping_file1,
                          map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL, map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
                          altid_mapping1_file=altid_mapping_file1,

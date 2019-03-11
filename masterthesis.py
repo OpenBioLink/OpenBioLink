@@ -1,6 +1,8 @@
 import argparse
 import os
+import sys
 
+from graph_creation.Types.qualityType import QualityType
 from graph_creation.graphCreator import GraphCreator
 import cProfile
 import graph_creation.graphCreationConfig as graphConfig
@@ -60,7 +62,7 @@ def main(args_list=None):
     parser.add_argument('--val_frac', type=float, default='0.2')
     parser.add_argument('--crossval')
     parser.add_argument('--folds')
-    parser.add_argument('--meta', type=str, help='Path to meta_edge tripples (only required if meta-edges not known by system)')
+    parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges not known by system)')
 
     # Hyperparameter Optimization
     parser.add_argument('-c', action='store_true', help='Apply hyperparameter optimization via cross validation')
@@ -78,6 +80,13 @@ def main(args_list=None):
 
     check_args_validity(args, parser)
 
+    if args.qual == 'hq':
+        args.qual = QualityType.HQ
+    elif args.qual == 'mq':
+        args.qual = QualityType.MQ
+    elif args.qual == 'lq':
+        args.qual = QualityType.LQ
+
     if args.g:
         create_graph(args)
 
@@ -89,15 +98,15 @@ def main(args_list=None):
 if __name__ == '__main__':
     pr = cProfile.Profile()
     pr.enable()
-    #main()
+    main()
     base_dir = os.path.dirname(os.path.realpath(__file__))
     test_folder = os.path.join(base_dir, 'test')
 
 
-    tts.random_edge_split(base_dir+'\\test\\test_data\\edges.csv',
-                          base_dir+'\\test\\test_data\\TN_edges.csv',
-                          base_dir+'\\test\\test_data\\nodes.csv',
-                          val_frac=0.2, test_frac = 0.2, crossval= None, folds = None)
+    #tts.random_edge_split(base_dir+'\\test\\test_data\\edges.csv',
+    #                      base_dir+'\\test\\test_data\\TN_edges.csv',
+    #                      base_dir+'\\test\\test_data\\nodes.csv',
+     #                     val_frac=0.2, test_frac = 0.2, crossval= None, folds = None)
 
     pr.disable()
     pr.print_stats( sort="time")

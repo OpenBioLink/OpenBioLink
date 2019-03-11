@@ -9,7 +9,7 @@ class InMetaEdgeBgeeExpr(InfileMetadata):
     USE_COLS = ['gene_id', 'anatomical_entity','call_quality' ]
     NODE1_COL = 0
     NODE2_COL = 1
-    QSCORE_COL = None
+    QSCORE_COL = 2
     NODE1_TYPE = NodeType.GENE
     NODE2_TYPE = NodeType.ANATOMY
     EDGE_TYPE = EdgeType.GENE_EXPRESSED_ANATOMY

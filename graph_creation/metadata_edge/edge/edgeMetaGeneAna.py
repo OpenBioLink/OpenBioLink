@@ -9,9 +9,9 @@ from graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMap
 
 
 class EdgeMetaGeneAna(EdgeRegularMetadata):
-    LQ_CUTOFF_TEXT = 'low quality'
-    MQ_CUTOFF_TEXT = 'low quality'
-    HQ_CUTOFF_TEXT = 'high quality'
+    LQ_CUTOFF_TEXT = None
+    MQ_CUTOFF_TEXT = None
+    HQ_CUTOFF_TEXT = ['low quality']
 
     EDGE_INMETA_CLASS = InMetaEdgeBgeeExpr
     MAP1_META_CLASS = InMetaMapUniEnsNcbi
