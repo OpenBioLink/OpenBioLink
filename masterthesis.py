@@ -1,7 +1,6 @@
 import argparse
 import os
 import sys
-
 from graph_creation.Types.qualityType import QualityType
 from graph_creation.graphCreator import GraphCreator
 import cProfile
@@ -16,16 +15,20 @@ def create_graph(args):
     graphConfig.INTERACTIVE_MODE = not args.no_interact
     graphConfig.SKIP_EXISTING_FILES = args.skip
     # graph_creator = GraphCreator("C:\\Users\\anna\\Desktop\\master")
-    graph_creator = GraphCreator("test\\test_data")
+    graph_creator = GraphCreator(working_dir)
 
-    print("\n\n############### downloading files #################################")
-    # graph_creator.download_db_files()
+    if not args.no_dl:
+        print("\n\n############### downloading files #################################")
+        graph_creator.download_db_files()
 
-    print("\n\n############### creating graph input files #################################")
-    # graph_creator.create_input_files()
+    if not args.no_in:
+        print("\n\n############### creating graph input files #################################")
+        graph_creator.create_input_files()
 
-    print("\n\n############### creating graph #################################")
-    # graph_creator.create_graph()
+    if not args.no_create:
+        print("\n\n############### creating graph #################################")
+        graph_creator.create_graph()
+
 
 def create_train_test_splits(args):
     if args.meta:
@@ -40,18 +43,27 @@ def check_args_validity(args, parser):
     if not (args.g or args.s or args.c or args.t or args.e):
         parser.error("at least one action is required [-g, -s, -c, -t, -e]")
     if args.skip and args.no_interact is None:
-        parser.error("--skip requires --no_interact")
+        parser.error("option --skip requires --no_interact")
+
 
 def main(args_list=None):
+    if (len(sys.argv) < 2) and not args_list:
+        import gui
+        #fixme ? --> better way to start gui
+        return
+
     parser = argparse.ArgumentParser('Bio-Medical Graph Toolbox (BiMeG)')
 
     # Graph Creation
     parser.add_argument('-g', action='store_true', help='Generate Graph')
-    parser.add_argument('--path', type=str, default= os.getcwd(),help='specify a working directory')
+    parser.add_argument('--path', type=str, default= os.getcwd(),help='specify a working directory (default = working dictionary')
     parser.add_argument('--undir', action='store_true', help='Output-Graph should be undirectional (default = directional)')
     parser.add_argument('--qual', type=str, help= 'quality level od the output-graph, options = [hq, mq, lq], (default = None -> all entries are used)')
     parser.add_argument('--no_interact', action='store_true', help='Disables interactive mode - existing files will be replaced (default = interactive)')
     parser.add_argument('--skip', action='store_true', help='Existing files will be skipped - in combination with --no_interact (default = replace)')
+    parser.add_argument('--no_dl', action='store_true', help='No download is being performed (e.g. when local data is used)')
+    parser.add_argument('--no_in', action='store_true', help='No input_files are created (e.g. when local data is used)')
+    parser.add_argument('--no_create', action='store_true', help='No graph is created (e.g. when only in files should be created)')
 
     # Train- Test Split Generation
     parser.add_argument('-s', action='store_true', help='Generate Train-,Validation-, Test-Split')
@@ -72,6 +84,8 @@ def main(args_list=None):
 
     # Testing and Evaluation
     parser.add_argument('-e', action='store_true', help='Apply Test and Evaluation')
+
+    #todo info from config file
 
     if args_list:
         args = parser.parse_args(args_list)
@@ -101,7 +115,6 @@ if __name__ == '__main__':
     main()
     base_dir = os.path.dirname(os.path.realpath(__file__))
     test_folder = os.path.join(base_dir, 'test')
-
 
     #tts.random_edge_split(base_dir+'\\test\\test_data\\edges.csv',
     #                      base_dir+'\\test\\test_data\\TN_edges.csv',
