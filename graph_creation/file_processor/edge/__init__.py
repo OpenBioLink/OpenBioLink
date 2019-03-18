@@ -32,3 +32,4 @@ from .edgeStringExpressionProcessor import EdgeStringExpressionProcessor
 from .edgeStringInhibitionProcessor import EdgeStringInhibitionProcessor
 from .edgeStringPtmodeProcessor import EdgeStringPtmodeProcessor
 from .edgeStringReactionProcessor import EdgeStringReactionProcessor
+from .edgeTnHpoDisProcessor import EdgeTnHpoDisProcessor

@@ -14,3 +14,4 @@ from .dbMetaEdgeBgeeExpr import DbMetaEdgeBgeeExpr
 from .dbMetaEdgeBgeeDiffExpr import DbMetaEdgeBgeeDiffExpr
 from .dbMetaEdgeStitchAction import DbMetaEdgeStitchAction
 from .dbMetaEdgeStringAction import DbMetaEdgeStringAction
+from .dbMetaEdgeTnHpoDis import DbMetaEdgeTnHpoDis

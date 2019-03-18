@@ -33,3 +33,4 @@ from .edgeMetaGeneReactionGene import EdgeMetaGeneReactionGene
 from .tnEdgeMetaDisDrug import TnEdgeMetaDisDrug
 from .tnEdgeMetaGeneAna import TnEdgeMetaGeneAna
 from .tnEdgeMetaGeneOverAna import TnEdgeMetaGeneOverAna
+from .tnEdgeMetaDisPheno import TnEdgeMetaDisPheno

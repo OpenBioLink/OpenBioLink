@@ -32,3 +32,4 @@ from .inMetaEdgeStringExpression import InMetaEdgeStringExpression
 from .inMetaEdgeStringInhibition import InMetaEdgeStringInhibition
 from .inMetaEdgeStringPtmod import InMetaEdgeStringPtmod
 from .inMetaEdgeStringReaction import InMetaEdgeStringReaction
+from .inMetaEdgeTnHpoDis import InMetaEdgeTnHpoDis

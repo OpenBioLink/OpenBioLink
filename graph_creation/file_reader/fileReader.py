@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 class FileReader (ABC):
 
-    def __init__(self, in_path, readerType, dbType,):
+    def __init__(self, in_path, readerType, dbType):
         self.in_path = in_path
         self.readerType = readerType
         self.dbType = dbType
@@ -24,5 +24,5 @@ class FileReader (ABC):
 
     @abstractmethod
     def read_file(self):
-        ...
+        ... # return pandas.Dataframe
 
