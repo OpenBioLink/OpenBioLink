@@ -12,7 +12,8 @@ from graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMap
 class TnEdgeMetaGeneAna(TnEdgeRegularMetadata):
     LQ_CUTOFF_TEXT = None
     MQ_CUTOFF_TEXT = None
-    HQ_CUTOFF_TEXT = ['low quality']
+    HQ_CUTOFF_TEXT = ['low quality'] #fixme silver or low quality?
+
 
     EDGE_INMETA_CLASS = InMetaEdgeBgeeNoExpr
     TP_EDGE_CLASS = EdgeMetaGeneAna

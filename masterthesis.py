@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 from graph_creation.Types.qualityType import QualityType
-from graph_creation.graphCreator import GraphCreator
+from graph_creation.graphCreation import Graph_Creation
 import cProfile
 import graph_creation.graphCreationConfig as graphConfig
 from train_test_set_creation import train_test_splitter as tts
@@ -15,7 +15,7 @@ def create_graph(args):
     graphConfig.INTERACTIVE_MODE = not args.no_interact
     graphConfig.SKIP_EXISTING_FILES = args.skip
     # graph_creator = GraphCreator("C:\\Users\\anna\\Desktop\\master")
-    graph_creator = GraphCreator(working_dir)
+    graph_creator = Graph_Creation(working_dir)
 
     if not args.no_dl:
         print("\n\n############### downloading files #################################")

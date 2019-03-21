@@ -39,17 +39,18 @@ class FileProcessor():
         return data
 
 
-    def stitch_to_pubchem_id(self, data, id_col):
-        data[data.columns[id_col]] = data[data.columns[id_col]].str[4:].str.lstrip("0")
-        #todo faster if via int?
-        #fixme A value is trying to be set on a copy of a slice from a DataFrame. Try using .loc[row_indexer,col_indexer] = value instead
-        return data
-
-
     def process(self, data):
         data = self.individual_preprocessing(data)
         data = data[self.use_cols]
         if self.mapping_sep is not None:
             data = self.flat_df(data)
         data = self.individual_postprocessing(data)
+        return data
+
+
+
+    def stitch_to_pubchem_id(self, data, id_col):
+        data[data.columns[id_col]] = data[data.columns[id_col]].str[4:].str.lstrip("0")
+        #todo faster if via int?
+        #fixme A value is trying to be set on a copy of a slice from a DataFrame. Try using .loc[row_indexer,col_indexer] = value instead
         return data

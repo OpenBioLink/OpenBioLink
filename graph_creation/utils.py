@@ -1,3 +1,5 @@
+import csv
+
 import pandas
 from functools import reduce
 
@@ -11,8 +13,10 @@ def get_leaf_subclasses(cls, classSet=None):
         classSet.union(x for c in cls.__subclasses__() for x in get_leaf_subclasses(c, classSet))
     return classSet
 
+
  #def get_all_subclasses(self, cls):
     #    return set(cls.__subclasses__()).union([x for c in cls.__subclasses__() for x in self.get_all_subclasses(c)])
+
 
 def remove_bidir_edges_from_df (data):
     no_rows, _ = data.shape
@@ -52,3 +56,34 @@ def rgetattr(obj, attr, *args):
     def _getattr(obj, attr):
         return getattr(obj, attr, *args)
     return reduce(_getattr, [obj] + attr.split('.'))
+
+
+def db_mapping_file_to_dic(mapping_file, map_sourceindex, map_targetindex):
+       """creates a dic out of a metadata_db_file mapping file {source_id : [target_ids]}"""
+       if (mapping_file is not None):
+           mapping = {}
+           with open(mapping_file, mode="r") as mapping_content1:
+               reader = csv.reader(mapping_content1, delimiter=";")
+
+               for row in reader:
+                   if row[map_sourceindex] in mapping:
+                       mapping[row[map_sourceindex]].append(row[map_targetindex])
+                   else:
+                       mapping[row[map_sourceindex]] = [row[map_targetindex]]
+               mapping_content1.close()
+           return mapping
+
+
+def cls_list_to_dic(clsList, keyAttr, condition = None):
+   """creates a attribute dic out of a class list {keyAttribute : [classes]}"""
+   if condition is None:
+       condition = lambda a:True
+   dic = {}
+   for cls in clsList:
+       if condition(cls):
+           key = rgetattr(cls, keyAttr)
+           if key in dic:
+               dic[key].append(cls)
+           elif key is not None:
+               dic[key]= [cls]
+   return dic
