@@ -107,7 +107,7 @@ class GraphCreator():
                                 # add an edge in the other direction when edge is undirectional and graph is directional
                                 if not edge_metadata.is_directional and glob.DIRECTED:
                                     edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore)) #todo test
-                                nodes1.add(Node(bimeg_id1, edge_metadata.node1_type)) #fixme add prefix to id
+                                nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
                                 nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))
 
                                 nr_edges_with_dup += 1
@@ -166,9 +166,3 @@ class GraphCreator():
 
         return nodes1, nodes2, edges
 
-
-# ----------- helper functions ----------
-
-
-#
-    #

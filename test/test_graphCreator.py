@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 
 import graph_creation.graphCreationConfig as glob
-from graph_creation.graphCreator import GraphCreator
+from graph_creation.graphCreation import Graph_Creation
 from graph_creation.metadata_db_file import *
 
 
@@ -40,6 +40,8 @@ class TestGraphCreator(TestCase):
         dbMetaEdgeHpoDis = DbMetaEdgeHpoDis
         dbMetaEdgeHpoDis.OFILE_NAME = 'HPO_disease_phenotype.tab'
         manual_db_file_metadata.append(dbMetaEdgeHpoDis)
+
+        #todo include TN_HPO
 
         dbMetaEdgeHpoGene = DbMetaEdgeHpoGene
         dbMetaEdgeHpoGene.OFILE_NAME = 'HPO_gene_phenotype.tsv'
@@ -97,6 +99,7 @@ class TestGraphCreator(TestCase):
 
         test_folder = os.path.dirname(os.path.realpath(__file__))
         test_data_folder = os.path.join(test_folder, 'test_data')
+        true_ref_folder = os.path.join(test_data_folder, 'TR_files')
 
         # global variables
         glob.QUALITY = None
@@ -105,7 +108,7 @@ class TestGraphCreator(TestCase):
 
         directed_tuple =  True, 'TR_DIR_'
         undirected_tuple =  False, 'TR_NOT_'
-        cases = [directed_tuple, undirected_tuple]
+        cases = [directed_tuple,undirected_tuple]
 
         for case in cases:
 
@@ -117,16 +120,17 @@ class TestGraphCreator(TestCase):
 
                 glob.DIRECTED = graph_is_directed
 
-                graph_creator = GraphCreator(test_data_folder, manual_db_file_metadata)
+                graph_creator = Graph_Creation(test_data_folder, manual_db_file_metadata)
                 graph_creator.create_input_files()
-                graph_creator.create_graph()
+                graph_creator.create_graph(one_file_sep='\t', multi_file_sep='\t')
 
                 #fixme either create all types of output or delete wrong TR
-                true_ref_files = [f for f in os.listdir(test_data_folder) if f.startswith(true_ref_file_prefix)]# os.path.isfile(f) ]
+                true_ref_files = [f for f in os.listdir(true_ref_folder) if f.startswith(true_ref_file_prefix)]# os.path.isfile(f) ]
+                missing_elements = []
                 for ref_file_name in true_ref_files:
                     with self.subTest(ref_file_name):
                         all_lines_in_comp_file = True
-                        with open(os.path.join(test_data_folder,ref_file_name)) as f:
+                        with open(os.path.join(true_ref_folder,ref_file_name)) as f:
                             ref_file = f.readlines()
                         with open(os.path.join(test_data_folder,ref_file_name[7:])) as f:
                             comp_file = f.readlines()
@@ -139,14 +143,13 @@ class TestGraphCreator(TestCase):
                         for row in ref_file:
                             if row not in comp_dict.values():
                                 all_lines_in_comp_file = False
+                                missing_elements.append(row)
                             i += 1
+
+                        if not all_lines_in_comp_file:
+                            print('missing elements:', missing_elements)
+
 
                         assert (j == i)
                         assert (all_lines_in_comp_file)
-
-
-
-
-
-
 

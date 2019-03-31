@@ -38,7 +38,7 @@ class OboReader(FileReader):
                 no_occurences = [x for x in defined_cols if x not in df_cols]
                 info_string = '\nWARNING: Reader %s should parse %s but there are no occurrences in file %s. '  %(str(self.readerType), str(no_occurences), self.in_path)
                 if glob.INTERACTIVE_MODE:
-                    continue_explain_string = 'Continue if you do not need those edges in your graph'
+                    continue_explain_string = 'Continue if you do not need these edges in your graph'
                     UserInteractor.ask_for_exit(info_string + continue_explain_string)
                     for col in no_occurences:
                         df[col]=np.nan

@@ -51,7 +51,8 @@ class TestDbMetaSubclasses(unittest.TestCase):
         self.assertTrue(DbMetaEdgeStitch.DB_TYPE ==  DbType.DB_EDGE_STITCH)
         self.assertTrue(DbMetaEdgeSiderSe.DB_TYPE ==  DbType.DB_EDGE_SIDER_SE)
         self.assertTrue(DbMetaEdgeHpoGene.DB_TYPE ==  DbType.DB_EDGE_HPO_GENE)
-        self.assertTrue(DbMetaEdgeHpoDis.DB_TYPE ==  DbType.DB_EDGE_HPO_DIS)
+        self.assertTrue(DbMetaEdgeHpoDis.DB_TYPE == DbType.DB_EDGE_HPO_DIS)
+        self.assertTrue(DbMetaEdgeTnHpoDis.DB_TYPE == DbType.DB_EDGE_TN_HPO_DIS)
         self.assertTrue(DbMetaEdgeGo.DB_TYPE ==  DbType.DB_EDGE_GO)
 
         self.assertTrue(DbMetaOntoDo.DB_TYPE ==  DbType.DB_ONTO_DO)

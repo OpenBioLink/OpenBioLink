@@ -1,5 +1,5 @@
-geneId	geneSymbol	diseaseId	diseaseName	score	NofPmids	NofSnps	source
-1	NAT2	C0005000	Bladder Neoplasm	0.245871429880008	5	0	CTD_human
-10	NAT2	C0000002	Drug Allergy	0.202681755307501	3	0	CTD_human
-10	NAT2	C0000001	Precursor Cell Lymphoblastic Leukemia Lymphoma	0.204814057046576	1	0	CTD_human
-2	ADA	C0000002	Drug Allergy	0.2	0	0	HPO
+geneId	geneSymbol	DSI	DPI	diseaseId	diseaseName	diseaseType	diseaseClass	diseaseSemanticType	score	EI	YearInitial	YearFinal	NofPmids	NofSnps	source
+1	NAT2	0.857	0.172	C0005000	Bladder Neoplasm	phenotype	C06;C23	Finding	0.245871429880008	0.848484848484849	1998	2016	5	0	CTD_human
+10	NAT2	0.857	0.172	C0000002	Drug Allergy	disease	F03	Mental or Behavioral Dysfunction	0.202681755307501		2017	2017	3	0	CTD_human
+10	NAT2	0.857	0.172	C0000001	Precursor Cell Lymphoblastic Leukemia Lymphoma	disease	C10;F03	Disease or Syndrome	0.204814057046576		2017	2017	1	0	CTD_human
+2	ADA	0.857	0.172	C0000002	Drug Allergy	disease	C10;F03	Disease or Syndrome	0.2		2017	2017	0	0	HPO

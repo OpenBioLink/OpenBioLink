@@ -122,7 +122,7 @@ class Graph_Creation():
 
 # ----------- create graph ----------
 
-    def create_graph(self):
+    def create_graph(self, one_file_sep='\t', multi_file_sep=None):
         #create and empty stat files
         #todo check for existing files, ask for exit
         gc = GraphCreator()
@@ -136,10 +136,10 @@ class Graph_Creation():
         open(path_stats, 'w').close()
         #create graph
         nodes_dic, edges_dic = gc.meta_edges_to_graph(self.edge_metadata)
-        GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep='\t')
+        GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep)
         #create TN edges
         tn_nodes_dic, tn_edges_dic = gc.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
-        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, one_file_sep='\t', prefix='TN_') #todo btter one?
+        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, prefix='TN_') #todo btter one?
 
 
 
