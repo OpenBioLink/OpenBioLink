@@ -10,7 +10,7 @@ from graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMap
 class EdgeMetaGeneOverAna(EdgeRegularMetadata):
     LQ_CUTOFF_TEXT = None
     MQ_CUTOFF_TEXT = None
-    HQ_CUTOFF_TEXT = ['low quality'] #fixme silver or low quality?
+    HQ_CUTOFF_TEXT = ['low quality']
 
     EDGE_INMETA_CLASS = InMetaEdgeBgeeOverExpr
     MAP1_META_CLASS = InMetaMapUniEnsNcbi
