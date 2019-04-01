@@ -9,7 +9,10 @@ from graph_creation.metadata_db_file import *
 class TestGraphCreator(TestCase):
 
     def test_graph_creation(self):
-
+        """ creates test graph from test o_files and compares against true reference test graph
+        tests directed and undirected version of graph (and TN-graph)
+        well as the output into a single as well as in separate files
+        """
         manual_db_file_metadata = []
 
         #EDGES --------------------------------------------------
@@ -41,7 +44,9 @@ class TestGraphCreator(TestCase):
         dbMetaEdgeHpoDis.OFILE_NAME = 'HPO_disease_phenotype.tab'
         manual_db_file_metadata.append(dbMetaEdgeHpoDis)
 
-        #todo include TN_HPO
+        dbMetaEdgeTnHpoDis = DbMetaEdgeTnHpoDis
+        dbMetaEdgeTnHpoDis.OFILE_NAME = 'HPO_TN_disease_phenotype.tab'
+        manual_db_file_metadata.append(dbMetaEdgeTnHpoDis)
 
         dbMetaEdgeHpoGene = DbMetaEdgeHpoGene
         dbMetaEdgeHpoGene.OFILE_NAME = 'HPO_gene_phenotype.tsv'
@@ -124,7 +129,6 @@ class TestGraphCreator(TestCase):
                 graph_creator.create_input_files()
                 graph_creator.create_graph(one_file_sep='\t', multi_file_sep='\t')
 
-                #fixme either create all types of output or delete wrong TR
                 true_ref_files = [f for f in os.listdir(true_ref_folder) if f.startswith(true_ref_file_prefix)]# os.path.isfile(f) ]
                 missing_elements = []
                 for ref_file_name in true_ref_files:
@@ -148,7 +152,6 @@ class TestGraphCreator(TestCase):
 
                         if not all_lines_in_comp_file:
                             print('missing elements:', missing_elements)
-
 
                         assert (j == i)
                         assert (all_lines_in_comp_file)

@@ -29,9 +29,6 @@ class BimegGui(tk.Tk):
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
 
-            # put all of the pages in the same location;
-            # the one on the top of the stacking order
-            # will be the one that is visible.
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame("StartPage")
@@ -50,16 +47,18 @@ class BimegGui(tk.Tk):
 
 
     def show_frame(self, page_name):
-        '''Show a frame for the given page name'''
+        """ Show a frame for the given page name """
         frame = self.frames[page_name]
         frame.tkraise()
 
     def start(self):
+        """ start script and close gui"""
         if messagebox.askokcancel("Quit", "Do you want to start now?"):
             arg_list = []
             arg_list.extend(self.ARGS_LIST_GRAPH_CREATION)
             arg_list.extend(self.ARGS_LIST_TRAIN_TEST_SPLT)
             masterthesis.main(args_list=arg_list)
+            app.destroy()
 
 
 class StartPage(tk.Frame):
@@ -142,6 +141,7 @@ class GraphCreationFrame(tk.Frame):
         tk.Button(self, text="Next", command=lambda: self.next_page()).pack()
 
         #self.no_interact = tk.BooleanVar()
+
         #no_interact_box = tk.Checkbutton(self, text='graph is undirected', variable=self.no_interact)
 
         #self.skip = tk.BooleanVar()
@@ -242,6 +242,7 @@ class ConfirmFrame(tk.Frame):
 
 
 app = BimegGui()
+
 
 
 def on_closing():
