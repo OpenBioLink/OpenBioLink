@@ -1,4 +1,4 @@
-import cProfile
+import logging
 
 import pandas
 
@@ -45,12 +45,14 @@ class FileProcessor():
         if self.mapping_sep is not None:
             data = self.flat_df(data)
         data = self.individual_postprocessing(data)
+        rows,_ = data.shape
+        if rows == 0:
+            logging.warning('WARNING: The preprocessing of this processor removed all data.')
         return data
 
 
 
     def stitch_to_pubchem_id(self, data, id_col):
-        data[data.columns[id_col]] = data[data.columns[id_col]].str[4:].str.lstrip("0")
+        data.iloc[:,id_col] = data[data.columns[id_col]].str[4:].str.lstrip("0")
         #todo faster if via int?
-        #fixme A value is trying to be set on a copy of a slice from a DataFrame. Try using .loc[row_indexer,col_indexer] = value instead
         return data

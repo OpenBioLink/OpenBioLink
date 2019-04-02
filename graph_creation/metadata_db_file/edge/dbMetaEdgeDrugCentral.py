@@ -6,7 +6,7 @@ class DbMetaEdgeDrugCentral(DbMetadataEdge):
     URL = "http://unmtid-shinyapps.net/download/drugcentral.dump.08262018.sql.gz"
     OFILE_NAME = "sql_dump.sql.gz"
 
-    TABLE_NAME_IND = "omop_relationship"
+    TABLE_NAME_IND = "public.omop_relationship"
     COLS_IND = [
         "id",
         "struct_id",
@@ -19,7 +19,7 @@ class DbMetaEdgeDrugCentral(DbMetadataEdge):
         "snomed_conceptid"
     ]
 
-    TABLE_NAME_MAP_PUBCHEM = "identifier"
+    TABLE_NAME_MAP_PUBCHEM = "public.identifier"
     COLS_MAP_PUBCHEM = [
         "id",
         "identifier",

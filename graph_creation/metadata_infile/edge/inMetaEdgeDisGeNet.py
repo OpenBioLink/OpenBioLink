@@ -16,7 +16,7 @@ class InMetaEdgeDisGeNet(InfileMetadata):
     INFILE_TYPE = InfileType.IN_EDGE_DISGENET
     MAPPING_SEP = None
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaEdgeDisGeNet.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaEdgeDisGeNet.INFILE_TYPE)

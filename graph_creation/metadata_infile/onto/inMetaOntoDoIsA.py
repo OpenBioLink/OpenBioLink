@@ -1,7 +1,6 @@
 from edgeType import EdgeType
 from graph_creation.Types.infileType import InfileType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
-from graph_creation.Types.ontoType import OntoType
 from nodeType import NodeType
 
 
@@ -18,9 +17,8 @@ class InMetaOntoDoIsA(InfileMetadata):
     MAPPING_SEP = ';'
     INFILE_TYPE = InfileType.IN_ONTO_DO_IS_A
 
-    ONTO_TYPE = OntoType.DIS
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=self.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=self.INFILE_TYPE)

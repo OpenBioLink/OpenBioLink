@@ -1,7 +1,8 @@
 import csv
+import logging
+from functools import reduce
 
 import pandas
-from functools import reduce
 
 
 def get_leaf_subclasses(cls, classSet=None):
@@ -30,7 +31,7 @@ def remove_bidir_edges_from_df (data):
         elif len(cols)==2:
             other_row = row[2] + row[1]
         else:
-            print(('WARNING: removing bidirectional edges requires 2 or 3 (incl score) columns but cols are '.join(cols))+ 'edges are not removed' )
+            logging.warning(('removing bidirectional edges requires 2 or 3 (incl score) columns but cols are '.join(cols))+ 'edges are not removed' )
             return data
         if len(cols)==3:
             if other_row not in temp_dic.keys():

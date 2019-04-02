@@ -16,7 +16,7 @@ class InMetaEdgeCdtPath(InfileMetadata):
     INFILE_TYPE = InfileType.IN_EDGE_CDT_PATH
     MAPPING_SEP = None
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaEdgeCdtPath.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaEdgeCdtPath.INFILE_TYPE)

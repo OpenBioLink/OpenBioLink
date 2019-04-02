@@ -1,5 +1,4 @@
 from graph_creation.Types.infileType import InfileType
-from graph_creation.Types.mappingType import MappingType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
 
 
@@ -12,9 +11,8 @@ class InMetaMapUniEnsNcbi(InfileMetadata):
     MAPPING_SEP = ";"
     INFILE_TYPE = InfileType.IN_MAP_UNI_ENS_NCBI
 
-    MAP_TYPE = MappingType.ENSEMBL_NCBI
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaMapUniEnsNcbi.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaMapUniEnsNcbi.INFILE_TYPE)

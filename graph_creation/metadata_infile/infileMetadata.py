@@ -1,6 +1,6 @@
 class InfileMetadata():
 
-    def __init__(self, csv_name, folder_path, infileType):
+    def __init__(self, csv_name, cols, infileType):
         self.csv_name = csv_name
-        #self.folder_path = folder_path #todo not needed
+        self.cols = cols,
         self.infileType = infileType

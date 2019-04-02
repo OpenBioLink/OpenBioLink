@@ -1,5 +1,4 @@
 from graph_creation.Types.infileType import InfileType
-from graph_creation.Types.mappingType import MappingType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
 
 
@@ -11,9 +10,8 @@ class InMetaMapString(InfileMetadata):
     TARGET_COL = 0
     MAPPING_SEP = None
     INFILE_TYPE = InfileType.IN_MAP_STRING
-    MAP_TYPE = MappingType.STRING_NCBI
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaMapString.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaMapString.INFILE_TYPE)

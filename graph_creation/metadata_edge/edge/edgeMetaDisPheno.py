@@ -31,7 +31,7 @@ class EdgeMetaDisPheno(EdgeRegularMetadata):
                          colindex1=self.EDGE_INMETA_CLASS.NODE1_COL, colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
                          edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
                          node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE, node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
-                         colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL, quality=quality, # todo check licenses / if IEA ok
+                         colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL, quality=quality,
                          mapping1_file=mapping_file1,
                          map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL, map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
                          altid_mapping1_file=altid_mapping_file1,

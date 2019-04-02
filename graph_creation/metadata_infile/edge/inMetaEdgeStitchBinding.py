@@ -18,7 +18,7 @@ class InMetaEdgeStitchBinding(InfileMetadata):
 
     MAPPING_SEP = None
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaEdgeStitchBinding.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaEdgeStitchBinding.INFILE_TYPE)

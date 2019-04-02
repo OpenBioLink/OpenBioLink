@@ -1,4 +1,8 @@
+import logging
+import sys
+
 import pandas as pd
+
 
 class PostgresDumpParser():
 
@@ -20,14 +24,14 @@ class PostgresDumpParser():
                     if len(row)== len(cols):
                         df = df.append(pd.DataFrame([row], columns=cols), ignore_index=True)
                     else:
-                        print('row ignored: ')
-                        print(row)
-            if line.startswith("COPY public." + table_name): #todo ohne public?
+                        logging.info('postgresParser -> row ignored: ', row)
+            if line.startswith("COPY " + table_name):
                 data_started = True
                 entry_list = line.split('(')[1].split(')')[0].split(',')
-                if cols == None:
+                if cols is None:
                     cols = [x.strip() for x in entry_list]
                 else:
                     if not(len(cols)== len(entry_list)) :
-                        pass# todo throw error
+                        logging.error("PostgresDumpParser: Number of columns provided for table %s are different from number found in table. %d provided, %d found" %(table_name, len(cols), len(entry_list)))
+                        sys.exit()
         return df

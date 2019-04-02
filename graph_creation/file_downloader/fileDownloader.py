@@ -1,5 +1,8 @@
-import urllib.error, urllib.request
+import logging
 import sys
+import urllib.error
+import urllib.request
+
 
 class FileDownloader ():
     @staticmethod
@@ -10,7 +13,7 @@ class FileDownloader ():
         try:
             urllib.request.urlretrieve(url, o_file_path)
         except urllib.error.HTTPError as err:
-            print ('ERROR: HTTP %s %s:  %s' %(err.code, err.msg, err.geturl()))
+            logging.error ('ERROR: HTTP %s %s:  %s' %(err.code, err.msg, err.geturl()))
             sys.exit()
 
 

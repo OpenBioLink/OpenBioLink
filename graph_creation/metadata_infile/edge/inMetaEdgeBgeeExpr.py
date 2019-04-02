@@ -16,7 +16,7 @@ class InMetaEdgeBgeeExpr(InfileMetadata):
     INFILE_TYPE = InfileType.IN_EDGE_BGEE_EXPR
     MAPPING_SEP = None
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaEdgeBgeeExpr.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaEdgeBgeeExpr.INFILE_TYPE)

@@ -2,7 +2,7 @@ import csv
 import os
 
 from tqdm import tqdm
-
+import logging
 import graph_creation.graphCreationConfig as glob
 import graph_creation.utils as utils
 from edge import Edge
@@ -36,8 +36,8 @@ class GraphCreator():
 
     def create_nodes_and_edges (self, edge_metadata, tn= None):
         if not os.path.isfile(edge_metadata.edges_file_path):
-            print('\nWARNING: File does not exist: ' + edge_metadata.edges_file_path)
-            print('Edgetype ' + str(edge_metadata.edgeType)+ ' will not be created')
+            #todo aks for exit
+            logging.warning('File does not exist: %s ! Edgetype %s will not be created' %(edge_metadata.edges_file_path, str(edge_metadata.edgeType)))
             #sys.exit() #todo also fo mapping files
             return set(), set(), set()
 
@@ -60,6 +60,8 @@ class GraphCreator():
         nr_edges_with_dup = 0
         nr_edges_below_cutoff = 0
         nr_edges_no_mapping = 0
+
+        no_cutoff_defined = edge_metadata.cutoff_num is None and edge_metadata.cutoff_txt is None
 
         with open(edge_metadata.edges_file_path, "r", encoding="utf8") as edge_content:
 
@@ -98,15 +100,15 @@ class GraphCreator():
                             if (edge_metadata.altid_mapping2_file is not None and id2 in altid_mapping2):
                                 id2 = altid_mapping2[id2][0] #todo there should only be one
                             #check for quality cutoff
-                            if (edge_metadata.cutoff_num is None and edge_metadata.cutoff_txt is None) or \
-                                     (edge_metadata.cutoff_num is not None and float(qscore) > edge_metadata.cutoff_num) or \
-                                     (edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt):
+                            within_num_cutoff= edge_metadata.cutoff_num is not None and float(qscore) > edge_metadata.cutoff_num
+                            within_text_cutoff = edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt
+                            if no_cutoff_defined or within_num_cutoff or within_text_cutoff:
                                 bimeg_id1 = edge_metadata.node1_type.name + '_' + id1
                                 bimeg_id2 = edge_metadata.node2_type.name + '_' + id2
                                 edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore))
                                 # add an edge in the other direction when edge is undirectional and graph is directional
                                 if not edge_metadata.is_directional and glob.DIRECTED:
-                                    edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore)) #todo test
+                                    edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore))
                                 nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
                                 nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))
 
@@ -124,6 +126,11 @@ class GraphCreator():
                 nr_edges += 1
 
         nr_edges_after_mapping = len(edges)
+
+        if not no_cutoff_defined and nr_edges_below_cutoff==0:
+            logging.warning("No edges were cut off by quality cutoff, maybe the metric has changed?")
+        if nr_edges_after_mapping==0:
+            logging.warning("No edges are left after mapping and cutoff!")
 
         # print statistics #todo not here
         edgeType = edge_metadata.edgeType

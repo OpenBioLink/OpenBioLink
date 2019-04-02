@@ -1,5 +1,4 @@
 from graph_creation.Types.infileType import InfileType
-from graph_creation.Types.mappingType import MappingType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
 
 
@@ -12,9 +11,8 @@ class InMetaMapOntoHpoUmls(InfileMetadata):
     MAPPING_SEP = ';'
     INFILE_TYPE = InfileType.IN_MAP_ONTO_HPO_UMLS
 
-    MAP_TYPE = MappingType.UMLS_HPO
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaMapOntoHpoUmls.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaMapOntoHpoUmls.INFILE_TYPE)

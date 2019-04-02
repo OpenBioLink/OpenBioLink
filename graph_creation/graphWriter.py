@@ -22,7 +22,7 @@ class GraphWriter ():
 
         #todo adjacency matrix
         #key, value = nodes_dic
-        #d = {x: i for i, x in enumerate(value)} #fixme continue here
+        #d = {x: i for i, x in enumerate(value)}
     #todo outputformat for graph DB
 
     @staticmethod

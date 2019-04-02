@@ -2,10 +2,7 @@ from graph_creation.metadata_db_file.dbMetadata import DbMetadata
 
 class DbMetadataOnto (DbMetadata):
 
-    def __init__(self, url, ofile_name, dbType, onto_mapping=None):
+    def __init__(self, url, ofile_name, dbType):
         super().__init__(url, ofile_name, dbType)
-        if onto_mapping is None:
-            onto_mapping = []       #fixme what is this for
-        self.onto_mapping = onto_mapping
 
 

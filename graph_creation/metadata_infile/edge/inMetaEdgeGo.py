@@ -16,7 +16,7 @@ class InMetaEdgeGo(InfileMetadata):
     INFILE_TYPE = InfileType.IN_EDGE_GO
     MAPPING_SEP = None
 
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaEdgeGo.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaEdgeGo.INFILE_TYPE)

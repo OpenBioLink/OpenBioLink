@@ -1,5 +1,4 @@
 from graph_creation.Types.infileType import InfileType
-from graph_creation.Types.mappingType import MappingType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
 
 
@@ -12,9 +11,7 @@ class InMetaMapOntoDoAltid(InfileMetadata):
     MAPPING_SEP = ';'  # ';' sep is created while parsing
     INFILE_TYPE = InfileType.IN_MAP_ONTO_DO_ALT_ID
 
-    MAP_TYPE = MappingType.ALT_DO_DO
-
-    def __init__(self, folder_path):
+    def __init__(self):
         super().__init__(csv_name=InMetaMapOntoDoAltid.CSV_NAME,
-                         folder_path=folder_path,
+                         cols=self.USE_COLS,
                          infileType=InMetaMapOntoDoAltid.INFILE_TYPE)
