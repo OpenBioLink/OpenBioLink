@@ -35,8 +35,3 @@ class UserInteractor():
                 skip = True
                 for_all = True
         return skip, for_all
-
-    @staticmethod
-    def print_verbose(message):
-
-        print(message)

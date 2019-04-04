@@ -11,6 +11,16 @@ from node import Node
 
 class GraphCreator():
 
+    def __init__(self):
+        self.tn_path_no_mappings = os.path.join(glob.FILE_PATH, glob.TN_ID_NO_MAPPING_FILE_NAME)
+        self.tn_path_stats = os.path.join(glob.FILE_PATH, glob.TN_STATS_FILE_NAME)
+        self.path_no_mappings = os.path.join(glob.FILE_PATH, glob.ID_NO_MAPPING_FILE_NAME)
+        self.path_stats = os.path.join(glob.FILE_PATH, glob.STATS_FILE_NAME)
+        open(self.tn_path_no_mappings, 'w').close()
+        open(self.tn_path_stats, 'w').close()
+        open(self.path_no_mappings, 'w').close()
+        open(self.path_stats, 'w').close()
+
 
 
     def meta_edges_to_graph(self, edge_metadata_list, tn = None):
@@ -57,7 +67,7 @@ class GraphCreator():
         ids2 = set()
         nr_edges = 0
         nr_edges_after_mapping = 0
-        nr_edges_with_dup = 0
+        nr_edges_incl_dup = 0
         nr_edges_below_cutoff = 0
         nr_edges_no_mapping = 0
 
@@ -112,7 +122,7 @@ class GraphCreator():
                                 nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
                                 nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))
 
-                                nr_edges_with_dup += 1
+                                nr_edges_incl_dup += 1
                             else:
                                 nr_edges_below_cutoff += 1
 
@@ -135,16 +145,12 @@ class GraphCreator():
         # print statistics #todo not here
         edgeType = edge_metadata.edgeType
         if tn:
-            path_no_mappings = os.path.join(glob.FILE_PATH, glob.TN_ID_NO_MAPPING_FILE_NAME)
-            path_stats = os.path.join(glob.FILE_PATH, glob.TN_STATS_FILE_NAME)
+            path_no_mappings = self.tn_path_no_mappings
+            path_stats = self.tn_path_stats
         else:
-            path_no_mappings = os.path.join(glob.FILE_PATH, glob.ID_NO_MAPPING_FILE_NAME)
-            path_stats = os.path.join(glob.FILE_PATH, glob.STATS_FILE_NAME)
-        if not os.path.isfile(path_no_mappings):
-            open(path_no_mappings, 'w').close()
-        if not os.path.isfile(path_stats):
-            open(path_stats, 'w').close()
-        with open(path_no_mappings, 'a') as out_file: #fixme empty the file at very beginning
+            path_no_mappings = self.path_no_mappings
+            path_stats = self.path_stats
+        with open(path_no_mappings, 'a') as out_file:
             for id in ids1_no_mapping:
                 out_file.write('%s\t%s\n' %(id, edgeType))
             for id in ids2_no_mapping:
@@ -158,7 +164,7 @@ class GraphCreator():
                        'Nr edges no mapping: ' + str(nr_edges_no_mapping) + '\n' + \
                        'Nr edges below cutoff: ' + str(nr_edges_below_cutoff) + '\n' + \
                        'Edges coverage: ' + str(1-(nr_edges_no_mapping/ nr_edges)) + '\n' + \
-                       'Duplicated edges: ' + str(nr_edges_with_dup-nr_edges_after_mapping) + '\n' + \
+                       'Duplicated edges: ' + str(nr_edges_incl_dup-nr_edges_after_mapping) + '\n' + \
                        'Nr edges after mapping (final nr): ' + str(nr_edges_after_mapping) + '\n' + \
                        'Nr nodes1 no mapping: ' + str(len(ids1_no_mapping)) + '\n' + \
                        'Nr nodes2 no mapping: ' + str(len(ids2_no_mapping)) + '\n' + \

@@ -18,3 +18,7 @@ class Edge:
 
     def __iter__(self):
         return iter([self.id1, self.type, self.id2, self.qScore])
+
+    def to_sub_rel_obj_list(self):
+        return iter([self.id1, self.type, self.id2])
+

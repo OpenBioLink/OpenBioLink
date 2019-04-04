@@ -125,14 +125,6 @@ class Graph_Creation():
         #create and empty stat files
         #todo check for existing files, ask for exit
         gc = GraphCreator()
-        tn_path_no_mappings = os.path.join(glob.FILE_PATH, glob.TN_ID_NO_MAPPING_FILE_NAME)
-        tn_path_stats = os.path.join(glob.FILE_PATH, glob.TN_STATS_FILE_NAME)
-        path_no_mappings = os.path.join(glob.FILE_PATH, glob.ID_NO_MAPPING_FILE_NAME)
-        path_stats = os.path.join(glob.FILE_PATH, glob.STATS_FILE_NAME)
-        open(tn_path_no_mappings, 'w').close()
-        open(tn_path_stats, 'w').close()
-        open(path_no_mappings, 'w').close()
-        open(path_stats, 'w').close()
         #create graph
         nodes_dic, edges_dic = gc.meta_edges_to_graph(self.edge_metadata)
         GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep)
