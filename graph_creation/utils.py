@@ -1,5 +1,6 @@
 import csv
 import logging
+import urllib.request
 from functools import reduce
 
 import pandas
@@ -88,3 +89,16 @@ def cls_list_to_dic(clsList, keyAttr, condition = None):
            elif key is not None:
                dic[key]= [cls]
    return dic
+
+
+def file_exists(url):
+    opener = urllib.request.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+    urllib.request.install_opener(opener)
+    try:
+        urllib.request.urlopen(url)
+        return True
+    except:
+        return False
+
+

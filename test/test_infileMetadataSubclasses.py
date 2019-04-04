@@ -31,14 +31,14 @@ class TestInfileMetadataSubclasses(TestCase):
                 #warning
                 #self.assertTrue(hasattr(cls, 'QSCORE_COL'))
 
-    def test_onto_variables(self):
-        onto_module = onto
-        with self.subTest():
-            self.test_edge_variables()
-        clsmembers = inspect.getmembers(onto_module, inspect.isclass)
-        for clsName, cls in clsmembers:
-            with self.subTest(cls=cls):
-                 self.assertTrue(cls, 'ONTO_TYPE')
+   # def test_onto_variables(self):
+   #     onto_module = onto
+   #     with self.subTest():
+   #         self.test_edge_variables()
+   #     clsmembers = inspect.getmembers(onto_module, inspect.isclass)
+   #     for clsName, cls in clsmembers:
+   #         with self.subTest(cls=cls):
+   #              self.assertTrue(cls, 'ONTO_TYPE')
 
     def test_mapping_variables(self):
         mapping_module = mapping
@@ -47,6 +47,5 @@ class TestInfileMetadataSubclasses(TestCase):
             with self.subTest(cls = cls):
                 self.assertTrue(hasattr(cls, 'SOURCE_COL'))
                 self.assertTrue(hasattr(cls, 'TARGET_COL'))
-                self.assertTrue(hasattr(cls, 'MAP_TYPE'))
 
 

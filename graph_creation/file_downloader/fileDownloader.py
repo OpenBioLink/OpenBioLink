@@ -13,7 +13,7 @@ class FileDownloader ():
         try:
             urllib.request.urlretrieve(url, o_file_path)
         except urllib.error.HTTPError as err:
-            logging.error ('ERROR: HTTP %s %s:  %s' %(err.code, err.msg, err.geturl()))
+            logging.error ('HTTP %s %s:  %s' %(err.code, err.msg, err.geturl()))
             sys.exit()
 
 

@@ -1,18 +1,19 @@
 import os
-from unittest import TestCase
+import unittest
 
 import graph_creation.graphCreationConfig as glob
 from graph_creation.graphCreation import Graph_Creation
 from graph_creation.metadata_db_file import *
 
 
-class TestGraphCreator(TestCase):
+class TestGraphCreation(unittest.TestCase):
 
     def test_graph_creation(self):
         """ creates test graph from test o_files and compares against true reference test graph
         tests directed and undirected version of graph (and TN-graph)
         well as the output into a single as well as in separate files
         """
+
         manual_db_file_metadata = []
 
         #EDGES --------------------------------------------------
