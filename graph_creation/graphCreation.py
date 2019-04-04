@@ -121,16 +121,16 @@ class Graph_Creation():
 
 # ----------- create graph ----------
 
-    def create_graph(self, one_file_sep='\t', multi_file_sep=None):
+    def create_graph(self, one_file_sep='\t', multi_file_sep=None,weights = True):
         #create and empty stat files
         #todo check for existing files, ask for exit
         gc = GraphCreator()
         #create graph
         nodes_dic, edges_dic = gc.meta_edges_to_graph(self.edge_metadata)
-        GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep)
+        GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, weights=weights)
         #create TN edges
         tn_nodes_dic, tn_edges_dic = gc.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
-        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, prefix='TN_')
+        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, prefix='TN_', weights=weights)
 
 
 

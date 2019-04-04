@@ -13,10 +13,10 @@ class BimegGui(tk.Tk):
 
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
 
-        container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        self.container = tk.Frame(self)
+        self.container.pack(side="top", fill="both", expand=True)
+        self.container.grid_rowconfigure(0, weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
 
         self.args = []
 
@@ -24,14 +24,23 @@ class BimegGui(tk.Tk):
         self.current_frame_index = 0
 
         self.frames = {}
+        #self.frame_cls = {}
+        #for cls in (StartPage, GraphCreationFrame, SplitFrame, CrossValFrame, TrainFrame, EvalFrame, ConfirmFrame):
+        #    self.frame_cls[cls.__name__] = cls
         for F in (StartPage, GraphCreationFrame, SplitFrame, CrossValFrame, TrainFrame, EvalFrame, ConfirmFrame):
             page_name = F.__name__
-            frame = F(parent=container, controller=self)
+            frame = F(parent=self.container, controller=self)
             self.frames[page_name] = frame
 
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame("StartPage")
+
+    def get_args(self):
+        arg_list = []
+        arg_list.extend(self.ARGS_LIST_GRAPH_CREATION)
+        arg_list.extend(self.ARGS_LIST_TRAIN_TEST_SPLT)
+        return arg_list
 
 
     def set_selected_frames(self, selected_frames):
@@ -49,6 +58,9 @@ class BimegGui(tk.Tk):
     def show_frame(self, page_name):
         """ Show a frame for the given page name """
         frame = self.frames[page_name]
+        #cls = self.frame_cls[page_name]
+        #frame = cls(parent=self.container, controller=self)
+        #frame.grid(row=0, column=0, sticky="nsew")
         frame.tkraise()
 
     def start(self):
@@ -59,6 +71,7 @@ class BimegGui(tk.Tk):
             arg_list.extend(self.ARGS_LIST_TRAIN_TEST_SPLT)
             masterthesis.main(args_list=arg_list)
             app.destroy()
+
 
 
 class StartPage(tk.Frame):
@@ -119,8 +132,9 @@ class GraphCreationFrame(tk.Frame):
         label = tk.Label(self, text="Graph Creation", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
 
-        self.path = ''
+        self.path = tk.StringVar('')
         tk.Button(self, text="select path ...", command=lambda: self.browse_dir()).pack()
+        tk.Label(self, textvariable=self.path).pack()
         self.undir = tk.BooleanVar()
         tk.Checkbutton(self, text='graph is undirected', variable=self.undir).pack()
         self.qual = tk.StringVar()
@@ -135,6 +149,22 @@ class GraphCreationFrame(tk.Frame):
         tk.Checkbutton(self, text='create infiles', variable=self.create_infiles).pack()
         self.create_graph = tk.BooleanVar(value=True)
         tk.Checkbutton(self, text='create graph', variable=self.create_graph).pack()
+        self.one_output_file = tk.BooleanVar(value=True)
+        tk.Checkbutton(self, text='output graph to single file', variable=self.one_output_file).pack()
+        self.single_sep = tk.StringVar(value='t')
+        tk.Label(self, text='separator (t for tab, n for newline)').pack()
+        tk.Entry(self, textvariable=self.single_sep).pack()
+        self.multi_output_file = tk.BooleanVar(value=False)
+        tk.Checkbutton(self, text='output graph to multiple files (one per edge-/node-type)', variable=self.multi_output_file).pack()
+        self.multi_sep = tk.StringVar(value=None)
+        tk.Label(self,text='separator (t for tab, n for newline)').pack()
+        tk.Entry(self, textvariable=self.multi_sep).pack()
+        self.no_weights = tk.BooleanVar(value=False)
+        tk.Checkbutton(self, text='output graph without weights').pack()
+
+
+
+
 
 
 
@@ -149,15 +179,16 @@ class GraphCreationFrame(tk.Frame):
 
 
     def browse_dir(self):
-        self.path = filedialog.askdirectory()
+        self.path.set(filedialog.askdirectory())
+
 
 
     def next_page(self):
         self.controller.ARGS_LIST_GRAPH_CREATION.append('-g')
-        if self.path == '':
+        if self.path.get() == '':
             messagebox.showerror('ERROR', 'Please select a path')
             return
-        self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--path', self.path])
+        self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--path', self.path.get()])
         if self.undir.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append('--undir')
         if not self.qual.get() == '':
@@ -168,6 +199,15 @@ class GraphCreationFrame(tk.Frame):
             self.controller.ARGS_LIST_GRAPH_CREATION.append('--no_in')
         if not self.create_graph.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append('--no_create')
+        if self.one_output_file.get():
+            if self.multi_output_file.get():
+                self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', 'sm', self.single_sep.get()+self.multi_sep.get()])
+            else:
+                self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', 's', self.single_sep.get()])
+        elif self.multi_output_file.get():
+            self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', 'm' , self.multi_sep.get()])
+        if self.no_weights.get():
+            self.controller.ARGS_LIST_GRAPH_CREATION.append('--no_weights')
 
         self.controller.show_next_frame()
 
@@ -237,6 +277,7 @@ class ConfirmFrame(tk.Frame):
 
         label = tk.Label(self, text="Confirm and Start", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
+        tk.Label(self, text=('graph creation options:' + str(self.controller.get_args()))).pack() #todo y are they not displayed?
         next_button = tk.Button(self, text="Start", command=lambda: self.controller.start())
         next_button.pack()
 

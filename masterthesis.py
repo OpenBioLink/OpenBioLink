@@ -30,7 +30,21 @@ def create_graph(args):
 
     if not args.no_create:
         print("\n\n############### creating graph #################################")
-        graph_creator.create_graph()
+        logging.info('Start creating graph')
+        if 's' in args.out_format[0]:
+            single_sep = args.out_format[1][args.out_format[0].index('s')]
+            if single_sep == 'n' or single_sep == 't':
+                single_sep= single_sep.replace('n', '\n').replace('t','\t')
+        else:
+            single_sep = None
+        if 'm' in args.out_format[0]:
+            multisep_sep = args.out_format[1][args.out_format[0].index('m')]
+            if multisep_sep == 'n' or multisep_sep == 't':
+                multisep_sep= multisep_sep.replace('n', '\n').replace('t','\t')
+        else:
+            multisep_sep = None
+
+        graph_creator.create_graph(one_file_sep=single_sep, multi_file_sep=multisep_sep, weights=(not args.no_weights) )
 
 
 def create_train_test_splits(args):
