@@ -122,7 +122,7 @@ class TestGraphCreation(unittest.TestCase):
             print('\n##########################################')
             print('GRAPH IS DIRECTED: ' + str(graph_is_directed) + '\n')
 
-            with self.subTest():
+            with self.subTest(graph_is_directed):
 
                 glob.DIRECTED = graph_is_directed
 
