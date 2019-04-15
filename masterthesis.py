@@ -7,7 +7,9 @@ import sys
 import graph_creation.graphCreationConfig as graphConfig
 from graph_creation.types.qualityType import QualityType
 from graph_creation.graphCreation import Graph_Creation
+
 from train_test_set_creation import train_test_splitter as tts
+from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
 
 def create_graph(args):
@@ -51,8 +53,13 @@ def create_train_test_splits(args):
     if args.meta:
         pass
         #fixme read out triplets from path
-    tts.random_edge_split(graph_path=args.edges, tn_graph_path=args.tn_edges, nodes_path=args.nodes,
-                          val_frac=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds, meta_edge_triples=args.meta)
+    tts = TrainTestSetCreation(graph_path=args.edges, tn_graph_path=args.tn_edges, nodes_path=args.nodes, meta_edge_triples=args.meta)
+    tts.random_edge_split()
+
+
+
+    #tts.random_edge_split(graph_path=args.edges, tn_graph_path=args.tn_edges, nodes_path=args.nodes,
+    #                      val_frac=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds, meta_edge_triples=args.meta)
     #tts.random_edge_split('test\\test_data\\edges.csv', 'test\\test_data\\TN_edges.csv',  'test\\test_data\\nodes.csv', val_frac=0.2, test_frac = 0.2, crossval= None, folds = None)
 
 
@@ -93,7 +100,7 @@ def main(args_list=None):
     parser.add_argument('--val_frac', type=float, default='0.2')
     parser.add_argument('--crossval')
     parser.add_argument('--folds')
-    parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges not known by system)')
+    parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges are not in BiMeG)')
 
     # Hyperparameter Optimization
     parser.add_argument('-c', action='store_true', help='Apply hyperparameter optimization via cross validation')
@@ -123,8 +130,8 @@ def main(args_list=None):
     if args.g:
         create_graph(args)
 
-   # if args.s:
-   #     create_train_test_splits()
+    if args.s:
+        create_train_test_splits(args)
     logging.info('Finished!')
 
 

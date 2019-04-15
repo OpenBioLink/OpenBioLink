@@ -21,27 +21,28 @@ def random_edge_split(graph_path, tn_graph_path, nodes_path, val_frac=None, test
         val_frac = 0.2
     if not test_frac:
         test_frac = 0.2
-    known_meta_edges = False
+    # get meta edge triples (nodeType, edgeType, nodeType
     if not meta_edge_triples:
         import graph_creation.metadata_edge.edgeMetadata as meta
-        meta_edge_triples = [( str(x.EDGE_INMETA_CLASS.NODE1_TYPE), str(x.EDGE_INMETA_CLASS.EDGE_TYPE), str(x.EDGE_INMETA_CLASS.NODE2_TYPE) )
+        meta_edge_triples = [( str(x.EDGE_INMETA_CLASS.NODE1_TYPE),
+                               str(x.EDGE_INMETA_CLASS.EDGE_TYPE),
+                               str(x.EDGE_INMETA_CLASS.NODE2_TYPE) )
                              for x in utils.get_leaf_subclasses(meta.EdgeMetadata)]         #todo ? maybe convert all types to enums ?
-        known_meta_edges=True
 
     # get nodes and node types
     with open(nodes_path) as file:
         nodes = pandas.read_csv(file, sep='\t', names=['id', 'nodeType'])
 
-    # get all positive examples
+    # get all tp examples
     with open(graph_path) as file:
         positive_samples = pandas.read_csv(file, sep='\t', names=COL_NAMES_EDGES)
         positive_samples['value'] = 1
         #todo ? maybe convert all types to enums ?
-    #edgeTypes = list(positive_samples['edgeType'].unique())
+    edgeTypes = list(positive_samples['edgeType'].unique())
     meta_edges_dic = {edge_type : (node1_type, node2_type) for node1_type, edge_type, node2_type in meta_edge_triples if edge_type in edgeTypes}
     #fixme list of triples
 
-    #get true negative examples
+    #get all tn examples
     negative_samples = pandas.DataFrame(columns=list(positive_samples))
     with open(tn_graph_path) as file:
         all_tn = pandas.read_csv(file, sep='\t', names=COL_NAMES_EDGES)
@@ -128,8 +129,6 @@ def remove_bidir_edges(remain_set, remove_set):
     remove = temp[(temp['value_x']==temp['value_y'])] #todo value should always be different? are there examples with diff qscore?
     remain = remain_set.drop(remove.index.values)
     return remain
-
-
 
 
 def create_cross_val (df, n):
