@@ -8,7 +8,6 @@ import graph_creation.graphCreationConfig as graphConfig
 from graph_creation.types.qualityType import QualityType
 from graph_creation.graphCreation import Graph_Creation
 
-from train_test_set_creation import train_test_splitter as tts
 from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
 
@@ -54,7 +53,7 @@ def create_train_test_splits(args):
         pass
         #fixme read out triplets from path
     tts = TrainTestSetCreation(graph_path=args.edges, tn_graph_path=args.tn_edges, nodes_path=args.nodes, meta_edge_triples=args.meta)
-    tts.random_edge_split()
+    tts.random_edge_split(val_frac=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds)
 
 
 
@@ -96,10 +95,10 @@ def main(args_list=None):
     parser.add_argument('--edges', type=str, help='Path to edges.csv file (required with action -s')
     parser.add_argument('--tn_edges', type=str, help='Path to true_negatives_edges.csv file (required with action -s')
     parser.add_argument('--nodes', type=str, help='Path to nodes.csv file (required with action -s')
-    parser.add_argument('--test_frac', type=float, default='0.2')
-    parser.add_argument('--val_frac', type=float, default='0.2')
-    parser.add_argument('--crossval')
-    parser.add_argument('--folds')
+    parser.add_argument('--test_frac', type=float, default='0.2', help='Fraction of test set as float (default= 0.2)')
+    parser.add_argument('--val_frac', type=float, default='0.2',help='Fraction of validation set as float (default= 0.2)')
+    parser.add_argument('--crossval', action='store_true', help='Multiple train-validation-sets are generated')
+    parser.add_argument('--folds', type=int, default=0, help='Define the number of folds - if not specified, number is calculated via val_frac)')
     parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges are not in BiMeG)')
 
     # Hyperparameter Optimization

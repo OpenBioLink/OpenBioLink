@@ -11,12 +11,10 @@ import graph_creation.utils as utils
 RANDOM_STATE = 42  # do not change for reproducibility
 random.seed(RANDOM_STATE)
 numpy.random.seed(RANDOM_STATE)
-#RANDOM_STATE_OBJECT = numpy.random.RandomState(RANDOM_STATE)
 COL_NAMES_EDGES = ['id1', 'edgeType', 'id2', 'qscore']
 COL_NAMES_SAMPLES = ['id1', 'edgeType', 'id2', 'qscore', 'value']
 
 
-# todo ? maybe convert all types to enums ?
 # TODO: random per edgeType (equally dist vs original dist)
 # TODO: no self loops in neg samples, not reproducible(?)
 
@@ -80,7 +78,6 @@ class TrainTestSetCreation():
         else:
             train_set = train_val_set.sample(frac=(1 - val_frac), random_state=RANDOM_STATE)
             val_set = train_val_set.drop(list(train_set.index.values))
-            train_set = self.remove_bidir_edges(remain_set=train_set, remove_set=val_set)
             train_val_set_tuples = [(train_set, val_set)]
         if glob.DIRECTED:
             train_val_set_tuples = [(self.remove_bidir_edges(remain_set=t, remove_set=v),v) for t,v in train_val_set_tuples]
@@ -149,39 +146,42 @@ class TrainTestSetCreation():
 
 
     def remove_bidir_edges(self,remain_set, remove_set):
-        remain_set = remain_set.drop(list(remove_set.index.values), errors='ignore')
-        # todo better?
-        remove_set.columns = ['edgeType', 'id2', 'id1', 'qscore', 'value']
-        temp = pandas.merge(remain_set, remove_set, how='left', left_on=['id1', 'id2', 'edgeType'],
+        remove_set_copy = remove_set.copy()
+        cols_other_dir = list(remove_set_copy.columns)
+        index_id1 = cols_other_dir.index('id1')
+        index_id2 = cols_other_dir.index('id2')
+        cols_other_dir[index_id1]= 'id2'
+        cols_other_dir[index_id2]= 'id1'
+        remove_set_copy.columns = cols_other_dir
+        temp = pandas.merge(remain_set, remove_set_copy, how='left', left_on=['id1', 'id2', 'edgeType'],
                             right_on=['id1', 'id2', 'edgeType']).set_index(remain_set.index)
-        remove = temp[(temp['value_x'] == temp[
-            'value_y'])]  # todo value should always be different? are there examples with diff qscore?
+        # todo value should always be different? are there examples with diff qscore?
+        remove = temp[(temp['value_x'] == temp['value_y'])]
         remain = remain_set.drop(remove.index.values)
         return remain
 
 
-    def create_cross_val(self, df, n):
-        nel_total, _ = len(df.index.list(df.index.values))
-        # n can be n-fold or fraction
-        if n < 1:
-            n = math.ceil(n * nel_total)
-        nel_per_chunk = math.ceil(nel_total / n)
-
-        rand_index = random.shuffle(list(df.index.values))
+    def create_cross_val(self, df, n_folds):
+        nel_total, _ = df.shape
+        if n_folds < 1: #n_folds is fraction
+            n_folds = math.ceil(1/n_folds)
+        nel_per_chunk = math.ceil(nel_total / n_folds)
+        rand_index = list(df.index.values)
+        random.shuffle(rand_index)
 
         bounds = []
-        for i in range(n):
+        for i in range(n_folds):
             bounds.append(i * nel_per_chunk)
         bounds.append(nel_total)
 
         chunks = []
-        for i in range(n):
+        for i in range(n_folds):
             chunks.append(rand_index[bounds[i]: bounds[i + 1]])
 
         folds_indices = []
-        for i in range(n):
-            train_chunk_indices = [(x + i) % n for x in range(n - 1)]
-            val_chunk_index = (n - 1 + i) % n
+        for i in range(n_folds):
+            train_chunk_indices = [(x + i) % n_folds for x in range(n_folds - 1)]
+            val_chunk_index = (n_folds - 1 + i) % n_folds
             train_indices = [element for chunk_index in train_chunk_indices for element in chunks[chunk_index]]
             val_indices = chunks[val_chunk_index]
             folds_indices.append((train_indices, val_indices))
@@ -230,13 +230,10 @@ class TrainTestSetCreation():
     def print_sets(self, train_val_set_tuples, test_set):
         # todo not here
         crossval_dir = os.path.join(os.getcwd(), "cross_val")
-        # os.mkdir(crossval_dir)
-        # fixme
         i = 0
         for train_set, val_set in train_val_set_tuples:
             folder_path = os.path.join(crossval_dir, "fold_%d" % (i))
-            # os.mkdir(folder_path)
-            # fixme
+            os.makedirs(folder_path, exist_ok=True)
             train_set[COL_NAMES_SAMPLES].to_csv(os.path.join(folder_path, "train_sample.csv"),
                                                 sep='\t',
                                                 index=False,
@@ -245,6 +242,7 @@ class TrainTestSetCreation():
                                               sep='\t',
                                               index=False,
                                               header=False)
+            i+=1
         test_set[COL_NAMES_SAMPLES].to_csv(os.path.join(crossval_dir, "train_sample.csv"),
                                            sep='\t',
                                            index=False,
