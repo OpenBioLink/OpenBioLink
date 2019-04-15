@@ -1,7 +1,7 @@
 import unittest
 
 from graph_creation import utils
-from graph_creation.Types.dbType import DbType
+from graph_creation.types.dbType import DbType
 from graph_creation.file_reader import *
 from graph_creation.metadata_db_file import *
 

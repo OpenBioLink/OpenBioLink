@@ -9,10 +9,10 @@ from graph_creation.metadata_db_file import *
 class TestGraphCreation(unittest.TestCase):
 
     def test_graph_creation(self):
-        """ creates test graph from test o_files and compares against true reference test graph
-        tests directed and undirected version of graph (and TN-graph)
-        well as the output into a single as well as in separate files
-        """
+
+        #creates test graph from test o_files and compares against true reference test graph
+        #tests directed and undirected version of graph (and TN-graph)
+        #well as the output into a single as well as in separate files
 
         manual_db_file_metadata = []
 
@@ -117,14 +117,11 @@ class TestGraphCreation(unittest.TestCase):
         cases = [directed_tuple,undirected_tuple]
 
         for case in cases:
-
             graph_is_directed, true_ref_file_prefix = case
             print('\n##########################################')
             print('GRAPH IS DIRECTED: ' + str(graph_is_directed) + '\n')
-
-            with self.subTest(graph_is_directed):
-
-                glob.DIRECTED = graph_is_directed
+            glob.DIRECTED = graph_is_directed
+            with self.subTest(graph_is_directed=graph_is_directed):
 
                 graph_creator = Graph_Creation(test_data_folder, manual_db_file_metadata)
                 graph_creator.create_input_files()
@@ -133,7 +130,7 @@ class TestGraphCreation(unittest.TestCase):
                 true_ref_files = [f for f in os.listdir(true_ref_folder) if f.startswith(true_ref_file_prefix)]# os.path.isfile(f) ]
                 missing_elements = []
                 for ref_file_name in true_ref_files:
-                    with self.subTest(ref_file_name):
+                    with self.subTest(ref_file_name=ref_file_name):
                         all_lines_in_comp_file = True
                         with open(os.path.join(true_ref_folder,ref_file_name)) as f:
                             ref_file = f.readlines()
@@ -152,6 +149,7 @@ class TestGraphCreation(unittest.TestCase):
                             i += 1
 
                         if not all_lines_in_comp_file:
+                            print(ref_file_name)
                             print('missing elements:', missing_elements)
 
                         assert (j == i)

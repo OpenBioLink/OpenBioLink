@@ -37,3 +37,6 @@ class EdgeType (Enum):
     GENE_REACTION_GENE = 37
     GENE_BINDACT_GENE = 38
     GENE_BINDINH_GENE = 39
+
+    def __str__(self):
+        return (self.name)

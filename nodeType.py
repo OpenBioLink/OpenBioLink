@@ -9,3 +9,6 @@ class NodeType (Enum):
     PHENOTYPE = 4
     PATHWAY = 5
     ANATOMY = 6
+
+    def __str__(self):
+        return (self.name)
