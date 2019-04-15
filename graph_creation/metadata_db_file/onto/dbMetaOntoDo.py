@@ -1,5 +1,5 @@
 from graph_creation.metadata_db_file.onto.dbMetadataOnto import DbMetadataOnto
-from graph_creation.Types.dbType import DbType
+from graph_creation.types.dbType import DbType
 
 
 class DbMetaOntoDo (DbMetadataOnto):

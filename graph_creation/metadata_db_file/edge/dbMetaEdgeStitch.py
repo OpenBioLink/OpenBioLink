@@ -1,5 +1,5 @@
 from graph_creation.metadata_db_file.edge.dbMetadataEdge import DbMetadataEdge
-from graph_creation.Types.dbType import DbType
+from graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeStitch(DbMetadataEdge):

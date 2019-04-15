@@ -1,7 +1,7 @@
 import os
 
 import graph_creation.graphCreationConfig as glob
-from graph_creation.Types.qualityType import QualityType
+from graph_creation.types.qualityType import QualityType
 from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 from graph_creation.metadata_infile import InMetaEdgeStitchExpression
 from graph_creation.metadata_infile.mapping.inMetaMapString import InMetaMapString

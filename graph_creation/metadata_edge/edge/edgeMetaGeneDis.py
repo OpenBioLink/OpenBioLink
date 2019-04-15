@@ -1,17 +1,16 @@
 import os
 
 import graph_creation.graphCreationConfig as glob
-from edgeType import EdgeType
-from graph_creation.Types.qualityType import QualityType
 from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 from graph_creation.metadata_infile import InMetaMapOntoDoAltid
 from graph_creation.metadata_infile.edge.inMetaEdgeDisGeNet import InMetaEdgeDisGeNet
 from graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
+from graph_creation.types.qualityType import QualityType
 
 
 class EdgeMetaGeneDis(EdgeRegularMetadata):
     LQ_CUTOFF = 0
-    MQ_CUTOFF = 0
+    MQ_CUTOFF = 0.4
     HQ_CUTOFF = 0.7
 
     EDGE_INMETA_CLASS = InMetaEdgeDisGeNet

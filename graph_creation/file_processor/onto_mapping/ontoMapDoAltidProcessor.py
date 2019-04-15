@@ -1,6 +1,6 @@
 from graph_creation.file_processor.fileProcessor import FileProcessor
-from graph_creation.Types.readerType import ReaderType
-from graph_creation.Types.infileType import InfileType
+from graph_creation.types.readerType import ReaderType
+from graph_creation.types.infileType import InfileType
 from graph_creation.metadata_infile.mapping.inMetaMapOntoDoAltid import InMetaMapOntoDoAltid
 
 

@@ -1,4 +1,4 @@
-from graph_creation.Types.infileType import InfileType
+from graph_creation.types.infileType import InfileType
 from graph_creation.metadata_infile.infileMetadata import InfileMetadata
 
 

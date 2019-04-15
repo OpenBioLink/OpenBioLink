@@ -5,7 +5,7 @@ import os
 import sys
 
 import graph_creation.graphCreationConfig as graphConfig
-from graph_creation.Types.qualityType import QualityType
+from graph_creation.types.qualityType import QualityType
 from graph_creation.graphCreation import Graph_Creation
 from train_test_set_creation import train_test_splitter as tts
 

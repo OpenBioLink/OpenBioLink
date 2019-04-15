@@ -1,4 +1,4 @@
-from graph_creation.Types.qualityType import QualityType
+from graph_creation.types.qualityType import QualityType
 from graph_creation.metadata_edge import EdgeMetadata
 
 
