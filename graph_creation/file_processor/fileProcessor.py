@@ -51,8 +51,8 @@ class FileProcessor():
         return data
 
 
-
-    def stitch_to_pubchem_id(self, data, id_col):
-        data.iloc[:,id_col] = data[data.columns[id_col]].str[4:].str.lstrip("0")
-        #todo faster if via int?
+    @staticmethod
+    def stitch_to_pubchem_id(data, id_col):
+        data.iloc[:,id_col] = data[data.columns[id_col]].str[4:].astype(int)
         return data
+

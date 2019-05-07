@@ -1,1 +1,2 @@
 LOG_FILE_PATH = ''
+GUI_MODE=False

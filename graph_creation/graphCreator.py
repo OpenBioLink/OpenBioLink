@@ -3,8 +3,10 @@ import os
 
 from tqdm import tqdm
 import logging
-import graph_creation.graphCreationConfig as glob
+import graph_creation.graphCreationConfig as gcConst
+import globalConfig as globConst
 import graph_creation.utils as utils
+from graph_creation.cli import Cli
 from edge import Edge
 from node import Node
 
@@ -12,10 +14,10 @@ from node import Node
 class GraphCreator():
 
     def __init__(self):
-        self.tn_path_no_mappings = os.path.join(glob.FILE_PATH, glob.TN_ID_NO_MAPPING_FILE_NAME)
-        self.tn_path_stats = os.path.join(glob.FILE_PATH, glob.TN_STATS_FILE_NAME)
-        self.path_no_mappings = os.path.join(glob.FILE_PATH, glob.ID_NO_MAPPING_FILE_NAME)
-        self.path_stats = os.path.join(glob.FILE_PATH, glob.STATS_FILE_NAME)
+        self.tn_path_no_mappings = os.path.join(gcConst.FILE_PATH, gcConst.TN_ID_NO_MAPPING_FILE_NAME)
+        self.tn_path_stats = os.path.join(gcConst.FILE_PATH, gcConst.TN_STATS_FILE_NAME)
+        self.path_no_mappings = os.path.join(gcConst.FILE_PATH, gcConst.ID_NO_MAPPING_FILE_NAME)
+        self.path_stats = os.path.join(gcConst.FILE_PATH, gcConst.STATS_FILE_NAME)
         open(self.tn_path_no_mappings, 'w').close()
         open(self.tn_path_stats, 'w').close()
         open(self.path_no_mappings, 'w').close()
@@ -46,9 +48,15 @@ class GraphCreator():
 
     def create_nodes_and_edges (self, edge_metadata, tn= None):
         if not os.path.isfile(edge_metadata.edges_file_path):
-            #todo aks for exit
-            logging.warning('File does not exist: %s ! Edgetype %s will not be created' %(edge_metadata.edges_file_path, str(edge_metadata.edgeType)))
-            #sys.exit() #todo also fo mapping files
+            message ='File does not exist: %s ! Edgetype %s will not be created' %(edge_metadata.edges_file_path, str(edge_metadata.edgeType))
+            if gcConst.INTERACTIVE_MODE:
+                if globConst.GUI_MODE:
+                    import gui
+                    gui.askForExit(message)
+                else:
+                    Cli.ask_for_exit(message)
+            else:
+                logging.error(message)
             return set(), set(), set()
 
         # --- mapping ---
@@ -57,8 +65,23 @@ class GraphCreator():
         altid_mapping1 = utils.db_mapping_file_to_dic(edge_metadata.altid_mapping1_file, edge_metadata.altid_map1_sourceindex, edge_metadata.altid_map1_targetindex)
         altid_mapping2 = utils.db_mapping_file_to_dic(edge_metadata.altid_mapping2_file, edge_metadata.altid_map2_sourceindex, edge_metadata.altid_map2_targetindex)
 
+        for mapping in [edge_metadata.mapping1_file, edge_metadata.mapping2_file, edge_metadata.altid_mapping1_file, edge_metadata.altid_mapping2_file]:
+            mapping_path = os.path.join(gcConst.IN_FILE_PATH, mapping)
+            if not os.path.isfile(mapping_path):
+                message = 'File does not exist: %s ! Edgetype %s will not be created' % (
+                edge_metadata.edges_file_path, str(edge_metadata.edgeType))
+                if gcConst.INTERACTIVE_MODE:
+                    if globConst.GUI_MODE:
+                        import gui
+                        gui.askForExit(message)
+                    else:
+                        Cli.ask_for_exit(message)
+                else:
+                    logging.error(message)
+                return set(), set(), set()
+
         # --- edges ---
-        nodes1 = set() #todo list and only before return set?
+        nodes1 = set()
         nodes2 = set()
         edges = set()
         ids1_no_mapping = set()
@@ -104,11 +127,11 @@ class GraphCreator():
                     for id1 in edge_id1:
                         #apply alt_id mapping 1
                         if (edge_metadata.altid_mapping1_file is not None and id1 in altid_mapping1):
-                            id1 = altid_mapping1[id1][0] #todo there should only be one
+                            id1 = altid_mapping1[id1][0] #there should only be one
                         for id2 in edge_id2:
                             # apply alt_id mapping 2
                             if (edge_metadata.altid_mapping2_file is not None and id2 in altid_mapping2):
-                                id2 = altid_mapping2[id2][0] #todo there should only be one
+                                id2 = altid_mapping2[id2][0] #there should only be one
                             #check for quality cutoff
                             within_num_cutoff= edge_metadata.cutoff_num is not None and float(qscore) > edge_metadata.cutoff_num
                             within_text_cutoff = edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt
@@ -117,7 +140,7 @@ class GraphCreator():
                                 bimeg_id2 = edge_metadata.node2_type.name + '_' + id2
                                 edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore))
                                 # add an edge in the other direction when edge is undirectional and graph is directional
-                                if not edge_metadata.is_directional and glob.DIRECTED:
+                                if not edge_metadata.is_directional and gcConst.DIRECTED:
                                     edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore))
                                 nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
                                 nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))
@@ -142,8 +165,28 @@ class GraphCreator():
         if nr_edges_after_mapping==0:
             logging.warning("No edges are left after mapping and cutoff!")
 
-        # print statistics #todo not here
-        edgeType = edge_metadata.edgeType
+        # print statistics
+        stats_dic = {
+            'edge_type': edge_metadata.edgeType,
+            'node1_type': edge_metadata.node1_type,
+            'node2_type': edge_metadata.node2_type,
+            'nr_edges': nr_edges,
+            'nr_edges_below_cutoff': nr_edges_below_cutoff,
+            'nr_edges_no_mapping': nr_edges_no_mapping,
+            'nr_edges_after_mapping': nr_edges_after_mapping,
+            'nr_edges_incl_dup': nr_edges_incl_dup,
+            'ids1_no_mapping': ids1_no_mapping,
+            'ids2_no_mapping': ids2_no_mapping,
+            'ids1':ids1,
+            'ids2': ids2
+        }
+        self.print_graph_stats(stats_dic, tn)
+
+        return nodes1, nodes2, edges
+
+
+    def print_graph_stats(self, stats_dic, tn):
+        edgeType = stats_dic['edge_type']
         if tn:
             path_no_mappings = self.tn_path_no_mappings
             path_stats = self.tn_path_stats
@@ -151,31 +194,29 @@ class GraphCreator():
             path_no_mappings = self.path_no_mappings
             path_stats = self.path_stats
         with open(path_no_mappings, 'a') as out_file:
-            for id in ids1_no_mapping:
+            for id in stats_dic['ids1_no_mapping']:
                 out_file.write('%s\t%s\n' %(id, edgeType))
-            for id in ids2_no_mapping:
+            for id in stats_dic['ids2_no_mapping']:
                 out_file.write('%s\t%s\n' % (id, edgeType))
             out_file.close()
 
         stats_string = '\nEdge Type: ' + str(edgeType) + '\n' + \
-                       'Node1 Type: ' + str(edge_metadata.node1_type) + '\n' + \
-                       'Node1 Type: ' + str(edge_metadata.node2_type) + '\n' + \
-                       'Nr edges: ' + str(nr_edges) + '\n' + \
-                       'Nr edges no mapping: ' + str(nr_edges_no_mapping) + '\n' + \
-                       'Nr edges below cutoff: ' + str(nr_edges_below_cutoff) + '\n' + \
-                       'Edges coverage: ' + str(1-(nr_edges_no_mapping/ nr_edges)) + '\n' + \
-                       'Duplicated edges: ' + str(nr_edges_incl_dup-nr_edges_after_mapping) + '\n' + \
-                       'Nr edges after mapping (final nr): ' + str(nr_edges_after_mapping) + '\n' + \
-                       'Nr nodes1 no mapping: ' + str(len(ids1_no_mapping)) + '\n' + \
-                       'Nr nodes2 no mapping: ' + str(len(ids2_no_mapping)) + '\n' + \
-                       'Nr nodes1: ' + str(len(ids1)) + '\n' + \
-                       'Nr nodes2: ' + str(len(ids2)) + '\n' + \
-                       'nodes1 coverage: ' + str(1-(len(ids1_no_mapping)/ len(ids1))) + '\n' + \
-                       'nodes2 coverage: ' + str(1-(len(ids2_no_mapping)/ len(ids2))) + '\n' + \
+                       'Node1 Type: ' + str(stats_dic['node1_type']) + '\n' + \
+                       'Node1 Type: ' + str(stats_dic['node2_type']) + '\n' + \
+                       'Nr edges: ' + str(stats_dic['nr_edges']) + '\n' + \
+                       'Nr edges no mapping: ' + str(stats_dic['nr_edges_no_mapping']) + '\n' + \
+                       'Nr edges below cutoff: ' + str(stats_dic['nr_edges_below_cutoff']) + '\n' + \
+                       'Edges coverage: ' + str(1-(stats_dic['nr_edges_no_mapping']/ stats_dic['nr_edges'])) + '\n' + \
+                       'Duplicated edges: ' + str(stats_dic['nr_edges_incl_dup']-stats_dic['nrEdgesAfterMapping']) + '\n' + \
+                       'Nr edges after mapping (final nr): ' + str(stats_dic['nr_edges_after_mapping']) + '\n' + \
+                       'Nr nodes1 no mapping: ' + str(len(stats_dic['ids1_no_mapping'])) + '\n' + \
+                       'Nr nodes2 no mapping: ' + str(len(stats_dic['ids2_no_mapping'])) + '\n' + \
+                       'Nr nodes1: ' + str(len(stats_dic['ids1'])) + '\n' + \
+                       'Nr nodes2: ' + str(len(stats_dic['ids2'])) + '\n' + \
+                       'nodes1 coverage: ' + str(1-(len(stats_dic['ids1_no_mapping'])/ len(stats_dic['ids1']))) + '\n' + \
+                       'nodes2 coverage: ' + str(1-(len(stats_dic['ids2_no_mapping'])/ len(stats_dic['ids2']))) + '\n' + \
                        '######################################################################################\n'
-        # print(stats_string)
         with open(path_stats, 'a') as out_file:
             out_file.write(stats_string)
 
-        return nodes1, nodes2, edges
 

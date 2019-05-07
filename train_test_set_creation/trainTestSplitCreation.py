@@ -53,6 +53,14 @@ class TrainTestSetCreation():
             for node1Type, edgeType, node2Type in meta_edge_triples:
                 self.meta_edges_dic['%s_%s_%s' % (node1Type, edgeType, node2Type)] = (node1Type, edgeType, node2Type)
 
+        # check for transient onto edges
+        transitiv_IS_A_edges = self.check_for_transitive_edges(self.all_tp[self.all_tp['edgeType'] == 'IS_A'])
+        transitiv_PART_OF_edges = self.check_for_transitive_edges(self.all_tp[self.all_tp['edgeType'] == 'PART_OF'])
+        if transitiv_IS_A_edges:
+            print('WARNING: transient edges in IS_A: ({a},b,c) for a IS_A b and a IS_A c', transitiv_IS_A_edges)
+        if transitiv_PART_OF_edges:
+            print('WARNING: transient edges in PART_OF: ({a},b,c) for a PART_OF b and a PART_OF c',
+                  transitiv_PART_OF_edges)
 
     def random_edge_split(self, val_frac=None, test_frac=None, crossval=None, folds=None):  # todo change to list of graph and tn graph files
         if not val_frac:
@@ -141,9 +149,24 @@ class TrainTestSetCreation():
         return negative_samples
 
 
-    def remove_parent_child_edges(self):
-        pass
+    def check_for_transitive_edges(self, df):
+        direct_child_dict={}
+        for row in df[['id1', 'id2']].itertuples():
+            _, child, parent = row
+            if not parent in direct_child_dict.keys():
+                direct_child_dict[parent] = {child}
+            else:
+                direct_child_dict[parent].add(child)
+        #fixme check for cycles
+        all_children =set()
+        return ([((child_set & direct_child_dict[c]), parent, c)  for (parent, child_set) in direct_child_dict.items() for c in child_set if c in direct_child_dict.keys() if (child_set & direct_child_dict[c])])
 
+    #def get_all_childs(self,direct_child_dict, current_parent, past_parents, all_children):
+    #    for child in direct_child_dict[current_parent]:
+    #        pass
+            #fixme continue here (more lvl transitivity
+
+          
 
     def remove_bidir_edges(self,remain_set, remove_set):
         remove_set_copy = remove_set.copy()

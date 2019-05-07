@@ -1,7 +1,7 @@
 import os
 import sys
 
-class UserInteractor():
+class Cli():
 
     @staticmethod
     def ask_for_exit(message):

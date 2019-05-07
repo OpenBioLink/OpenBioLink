@@ -3,7 +3,8 @@ import os
 
 from tqdm import tqdm
 
-import graph_creation.graphCreationConfig as glob
+import graph_creation.graphCreationConfig as gcConst
+import globalConfig as globConst
 import graph_creation.utils as utils
 from graph_creation.graphCreator import GraphCreator
 from graph_creation.graphWriter import GraphWriter
@@ -16,24 +17,24 @@ from .file_reader.fileReader import *
 from .file_writer.fileWriter import *
 from .metadata_db_file import *
 from .metadata_infile import *
-from .userInteractor import UserInteractor
+from .cli import Cli
 
 
 class Graph_Creation():
     def __init__(self, folder_path, use_db_metadata_classes = None, use_edge_metadata_classes = None):
-        glob.FILE_PATH = folder_path
-        glob.O_FILE_PATH = os.path.join(folder_path, 'o_files')
-        glob.IN_FILE_PATH = os.path.join(folder_path, 'in_files')
+        gcConst.FILE_PATH = folder_path
+        gcConst.O_FILE_PATH = os.path.join(folder_path, 'o_files')
+        gcConst.IN_FILE_PATH = os.path.join(folder_path, 'in_files')
 
-        if not os.path.exists(glob.FILE_PATH):
-            os.makedirs(glob.FILE_PATH)
+        if not os.path.exists(gcConst.FILE_PATH):
+            os.makedirs(gcConst.FILE_PATH)
 
         self.db_file_metadata = [x() for x in utils.get_leaf_subclasses(DbMetadata)]
         self.file_readers = [x() for x in utils.get_leaf_subclasses(FileReader)]
         self.file_processors = [x() for x in utils.get_leaf_subclasses(FileProcessor)]
         self.infile_metadata = [x() for x in utils.get_leaf_subclasses(InfileMetadata)]
-        self.edge_metadata = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)] + [x(glob.QUALITY) for x in utils.get_leaf_subclasses(EdgeOntoMetadata)]
-        self.tn_edge_metadata = [x(glob.QUALITY) for x in utils.get_leaf_subclasses(TnEdgeRegularMetadata)]
+        self.edge_metadata = [x(gcConst.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)] + [x(gcConst.QUALITY) for x in utils.get_leaf_subclasses(EdgeOntoMetadata)]
+        self.tn_edge_metadata = [x(gcConst.QUALITY) for x in utils.get_leaf_subclasses(TnEdgeRegularMetadata)]
 
         self.dbType_reader_map = utils.cls_list_to_dic(self.file_readers, 'dbType')
         self.readerType_processor_map = utils.cls_list_to_dic(self.file_processors, 'readerType')
@@ -68,15 +69,15 @@ class Graph_Creation():
     def download_db_files(self):
         skip = None
         for_all = False
-        if not glob.INTERACTIVE_MODE:
-            skip =glob.SKIP_EXISTING_FILES
+        if not gcConst.INTERACTIVE_MODE:
+            skip =gcConst.SKIP_EXISTING_FILES
             for_all = True
-        if not os.path.exists(glob.O_FILE_PATH):
-            os.makedirs(glob.O_FILE_PATH)
+        if not os.path.exists(gcConst.O_FILE_PATH):
+            os.makedirs(gcConst.O_FILE_PATH)
         for db_file in tqdm(self.db_file_metadata):
-            o_file_path = os.path.join(glob.O_FILE_PATH, db_file.ofile_name)
+            o_file_path = os.path.join(gcConst.O_FILE_PATH, db_file.ofile_name)
             if not for_all:
-                skip, for_all = UserInteractor.skip_existing_files(o_file_path)
+                skip, for_all = Cli.skip_existing_files(o_file_path)
             if not (skip and os.path.isfile(o_file_path)):
                 FileDownloader.download(db_file.url, o_file_path)
 
@@ -86,32 +87,32 @@ class Graph_Creation():
     def create_input_files(self):
         skip = None
         for_all = False
-        if not glob.INTERACTIVE_MODE:
-            skip =glob.SKIP_EXISTING_FILES
+        if not gcConst.INTERACTIVE_MODE:
+            skip =gcConst.SKIP_EXISTING_FILES
             for_all = True
-        if not os.path.exists(glob.IN_FILE_PATH):
-            os.makedirs(glob.IN_FILE_PATH)
+        if not os.path.exists(gcConst.IN_FILE_PATH):
+            os.makedirs(gcConst.IN_FILE_PATH)
         for reader in tqdm(self.file_readers):
             if reader.readerType in self.readerType_processor_map:
 
                 #check beforehand if read in content is processed as parsing can be time consuming
                 all_files_exist = True
                 for processor in self.readerType_processor_map[reader.readerType]:
-                    if not os.path.isfile(os.path.join(glob.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name)):
+                    if not os.path.isfile(os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name)):
                         all_files_exist = False
                 if all_files_exist and not for_all and self.readerType_processor_map[reader.readerType]:
                     first_processor = self.readerType_processor_map[reader.readerType][0]
-                    first_processor_out_path = os.path.join(glob.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name)
-                    skip, for_all = UserInteractor.skip_existing_files(first_processor_out_path)
+                    first_processor_out_path = os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name)
+                    skip, for_all = Cli.skip_existing_files(first_processor_out_path)
                 if not (skip and all_files_exist):
 
                     #execute processors
                     in_data = reader.read_file()
                     #fixme  ResourceWarning: Enable tracemalloc to get the object allocation traceback
                     for processor in self.readerType_processor_map[reader.readerType]:
-                        out_file_path = os.path.join(glob.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name)
+                        out_file_path = os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name)
                         if not for_all:
-                            skip, for_all = UserInteractor.skip_existing_files(out_file_path)
+                            skip, for_all = Cli.skip_existing_files(out_file_path)
                         if not (skip and os.path.isfile(out_file_path)):
                             out_data = processor.process(in_data)
                             FileWriter.wirte_to_file(out_data, out_file_path)
@@ -121,16 +122,14 @@ class Graph_Creation():
 
 # ----------- create graph ----------
 
-    def create_graph(self, one_file_sep='\t', multi_file_sep=None,weights = True):
-        #create and empty stat files
-        #todo check for existing files, ask for exit
+    def create_graph(self, one_file_sep='\t', multi_file_sep=None, qscore = True):
         gc = GraphCreator()
         #create graph
         nodes_dic, edges_dic = gc.meta_edges_to_graph(self.edge_metadata)
-        GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, weights=weights)
+        GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, qscore=qscore)
         #create TN edges
         tn_nodes_dic, tn_edges_dic = gc.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
-        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, prefix='TN_', weights=weights)
+        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, prefix='TN_', qscore=qscore)
 
 
 
@@ -187,11 +186,18 @@ class Graph_Creation():
                     additional_remove_metaEdges.append(metaEdge)
                     additional_remove_mapping_infileType.append(mapping.INFILE_TYPE)
         if len(additional_remove_metaEdges)>0:
-            UserInteractor.ask_for_exit('\nWARNING: Due to manual exclusion of DB resources, also the edges: ' +
-                                        str([x.__class__.__name__ for x in additional_remove_metaEdges]) +
-                                        '\n will be removed due to deleted dependencies of used mappings (i.e. ' +
-                                        str([str(x) for x in additional_remove_mapping_infileType])+
-                                        '\n Consider manually exclude edges instead of DB resources.')
+            message = '\nDue to manual exclusion of DB resources, also the edges: %s\n ' \
+                      'will be removed due to deleted dependencies of used mappings (i.e. %s\n ' \
+                      'Consider manually exclude edges instead of DB resources.' % (
+                      str([x.__class__.__name__ for x in additional_remove_metaEdges]),
+                      str([str(x) for x in additional_remove_mapping_infileType]))
+            if globConst.GUI_MODE:
+                import gui
+                gui.askForExit(message)
+            else:
+                Cli.ask_for_exit(message)
+            logging.warning(message)
+            #todo what to do in non interactive mode
 
             self.edge_metadata = [x for x in self.edge_metadata if x not in additional_remove_metaEdges]
             self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x not in additional_remove_metaEdges]

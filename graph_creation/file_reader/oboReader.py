@@ -1,9 +1,11 @@
 from graph_creation.file_reader.fileReader import FileReader
 from graph_creation.file_reader.parser.oboParser import OboParser
-from graph_creation.userInteractor import UserInteractor
-import graph_creation.graphCreationConfig as glob
+from graph_creation.cli import Cli
+import graph_creation.graphCreationConfig as gcConst
+import globalConfig as globConst
 import numpy as np
 import sys
+import logging
 
 
 class OboReader(FileReader):
@@ -36,13 +38,18 @@ class OboReader(FileReader):
             if len(df_cols) != len(defined_cols):
 
                 no_occurences = [x for x in defined_cols if x not in df_cols]
-                info_string = '\nWARNING: Reader %s should parse %s but there are no occurrences in file %s. '  %(str(self.readerType), str(no_occurences), self.in_path)
-                if glob.INTERACTIVE_MODE:
-                    continue_explain_string = 'Continue if you do not need these edges in your graph'
-                    UserInteractor.ask_for_exit(info_string + continue_explain_string)
+                info_string = 'Reader %s should parse %s but there are no occurrences in file %s. '  %(str(self.readerType), str(no_occurences), self.in_path)
+                if gcConst.INTERACTIVE_MODE:
+                    ask_continue_string =  info_string +'Continue if you do not need these edges in your graph'
+                    if globConst.GUI_MODE:
+                        import gui
+                        gui.askForExit(ask_continue_string)
+                    else:
+                        Cli.ask_for_exit(ask_continue_string)
                     for col in no_occurences:
                         df[col]=np.nan
                 else:
+                    logging.error(info_string)
                     sys.exit(info_string)
 
             return df

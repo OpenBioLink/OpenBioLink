@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 
+import globalConfig as glob
 import graph_creation.graphCreationConfig as graphConfig
 from graph_creation.types.qualityType import QualityType
 from graph_creation.graphCreation import Graph_Creation
@@ -45,7 +46,7 @@ def create_graph(args):
         else:
             multisep_sep = None
 
-        graph_creator.create_graph(one_file_sep=single_sep, multi_file_sep=multisep_sep, weights=(not args.no_weights) )
+        graph_creator.create_graph(one_file_sep=single_sep, multi_file_sep=multisep_sep, qscore=(not args.no_qscore))
 
 
 def create_train_test_splits(args):
@@ -71,6 +72,8 @@ def check_args_validity(args, parser):
 
 def main(args_list=None):
     if (len(sys.argv) < 2) and not args_list:
+        import gui
+        glob.GUI_MODE = True
         #fixme ? --> better way to start gui
         return
 
@@ -88,7 +91,7 @@ def main(args_list=None):
     parser.add_argument('--no_in', action='store_true', help='No input_files are created (e.g. when local data is used)')
     parser.add_argument('--no_create', action='store_true', help='No graph is created (e.g. when only in-files should be created)')
     parser.add_argument('--out_format', nargs=2,type=list, default='s t', help='Format of graph output, takes 2 arguments: list of file formats [s= single file, m=multiple files] and list of separators (e.g. t=tab, n=newline, or any other character) (default= s t)')
-    parser.add_argument('--no_weights', action='store_true', help='The outputfiles will contain no weights')
+    parser.add_argument('--no_qscore', action='store_true', help='The outputfiles will contain no scores')
 
     # Train- Test Split Generation
     parser.add_argument('-s', action='store_true', help='Generate Train-,Validation-, Test-Split')
