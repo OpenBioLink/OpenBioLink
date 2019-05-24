@@ -3,38 +3,40 @@ import os
 
 from tqdm import tqdm
 
-import graph_creation.graphCreationConfig as gcConst
 import globalConfig as globConst
+import graph_creation.graphCreationConfig as gcConst
+import graphProperties as graphProp
 import graph_creation.utils as utils
 from graph_creation.graphCreator import GraphCreator
 from graph_creation.graphWriter import GraphWriter
 from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
 from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 from graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from .cli import Cli
 from .file_downloader.fileDownloader import *
 from .file_processor.fileProcessor import *
 from .file_reader.fileReader import *
 from .file_writer.fileWriter import *
 from .metadata_db_file import *
 from .metadata_infile import *
-from .cli import Cli
 
 
 class Graph_Creation():
     def __init__(self, folder_path, use_db_metadata_classes = None, use_edge_metadata_classes = None):
-        gcConst.FILE_PATH = folder_path
-        gcConst.O_FILE_PATH = os.path.join(folder_path, 'o_files')
-        gcConst.IN_FILE_PATH = os.path.join(folder_path, 'in_files')
+        globConst.WORKING_DIR = folder_path
+        gcConst.O_FILE_PATH = os.path.join(folder_path, gcConst.O_FILE_FOLDER_NAME)
+        gcConst.IN_FILE_PATH = os.path.join(folder_path, gcConst.IN_FILE_FOLDER_NAME)
 
-        if not os.path.exists(gcConst.FILE_PATH):
-            os.makedirs(gcConst.FILE_PATH)
+        if not os.path.exists(globConst.WORKING_DIR):
+            os.makedirs(globConst.WORKING_DIR)
 
         self.db_file_metadata = [x() for x in utils.get_leaf_subclasses(DbMetadata)]
         self.file_readers = [x() for x in utils.get_leaf_subclasses(FileReader)]
         self.file_processors = [x() for x in utils.get_leaf_subclasses(FileProcessor)]
         self.infile_metadata = [x() for x in utils.get_leaf_subclasses(InfileMetadata)]
-        self.edge_metadata = [x(gcConst.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)] + [x(gcConst.QUALITY) for x in utils.get_leaf_subclasses(EdgeOntoMetadata)]
-        self.tn_edge_metadata = [x(gcConst.QUALITY) for x in utils.get_leaf_subclasses(TnEdgeRegularMetadata)]
+        self.edge_metadata = [x(graphProp.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)] + \
+                             [x(graphProp.QUALITY) for x in utils.get_leaf_subclasses(EdgeOntoMetadata)]
+        self.tn_edge_metadata = [x(graphProp.QUALITY) for x in utils.get_leaf_subclasses(TnEdgeRegularMetadata)]
 
         self.dbType_reader_map = utils.cls_list_to_dic(self.file_readers, 'dbType')
         self.readerType_processor_map = utils.cls_list_to_dic(self.file_processors, 'readerType')
@@ -63,6 +65,8 @@ class Graph_Creation():
         if use_edge_metadata_classes is not None:
             self.init_custom_sources_top_down(use_edge_metadata_classes)
 
+        # todo set here edge types as glob variable
+
 
 # ----------- download ----------
 
@@ -77,7 +81,11 @@ class Graph_Creation():
         for db_file in tqdm(self.db_file_metadata):
             o_file_path = os.path.join(gcConst.O_FILE_PATH, db_file.ofile_name)
             if not for_all:
-                skip, for_all = Cli.skip_existing_files(o_file_path)
+                if globConst.GUI_MODE:
+                    from gui import skipExistingFiles
+                    skip, for_all = skipExistingFiles(o_file_path)
+                else:
+                    skip, for_all = Cli.skip_existing_files(o_file_path)
             if not (skip and os.path.isfile(o_file_path)):
                 FileDownloader.download(db_file.url, o_file_path)
 
@@ -103,7 +111,11 @@ class Graph_Creation():
                 if all_files_exist and not for_all and self.readerType_processor_map[reader.readerType]:
                     first_processor = self.readerType_processor_map[reader.readerType][0]
                     first_processor_out_path = os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name)
-                    skip, for_all = Cli.skip_existing_files(first_processor_out_path)
+                    if globConst.GUI_MODE:
+                        from gui import skipExistingFiles
+                        skip, for_all = skipExistingFiles(first_processor_out_path)
+                    else:
+                        skip, for_all = Cli.skip_existing_files(first_processor_out_path)
                 if not (skip and all_files_exist):
 
                     #execute processors
@@ -112,7 +124,11 @@ class Graph_Creation():
                     for processor in self.readerType_processor_map[reader.readerType]:
                         out_file_path = os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name)
                         if not for_all:
-                            skip, for_all = Cli.skip_existing_files(out_file_path)
+                            if globConst.GUI_MODE:
+                                from gui import skipExistingFiles
+                                skip, for_all = skipExistingFiles(out_file_path)
+                            else:
+                                skip, for_all = Cli.skip_existing_files(out_file_path)
                         if not (skip and os.path.isfile(out_file_path)):
                             out_data = processor.process(in_data)
                             FileWriter.wirte_to_file(out_data, out_file_path)
@@ -122,14 +138,24 @@ class Graph_Creation():
 
 # ----------- create graph ----------
 
-    def create_graph(self, one_file_sep='\t', multi_file_sep=None, qscore = True):
+    def create_graph(self, one_file_sep='\t', multi_file_sep=None, print_qscore = True):
         gc = GraphCreator()
+        gw = GraphWriter()
         #create graph
         nodes_dic, edges_dic = gc.meta_edges_to_graph(self.edge_metadata)
-        GraphWriter.output_graph(nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, qscore=qscore)
+        gw.output_graph(nodes_dic,
+                        edges_dic,
+                        one_file_sep=one_file_sep,
+                        multi_file_sep=multi_file_sep,
+                        print_qscore=print_qscore)
         #create TN edges
         tn_nodes_dic, tn_edges_dic = gc.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
-        GraphWriter.output_graph(tn_nodes_dic, tn_edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, prefix='TN_', qscore=qscore)
+        gw.output_graph(tn_nodes_dic,
+                        tn_edges_dic,
+                        one_file_sep=one_file_sep,
+                        multi_file_sep=multi_file_sep,
+                        prefix='TN_',
+                        print_qscore=print_qscore)
 
 
 

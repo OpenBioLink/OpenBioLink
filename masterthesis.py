@@ -5,7 +5,8 @@ import os
 import sys
 
 import globalConfig as glob
-import graph_creation.graphCreationConfig as graphConfig
+import graph_creation.graphCreationConfig as gcConst
+import graphProperties as graphProp
 from graph_creation.types.qualityType import QualityType
 from graph_creation.graphCreation import Graph_Creation
 
@@ -14,25 +15,25 @@ from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
 def create_graph(args):
     working_dir = args.path
-    graphConfig.DIRECTED = not args.undir
-    graphConfig.QUALITY = args.qual
-    graphConfig.INTERACTIVE_MODE = not args.no_interact
-    graphConfig.SKIP_EXISTING_FILES = args.skip
+    graphProp.DIRECTED = not args.undir
+    graphProp.QUALITY = args.qual
+    gcConst.INTERACTIVE_MODE = not args.no_interact
+    gcConst.SKIP_EXISTING_FILES = args.skip
     graph_creator = Graph_Creation(working_dir)
-    logging.INFO('GRAPH CREATION')
+    logging.info('###### (1) GRAPH CREATION ######')
     if not args.no_dl:
         print("\n\n############### downloading files #################################")
-        logging.info('Start downloading files')
+        logging.info('## Start downloading files ##')
         graph_creator.download_db_files()
 
     if not args.no_in:
         print("\n\n############### creating graph input files #################################")
-        logging.info('Start creating input files')
+        logging.info('## Start creating input files ##')
         graph_creator.create_input_files()
 
     if not args.no_create:
         print("\n\n############### creating graph #################################")
-        logging.info('Start creating graph')
+        logging.info('## Start creating graph ##')
         if 's' in args.out_format[0]:
             single_sep = args.out_format[1][args.out_format[0].index('s')]
             if single_sep == 'n' or single_sep == 't':
@@ -46,7 +47,7 @@ def create_graph(args):
         else:
             multisep_sep = None
 
-        graph_creator.create_graph(one_file_sep=single_sep, multi_file_sep=multisep_sep, qscore=(not args.no_qscore))
+        graph_creator.create_graph(one_file_sep=single_sep, multi_file_sep=multisep_sep, print_qscore=(not args.no_qscore))
 
 
 def create_train_test_splits(args):
@@ -72,8 +73,8 @@ def check_args_validity(args, parser):
 
 def main(args_list=None):
     if (len(sys.argv) < 2) and not args_list:
-        import gui
         glob.GUI_MODE = True
+        import gui
         #fixme ? --> better way to start gui
         return
 
@@ -139,6 +140,8 @@ def main(args_list=None):
 
 
 if __name__ == '__main__':
+    logger = logging.getLogger()
+    logger.setLevel('INFO')
     pr = cProfile.Profile()
     pr.enable()
     main()

@@ -1,7 +1,8 @@
 import os
 import unittest
 
-import graph_creation.graphCreationConfig as glob
+import graph_creation.graphCreationConfig as gcConst
+import graphProperties as graphProp
 from graph_creation.graphCreation import Graph_Creation
 from graph_creation.metadata_db_file import *
 
@@ -108,9 +109,9 @@ class TestGraphCreation(unittest.TestCase):
         true_ref_folder = os.path.join(test_data_folder, 'TR_files')
 
         # global variables
-        glob.QUALITY = None
-        glob.INTERACTIVE_MODE = False
-        glob.SKIP_EXISTING_FILES = False
+        graphProp.QUALITY = None
+        gcConst.INTERACTIVE_MODE = False
+        gcConst.SKIP_EXISTING_FILES = False
 
         directed_tuple =  True, 'TR_DIR_'
         undirected_tuple =  False, 'TR_NOT_'
@@ -120,7 +121,7 @@ class TestGraphCreation(unittest.TestCase):
             graph_is_directed, true_ref_file_prefix = case
             print('\n##########################################')
             print('GRAPH IS DIRECTED: ' + str(graph_is_directed) + '\n')
-            glob.DIRECTED = graph_is_directed
+            graphProp.DIRECTED = graph_is_directed
             with self.subTest(graph_is_directed=graph_is_directed):
 
                 graph_creator = Graph_Creation(test_data_folder, manual_db_file_metadata)

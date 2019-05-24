@@ -1,12 +1,16 @@
 import csv
 import os
-import graph_creation.graphCreationConfig as glob
+import graph_creation.graphCreationConfig as gcConst
+import globalConfig as globConst
 
 
 class GraphWriter ():
 
+    def __init__(self):
+        self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
+
     @staticmethod
-    def output_graph(nodes_dic: dict, edges_dic : dict, one_file_sep = None, multi_file_sep = None, prefix= None, qscore=True, node_edge_list = True):
+    def output_graph(nodes_dic: dict, edges_dic : dict, one_file_sep = None, multi_file_sep = None, prefix= None, print_qscore=True, node_edge_list = True):
         if not prefix:
             prefix=''
 
@@ -14,10 +18,10 @@ class GraphWriter ():
             one_file_sep = ','
         # one file
         if one_file_sep is not None:
-            GraphWriter.output_graph_in_single_file(prefix, one_file_sep, nodes_dic, edges_dic, qscore=qscore)
+            GraphWriter.output_graph_in_single_file(prefix, one_file_sep, nodes_dic, edges_dic, qscore=print_qscore)
         # separate files
         if multi_file_sep is not None:
-            GraphWriter.output_graph_in_multi_files(prefix, multi_file_sep, nodes_dic, edges_dic, qscore=qscore)
+            GraphWriter.output_graph_in_multi_files(prefix, multi_file_sep, nodes_dic, edges_dic, qscore=print_qscore)
         # lists of all nodes and metaedges
         if node_edge_list:
             GraphWriter.write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
@@ -28,14 +32,13 @@ class GraphWriter ():
         #d = {x: i for i, x in enumerate(value)}
     #todo outputformat for graph DB
 
-    @staticmethod
-    def output_graph_in_single_file(prefix, file_sep, nodes_dic, edges_dic, qscore):
-        with open(os.path.join(glob.FILE_PATH, prefix + glob.NODES_FILE_PREFIX + '.csv'), 'w') as out_file:
+    def output_graph_in_single_file(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
+        with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + '.csv'), 'w') as out_file:
             writer = csv.writer(out_file, delimiter=file_sep, lineterminator='\n')
             for key, value in nodes_dic.items():
                 for node in value:
                     writer.writerow(list(node))
-        with open(os.path.join(glob.FILE_PATH, prefix + glob.EDGES_FILE_PREFIX + '.csv'), 'w') as out_file:
+        with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + '.csv'), 'w') as out_file:
             writer = csv.writer(out_file, delimiter=file_sep, lineterminator='\n')
             for key, value in edges_dic.items():
                 for edge in value:
@@ -45,18 +48,17 @@ class GraphWriter ():
                         writer.writerow(edge.to_sub_rel_obj_list())
 
 
-    @staticmethod
-    def output_graph_in_multi_files(prefix, file_sep, nodes_dic, edges_dic, qscore):
+    def output_graph_in_multi_files(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
         # write nodes
         for key, value in nodes_dic.items():
-            with open(os.path.join(glob.FILE_PATH, prefix + glob.NODES_FILE_PREFIX + '_' + key + '.csv'),
+            with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + '_' + key + '.csv'),
                       'w') as out_file:
                 writer = csv.writer(out_file, delimiter=file_sep, lineterminator='\n')
                 for node in value:
                     writer.writerow(list(node))
         # write edges
         for key, value in edges_dic.items():
-            with open(os.path.join(glob.FILE_PATH, prefix + glob.EDGES_FILE_PREFIX + '_' + key + '.csv'),
+            with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + '_' + key + '.csv'),
                       'w') as out_file:
                 writer = csv.writer(out_file, delimiter=file_sep, lineterminator='\n')
                 for edge in value:
@@ -65,11 +67,10 @@ class GraphWriter ():
                     else:
                         writer.writerow(edge.to_sub_rel_obj_list())
 
-    @staticmethod
-    def write_node_and_edge_list(prefix, nodes_list, edges_list):
-        with open(os.path.join(glob.FILE_PATH, prefix + 'nodes_list.csv'), 'w') as out_file:
+    def write_node_and_edge_list(self, prefix, nodes_list, edges_list):
+        with open(os.path.join(self.graph_dir_path, prefix + 'nodes_list.csv'), 'w') as out_file:
             out_file.writelines(list('\n'.join(nodes_list)))
 
-        with open(os.path.join(glob.FILE_PATH, prefix + 'edges_list.csv'), 'w') as out_file:
+        with open(os.path.join(self.graph_dir_path, prefix + 'edges_list.csv'), 'w') as out_file:
             out_file.writelines(list('\n'.join(edges_list)))
 

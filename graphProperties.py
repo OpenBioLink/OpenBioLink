@@ -1,0 +1,5 @@
+QUALITY = None
+DIRECTED = True
+EDGE_TYPES = []
+NODE_TYPES = []
+
