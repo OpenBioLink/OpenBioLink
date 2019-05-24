@@ -1,8 +1,7 @@
 import os
 import tkinter as tk
-from tkinter import font  as tkfont, messagebox, filedialog, ttk
+from tkinter import font  as tkfont, messagebox, filedialog
 import sys
-
 import masterthesis
 
 
@@ -12,30 +11,28 @@ class BimegGui(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
-
+        # Define Fonts
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
         self.info_font= tkfont.Font(family='Helvetica', size=7, slant="italic")
-
+        # Define base container
         self.container = tk.Frame(self)
         self.container.pack(side="top", fill="both", expand=True)
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
 
-        self.args = []
-
-        self.selected_frames = ['ConfirmFrame']
-        self.next_frame_index = 0
-
+        # Initialize all frames
         self.frames = {}
-        #self.frame_cls = {}
-        #for cls in (StartPage, GraphCreationFrame, SplitFrame, CrossValFrame, TrainFrame, EvalFrame, ConfirmFrame):
-        #    self.frame_cls[cls.__name__] = cls
-        for F in (StartPage, GraphCreationFrame, SplitFrame, CrossValFrame, TrainFrame, EvalFrame, ConfirmFrame):
+        for F in (StartPage, GraphCreationFrame, SplitFrame, CrossValFrame, TrainFrame, EvalFrame, ConfirmFrame, ConsoleFrame):
             page_name = F.__name__
             frame = F(parent=self.container, controller=self)
             self.frames[page_name] = frame
 
             frame.grid(row=0, column=0, sticky="nsew")
+
+        self.args = []
+
+        self.selected_frames = ['ConfirmFrame']
+        self.next_frame_index = 0
 
         self.show_frame("StartPage")
 
@@ -75,20 +72,13 @@ class BimegGui(tk.Tk):
     def start(self):
         """ start script and close gui"""
         if messagebox.askokcancel("Start", "Do you want to start now?"):
+            self.show_frame("ConsoleFrame")
             arg_list = []
             arg_list.extend(self.ARGS_LIST_GRAPH_CREATION)
             arg_list.extend(self.ARGS_LIST_TRAIN_TEST_SPLT)
             masterthesis.main(args_list=arg_list)
-            app.destroy()
-
-    def ask_for_exit(self, message):
-        """ start script and close gui"""
-        if messagebox.askokcancel("Warning", message):
-            arg_list = []
-            arg_list.extend(self.ARGS_LIST_GRAPH_CREATION)
-            arg_list.extend(self.ARGS_LIST_TRAIN_TEST_SPLT)
-            masterthesis.main(args_list=arg_list)
-            app.destroy()
+            #todo start detached
+            #app.destroy()
 
 
 #################### START PAGE ############################
@@ -99,19 +89,19 @@ class StartPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        title = tk.Label(self, text="Select actions", font=controller.title_font)
+        title = tk.Label(self, text="Select Actions", font=controller.title_font)
 
-        actions_panel=tk.Frame(self)
+        actions_panel=tk.LabelFrame(self, text='Actions')
         self.g = tk.BooleanVar()
-        g_box = tk.Checkbutton(actions_panel, text="Generate Graph", variable=self.g)
+        g_box = tk.Checkbutton(actions_panel, text="(1) Generate Graph", variable=self.g)
         self.s = tk.BooleanVar()
-        s_box = tk.Checkbutton(actions_panel, text="Generate Train Test Split", variable=self.s)
+        s_box = tk.Checkbutton(actions_panel, text="(2) Generate Train Test Split", variable=self.s)
         self.c = tk.BooleanVar()
-        c_box = tk.Checkbutton(actions_panel, text="Apply hyperparameter optimization via cross validation", variable=self.c)
+        c_box = tk.Checkbutton(actions_panel, text="(3) Apply hyperparameter optimization via cross validation", variable=self.c)
         self.t = tk.BooleanVar()
-        t_box = tk.Checkbutton(actions_panel, text="Apply Training", variable=self.t)
+        t_box = tk.Checkbutton(actions_panel, text="(4) Apply Training", variable=self.t)
         self.e = tk.BooleanVar()
-        e_box = tk.Checkbutton(actions_panel, text="Apply Testing and Evaluation", variable=self.e)
+        e_box = tk.Checkbutton(actions_panel, text="(5) Apply Testing and Evaluation", variable=self.e)
 
 
 
@@ -119,9 +109,9 @@ class StartPage(tk.Frame):
         next_button = tk.Button(buttons_panel, text="Next", command=lambda: self.next_page(),height = 1, width = 15 )
 
         title.pack(side="top", fill="x", pady=10)
-        actions_panel.pack(side='top', fill='both', expand=True, anchor='w')
-        g_box.pack()
-        #s_box.pack()
+        actions_panel.pack(side='top', fill='both', expand=True, anchor='w',padx=15, pady=10)
+        g_box.pack(side='top', anchor='w', padx=20, pady=(20,0))
+        s_box.pack(side='top', anchor='w', padx=20, pady=(20,0))
         #c_box.pack()
         #t_box.pack()
         #e_box.pack()
@@ -156,7 +146,7 @@ class GraphCreationFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        title = tk.Label(self, text="Graph Creation", font=controller.title_font)
+        title = tk.Label(self, text="(1) Graph Creation", font=controller.title_font)
         working_dir_el = self._create_working_dir_el(self)
         options_panel = tk.Frame(self)
         actions_el = self._create_action_el(options_panel)
@@ -179,16 +169,8 @@ class GraphCreationFrame(tk.Frame):
         prev_button.pack(side='left', anchor='w', pady=(5,10))
         next_button.pack(side='right', anchor='e', pady=(5,10))
 
-        #self.no_interact = tk.BooleanVar()
-
-        #no_interact_box = tk.Checkbutton(self, text='graph is undirected', variable=self.no_interact)
-
-        #self.skip = tk.BooleanVar()
-        #skip_box = tk.Checkbutton(self, text='graph is undirected', variable=self.skip)
-
     def _create_working_dir_el(self, parent):
         el = tk.LabelFrame(parent, text="Working Directory")
-
         self.path = tk.StringVar(value=os.getcwd())
         path_button = tk.Button(el, text="select path ...", command=lambda: self.browse_dir())
         path_label = tk.Label(el, textvariable=self.path)
@@ -307,11 +289,78 @@ class SplitFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text="Split Creation", font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
-        next_button = tk.Button(self, text="Next", command=lambda: self.next_page())
+        title = tk.Label(self, text="(2) Split Creation", font=controller.title_font)
+        file_edge_el = self._create_edge_path_el(self)
+        file_tn_el = self._create_tn_path_el(self)
+        file_nodes_el = self._create_nodes_path_el(self)
 
-        next_button.pack()
+        buttons_panel = tk.Frame(self)
+        next_button = tk.Button(buttons_panel, text="Next", command=lambda: self.next_page(), height=1, width=15)
+
+        title.pack(side="top", fill="x", pady=10)
+
+        file_edge_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+        file_tn_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+        file_nodes_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+
+        ttk.Separator(self, orient='horizontal').pack(side='top', fill='x', pady=(15, 0), padx=10, anchor='s')
+        buttons_panel.pack(side='bottom', padx=15, fill='x')
+        next_button.pack(side='right', anchor='e', pady=(5, 10))
+
+     #   parser.add_argument('--edges', type=str, help='Path to edges.csv file (required with action -s')
+     #   parser.add_argument('--tn_edges', type=str,
+     #                       help='Path to true_negatives_edges.csv file (required with action -s')
+     #   parser.add_argument('--nodes', type=str, help='Path to nodes.csv file (required with action -s')
+
+     #   parser.add_argument('--test_frac', type=float, default='0.2',
+     #                       help='Fraction of test set as float (default= 0.2)')
+     #   parser.add_argument('--val_frac', type=float, default='0.2',
+     #                       help='Fraction of validation set as float (default= 0.2)')
+     #   parser.add_argument('--crossval', action='store_true', help='Multiple train-validation-sets are generated')
+     #   parser.add_argument('--folds', type=int, default=0,
+     #                       help='Define the number of folds - if not specified, number is calculated via val_frac)')
+     #   parser.add_argument('--meta', type=str,
+     #                       help='Path to meta_edge triples (only required if meta-edges are not in BiMeG)')
+
+    def _create_edge_path_el(self, parent):
+        el = tk.Frame(parent)
+        self.edge_path = tk.StringVar() #todo here right path
+        edge_button = tk.Button(el, text="select path ...", command=lambda: self.browse_edge_file())
+        edge_label = tk.Entry(el, textvariable=self.edge_path)
+        tk.Label(el, text="edge path").pack(side='left', anchor='w',padx=5, pady=5)
+        edge_label.pack(side='left', anchor='w',padx=5, pady=5)
+        edge_button.pack(side='right', anchor='w',padx=5, pady=5)
+        return el
+
+    def _create_tn_path_el(self, parent):
+        el = tk.Frame(parent)
+        self.tn_path = tk.StringVar()# todo here right path
+        tn_button = tk.Button(el, text="select path ...", command=lambda: self.browse_tn_file())
+        tn_label = tk.Entry(el, textvariable=self.tn_path)
+        tk.Label(el, text="true negative edge path").pack(side='left', anchor='w',padx=5, pady=5)
+        tn_label.pack(side='left', anchor='w', padx=5, pady=5)
+        tn_button.pack(side='right', padx=5, pady=5)
+        return el
+
+    def _create_nodes_path_el(self, parent):
+        el = tk.Frame(parent)
+        self.nodes_path = tk.StringVar()# todo here right path
+        nodes_button = tk.Button(el, text="select path ...", command=lambda: self.browse_nodes_file())
+        nodes_label = tk.Entry(el, textvariable=self.nodes_path)
+        tk.Label(el, text="nodes file path").pack(side='left', anchor='w',padx=5, pady=5)
+        nodes_label.pack(side='left', anchor='w', padx=5, pady=5)
+        nodes_button.pack(side='right', anchor='w', padx=5, pady=5)
+
+        return el
+
+    def browse_edge_file(self):
+        self.edge_path.set(filedialog.askopenfilename())
+
+    def browse_tn_file(self):
+        self.tn_path.set(filedialog.askopenfilename())
+
+    def browse_nodes_file(self):
+        self.nodes_path.set(filedialog.askopenfilename())
 
     def next_page(self):
         self.controller.show_next_frame()
@@ -324,7 +373,7 @@ class CrossValFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text=" Hyperparameter Optimization (Cross Validation)", font=controller.title_font)
+        label = tk.Label(self, text="(3) Hyperparameter Optimization (Cross Validation)", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
         next_button = tk.Button(self, text="Next", command=lambda: self.next_page())
         next_button.pack()
@@ -339,7 +388,7 @@ class TrainFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text="Training", font=controller.title_font)
+        label = tk.Label(self, text="(4) Training", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
         next_button = tk.Button(self, text="Next", command=lambda: self.next_page())
         next_button.pack()
@@ -355,7 +404,7 @@ class EvalFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text="Testing and Evaluation", font=controller.title_font)
+        label = tk.Label(self, text="(5)  Testing and Evaluation", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
         next_button = tk.Button(self, text="Start", command=lambda: self.next_page())
         next_button.pack()
@@ -411,6 +460,8 @@ class ConfirmFrame(tk.Frame):
         return params_gc_string
 
 
+#################### ASK FOR EXIT ############################
+
 class AskForExitPopup:
     def __init__(self, message):
         win = self.win = tk.Toplevel()
@@ -436,6 +487,163 @@ def askForExit(message):
     exit = AskForExitPopup(message)
     if exit:
         on_closing()
+
+#################### SKIP EXISTING FILES ############################
+
+class SkipExistingFilesPopup:
+    def __init__(self, file_path):
+        self.skip = None
+        self.for_all=False
+        self.win = tk.Toplevel()
+        message = 'The file %s already exists'%(file_path)
+        l = tk.Label(self.win, text=message)
+
+        button_panel = tk.Frame(self.win)
+
+        go_on_button = tk.Button(button_panel, text="continue anyways", command=self.go_on)
+        go_on_all_button = tk.Button(button_panel, text="continue anyways for all files", command=self.go_on_for_all)
+        skip_button = tk.Button(button_panel, text="skip this file", command=self.skip_this)
+        skip_all_button = tk.Button(button_panel, text="skip all existing files", command=self.skip_all)
+        exit_button = tk.Button(button_panel, text="exit", command=self.exit)
+        l.pack(side='top')
+        button_panel.pack(side='top')
+        go_on_button.pack(side='left')
+        go_on_all_button.pack(side='left')
+        skip_button.pack(side='left')
+        skip_all_button.pack(side='left')
+        exit_button.pack(side='left')
+        self.win.wait_window()
+
+    def exit(self):
+        self.win.destroy()
+        self.skip = None
+        self.for_all = None
+
+    def go_on(self):
+            self.win.destroy()
+            self.skip = None
+            self.for_all = False
+    def go_on_for_all(self):
+            self.win.destroy()
+            self.skip = False
+            self.for_all = True
+    def skip_this(self):
+            self.win.destroy()
+            self.skip = True
+            self.for_all=False
+    def skip_all(self):
+            self.win.destroy()
+            self.skip = True
+            self.for_all = True
+
+def skipExistingFiles(file_path):
+    skip = None
+    for_all = False
+    if os.path.isfile(file_path):
+        popup_response = SkipExistingFilesPopup(file_path)
+        skip = popup_response.skip
+        for_all = popup_response.for_all
+        if skip is None and for_all is None:
+            on_closing()
+    return skip, for_all
+
+#################### DISPLAY LOGGING IN GUI ############################
+
+# """ source: #https://github.com/beenje/tkinter-logging-text-widget/blob/master/main.py """
+import logging
+import queue
+import tkinter as tk
+from tkinter import ttk, N, S, E, W
+from tkinter.scrolledtext import ScrolledText
+
+logger = logging.getLogger()
+
+class QueueHandler(logging.Handler):
+    """Class to send logging records to a queue
+
+    It can be used from different threads
+    The ConsoleUi class polls this queue to display records in a ScrolledText widget
+    """
+    # Example from Moshe Kaplan: https://gist.github.com/moshekaplan/c425f861de7bbf28ef06
+    # (https://stackoverflow.com/questions/13318742/python-logging-to-tkinter-text-widget) is not thread safe!
+    # See https://stackoverflow.com/questions/43909849/tkinter-python-crashes-on-new-thread-trying-to-log-on-main-thread
+
+    def __init__(self, log_queue):
+        super().__init__()
+        self.log_queue = log_queue
+
+    def emit(self, record):
+        self.log_queue.put(record)
+
+
+class ConsoleUi:
+    """Poll messages from a logging queue and display them in a scrolled text widget"""
+
+    def __init__(self, frame):
+        self.frame = frame
+        # Create a ScrolledText wdiget
+        self.scrolled_text = ScrolledText(frame, state='disabled', height=12)
+        self.scrolled_text.grid(row=0, column=0, sticky=(N, S, W, E))
+        self.scrolled_text.configure(font='TkFixedFont')
+        self.scrolled_text.tag_config('INFO', foreground='black' )
+        self.scrolled_text.tag_config('DEBUG', foreground='gray')
+        self.scrolled_text.tag_config('WARNING', foreground='orange')
+        self.scrolled_text.tag_config('ERROR', foreground='red')
+        self.scrolled_text.tag_config('CRITICAL', foreground='red', underline=1)
+        # Create a logging handler using a queue
+        self.log_queue = queue.Queue()
+        self.queue_handler = QueueHandler(self.log_queue)
+        formatter = logging.Formatter('%(asctime)s: %(message)s')
+        self.queue_handler.setFormatter(formatter)
+        logger.addHandler(self.queue_handler)
+        # Start polling messages from the queue
+        self.frame.after(100, self.poll_log_queue)
+
+    def display(self, record):
+        msg = self.queue_handler.format(record)
+        self.scrolled_text.configure(state='normal')
+        self.scrolled_text.insert(tk.END, msg + '\n', record.levelname)
+        self.scrolled_text.configure(state='disabled')
+        # Autoscroll to the bottom
+        self.scrolled_text.yview(tk.END)
+
+    def poll_log_queue(self):
+        # Check every 100ms if there is a new message in the queue to display
+        while True:
+            try:
+                record = self.log_queue.get(block=False)
+            except queue.Empty:
+                break
+            else:
+                self.display(record)
+        self.frame.after(100, self.poll_log_queue)
+
+
+class ConsoleFrame(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        # Create the panes and frames
+        console_frame = ttk.Labelframe(self, text="Console")
+        buttons_panel = tk.Frame(self)
+        next_button = tk.Button(buttons_panel, text="Cancel", command=lambda: on_closing(), height=1, width=15)
+
+
+        # Initialize all frames
+        self.console = ConsoleUi(console_frame)
+        console_frame.pack(side='top', fill='both', expand=True)
+
+
+
+        ttk.Separator(self, orient='horizontal').pack(side='top', fill='x', pady=(15, 0), padx=10, anchor='s')
+        buttons_panel.pack(side='bottom', padx=15, fill='x')
+        next_button.pack(side='left', anchor='w', pady=(5, 10))
+
+    def quit(self, *args):
+        self.root.destroy()
+
+#################### MAIN GUI ############################
 
 def on_closing():
     if messagebox.askokcancel("Quit", "Do you really want to quit?"):
