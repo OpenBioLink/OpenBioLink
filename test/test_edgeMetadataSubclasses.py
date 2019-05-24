@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from graph_creation import utils
+import utils
 from graph_creation.metadata_edge.tnEdgeRegularMetadata import *
 
 

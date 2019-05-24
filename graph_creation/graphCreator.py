@@ -6,7 +6,7 @@ import logging
 import graphProperties as graphProp
 import graph_creation.graphCreationConfig as gcConst
 import globalConfig as globConst
-import graph_creation.utils as utils
+import utils
 from graph_creation.cli import Cli
 from edge import Edge
 from node import Node

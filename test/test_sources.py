@@ -1,8 +1,7 @@
 import unittest
 import urllib.request as request
-from ftplib import FTP
 
-import graph_creation.utils as utils
+import utils
 from graph_creation.metadata_db_file import DbMetadata
 
 

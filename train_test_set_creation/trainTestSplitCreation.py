@@ -5,11 +5,9 @@ import numpy
 import pandas
 
 import graphProperties as graphProp
-import graph_creation.utils as graph_utils
-import train_test_set_creation.utils as tts_utils
-from .trainTestSetWriter import TrainTestSetWriter
+import utils
 from .sampler import NegativeSampler
-
+from .trainTestSetWriter import TrainTestSetWriter
 
 RANDOM_STATE = 42  # do not change for reproducibility
 random.seed(RANDOM_STATE)
@@ -46,7 +44,7 @@ class TrainTestSetCreation():
         self.meta_edges_dic = {}
         if not meta_edge_triples:
             import graph_creation.metadata_edge.edgeMetadata as meta
-            for metaEdge in graph_utils.get_leaf_subclasses(meta.EdgeMetadata):
+            for metaEdge in utils.get_leaf_subclasses(meta.EdgeMetadata):
                 edgeType =  str(metaEdge.EDGE_INMETA_CLASS.EDGE_TYPE)
                 node1Type = str(metaEdge.EDGE_INMETA_CLASS.NODE1_TYPE)
                 node2Type = str(metaEdge.EDGE_INMETA_CLASS.NODE2_TYPE)
@@ -58,8 +56,8 @@ class TrainTestSetCreation():
                 #todo does this work?
 
         # check for transient onto edges
-        transitiv_IS_A_edges = tts_utils.check_for_transitive_edges(self.all_tp[self.all_tp['edgeType'] == 'IS_A'])
-        transitiv_PART_OF_edges = tts_utils.check_for_transitive_edges(self.all_tp[self.all_tp['edgeType'] == 'PART_OF'])
+        transitiv_IS_A_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp['edgeType'] == 'IS_A'])
+        transitiv_PART_OF_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp['edgeType'] == 'PART_OF'])
         if transitiv_IS_A_edges:
             print('WARNING: transient edges in IS_A: ({a},b,c) for a IS_A b and a IS_A c', transitiv_IS_A_edges)
         if transitiv_PART_OF_edges:
@@ -83,7 +81,7 @@ class TrainTestSetCreation():
         test_set = all_samples.sample(frac=test_frac, random_state=RANDOM_STATE)
         train_val_set = all_samples.drop(list(test_set.index.values))
         if graphProp.DIRECTED:
-            train_val_set = tts_utils.remove_bidir_edges(remain_set=train_val_set, remove_set=test_set)
+            train_val_set = utils.remove_bidir_edges(remain_set=train_val_set, remove_set=test_set)
         if crossval:
             if folds:
                 train_val_set_tuples = self.create_cross_val(train_val_set, folds)
@@ -94,7 +92,7 @@ class TrainTestSetCreation():
             val_set = train_val_set.drop(list(train_set.index.values))
             train_val_set_tuples = [(train_set, val_set)]
         if graphProp.DIRECTED:
-            train_val_set_tuples = [(tts_utils.remove_bidir_edges(remain_set=t, remove_set=v),v)
+            train_val_set_tuples = [(utils.remove_bidir_edges(remain_set=t, remove_set=v),v)
                                     for t,v in train_val_set_tuples]
         writer = TrainTestSetWriter(COL_NAMES_SAMPLES)
         writer.print_sets(train_val_set_tuples,test_set)

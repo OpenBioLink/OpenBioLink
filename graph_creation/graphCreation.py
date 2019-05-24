@@ -6,7 +6,7 @@ from tqdm import tqdm
 import globalConfig as globConst
 import graph_creation.graphCreationConfig as gcConst
 import graphProperties as graphProp
-import graph_creation.utils as utils
+import utils as utils
 from graph_creation.graphCreator import GraphCreator
 from graph_creation.graphWriter import GraphWriter
 from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
