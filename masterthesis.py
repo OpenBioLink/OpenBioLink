@@ -14,12 +14,11 @@ from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
 
 def create_graph(args):
-    working_dir = args.path
     graphProp.DIRECTED = not args.undir
     graphProp.QUALITY = args.qual
     gcConst.INTERACTIVE_MODE = not args.no_interact
     gcConst.SKIP_EXISTING_FILES = args.skip
-    graph_creator = Graph_Creation(working_dir)
+    graph_creator = Graph_Creation(glob.WORKING_DIR)
     logging.info('###### (1) GRAPH CREATION ######')
     if not args.no_dl:
         print("\n\n############### downloading files #################################")
@@ -54,8 +53,16 @@ def create_train_test_splits(args):
     if args.meta:
         pass
         #fixme read out triplets from path
-    tts = TrainTestSetCreation(graph_path=args.edges, tn_graph_path=args.tn_edges, nodes_path=args.nodes, meta_edge_triples=args.meta)
-    tts.random_edge_split(val_frac=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds)
+    tts = TrainTestSetCreation(graph_path=args.edges,
+                               tn_graph_path=args.tn_edges,
+                               nodes_path=args.nodes,
+                               meta_edge_triples=args.meta,
+                               t_minus_one_graph_path=args.tmo_edges,
+                               t_minus_one_tn_graph_path=args.tmo_tn_edges,
+                               t_minus_one_nodes_path=args.tmo_nodes)
+    tts.time_slice_split()
+    #tts = TrainTestSetCreation(graph_path=args.edges, tn_graph_path=args.tn_edges, nodes_path=args.nodes, meta_edge_triples=args.meta)
+    #tts.random_edge_split(val_frac=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds)
 
 
 
@@ -69,20 +76,23 @@ def check_args_validity(args, parser):
         parser.error("at least one action is required [-g, -s, -c, -t, -e]")
     if args.skip and args.no_interact is None:
         parser.error("option --skip requires --no_interact")
+        #fixme
 
 
 def main(args_list=None):
     if (len(sys.argv) < 2) and not args_list:
         glob.GUI_MODE = True
         import gui
-        #fixme ? --> better way to start gui
+        gui.start_gui()
         return
 
     parser = argparse.ArgumentParser('Bio-Medical Graph Toolbox (BiMeG)')
 
+    # Global config
+    parser.add_argument('-p', type=str, default= os.getcwd(),help='specify a working directory (default = current working dictionary')
+
     # Graph Creation
     parser.add_argument('-g', action='store_true', help='Generate Graph')
-    parser.add_argument('--path', type=str, default= os.getcwd(),help='specify a working directory (default = current working dictionary')
     parser.add_argument('--undir', action='store_true', help='Output-Graph should be undirectional (default = directional)')
     parser.add_argument('--qual', type=str, help= 'quality level od the output-graph, options = [hq, mq, lq], (default = None -> all entries are used)')
     parser.add_argument('--no_interact', action='store_true', help='Disables interactive mode - existing files will be replaced (default = interactive)')
@@ -97,13 +107,18 @@ def main(args_list=None):
     # Train- Test Split Generation
     parser.add_argument('-s', action='store_true', help='Generate Train-,Validation-, Test-Split')
     parser.add_argument('--edges', type=str, help='Path to edges.csv file (required with action -s')
-    parser.add_argument('--tn_edges', type=str, help='Path to true_negatives_edges.csv file (required with action -s')
-    parser.add_argument('--nodes', type=str, help='Path to nodes.csv file (required with action -s')
+    parser.add_argument('--tn_edges', type=str, help='Path to true_negatives_edges.csv file (required with action -s)')
+    parser.add_argument('--nodes', type=str, help='Path to nodes.csv file (required with action -s)')
+    parser.add_argument('--mode', type=str, help='Mode of train-test-set split, options=[rand, time]')
+
     parser.add_argument('--test_frac', type=float, default='0.2', help='Fraction of test set as float (default= 0.2)')
     parser.add_argument('--val_frac', type=float, default='0.2',help='Fraction of validation set as float (default= 0.2)')
     parser.add_argument('--crossval', action='store_true', help='Multiple train-validation-sets are generated')
     parser.add_argument('--folds', type=int, default=0, help='Define the number of folds - if not specified, number is calculated via val_frac)')
     parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges are not in BiMeG)')
+    parser.add_argument('--tmo_edges', type=str, help='Path to edges.csv file of t-minus-one graph (required for --mode time')
+    parser.add_argument('--tmo_tn_edges', type=str, help='Path to true_negatives_edges.csv file of t-minus-one graph (required for --mode time')
+    parser.add_argument('--tmo_nodes', type=str, help='Path to nodes.csv file of t-minus-one graph (required for --mode time')
 
     # Hyperparameter Optimization
     parser.add_argument('-c', action='store_true', help='Apply hyperparameter optimization via cross validation')
@@ -122,6 +137,7 @@ def main(args_list=None):
         args = parser.parse_args()
 
     check_args_validity(args, parser)
+    glob.WORKING_DIR = args.p
 
     if args.qual == 'hq':
         args.qual = QualityType.HQ
@@ -132,9 +148,9 @@ def main(args_list=None):
 
     if args.g:
         create_graph(args)
-
     if args.s:
         create_train_test_splits(args)
+
     logging.info('Finished!')
 
 

@@ -4,6 +4,8 @@ from tkinter import font  as tkfont, messagebox, filedialog
 import sys
 import masterthesis
 
+app = None
+
 
 class BimegGui(tk.Tk):
     ARGS_LIST_GRAPH_CREATION = []
@@ -22,7 +24,7 @@ class BimegGui(tk.Tk):
 
         # Initialize all frames
         self.frames = {}
-        for F in (StartPage, GraphCreationFrame, SplitFrame, CrossValFrame, TrainFrame, EvalFrame, ConfirmFrame, ConsoleFrame):
+        for F in (StartPage, GlobalConfigFrame, GraphCreationFrame, SplitFrame, CrossValFrame, TrainFrame, EvalFrame, ConfirmFrame, ConsoleFrame):
             page_name = F.__name__
             frame = F(parent=self.container, controller=self)
             self.frames[page_name] = frame
@@ -121,7 +123,7 @@ class StartPage(tk.Frame):
 
     def next_page(self):
         selected_frames = []
-
+        selected_frames.append("GlobalConfigFrame")
         if self.g.get():
             selected_frames.append("GraphCreationFrame")
         if self.s.get():
@@ -132,11 +134,57 @@ class StartPage(tk.Frame):
             selected_frames.append("TrainFrame")
         if self.e.get():
             selected_frames.append("EvalFrame")
-        if len(selected_frames)<1:
+        if len(selected_frames)<2:
             messagebox.showerror("ERROR", "At least one action must be chosen!")
             return
         self.controller.set_selected_frames(selected_frames)
         self.controller.show_next_frame()
+
+
+
+#################### GLOBAL CONFIG PAGE ############################
+
+class GlobalConfigFrame(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.title = tk.Label(self, text="Global config", font=controller.title_font)
+        self.working_dir_el = self._create_working_dir_el(self)
+
+        buttons_panel = tk.Frame(self)
+        next_button = tk.Button(buttons_panel, text="Next", command=lambda: self.next_page(),height = 1, width = 15 )
+        prev_button = tk.Button(buttons_panel, text="Back", command=lambda: self.controller.show_previous_frame(), height=1, width=15)
+
+        self.title.pack(side="top", fill="x", pady=10)
+        self.working_dir_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+
+        ttk.Separator(self, orient='horizontal').pack(side='top', fill='x', pady=(15,0), padx=10, anchor='s')
+        buttons_panel.pack(side='bottom', padx=15, fill='x')
+        prev_button.pack(side='left', anchor='w', pady=(5,10))
+        next_button.pack(side='right', anchor='e', pady=(5,10))
+
+    def _create_working_dir_el(self, parent):
+        el = tk.LabelFrame(parent, text="Working Directory")
+        self.path = tk.StringVar(value=os.getcwd()) #todo good idea?
+        path_button = tk.Button(el, text="select path ...", command=lambda: self.browse_dir())
+        path_label = tk.Label(el, textvariable=self.path)
+        path_button.pack(side='left', anchor='w',padx=5, pady=5)
+        path_label.pack(side='left', anchor='w',padx=5, pady=5)
+        return el
+
+    def browse_dir(self):
+        self.path.set(filedialog.askdirectory())
+
+
+    def next_page(self):
+        self.controller.ARGS_LIST_GRAPH_CREATION=[]
+        if self.path.get() == '':
+            messagebox.showerror('ERROR', 'Please select a path')
+            return
+        self.controller.ARGS_LIST_GRAPH_CREATION.extend(['-p', self.path.get()])
+        self.controller.show_next_frame()
+
 
 
 #################### GRAPH CREATION PAGE ############################
@@ -146,37 +194,37 @@ class GraphCreationFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        title = tk.Label(self, text="(1) Graph Creation", font=controller.title_font)
-        working_dir_el = self._create_working_dir_el(self)
-        options_panel = tk.Frame(self)
-        actions_el = self._create_action_el(options_panel)
-        graph_prop_el = self._create_graph_prop_el(options_panel)
-        output_format_el = self._create_output_format_el(options_panel)
+        self.title = tk.Label(self, text="(1) Graph Creation", font=controller.title_font)
+        #self.working_dir_el = self._create_working_dir_el(self)
+        self.options_panel = tk.Frame(self)
+        self.actions_el = self._create_action_el(self.options_panel)
+        self.graph_prop_el = self._create_graph_prop_el(self.options_panel)
+        self.output_format_el = self._create_output_format_el(self.options_panel)
 
         buttons_panel = tk.Frame(self)
         next_button = tk.Button(buttons_panel, text="Next", command=lambda: self.next_page(),height = 1, width = 15 )
         prev_button = tk.Button(buttons_panel, text="Back", command=lambda: self.controller.show_previous_frame(), height=1, width=15)
 
-        title.pack(side="top", fill="x", pady=10)
-        working_dir_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
-        options_panel.pack(side='top', fill='both', padx=5, pady=10, expand=True)
-        actions_el.pack(side='left', fill='both', padx=10, expand=True)
-        graph_prop_el.pack(side='left', fill='both', padx=10, expand=True)
-        output_format_el.pack(side='left', fill='both', padx=10, expand=True)
+        self.title.pack(side="top", fill="x", pady=10)
+        #self.working_dir_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+        self.options_panel.pack(side='top', fill='both', padx=5, pady=10, expand=True)
+        self.actions_el.pack(side='left', fill='both', padx=10, expand=True)
+        self.graph_prop_el.pack(side='left', fill='both', padx=10, expand=True)
+        self.output_format_el.pack(side='left', fill='both', padx=10, expand=True)
 
         ttk.Separator(self, orient='horizontal').pack(side='top', fill='x', pady=(15,0), padx=10, anchor='s')
         buttons_panel.pack(side='bottom', padx=15, fill='x')
         prev_button.pack(side='left', anchor='w', pady=(5,10))
         next_button.pack(side='right', anchor='e', pady=(5,10))
 
-    def _create_working_dir_el(self, parent):
-        el = tk.LabelFrame(parent, text="Working Directory")
-        self.path = tk.StringVar(value=os.getcwd())
-        path_button = tk.Button(el, text="select path ...", command=lambda: self.browse_dir())
-        path_label = tk.Label(el, textvariable=self.path)
-        path_button.pack(side='left', anchor='w',padx=5, pady=5)
-        path_label.pack(side='left', anchor='w',padx=5, pady=5)
-        return el
+    #def _create_working_dir_el(self, parent):
+    #    el = tk.LabelFrame(parent, text="Working Directory")
+    #    self.path = tk.StringVar(value=os.getcwd())
+    #    path_button = tk.Button(el, text="select path ...", command=lambda: self.browse_dir())
+    #    path_label = tk.Label(el, textvariable=self.path)
+    #    path_button.pack(side='left', anchor='w',padx=5, pady=5)
+    #    path_label.pack(side='left', anchor='w',padx=5, pady=5)
+    #    return el
 
     def _create_action_el(self, parent):
         el = tk.LabelFrame(parent, text="Actions")
@@ -185,7 +233,7 @@ class GraphCreationFrame(tk.Frame):
         self.create_infiles = tk.BooleanVar(value=True)
         create_in_box = tk.Checkbutton(el, text='create infiles', variable=self.create_infiles)
         self.create_graph = tk.BooleanVar(value=True)
-        create_graph_box = tk.Checkbutton(el, text='create graph', variable=self.create_graph)
+        create_graph_box = tk.Checkbutton(el, text='create graph', variable=self.create_graph, command=self.toggl_cg_elements)
         dl_box.pack(side='top',padx=5, anchor='w')
         create_in_box.pack(side='top',padx=5, anchor='w')
         create_graph_box.pack(side='top',padx=5, anchor='w')
@@ -249,6 +297,15 @@ class GraphCreationFrame(tk.Frame):
     def browse_dir(self):
         self.path.set(filedialog.askdirectory())
 
+    def toggl_cg_elements(self):
+        if self.graph_prop_el.winfo_ismapped():
+            self.graph_prop_el.pack_forget()
+            self.output_format_el.pack_forget()
+        else:
+            self.graph_prop_el.pack(side='left', fill='both', padx=10, expand=True)
+            self.output_format_el.pack(side='left', fill='both', padx=10, expand=True)
+
+
     def next_page(self):
         self.controller.ARGS_LIST_GRAPH_CREATION=[]
         if self.path.get() == '':
@@ -289,23 +346,25 @@ class SplitFrame(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        title = tk.Label(self, text="(2) Split Creation", font=controller.title_font)
-        file_edge_el = self._create_edge_path_el(self)
-        file_tn_el = self._create_tn_path_el(self)
-        file_nodes_el = self._create_nodes_path_el(self)
+        self.title = tk.Label(self, text="(2) Split Creation", font=controller.title_font)
+        self.file_edge_el = self._create_edge_path_el(self)
+        self.file_tn_el = self._create_tn_path_el(self)
+        self.file_nodes_el = self._create_nodes_path_el(self)
 
-        buttons_panel = tk.Frame(self)
-        next_button = tk.Button(buttons_panel, text="Next", command=lambda: self.next_page(), height=1, width=15)
+        self.buttons_panel = tk.Frame(self)
+        self.next_button = tk.Button(self.buttons_panel, text="Next", command=lambda: self.next_page(), height=1, width=15)
 
-        title.pack(side="top", fill="x", pady=10)
+        self.title.pack(side="top", fill="x", pady=10)
 
-        file_edge_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
-        file_tn_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
-        file_nodes_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+        self.file_edge_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+        self.file_tn_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+        self.file_nodes_el.pack(side='top', fill='both', padx=15, pady=10, expand=True)
+
+
 
         ttk.Separator(self, orient='horizontal').pack(side='top', fill='x', pady=(15, 0), padx=10, anchor='s')
-        buttons_panel.pack(side='bottom', padx=15, fill='x')
-        next_button.pack(side='right', anchor='e', pady=(5, 10))
+        self.buttons_panel.pack(side='bottom', padx=15, fill='x')
+        self.next_button.pack(side='right', anchor='e', pady=(5, 10))
 
      #   parser.add_argument('--edges', type=str, help='Path to edges.csv file (required with action -s')
      #   parser.add_argument('--tn_edges', type=str,
@@ -650,7 +709,10 @@ def on_closing():
         app.destroy()
         sys.exit()
 
-app = BimegGui()
+def start_gui():
 
-app.protocol("WM_DELETE_WINDOW", on_closing)
-app.mainloop()
+    global app
+    app = BimegGui()
+
+    app.protocol("WM_DELETE_WINDOW", on_closing)
+    app.mainloop()

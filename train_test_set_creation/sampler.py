@@ -68,13 +68,15 @@ class NegativeSampler(Sampler):
             neg_samples_metaEdges = (list(numpy.random.choice(meta_edges, num_tp_examples)))
             neg_samples_metaEdges.sort()
             neg_samples_count_metaEdges = {e: neg_samples_metaEdges.count(e) for e in
-                                                set(neg_samples_metaEdges)}
+                                                set(neg_samples_metaEdges) if neg_samples_metaEdges.count(e)> 0}
         elif distrib =='orig':
             for key, value in self.meta_edges_dic.items():
                 nodeType1, edgeType, nodeType2 = value
-                neg_samples_count_metaEdges[key] = len(pos_samples.loc[(pos_samples['id1'].str.startswith(nodeType1)) &
+                num_entry = len(pos_samples.loc[(pos_samples['id1'].str.startswith(nodeType1)) &
                                                        (pos_samples['edgeType'] == edgeType) &
                                                        (pos_samples['id2'].str.startswith(nodeType2))])
+                if num_entry>0:
+                    neg_samples_count_metaEdges[key] = num_entry
                 # todo count positive examples with edgetype
 
         # generate a negative sub-sample for each negative meta_edge type
