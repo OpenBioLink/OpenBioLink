@@ -15,10 +15,11 @@ from ..node import Node
 class GraphCreator():
 
     def __init__(self):
-        self.tn_path_no_mappings = os.path.join(globConst.WORKING_DIR, gcConst.TN_ID_NO_MAPPING_FILE_NAME)
-        self.tn_path_stats = os.path.join(globConst.WORKING_DIR, gcConst.TN_STATS_FILE_NAME)
-        self.path_no_mappings = os.path.join(globConst.WORKING_DIR, gcConst.ID_NO_MAPPING_FILE_NAME)
-        self.path_stats = os.path.join(globConst.WORKING_DIR, gcConst.STATS_FILE_NAME)
+        output_dir = os.path.join(globConst.WORKING_DIR,gcConst.GRAPH_FILES_FOLDER_NAME )
+        self.tn_path_no_mappings = os.path.join(output_dir, gcConst.TN_ID_NO_MAPPING_FILE_NAME)
+        self.tn_path_stats = os.path.join(output_dir, gcConst.TN_STATS_FILE_NAME)
+        self.path_no_mappings = os.path.join(output_dir, gcConst.ID_NO_MAPPING_FILE_NAME)
+        self.path_stats = os.path.join(output_dir, gcConst.STATS_FILE_NAME)
         open(self.tn_path_no_mappings, 'w').close()
         open(self.tn_path_stats, 'w').close()
         open(self.path_no_mappings, 'w').close()

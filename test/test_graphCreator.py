@@ -106,6 +106,7 @@ class TestGraphCreation(unittest.TestCase):
 
         test_folder = os.path.dirname(os.path.realpath(__file__))
         test_data_folder = os.path.join(test_folder, 'test_data')
+        output_data_folder = os.path.join(test_data_folder, 'graph_files')
         true_ref_folder = os.path.join(test_data_folder, 'TR_files')
 
         # global variables
@@ -135,7 +136,7 @@ class TestGraphCreation(unittest.TestCase):
                         all_lines_in_comp_file = True
                         with open(os.path.join(true_ref_folder,ref_file_name)) as f:
                             ref_file = f.readlines()
-                        with open(os.path.join(test_data_folder,ref_file_name[7:])) as f:
+                        with open(os.path.join(output_data_folder,ref_file_name[7:])) as f:
                             comp_file = f.readlines()
                         comp_dict = {}
                         j = 0
