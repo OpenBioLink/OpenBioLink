@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import font  as tkfont, messagebox, filedialog
 import sys
-import masterthesis
+import openBioLink
 import utils
 from graph_creation.metadata_db_file import DbMetadata
 from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata

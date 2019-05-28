@@ -1,1 +1,16 @@
 /.idea
+/venv
+/BiMeG
+/cross_val
+/other
+/pyKEEN
+/results
+/train_test_data
+/playground*
+/test/test_data/*.csv
+/test/test_data/*.txt
+/test/test_data/*.tsv
+/test/test_data/graph_files
+/test/test_data/in_files
+__pycache__
+
