@@ -1,8 +1,8 @@
 import os
 
-import graph_creation.graphCreationConfig as glob
-from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from graph_creation.metadata_infile import InMetaOntoGoPartOf
+from ... import graphCreationConfig as glob
+from ...metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from ...metadata_infile import InMetaOntoGoPartOf
 
 
 class EdgeMetaGoOntoPartOf(EdgeOntoMetadata):

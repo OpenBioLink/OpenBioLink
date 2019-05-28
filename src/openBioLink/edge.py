@@ -1,4 +1,4 @@
-from edgeType import EdgeType
+from .edgeType import EdgeType
 
 class Edge:
     def __init__(self, id1: str, type : EdgeType, id2: str, source: "", qScore = None):

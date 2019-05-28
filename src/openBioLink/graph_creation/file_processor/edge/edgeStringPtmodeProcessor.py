@@ -1,8 +1,8 @@
-import utils
-from graph_creation.types.infileType import InfileType
-from graph_creation.types.readerType import ReaderType
-from graph_creation.file_processor.fileProcessor import FileProcessor
-from graph_creation.metadata_infile import InMetaEdgeStringPtmod
+from .... import utils
+from ...types.infileType import InfileType
+from ...types.readerType import ReaderType
+from ..fileProcessor import FileProcessor
+from ...metadata_infile import InMetaEdgeStringPtmod
 
 
 class EdgeStringPtmodeProcessor(FileProcessor):

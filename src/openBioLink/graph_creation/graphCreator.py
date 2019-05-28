@@ -3,13 +3,13 @@ import os
 
 from tqdm import tqdm
 import logging
-import graphProperties as graphProp
-import graph_creation.graphCreationConfig as gcConst
-import globalConfig as globConst
-import utils
-from graph_creation.cli import Cli
-from edge import Edge
-from node import Node
+from .. import graphProperties as graphProp
+from . import graphCreationConfig as gcConst
+from .. import globalConfig as globConst
+from .. import utils
+from .cli import Cli
+from ..edge import Edge
+from ..node import Node
 
 
 class GraphCreator():
@@ -52,7 +52,7 @@ class GraphCreator():
             message ='File does not exist: %s ! Edgetype %s will not be created' %(edge_metadata.edges_file_path, str(edge_metadata.edgeType))
             if gcConst.INTERACTIVE_MODE:
                 if globConst.GUI_MODE:
-                    import gui
+                    from .. import gui
                     gui.askForExit(message)
                 else:
                     Cli.ask_for_exit(message)
@@ -68,13 +68,14 @@ class GraphCreator():
 
         for mapping in [edge_metadata.mapping1_file, edge_metadata.mapping2_file, edge_metadata.altid_mapping1_file, edge_metadata.altid_mapping2_file]:
             if mapping is not None:
-                mapping_path = os.path.join(gcConst.IN_WORKING_DIR, mapping)
+                infile_folder = os.path.join(globConst.WORKING_DIR, gcConst.IN_FILE_FOLDER_NAME)
+                mapping_path = os.path.join(infile_folder, mapping)
                 if not os.path.isfile(mapping_path):
                     message = 'File does not exist: %s ! Edgetype %s will not be created' % (
                     edge_metadata.edges_file_path, str(edge_metadata.edgeType))
                     if gcConst.INTERACTIVE_MODE:
                         if globConst.GUI_MODE:
-                            import gui
+                            from .. import gui
                             gui.askForExit(message)
                         else:
                             Cli.ask_for_exit(message)

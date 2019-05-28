@@ -1,7 +1,7 @@
 import csv
 import os
-import graph_creation.graphCreationConfig as gcConst
-import globalConfig as globConst
+from . import graphCreationConfig as gcConst
+from .. import globalConfig as globConst
 
 
 class GraphWriter ():

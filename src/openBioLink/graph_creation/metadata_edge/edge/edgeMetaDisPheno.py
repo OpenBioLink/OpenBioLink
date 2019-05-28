@@ -1,11 +1,11 @@
 import os
 
-import graph_creation.graphCreationConfig as glob
-from graph_creation.types.qualityType import QualityType
-from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from graph_creation.metadata_infile import InMetaMapOntoDoAltid, InMetaMapOntoHpoAltid
-from graph_creation.metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDis
-from graph_creation.metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
+from ... import graphCreationConfig as glob
+from ...types.qualityType import QualityType
+from ...metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from ...metadata_infile import InMetaMapOntoDoAltid, InMetaMapOntoHpoAltid
+from ...metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDis
+from ...metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
 
 
 class EdgeMetaDisPheno(EdgeRegularMetadata):

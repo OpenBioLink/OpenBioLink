@@ -1,5 +1,5 @@
-from graph_creation.types.infileType import InfileType
-from graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from ...types.infileType import InfileType
+from ...metadata_infile.infileMetadata import InfileMetadata
 
 
 class InMetaMapOntoDoOmim(InfileMetadata):

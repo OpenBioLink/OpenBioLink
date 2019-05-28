@@ -1,4 +1,4 @@
-from graph_creation.file_reader.fileReader import FileReader
+from .fileReader import FileReader
 import pandas
 
 class CsvReader (FileReader):

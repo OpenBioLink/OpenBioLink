@@ -1,4 +1,4 @@
-from graph_creation.metadata_db_file.dbMetadata import DbMetadata
+from ...metadata_db_file.dbMetadata import DbMetadata
 
 
 class DbMetadataMapping (DbMetadata):

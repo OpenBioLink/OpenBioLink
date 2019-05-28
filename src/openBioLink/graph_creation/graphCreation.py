@@ -3,15 +3,15 @@ import os
 
 from tqdm import tqdm
 
-import globalConfig as globConst
-import graph_creation.graphCreationConfig as gcConst
-import graphProperties as graphProp
-import utils as utils
-from graph_creation.graphCreator import GraphCreator
-from graph_creation.graphWriter import GraphWriter
-from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from .. import globalConfig as globConst
+from . import graphCreationConfig as gcConst
+from .. import graphProperties as graphProp
+from .. import utils as utils
+from .graphCreator import GraphCreator
+from .graphWriter import GraphWriter
+from .metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from .metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from .metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
 from .cli import Cli
 from .file_downloader.fileDownloader import *
 from .file_processor.fileProcessor import *
@@ -82,7 +82,7 @@ class Graph_Creation():
             o_file_path = os.path.join(gcConst.O_FILE_PATH, db_file.ofile_name)
             if not for_all:
                 if globConst.GUI_MODE:
-                    from gui import skipExistingFiles
+                    from ..gui import skipExistingFiles
                     skip, for_all = skipExistingFiles(o_file_path)
                 else:
                     skip, for_all = Cli.skip_existing_files(o_file_path)
@@ -112,7 +112,7 @@ class Graph_Creation():
                     first_processor = self.readerType_processor_map[reader.readerType][0]
                     first_processor_out_path = os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name)
                     if globConst.GUI_MODE:
-                        from gui import skipExistingFiles
+                        from ..gui import skipExistingFiles
                         skip, for_all = skipExistingFiles(first_processor_out_path)
                     else:
                         skip, for_all = Cli.skip_existing_files(first_processor_out_path)
@@ -125,7 +125,7 @@ class Graph_Creation():
                         out_file_path = os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name)
                         if not for_all:
                             if globConst.GUI_MODE:
-                                from gui import skipExistingFiles
+                                from ..gui import skipExistingFiles
                                 skip, for_all = skipExistingFiles(out_file_path)
                             else:
                                 skip, for_all = Cli.skip_existing_files(out_file_path)
@@ -218,7 +218,7 @@ class Graph_Creation():
                       str([x.__class__.__name__ for x in additional_remove_metaEdges]),
                       str([str(x) for x in additional_remove_mapping_infileType]))
             if globConst.GUI_MODE:
-                import gui
+                from .. import gui
                 gui.askForExit(message)
             else:
                 Cli.ask_for_exit(message)

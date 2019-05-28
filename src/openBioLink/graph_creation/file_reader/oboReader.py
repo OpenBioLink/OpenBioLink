@@ -1,8 +1,8 @@
-from graph_creation.file_reader.fileReader import FileReader
-from graph_creation.file_reader.parser.oboParser import OboParser
-from graph_creation.cli import Cli
-import graph_creation.graphCreationConfig as gcConst
-import globalConfig as globConst
+from .fileReader import FileReader
+from .parser.oboParser import OboParser
+from ..cli import Cli
+from .. import graphCreationConfig as gcConst
+from ... import globalConfig as globConst
 import numpy as np
 import sys
 import logging
@@ -42,7 +42,7 @@ class OboReader(FileReader):
                 if gcConst.INTERACTIVE_MODE:
                     ask_continue_string =  info_string +'Continue if you do not need these edges in your graph'
                     if globConst.GUI_MODE:
-                        import gui
+                        from ... import gui
                         gui.askForExit(ask_continue_string)
                     else:
                         Cli.ask_for_exit(ask_continue_string)

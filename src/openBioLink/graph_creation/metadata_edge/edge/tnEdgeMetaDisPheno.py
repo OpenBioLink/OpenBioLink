@@ -1,12 +1,12 @@
 import os
 
-import graph_creation.graphCreationConfig as glob
-from graph_creation.types.qualityType import QualityType
-from graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
-from graph_creation.metadata_infile import InMetaMapOntoDoAltid, InMetaMapOntoHpoAltid
-from graph_creation.metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDis
-from graph_creation.metadata_infile.edge.inMetaEdgeTnHpoDis import InMetaEdgeTnHpoDis
-from graph_creation.metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
+from ... import graphCreationConfig as glob
+from ...types.qualityType import QualityType
+from ...metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from ...metadata_infile import InMetaMapOntoDoAltid, InMetaMapOntoHpoAltid
+from ...metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDis
+from ...metadata_infile.edge.inMetaEdgeTnHpoDis import InMetaEdgeTnHpoDis
+from ...metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
 
 
 class TnEdgeMetaDisPheno(TnEdgeRegularMetadata):

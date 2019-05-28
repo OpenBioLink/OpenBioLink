@@ -1,8 +1,8 @@
-from graph_creation.types.dbType import DbType
-from graph_creation.file_reader.csvReader import CsvReader
-from graph_creation.types.readerType import ReaderType
-from graph_creation.metadata_db_file.edge.dbMetaEdgeStitch import DbMetaEdgeStitch
-import graph_creation.graphCreationConfig as g
+from ...types.dbType import DbType
+from ...file_reader.csvReader import CsvReader
+from ...types.readerType import ReaderType
+from ...metadata_db_file.edge.dbMetaEdgeStitch import DbMetaEdgeStitch
+from ... import graphCreationConfig as g
 import os
 
 

@@ -4,8 +4,8 @@ import logging
 import numpy
 import pandas
 
-import graphProperties as graphProp
-import utils
+from .. import graphProperties as graphProp
+from .. import utils
 from .sampler import NegativeSampler
 from .trainTestSetWriter import TrainTestSetWriter
 
@@ -48,7 +48,7 @@ class TrainTestSetCreation():
 
         self.meta_edges_dic = {}
         if not meta_edge_triples:
-            import graph_creation.metadata_edge.edgeMetadata as meta
+            from ..graph_creation.metadata_edge import edgeMetadata as meta
             for metaEdge in utils.get_leaf_subclasses(meta.EdgeMetadata):
                 edgeType =  str(metaEdge.EDGE_INMETA_CLASS.EDGE_TYPE)
                 node1Type = str(metaEdge.EDGE_INMETA_CLASS.NODE1_TYPE)

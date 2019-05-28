@@ -1,11 +1,11 @@
 import os
 
-import graph_creation.graphCreationConfig as glob
-from graph_creation.types.qualityType import QualityType
-from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from graph_creation.metadata_infile import InMetaMapOntoGoAltid
-from graph_creation.metadata_infile.edge.inMetaEdgeGo import InMetaEdgeGo
-from graph_creation.metadata_infile.mapping.inMetaMapUniUniNcbi import InMetaMapUniUniNcbi
+from ... import graphCreationConfig as glob
+from ...types.qualityType import QualityType
+from ...metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from ...metadata_infile import InMetaMapOntoGoAltid
+from ...metadata_infile.edge.inMetaEdgeGo import InMetaEdgeGo
+from ...metadata_infile.mapping.inMetaMapUniUniNcbi import InMetaMapUniUniNcbi
 
 
 class EdgeMetaGeneGo(EdgeRegularMetadata):

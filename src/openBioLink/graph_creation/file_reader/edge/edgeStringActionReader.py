@@ -1,10 +1,10 @@
 import os
 
-import graph_creation.graphCreationConfig as g
-from graph_creation.types.dbType import DbType
-from graph_creation.types.readerType import ReaderType
-from graph_creation.file_reader.csvReader import CsvReader
-from graph_creation.metadata_db_file import DbMetaEdgeStringAction
+from ... import graphCreationConfig as g
+from ...types.dbType import DbType
+from ...types.readerType import ReaderType
+from ...file_reader.csvReader import CsvReader
+from ...metadata_db_file import DbMetaEdgeStringAction
 
 
 class EdgeStringActionReader(CsvReader):

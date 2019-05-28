@@ -1,6 +1,6 @@
-from graph_creation.types.infileType import InfileType
+from ...types.infileType import InfileType
 
-from graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from ...metadata_infile.infileMetadata import InfileMetadata
 
 
 class InMetaMapDrugCentralPubchem(InfileMetadata):

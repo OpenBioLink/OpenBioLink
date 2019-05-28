@@ -1,11 +1,11 @@
 import os
 
-import graph_creation.graphCreationConfig as glob
-from graph_creation.types.qualityType import QualityType
-from graph_creation.metadata_edge.edge.edgeMetaGeneOverAna import EdgeMetaGeneOverAna
-from graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
-from graph_creation.metadata_infile import InMetaEdgeBgeeUnderExpr, InMetaMapOntoUberonAltid
-from graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMapUniEnsNcbi
+from ... import graphCreationConfig as glob
+from ...types.qualityType import QualityType
+from ...metadata_edge.edge.edgeMetaGeneOverAna import EdgeMetaGeneOverAna
+from ...metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from ...metadata_infile import InMetaEdgeBgeeUnderExpr, InMetaMapOntoUberonAltid
+from ...metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMapUniEnsNcbi
 
 
 class TnEdgeMetaGeneOverAna(TnEdgeRegularMetadata):

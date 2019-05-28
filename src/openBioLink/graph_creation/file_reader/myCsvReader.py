@@ -1,7 +1,7 @@
-from graph_creation.types.dbType import DbType
-from graph_creation.file_reader.csvReader import CsvReader
-from graph_creation.types.readerType import ReaderType
-import graph_creation.graphCreationConfig as g
+#from ..types.dbType import DbType
+from ..file_reader.csvReader import CsvReader
+#from ..types.readerType import ReaderType
+from .. import graphCreationConfig as g
 import os
 
 class MyCsvReader(CsvReader):

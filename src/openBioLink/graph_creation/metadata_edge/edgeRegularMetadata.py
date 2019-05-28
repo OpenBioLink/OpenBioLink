@@ -1,5 +1,5 @@
-from graph_creation.types.qualityType import QualityType
-from graph_creation.metadata_edge import EdgeMetadata
+from ..types.qualityType import QualityType
+from . import EdgeMetadata
 
 
 class EdgeRegularMetadata(EdgeMetadata):

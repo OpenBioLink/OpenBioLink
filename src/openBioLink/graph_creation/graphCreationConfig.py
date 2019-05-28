@@ -1,5 +1,3 @@
-from graph_creation.types.qualityType import QualityType
-
 O_FILE_PATH =""
 IN_FILE_PATH=""
 

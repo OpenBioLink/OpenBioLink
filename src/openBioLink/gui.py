@@ -2,12 +2,12 @@ import os
 import tkinter as tk
 from tkinter import font  as tkfont, messagebox, filedialog
 import sys
-import openBioLink
-import utils
-from graph_creation.metadata_db_file import DbMetadata
-from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-import graph_creation.graphCreationConfig as gcConst
+from . import openBioLink
+from . import utils
+from .graph_creation.metadata_db_file import DbMetadata
+from .graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from .graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from .graph_creation import graphCreationConfig as gcConst
 from tkinter.scrolledtext import ScrolledText
 
 app = None
@@ -87,7 +87,7 @@ class BimegGui(tk.Tk):
         if messagebox.askokcancel("Start", "Do you want to start now?"):
             self.show_frame("ConsoleFrame")
             arg_list = self.get_args()
-            #masterthesis.main(args_list=arg_list) #fixme CHANGE HERE
+            #openBioLink.main(args_list=arg_list) #fixme CHANGE HERE
             #todo start detached
             #app.destroy()
 
@@ -880,8 +880,8 @@ class ConsoleFrame(tk.Frame):
         buttons_panel.pack(side='bottom', padx=15, fill='x')
         next_button.pack(side='left', anchor='w', pady=(5, 10))
 
-    def quit(self, *args):
-        self.root.destroy()
+    #def quit(self, *args):
+    #    self.root.destroy()
 
 #################### MAIN GUI ############################
 

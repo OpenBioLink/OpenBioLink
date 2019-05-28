@@ -1,7 +1,7 @@
-from edgeType import EdgeType
-from graph_creation.types.infileType import InfileType
-from graph_creation.metadata_infile.infileMetadata import InfileMetadata
-from nodeType import NodeType
+from ....edgeType import EdgeType
+from ...types.infileType import InfileType
+from ...metadata_infile.infileMetadata import InfileMetadata
+from ....nodeType import NodeType
 
 
 class InMetaEdgeCdtPath(InfileMetadata):

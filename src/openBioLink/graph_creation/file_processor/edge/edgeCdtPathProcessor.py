@@ -1,7 +1,7 @@
-from graph_creation.file_processor.fileProcessor import FileProcessor
-from graph_creation.types.readerType import ReaderType
-from graph_creation.types.infileType import InfileType
-from graph_creation.metadata_infile.edge.inMetaEdgeCdtPath import InMetaEdgeCdtPath
+from ..fileProcessor import FileProcessor
+from ...types.readerType import ReaderType
+from ...types.infileType import InfileType
+from ...metadata_infile.edge.inMetaEdgeCdtPath import InMetaEdgeCdtPath
 
 
 class EdgeCdtPathProcessor(FileProcessor):

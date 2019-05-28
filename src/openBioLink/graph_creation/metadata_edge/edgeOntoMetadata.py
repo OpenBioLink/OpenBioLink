@@ -1,4 +1,4 @@
-from graph_creation.metadata_edge import EdgeMetadata
+from . import EdgeMetadata
 
 
 class EdgeOntoMetadata(EdgeMetadata):

@@ -1,10 +1,10 @@
 import os
 import unittest
 
-import graph_creation.graphCreationConfig as gcConst
-import graphProperties as graphProp
-from graph_creation.graphCreation import Graph_Creation
-from graph_creation.metadata_db_file import *
+from src.openBioLink.graph_creation import graphCreationConfig as gcConst
+from src.openBioLink import graphProperties as graphProp
+from src.openBioLink.graph_creation.graphCreation import Graph_Creation
+from src.openBioLink.graph_creation.metadata_db_file import *
 
 
 class TestGraphCreation(unittest.TestCase):

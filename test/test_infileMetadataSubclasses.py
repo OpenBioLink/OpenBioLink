@@ -1,8 +1,8 @@
 import inspect
 from unittest import TestCase
 
-import utils
-from graph_creation.metadata_infile import *
+from src.openBioLink import utils
+from src.openBioLink.graph_creation.metadata_infile import *
 
 
 class TestInfileMetadataSubclasses(TestCase):

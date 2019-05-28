@@ -1,5 +1,5 @@
-from graph_creation.metadata_db_file.mapping.dbMetadataMapping import DbMetadataMapping
-from graph_creation.types.dbType import DbType
+from ...metadata_db_file.mapping.dbMetadataMapping import DbMetadataMapping
+from ...types.dbType import DbType
 
 
 

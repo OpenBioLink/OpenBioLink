@@ -1,8 +1,8 @@
 import os
 
-import graph_creation.graphCreationConfig as glob
-from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from graph_creation.metadata_infile.onto.inMetaOntoHpoIsA import InMetaOntoHpoIsA
+from ... import graphCreationConfig as glob
+from ...metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from ...metadata_infile.onto.inMetaOntoHpoIsA import InMetaOntoHpoIsA
 
 
 class EdgeMetaPhenoOntoIsA(EdgeOntoMetadata):

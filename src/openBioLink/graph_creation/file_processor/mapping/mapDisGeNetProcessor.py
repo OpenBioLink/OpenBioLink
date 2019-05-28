@@ -1,8 +1,8 @@
-from graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
+from ...metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
 
-from graph_creation.types.readerType import ReaderType
-from graph_creation.file_processor.fileProcessor import FileProcessor
-from graph_creation.types.infileType import InfileType
+from ...types.readerType import ReaderType
+from ...file_processor.fileProcessor import FileProcessor
+from ...types.infileType import InfileType
 
 
 class MapDisGeNetProcessor(FileProcessor):
