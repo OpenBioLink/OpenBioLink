@@ -3,6 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeGo(DbMetadataEdge):
+    NAME = 'Edge - GO - GO Annotations'
     URL = "http://geneontology.org/gene-associations/goa_human.gaf.gz"
     OFILE_NAME = "GO_annotations.gaf.gz"
     COLS = ['DB', 'DOI', 'DB_symbol', 'qulifier', 'GO_ID', 'DB_ref', 'evidence_code',

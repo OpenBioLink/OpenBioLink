@@ -3,6 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeHpa(DbMetadataEdge):
+    NAME = 'Edge - HPA - Expression Data'
     URL = "https://www.proteinatlas.org/download/rna_tissue.tsv.zip"
     OFILE_NAME = "HPA_gene_anatomy.tsv.zip"
     COLS = ['geneID', 'geneName', 'anatomy', 'expressionValue', 'Unit']

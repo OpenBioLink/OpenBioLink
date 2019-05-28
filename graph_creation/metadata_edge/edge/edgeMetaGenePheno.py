@@ -8,6 +8,8 @@ from graph_creation.metadata_infile.edge.inMetaEdgeHpoGene import InMetaEdgeHpoG
 
 
 class EdgeMetaGenePheno(EdgeRegularMetadata):
+    NAME = 'Edge - Gene_association_Phenotype'
+
     EDGE_INMETA_CLASS = InMetaEdgeHpoGene
     MAP2_ALT_ID_META_CLASS = InMetaMapOntoHpoAltid
 

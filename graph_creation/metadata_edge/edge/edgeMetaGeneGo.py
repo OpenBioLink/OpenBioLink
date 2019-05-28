@@ -9,6 +9,8 @@ from graph_creation.metadata_infile.mapping.inMetaMapUniUniNcbi import InMetaMap
 
 
 class EdgeMetaGeneGo(EdgeRegularMetadata):
+    NAME = 'Edge - Gene_association_GO'
+
     LQ_CUTOFF_TEXT = []
     MQ_CUTOFF_TEXT = []
     HQ_CUTOFF_TEXT = ['IEA']

@@ -6,6 +6,8 @@ from graph_creation.metadata_infile.onto.inMetaOntoHpoIsA import InMetaOntoHpoIs
 
 
 class EdgeMetaPhenoOntoIsA(EdgeOntoMetadata):
+    NAME = 'Onto - Phenotype_isA_Phenotype'
+
     EDGE_INMETA_CLASS = InMetaOntoHpoIsA
 
     def __init__(self, quality = None):

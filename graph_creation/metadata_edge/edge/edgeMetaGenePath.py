@@ -7,6 +7,8 @@ from graph_creation.metadata_infile.edge.inMetaEdgeCdtPath import InMetaEdgeCdtP
 
 
 class EdgeMetaGenePath(EdgeRegularMetadata):
+    NAME = 'Edge - Gene_association_Pathway' #todo wording
+
 
     EDGE_INMETA_CLASS = InMetaEdgeCdtPath
 

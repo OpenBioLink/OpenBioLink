@@ -9,6 +9,8 @@ from graph_creation.types.qualityType import QualityType
 
 
 class EdgeMetaGeneDis(EdgeRegularMetadata):
+    NAME = 'Edge - Gene_association_Disease'
+
     LQ_CUTOFF = 0
     MQ_CUTOFF = 0.4
     HQ_CUTOFF = 0.7

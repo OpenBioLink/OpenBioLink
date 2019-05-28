@@ -2,6 +2,8 @@ from graph_creation.metadata_db_file.edge.dbMetadataEdge import DbMetadataEdge
 from graph_creation.types.dbType import DbType
 
 class DbMetaEdgeCtdPath(DbMetadataEdge):
+    NAME = 'Edge - CTD - Gene Pathway'
+
     URL = "http://ctdbase.org/reports/CTD_genes_pathways.tsv.gz"
     OFILE_NAME = "CDT_gene_pathway.tsv.gz"
     COLS = ['geneSymb', 'geneID', 'pathName', 'pathID']

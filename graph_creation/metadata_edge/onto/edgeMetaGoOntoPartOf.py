@@ -6,6 +6,8 @@ from graph_creation.metadata_infile import InMetaOntoGoPartOf
 
 
 class EdgeMetaGoOntoPartOf(EdgeOntoMetadata):
+    NAME = 'Onto - GO_partOf_GO'
+
     EDGE_INMETA_CLASS = InMetaOntoGoPartOf
 
     def __init__(self, quality = None):

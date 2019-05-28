@@ -10,6 +10,7 @@ from graph_creation.metadata_infile.mapping.inMetaMapDrugCentralPubchem import I
 
 
 class EdgeMetaDisDrug(EdgeRegularMetadata):
+    NAME = 'Edge - Disease_treatedWith_Drug (Indication)'
     EDGE_INMETA_CLASS = InMetaEdgeDrugCentral
     MAP1_META_CLASS = InMetaMapDisGeNet
     MAP2_META_CLASS = InMetaMapDrugCentralPubchem

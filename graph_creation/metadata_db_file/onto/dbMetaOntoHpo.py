@@ -3,6 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaOntoHpo (DbMetadataOnto):
+    NAME = 'Onto - HPO - is_a, mapping(umls->hpo)'
     URL = "https://raw.githubusercontent.com/obophenotype/human-phenotype-ontology/master/hp.obo"
     OFILE_NAME = "HPO_ontology.obo"
     QUADRUPLES = [('id', ' ', 1, 'ID'),

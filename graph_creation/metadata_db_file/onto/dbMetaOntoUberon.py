@@ -3,6 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaOntoUberon (DbMetadataOnto):
+    NAME = 'Onto - HPO - is_a, part_of'
     URL = "http://ontologies.berkeleybop.org/uberon/ext.obo"
     OFILE_NAME = "UBERON_ontology.obo"
     QUADRUPLES = [('id', ' ', 1, 'ID'),

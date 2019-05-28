@@ -3,6 +3,7 @@ from graph_creation.metadata_db_file.edge.dbMetadataEdge import DbMetadataEdge
 
 
 class DbMetaEdgeBgeeExpr(DbMetadataEdge):
+        NAME = 'Edge - Bgee - presence/absence of expression'
         URL = "ftp://ftp.bgee.org/current/download/calls/expr_calls/Homo_sapiens_expr_simple.tsv.gz"
         OFILE_NAME = "BGEE_expr_calls.tsv.gz"
 

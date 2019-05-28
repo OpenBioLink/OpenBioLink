@@ -11,6 +11,8 @@ from graph_creation.metadata_infile.mapping.inMetaMapDrugCentralPubchem import I
 
 
 class TnEdgeMetaDisDrug(TnEdgeRegularMetadata):
+    NAME = 'Negative Edge - Disease_treatedWith_Drug (Contra-Indication)'
+
     EDGE_INMETA_CLASS = InMetaEdgeDrugCentralContraInd
     TP_EDGE_CLASS = EdgeMetaDisDrug
     MAP1_META_CLASS = InMetaMapDisGeNet

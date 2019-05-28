@@ -3,6 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeDrugCentral(DbMetadataEdge):
+    NAME = 'Edge/Mapping - DrugCentral - (Contra)-Indications, Mapping for drugs to pubchem id'
     URL = "http://unmtid-shinyapps.net/download/drugcentral.dump.08262018.sql.gz"
     OFILE_NAME = "sql_dump.sql.gz"
 

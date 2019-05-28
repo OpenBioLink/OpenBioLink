@@ -8,6 +8,8 @@ from graph_creation.metadata_infile.mapping.inMetaMapString import InMetaMapStri
 
 
 class EdgeMetaDrugBindingGene(EdgeRegularMetadata):
+    NAME = 'Edge - Drug_binding_Gene'
+
     LQ_CUTOFF = 0
     MQ_CUTOFF = 400
     HQ_CUTOFF = 700

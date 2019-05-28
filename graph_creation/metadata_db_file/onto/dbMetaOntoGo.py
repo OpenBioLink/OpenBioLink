@@ -3,6 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaOntoGo (DbMetadataOnto):
+    NAME = 'Onto - GO - is_a,part_of'
     URL = "http://purl.obolibrary.org/obo/go/go-basic.obo"
     OFILE_NAME = "GO_ontology.obo"
     QUADRUPLES = [('id', ' ', 1, 'ID'),

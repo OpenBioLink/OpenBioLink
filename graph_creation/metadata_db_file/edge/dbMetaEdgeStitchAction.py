@@ -3,6 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeStitchAction(DbMetadataEdge):
+    NAME = 'Edge - STITCH - Gene Drug (Action)'
     URL = "http://stitch.embl.de/download/actions.v5.0/9606.actions.v5.0.tsv.gz"
     OFILE_NAME = "STITCH_gene_drug_actions.tsv.gz"
     COLS = ['item_id_a', 'item_id_b', 'mode', 'action', 'a_is_acting', 'score']

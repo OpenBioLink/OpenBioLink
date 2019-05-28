@@ -9,6 +9,8 @@ from graph_creation.metadata_infile.mapping.inMetaMapOntoHpoUmls import InMetaMa
 
 
 class EdgeMetaDrugPheno(EdgeRegularMetadata):
+    NAME = 'Edge - Drug_sideEffect_Phenotype'
+
     EDGE_INMETA_CLASS = InMetaEdgeSiderSe
     MAP2_META_CLASS = InMetaMapOntoHpoUmls
     MAP2_ALT_ID_META_CLASS = InMetaMapOntoHpoAltid

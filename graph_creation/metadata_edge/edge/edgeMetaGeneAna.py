@@ -9,6 +9,8 @@ from graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMap
 
 
 class EdgeMetaGeneAna(EdgeRegularMetadata):
+    NAME = 'Edge - Gene_expression_Anatomy'
+
     LQ_CUTOFF_TEXT = None
     MQ_CUTOFF_TEXT = None
     HQ_CUTOFF_TEXT = ['silver quality']

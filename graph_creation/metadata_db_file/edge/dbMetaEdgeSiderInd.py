@@ -3,6 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeSiderInd(DbMetadataEdge):
+    NAME = 'Edge - Sider - Indications'
     URL = "http://sideeffects.embl.de/media/download/meddra_all_indications.tsv.gz"
     OFILE_NAME = "SIDER_dis_drug.tsv.gz"
     COLS = ['stichID', 'umlsID', 'method', 'umlsName', 'medDRAumlsType',

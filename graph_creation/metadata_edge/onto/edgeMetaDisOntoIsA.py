@@ -6,6 +6,8 @@ from graph_creation.metadata_infile.onto.inMetaOntoDoIsA import InMetaOntoDoIsA
 
 
 class EdgeMetaDisOntoIsA(EdgeOntoMetadata):
+    NAME = 'Onto - Disease_isA_Disease'
+
     EDGE_INMETA_CLASS = InMetaOntoDoIsA
     def __init__(self, quality = None):
         super().__init__(is_directional=True, edges_file_path=os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME),

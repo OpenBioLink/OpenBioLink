@@ -9,6 +9,8 @@ from graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMap
 
 
 class TnEdgeMetaGeneOverAna(TnEdgeRegularMetadata):
+    NAME = 'Negative Edge - Gene_overExpression_Anatomy'
+
     LQ_CUTOFF_TEXT = None
     MQ_CUTOFF_TEXT = None
     HQ_CUTOFF_TEXT = ['low quality']

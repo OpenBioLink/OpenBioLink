@@ -3,7 +3,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeDisGeNet(DbMetadataEdge):
-
+    NAME = 'Edge - DisGeNet - Gene Disease'
     #URL = "http://www.disgenet.org/ds/DisGeNET/results/curated_gene_disease_associations.tsv.gz"
     URL="http://www.disgenet.org/static/disgenet_ap1/files/downloads/curated_gene_disease_associations.tsv.gz"
     OFILE_NAME = "DisGeNet_gene_disease.tsv.gz"

@@ -6,6 +6,8 @@ from graph_creation.metadata_infile import InMetaOntoUberonPartOf
 
 
 class EdgeMetaAnatomyOntoPartOf(EdgeOntoMetadata):
+    NAME = 'Onto - Anatomy_partOf_Anatomy'
+
     EDGE_INMETA_CLASS = InMetaOntoUberonPartOf
 
     def __init__(self, quality = None):

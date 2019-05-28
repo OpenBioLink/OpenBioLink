@@ -4,6 +4,7 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaMapUniprot(DbMetadataMapping):
+    NAME = 'Mapping - Uniprot - Gene (ensembl/uniprot -> ncbi entrez)'
     URL = "ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping_selected.tab.gz"
     OFILE_NAME = "Uniprot_mapping_gene.tab.gz"
     COLS = ['UniProtKB-AC', 'UniProtKB-ID', 'GeneID',

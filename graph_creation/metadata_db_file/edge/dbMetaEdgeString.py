@@ -3,6 +3,8 @@ from graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeString(DbMetadataEdge):
+    NAME = 'Edge - STRING - Gene Gene'
+
     #current link can be extracted from https://stringdb-static.org/cgi/download.pl?sessionId=FuXJ9a0fkSMB&species_text=Homo+sapiens
     #URL = "https://stringdb-static.org/download/protein.links.v10.5/9606.protein.links.v10.5.txt.gz"
     URL ="https://stringdb-static.org/download/protein.links.v11.0/9606.protein.links.v11.0.txt.gz"

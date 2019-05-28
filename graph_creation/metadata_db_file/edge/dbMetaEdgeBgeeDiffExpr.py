@@ -3,6 +3,7 @@ from graph_creation.metadata_db_file.edge.dbMetadataEdge import DbMetadataEdge
 
 
 class DbMetaEdgeBgeeDiffExpr(DbMetadataEdge):
+        NAME = 'Edge - Bgee - differential expression (over-/under-expressed)'
         URL = "ftp://ftp.bgee.org/bgee_v13/download/calls/diff_expr_calls/Homo_sapiens_diffexpr-anatomy-simple.tsv.zip"
         OFILE_NAME = "BGEE_overexpr.tsv.zip"
         COLS = ['gene_id', 'gene_name', 'anatomical_entity', 'anatomical_entity_name',
