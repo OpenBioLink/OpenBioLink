@@ -18,7 +18,22 @@ def create_graph(args):
     graphProp.QUALITY = args.qual
     gcConst.INTERACTIVE_MODE = not args.no_interact
     gcConst.SKIP_EXISTING_FILES = args.skip
-    graph_creator = Graph_Creation(glob.WORKING_DIR)
+
+    use_db_metadata_classes = None
+    use_edge_metadata_classes = None
+    if args.dbs:
+        db_module_names = ['.'.join(y) for y in [x.split('.')[0:-1] for x in args.dbs]]
+        db_cls_names = [x.split('.')[-1] for x in args.dbs]
+        use_db_metadata_classes = [getattr(sys.modules[module_name],cls_name) for module_name, cls_name in zip(db_module_names,db_cls_names)]
+    if args.mes:
+        db_module_names = ['.'.join(y) for y in [x.split('.')[0:-1] for x in args.mes]]
+        db_cls_names = [x.split('.')[-1] for x in args.mes]
+        use_edge_metadata_classes = [getattr(sys.modules[module_name],cls_name) for module_name, cls_name in zip(db_module_names,db_cls_names)]
+
+    graph_creator = Graph_Creation(folder_path=glob.WORKING_DIR,
+                                   use_db_metadata_classes=use_db_metadata_classes,
+                                   use_edge_metadata_classes=use_edge_metadata_classes)
+
     logging.info('###### (1) GRAPH CREATION ######')
     if not args.no_dl:
         print("\n\n############### downloading files #################################")
@@ -102,7 +117,9 @@ def main(args_list=None):
     parser.add_argument('--no_in', action='store_true', help='No input_files are created (e.g. when local data is used)')
     parser.add_argument('--no_create', action='store_true', help='No graph is created (e.g. when only in-files should be created)')
     parser.add_argument('--out_format', nargs=2,type=list, default='s t', help='Format of graph output, takes 2 arguments: list of file formats [s= single file, m=multiple files] and list of separators (e.g. t=tab, n=newline, or any other character) (default= s t)')
-    parser.add_argument('--no_qscore', action='store_true', help='The outputfiles will contain no scores')
+    parser.add_argument('--no_qscore', action='store_true', help='The output files will contain no scores')
+    parser.add_argument('--dbs', nargs='+', help='custom source databases selection to be used, full class name, options --> see doc')
+    parser.add_argument('--mes', nargs='+', help='custom meta edges selection to be used, full class name, options --> see doc')
 
     # Train- Test Split Generation
     parser.add_argument('-s', action='store_true', help='Generate Train-,Validation-, Test-Split')
@@ -112,10 +129,10 @@ def main(args_list=None):
     parser.add_argument('--mode', type=str, help='Mode of train-test-set split, options=[rand, time]')
 
     parser.add_argument('--test_frac', type=float, default='0.2', help='Fraction of test set as float (default= 0.2)')
-    parser.add_argument('--val_frac', type=float, default='0.2',help='Fraction of validation set as float (default= 0.2)')
     parser.add_argument('--crossval', action='store_true', help='Multiple train-validation-sets are generated')
-    parser.add_argument('--folds', type=int, default=0, help='Define the number of folds - if not specified, number is calculated via val_frac)')
-    parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges are not in BiMeG)')
+    parser.add_argument('--val', type=float, default='0.2',help='Fraction of validation set as float (default= 0.2) or number of folds as int')
+    #parser.add_argument('--folds', type=int, default=0, help='Define the number of folds - if not specified, number is calculated via val_frac)')
+    #parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges are not in BiMeG)')
     parser.add_argument('--tmo_edges', type=str, help='Path to edges.csv file of t-minus-one graph (required for --mode time')
     parser.add_argument('--tmo_tn_edges', type=str, help='Path to true_negatives_edges.csv file of t-minus-one graph (required for --mode time')
     parser.add_argument('--tmo_nodes', type=str, help='Path to nodes.csv file of t-minus-one graph (required for --mode time')

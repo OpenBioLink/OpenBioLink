@@ -165,7 +165,7 @@ class Graph_Creation():
 # ----------- helper init functions ----------
 
     def init_custom_sources_bottom_up(self, use_db_metdata_classes):
-        """hepler __init__ function for custom db_metadata_classes"""
+        """helper __init__ function for custom db_metadata_classes"""
 
         self.db_file_metadata = []
 

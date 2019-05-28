@@ -8,6 +8,7 @@ class GraphWriter ():
 
     def __init__(self):
         self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
+        os.makedirs(self.graph_dir_path, exist_ok=True)
 
     @staticmethod
     def output_graph(nodes_dic: dict, edges_dic : dict, one_file_sep = None, multi_file_sep = None, prefix= None, print_qscore=True, node_edge_list = True):
@@ -18,13 +19,13 @@ class GraphWriter ():
             one_file_sep = ','
         # one file
         if one_file_sep is not None:
-            GraphWriter.output_graph_in_single_file(prefix, one_file_sep, nodes_dic, edges_dic, qscore=print_qscore)
+            GraphWriter().output_graph_in_single_file(prefix=prefix, file_sep=one_file_sep, nodes_dic=nodes_dic, edges_dic=edges_dic, qscore=print_qscore)
         # separate files
         if multi_file_sep is not None:
-            GraphWriter.output_graph_in_multi_files(prefix, multi_file_sep, nodes_dic, edges_dic, qscore=print_qscore)
+            GraphWriter().output_graph_in_multi_files(prefix, multi_file_sep, nodes_dic, edges_dic, qscore=print_qscore)
         # lists of all nodes and metaedges
         if node_edge_list:
-            GraphWriter.write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
+            GraphWriter().write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
 
 
         #todo adjacency matrix

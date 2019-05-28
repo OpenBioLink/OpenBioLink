@@ -16,13 +16,7 @@ COL_NAMES_EDGES = ['id1', 'edgeType', 'id2', 'qscore']
 COL_NAMES_SAMPLES = ['id1', 'edgeType', 'id2', 'qscore', 'value']
 
 
-# TODO: random per edgeType (equally dist vs original dist)
 # TODO: no self loops in neg samples, not reproducible(?)
-
-# (sub)sample negative examples
-# only provided TN
-# provided + equally distributed
-# original distribution + providing (some) tn ?
 
 
 class TrainTestSetCreation():
@@ -30,21 +24,25 @@ class TrainTestSetCreation():
                  graph_path,
                  tn_graph_path,
                  nodes_path,
-                 meta_edge_triples=None,
+                 sep='\t',
+                 #meta_edge_triples=None, #todo split for subsample of edges
                  t_minus_one_graph_path=None,
                  t_minus_one_tn_graph_path=None,
                  t_minus_one_nodes_path=None):
 
+        meta_edge_triples = None #todo split for subsample of edges
+
+
         with open(nodes_path) as file:
-            self.nodes = pandas.read_csv(file, sep='\t', names=['id', 'nodeType'])
+            self.nodes = pandas.read_csv(file, sep=sep, names=['id', 'nodeType'])
 
         with open(graph_path) as file:
-            self.all_tp = pandas.read_csv(file, sep='\t', names=COL_NAMES_EDGES)
+            self.all_tp = pandas.read_csv(file, sep=sep, names=COL_NAMES_EDGES)
             self.all_tp['value'] = 1
         self.tp_edgeTypes = list(self.all_tp['edgeType'].unique())
 
         with open(tn_graph_path) as file:
-            self.all_tn = pandas.read_csv(file, sep='\t', names=COL_NAMES_EDGES)
+            self.all_tn = pandas.read_csv(file, sep=sep, names=COL_NAMES_EDGES)
             self.all_tn['value'] = 0
         self.tn_edgeTypes = list(self.all_tn['edgeType'].unique())
 
@@ -76,23 +74,23 @@ class TrainTestSetCreation():
             logging.error('either all three or none of these variables must be provided') #todo better + exit
         if t_minus_one_nodes_path and t_minus_one_graph_path and t_minus_one_tn_graph_path:
             with open(t_minus_one_nodes_path) as file:
-                self.tmo_nodes = pandas.read_csv(file, sep='\t', names=['id', 'nodeType'])
+                self.tmo_nodes = pandas.read_csv(file, sep=sep, names=['id', 'nodeType'])
 
             with open(t_minus_one_graph_path) as file:
-                self.tmo_all_tp = pandas.read_csv(file, sep='\t', names=COL_NAMES_EDGES)
+                self.tmo_all_tp = pandas.read_csv(file, sep=sep, names=COL_NAMES_EDGES)
                 self.tmo_all_tp['value'] = 1
             self.tmo_tp_edgeTypes = list(self.all_tp['edgeType'].unique())
 
             with open(t_minus_one_tn_graph_path) as file:
-                self.tmo_all_tn = pandas.read_csv(file, sep='\t', names=COL_NAMES_EDGES)
+                self.tmo_all_tn = pandas.read_csv(file, sep=sep, names=COL_NAMES_EDGES)
                 self.tmo_all_tn['value'] = 1
             self.tmo_tn_edgeTypes = list(self.all_tp['edgeType'].unique())
 
 
 
-    def random_edge_split(self, val_frac=None, test_frac=None, crossval=None, folds=None):
-        if not val_frac:
-            val_frac = 0.2
+    def random_edge_split(self, test_frac=None, val=None, crossval=None):
+        if not val:
+            val = 0.2
         if not test_frac:
             test_frac = 0.2
 
@@ -111,10 +109,7 @@ class TrainTestSetCreation():
         if graphProp.DIRECTED:
             train_val_set = utils.remove_bidir_edges(remain_set=train_val_set, remove_set=test_set)
         if crossval:
-            if folds:
-                train_val_set_tuples = self.create_cross_val(train_val_set, folds)
-            else:
-                train_val_set_tuples = self.create_cross_val(train_val_set, val_frac)
+            train_val_set_tuples = self.create_cross_val(train_val_set, val)
             new_val_nodes = [self.get_additional_nodes(t['id1'].tolist()+t['id2'].tolist(), nodes_in_train_val_set)
                              for t,v, in train_val_set_tuples]
         else:
