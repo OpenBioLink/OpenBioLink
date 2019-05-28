@@ -2,6 +2,8 @@ import csv
 import os
 from . import graphCreationConfig as gcConst
 from .. import globalConfig as globConst
+from .. import graphProperties as graphProp
+import json
 
 
 class GraphWriter ():
@@ -9,6 +11,12 @@ class GraphWriter ():
     def __init__(self):
         self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
         os.makedirs(self.graph_dir_path, exist_ok=True)
+
+    def output_graph_props(self):
+        graph_prop_list = [item for item in dir(graphProp) if not item.startswith("__")]
+        graph_prop_dict = {var: getattr(graphProp, var) for var in graph_prop_list}
+        with open(os.path.join(self.graph_dir_path,'graph_props.json'), 'w') as json_file:
+            json.dump(graph_prop_dict, json_file, indent=4)
 
     @staticmethod
     def output_graph(nodes_dic: dict, edges_dic : dict, one_file_sep = None, multi_file_sep = None, prefix= None, print_qscore=True, node_edge_list = True):

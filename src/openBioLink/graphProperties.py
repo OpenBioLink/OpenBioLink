@@ -1,5 +1,6 @@
 QUALITY = None
 DIRECTED = True
+#USED_EDGE_TYPES = []
 EDGE_TYPES = []
 NODE_TYPES = []
 

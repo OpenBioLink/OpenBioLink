@@ -64,6 +64,8 @@ class Graph_Creation():
             self.init_custom_sources_bottom_up(use_db_metadata_classes)
         if use_edge_metadata_classes is not None:
             self.init_custom_sources_top_down(use_edge_metadata_classes)
+        #graphProp.USED_EDGE_TYPES = [str(x.__class__.__name__) for x in self.edge_metadata]
+
 
         # todo set here edge types as glob variable
 
@@ -156,6 +158,10 @@ class Graph_Creation():
                         multi_file_sep=multi_file_sep,
                         prefix='TN_',
                         print_qscore=print_qscore)
+        graphProp.EDGE_TYPES = list(edges_dic.keys())
+        graphProp.NODE_TYPES = list(nodes_dic.keys())
+
+        gw.output_graph_props()
 
 
 

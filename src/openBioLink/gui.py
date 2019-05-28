@@ -26,7 +26,7 @@ class BimegGui(tk.Tk):
         self.info_font= tkfont.Font(family='Helvetica', size=7, slant="italic")
         # Define base container
         self.container = tk.Frame(self)
-        self.wm_geometry('600x470')
+        #self.wm_geometry('600x470')
         self.container.pack(side="top", fill="both", expand=True)
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
@@ -239,7 +239,7 @@ class GraphCreationFrame(tk.Frame):
         return el
 
     def select_dbs_popup(self):
-        select_popup = tk.Toplevel()#todo schön!
+        select_popup = tk.Toplevel()
         select_popup.wm_title("Select Source Databases")
         select_popup.wm_geometry('400x400')
         label = tk.Label(select_popup,text='Data Base Type - Data Base - Data Base File')

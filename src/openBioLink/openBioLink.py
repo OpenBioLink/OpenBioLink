@@ -101,7 +101,7 @@ def main(args_list=None):
         gui.start_gui()
         return
 
-    parser = argparse.ArgumentParser('Bio-Medical Graph Toolbox (BiMeG)')
+    parser = argparse.ArgumentParser('OpenBioLink Toolbox')
 
     # Global config
     parser.add_argument('-p', type=str, default= os.getcwd(),help='specify a working directory (default = current working dictionary')
