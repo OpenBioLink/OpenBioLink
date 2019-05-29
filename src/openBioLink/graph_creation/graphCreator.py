@@ -53,7 +53,7 @@ class GraphCreator():
             message ='File does not exist: %s ! Edgetype %s will not be created' %(edge_metadata.edges_file_path, str(edge_metadata.edgeType))
             if gcConst.INTERACTIVE_MODE:
                 if globConst.GUI_MODE:
-                    from .. import gui
+                    from gui import gui
                     gui.askForExit(message)
                 else:
                     Cli.ask_for_exit(message)
@@ -76,7 +76,7 @@ class GraphCreator():
                     edge_metadata.edges_file_path, str(edge_metadata.edgeType))
                     if gcConst.INTERACTIVE_MODE:
                         if globConst.GUI_MODE:
-                            from .. import gui
+                            from gui import gui
                             gui.askForExit(message)
                         else:
                             Cli.ask_for_exit(message)

@@ -4,9 +4,9 @@ from tkinter import messagebox, ttk
 import gui.gui as gui
 import utils
 
-from src.openBioLink.graph_creation.metadata_db_file import DbMetadata
-from src.openBioLink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from src.openBioLink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from graph_creation.metadata_db_file import DbMetadata
+from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 
 
 class GraphCreationFrame(tk.Frame):

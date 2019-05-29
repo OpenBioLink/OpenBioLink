@@ -4,7 +4,7 @@ from tkinter import filedialog, ttk, messagebox
 
 import gui.gui as gui
 
-from src.openBioLink.graph_creation import graphCreationConfig as gcConst
+from graph_creation import graphCreationConfig as gcConst
 
 
 class SplitFrame(tk.Frame):

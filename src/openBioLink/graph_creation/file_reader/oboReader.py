@@ -42,7 +42,7 @@ class OboReader(FileReader):
                 if gcConst.INTERACTIVE_MODE:
                     ask_continue_string =  info_string +'Continue if you do not need these edges in your graph'
                     if globConst.GUI_MODE:
-                        from ... import gui
+                        from gui import gui
                         gui.askForExit(ask_continue_string)
                     else:
                         Cli.ask_for_exit(ask_continue_string)

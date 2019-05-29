@@ -2,10 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 
 import gui.gui as gui
-import tkinter as tk
-from tkinter import ttk
-
-import gui.gui as gui
 
 
 class EvalFrame(tk.Frame):

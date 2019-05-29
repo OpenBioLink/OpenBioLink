@@ -3,9 +3,8 @@ import logging
 import queue
 from tkinter import ttk, N, S, E, W
 from tkinter.scrolledtext import ScrolledText
-import tkinter as tk
-from .gui import *
 
+from .gui import *
 
 logger = logging.getLogger()
 
