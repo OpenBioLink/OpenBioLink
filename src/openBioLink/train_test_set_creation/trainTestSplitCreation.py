@@ -132,6 +132,7 @@ class TrainTestSetCreation():
 
     def time_slice_split(self):
         new_test_nodes = self.get_additional_nodes(self.tmo_nodes['id'].tolist(), self.nodes['id'].tolist())
+        #todo idea: calculate nodes like above, then tmo_nodes= test_nodes --> mehr auswahl bei neg examples
         tmo_positive_samples = self.tmo_all_tp
         tmo_negative_sampler = NegativeSampler(self.meta_edges_dic,
                                            self.tmo_tn_edgeTypes,

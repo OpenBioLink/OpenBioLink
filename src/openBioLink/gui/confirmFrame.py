@@ -10,17 +10,16 @@ class ConfirmFrame(tk.Frame):
         title = tk.Label(self, text="Confirm and Start", font=controller.title_font)
 
         global_variable_panel = tk.LabelFrame(self, text='Global Config')
-        self.param_glob = tk.StringVar(value='')
         self.global_message = ScrolledText(global_variable_panel, height=2 )
 
         gc_variable_panel = tk.LabelFrame(self, text='Graph Creation Options')
-        self.param_gc = tk.StringVar(value='')
         self.gc_message = ScrolledText(gc_variable_panel, height=3)
 
-
         tts_variable_panel = tk.LabelFrame(self, text='Train Test Split Options')
-        self.param_tts = tk.StringVar(value='')
-        tts_message = ScrolledText(tts_variable_panel, height=3)
+        self.tts_message = ScrolledText(tts_variable_panel, height=3)
+
+        eval_variable_panel = tk.LabelFrame(self, text='Training and Evaluation Options')
+        self.eval_message = ScrolledText(eval_variable_panel, height=3)
 
 
         buttons_panel = tk.Frame(self)
@@ -33,7 +32,9 @@ class ConfirmFrame(tk.Frame):
         gc_variable_panel.pack(side='top', fill='both', expand=True, padx=15)
         self.gc_message.pack(side='left', fill='both', expand=True, anchor='w')
         tts_variable_panel.pack(side='top', fill='both', expand=True, padx=15)
-        tts_message.pack(side='left', fill='both', expand=True, anchor='w')
+        self.tts_message.pack(side='left', fill='both', expand=True, anchor='w')
+        eval_variable_panel.pack(side='top', fill='both', expand=True, padx=15)
+        self.eval_message.pack(side='left', fill='both', expand=True, anchor='w')
 
         ttk.Separator(self, orient='horizontal').pack(side='top', fill='x', pady=(15, 0), padx=10, anchor='s')
         buttons_panel.pack(side='bottom', padx=15,  fill='x')
@@ -41,14 +42,14 @@ class ConfirmFrame(tk.Frame):
         next_button.pack(side='right', anchor='e', pady=(5, 10))
 
     def update(self):
-        self.global_message.delete(1.0,'end')
+        self.global_message.delete(1.0,'end') #fixme why is controller not updated?
         self.gc_message.delete(1.0,'end')
+        self.tts_message.delete(1.0,'end')
+        self.eval_message.delete(1.0,'end')
         self.gc_message.insert('end',self.args_list_to_string( self.controller.ARGS_LIST_GRAPH_CREATION))
         self.global_message.insert('end',self.args_list_to_string( self.controller.ARGS_LIST_GLOBAL))
-
-        self.param_glob.set(self.args_list_to_string(self.controller.ARGS_LIST_GLOBAL))
-        self.param_gc.set(self.args_list_to_string(self.controller.ARGS_LIST_GRAPH_CREATION))
-        self.param_tts.set(self.args_list_to_string(self.controller.ARGS_LIST_TRAIN_TEST_SPLT))
+        self.tts_message.insert('end',self.args_list_to_string( self.controller.ARGS_LIST_TRAIN_TEST_SPLIT))
+        self.eval_message.insert('end',self.args_list_to_string( self.controller.ARGS_LIST_EVAL))
 
 
     def args_list_to_string(self, arg_list):

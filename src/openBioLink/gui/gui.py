@@ -1,19 +1,14 @@
 import os
-import tkinter as tk
-from tkinter import font  as tkfont, messagebox, ttk
 import sys
-from src.openBioLink import openBioLink
-from src.openBioLink import utils
-from src.openBioLink.graph_creation.metadata_db_file import DbMetadata
-from src.openBioLink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from src.openBioLink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from src.openBioLink.graph_creation import graphCreationConfig as gcConst
-from tkinter.scrolledtext import ScrolledText
-from .startPage import StartPage
-from .graphCreationFrame import GraphCreationFrame
-from .splitFrame import SplitFrame
+import tkinter as tk
+from tkinter import font  as tkfont, messagebox
+
 from .confirmFrame import ConfirmFrame
 from .console import ConsoleFrame
+from .graphCreationFrame import GraphCreationFrame
+from .splitFrame import SplitFrame
+from .startPage import StartPage
+from .evaluationFrame import EvalFrame
 
 app = None
 
@@ -21,7 +16,7 @@ app = None
 class BimegGui(tk.Tk):
     ARGS_LIST_GLOBAL = []
     ARGS_LIST_GRAPH_CREATION = []
-    ARGS_LIST_TRAIN_TEST_SPLT = []
+    ARGS_LIST_TRAIN_TEST_SPLIT = []
     ARGS_LIST_EVAL = []
 
     def __init__(self, *args, **kwargs):
@@ -56,7 +51,7 @@ class BimegGui(tk.Tk):
         arg_list = []
         arg_list.extend(self.ARGS_LIST_GLOBAL)
         arg_list.extend(self.ARGS_LIST_GRAPH_CREATION)
-        arg_list.extend(self.ARGS_LIST_TRAIN_TEST_SPLT)
+        arg_list.extend(self.ARGS_LIST_TRAIN_TEST_SPLIT)
         arg_list.extend(self.ARGS_LIST_EVAL)
         return arg_list
 

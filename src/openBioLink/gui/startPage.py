@@ -64,10 +64,16 @@ class StartPage(tk.Frame):
         selected_frames = []
         if self.g.get():
             selected_frames.append("GraphCreationFrame")
+        else:
+            self.ARGS_LIST_GRAPH_CREATION = []
         if self.s.get():
             selected_frames.append("SplitFrame")
+        else:
+            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT = []
         if self.e.get():
             selected_frames.append("EvalFrame")
+        else:
+            self.controller.ARGS_LIST_EVAL = []
         if len(selected_frames)<1:
             messagebox.showerror("ERROR", "At least one action must be chosen!")
             return
