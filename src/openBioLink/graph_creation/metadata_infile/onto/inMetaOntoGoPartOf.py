@@ -1,7 +1,7 @@
-from ....edgeType import EdgeType
+from edgeType import EdgeType
 from ...types.infileType import InfileType
 from ...metadata_infile.infileMetadata import InfileMetadata
-from ....nodeType import NodeType
+from nodeType import NodeType
 
 
 class InMetaOntoGoPartOf(InfileMetadata):

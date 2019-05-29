@@ -1,5 +1,5 @@
 import os
-from .. import globalConfig as globConst
+import globalConfig as globConst
 
 COL_NAMES_SAMPLES = ''
 class TrainTestSetWriter():

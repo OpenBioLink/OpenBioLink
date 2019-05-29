@@ -3,13 +3,13 @@ import os
 
 from tqdm import tqdm
 import logging
-from .. import graphProperties as graphProp
+import graphProperties as graphProp
 from . import graphCreationConfig as gcConst
-from .. import globalConfig as globConst
-from .. import utils
+import globalConfig as globConst
+import utils
 from .cli import Cli
-from ..edge import Edge
-from ..node import Node
+from edge import Edge
+from node import Node
 
 
 class GraphCreator():

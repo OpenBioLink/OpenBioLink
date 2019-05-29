@@ -3,10 +3,10 @@ import os
 
 from tqdm import tqdm
 
-from .. import globalConfig as globConst
+import globalConfig as globConst
 from . import graphCreationConfig as gcConst
-from .. import graphProperties as graphProp
-from .. import utils as utils
+import graphProperties as graphProp
+import utils as utils
 from .graphCreator import GraphCreator
 from .graphWriter import GraphWriter
 from .metadata_edge.edgeOntoMetadata import EdgeOntoMetadata

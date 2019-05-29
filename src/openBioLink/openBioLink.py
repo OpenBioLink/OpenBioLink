@@ -4,13 +4,13 @@ import logging
 import os
 import sys
 
-from . import globalConfig as glob
-from .graph_creation import graphCreationConfig as gcConst
-from . import graphProperties as graphProp
-from .graph_creation.types.qualityType import QualityType
-from .graph_creation.graphCreation import Graph_Creation
+import globalConfig as glob
+from graph_creation import graphCreationConfig as gcConst
+import graphProperties as graphProp
+from graph_creation.types.qualityType import QualityType
+from graph_creation.graphCreation import Graph_Creation
 
-from .train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
+from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
 
 def create_graph(args):
@@ -71,7 +71,7 @@ def create_train_test_splits(args):
     tts = TrainTestSetCreation(graph_path=args.edges,
                                tn_graph_path=args.tn_edges,
                                nodes_path=args.nodes,
-                               meta_edge_triples=args.meta,
+                               #meta_edge_triples=args.meta,
                                t_minus_one_graph_path=args.tmo_edges,
                                t_minus_one_tn_graph_path=args.tmo_tn_edges,
                                t_minus_one_nodes_path=args.tmo_nodes)
@@ -97,7 +97,7 @@ def check_args_validity(args, parser):
 def main(args_list=None):
     if (len(sys.argv) < 2) and not args_list:
         glob.GUI_MODE = True
-        from . import gui
+        import gui.gui as gui
         gui.start_gui()
         return
 

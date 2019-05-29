@@ -4,8 +4,8 @@ import logging
 import numpy
 import pandas
 
-from .. import graphProperties as graphProp
-from .. import utils
+import graphProperties as graphProp
+import utils
 from .sampler import NegativeSampler
 from .trainTestSetWriter import TrainTestSetWriter
 

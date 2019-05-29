@@ -1,4 +1,4 @@
-from .nodeType import NodeType
+from nodeType import NodeType
 
 class Node :
     def __init__(self, id: str, type : NodeType, name = "" ):

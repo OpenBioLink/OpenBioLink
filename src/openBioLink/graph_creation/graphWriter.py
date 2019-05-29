@@ -1,8 +1,8 @@
 import csv
 import os
 from . import graphCreationConfig as gcConst
-from .. import globalConfig as globConst
-from .. import graphProperties as graphProp
+import globalConfig as globConst
+import graphProperties as graphProp
 import json
 
 

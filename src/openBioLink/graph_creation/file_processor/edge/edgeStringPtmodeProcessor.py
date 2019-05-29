@@ -1,4 +1,4 @@
-from .... import utils
+import utils
 from ...types.infileType import InfileType
 from ...types.readerType import ReaderType
 from ..fileProcessor import FileProcessor

@@ -2,7 +2,7 @@ from .fileReader import FileReader
 from .parser.oboParser import OboParser
 from ..cli import Cli
 from .. import graphCreationConfig as gcConst
-from ... import globalConfig as globConst
+import globalConfig as globConst
 import numpy as np
 import sys
 import logging

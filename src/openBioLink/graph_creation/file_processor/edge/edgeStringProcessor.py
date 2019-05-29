@@ -1,4 +1,4 @@
-from .... import utils
+import utils
 from ..fileProcessor import FileProcessor
 from ...metadata_infile.edge.inMetaEdgeString import InMetaEdgeString
 from ...types.infileType import InfileType
