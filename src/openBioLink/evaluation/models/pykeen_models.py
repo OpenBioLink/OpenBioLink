@@ -16,21 +16,21 @@ from .model import Model
 
 
 class PyKeen_BasicModel (Model):
-    def __init__(self, config=None):
-        super().__init__()
-        import torch
-        import os
+    def __init__(self, kge_model = None, config=None):
+        super().__init__(kge_model)
         self.config=config
         self.device = torch.device('cpu')
         self.kge_model = None
-        self.entity_to_id_train = None
-        self.rel_to_id_train = None
+        self.entity_to_id = None
+        self.rel_to_id = None
         self.output_directory = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\results"
         os.makedirs(self.output_directory, exist_ok=True)
+        #todo load variables from config
+
 
     def train(self, examples=None):
         ### prepare input examples
-        if not examples:
+        if examples is None:
             examples = pandas.read_csv(self.config[keenConst.TRAINING_SET_PATH], sep="\t",
                                       names=['id1', 'edge', 'id2', 'qscore', 'value'])
 
@@ -79,7 +79,6 @@ class PyKeen_BasicModel (Model):
             mapped_neg_train_triples = mapped_neg_train_triples[indices_neg]
             neg_batches = self._split_list_in_batches(input_list=mapped_neg_train_triples,
                                                       batch_size=self.config["batch_size"])
-
             current_epoch_loss = 0.
 
             for pos_batch, neg_batch in zip(pos_batches, neg_batches):
@@ -132,12 +131,13 @@ class PyKeen_BasicModel (Model):
         return self.kge_model, loss_per_epoch
 
 
-    def get_ranked_predictions(self):
 
-        #fixme load trained model
+    def get_ranked_predictions(self, examples= None):
+        #** code can be found in utilities/prediction_utils.py
 
         ### prepare input examples
-        examples = pandas.read_csv(self.config[keenConst.TEST_SET_PATH], sep="\t",
+        if examples is None:
+            examples = pandas.read_csv(self.config[keenConst.TEST_SET_PATH], sep="\t",
                                    names=['id1', 'edge', 'id2', 'qscore', 'value'])
 
         test_triples = examples[['id1', 'edge', 'id2']].values
@@ -146,11 +146,22 @@ class PyKeen_BasicModel (Model):
         id_to_entity = {value: key for key, value in self.entity_to_id.items()}
         id_to_rel = {value: key for key, value in self.rel_to_id.items()}
 
-        mapped_test_triples, _, _ = pipeline.create_mapped_triples(
-            triples=test_triples,
-            entity_label_to_id=self.entity_to_id,
-            relation_label_to_id=self.rel_to_id,
-        )
+        # Note: pipeline.create_mapped_triples changes order, therefore:
+        subject_column = np.vectorize(self.entity_to_id.get)(test_triples[:, 0:1])
+        relation_column = np.vectorize(self.rel_to_id.get)(test_triples[:, 1:2])
+        object_column = np.vectorize(self.entity_to_id.get)(test_triples[:, 2:3])
+        triples_of_ids = np.concatenate([subject_column, relation_column, object_column], axis=1)
+
+        mapped_test_triples = np.array(triples_of_ids, dtype=np.long)
+        #todo use unique
+        #return np.unique(ar=triples_of_ids, axis=0), entity_label_to_id, relation_label_to_id
+
+        #mapped_test_triples, _, _ = pipeline.create_mapped_triples(
+        #    triples=test_triples,
+        #    entity_label_to_id=self.entity_to_id,
+        #    relation_label_to_id=self.rel_to_id,
+        #)
+        mapped_test_triples = torch.tensor(mapped_test_triples, dtype=torch.long, device=self.device)
 
         predicted_scores = self.kge_model.predict(mapped_test_triples)
         _, sorted_indices = torch.sort(torch.tensor(predicted_scores, dtype=torch.float),
@@ -164,9 +175,12 @@ class PyKeen_BasicModel (Model):
         ranked_object_column = np.vectorize(id_to_entity.get)(ranked_mapped_test_triples[:, 2:3])
         ranked_scores = np.reshape(predicted_scores[sorted_indices], newshape=(-1, 1))
 
-        ranked_triples = np.concatenate([ranked_subject_column,ranked_predicate_column, ranked_object_column , ranked_scores], axis=1)
-
-        return ranked_triples
+        #ranked_triples = np.concatenate([ranked_subject_column,ranked_predicate_column, ranked_object_column , ranked_scores], axis=1)
+        ranked_triples = pandas.DataFrame({'id1':[x for sublist in ranked_subject_column.tolist() for x in sublist],
+                                           'edge': [x for sublist in ranked_predicate_column.tolist() for x in sublist],
+                                           'id2':[x for sublist in ranked_object_column.tolist() for x in sublist],
+                                           'score' : [x for sublist in ranked_scores.tolist() for x in sublist]})
+        return ranked_triples, sorted_indices
 
 
     def output_train_results(self, results):
@@ -253,7 +267,7 @@ class TransR_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path="C:\\Users\\anna\\PycharmProjects\\masterthesis\\cross_val\\fold_0\\train_sample.csv",
-                # test_set_path = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\cross_val\\fold_0\\val_sample.csv",
+                test_set_path = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\cross_val\\fold_0\\val_sample.csv",
                 execution_mode="Training_mode",
                 random_seed=42,
                 kg_embedding_model_name="TransR",
@@ -277,5 +291,7 @@ class TransR_PyKeen(PyKeen_BasicModel):
 
 
 
-py = TransR_PyKeen()
-py.train()
+#py = TransR_PyKeen()
+#py.train()
+#res = py.get_ranked_predictions()
+#print('foo')

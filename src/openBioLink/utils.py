@@ -4,6 +4,7 @@ import urllib.request
 from functools import reduce
 
 import pandas
+import os
 
 
 ############# FROM GRAPH CREATION #################################
@@ -109,8 +110,9 @@ def file_exists(url):
 def get_diff(df1, df2):
     diff = pandas.merge(df1, df2, how='outer', indicator=True).loc[lambda x: x['_merge'] != 'both']
     left_only = diff.loc[lambda x: x._merge == 'left_only'].drop(['_merge'], axis=1)
-    right_only = diff.loc[lambda x: x._merge == 'left_only'].drop(['_merge'], axis=1)
+    right_only = diff.loc[lambda x: x._merge == 'right_only'].drop(['_merge'], axis=1)
     # fixme naming convention for output to ensure same output
+    # todo option to print
     return left_only, right_only
 
 #todo 2 remove bidir edges
@@ -153,5 +155,82 @@ def check_for_transitive_edges(df):
 #        pass
 # fixme continue here (more lvl transitivity
 
+
+
+def calc_corrupted_triples(pos_examples: pandas.DataFrame, nodes:pandas.DataFrame, filtered=True, path = None):
+    nodeTypes = nodes['nodeType'].unique()
+    nodes_dic = {nodeType: nodes[nodes['nodeType'] == nodeType][['id']] for nodeType in nodeTypes}
+    if list(pos_examples) == 4:
+        pos_examples.drop('value', axis=1)
+
+    corrupted_head_dict = {}
+    corrupted_tail_dict = {}
+
+    #todo style code dup
+    for quadruple in pos_examples.itertuples():
+        _, head, relation,tail = quadruple
+        head_nodes = nodes_dic[head.split('_')[0]]['id']
+        tail_nodes = nodes_dic[tail.split('_')[0]]['id']
+        corrupted_head_examples = pandas.DataFrame(columns=list(pos_examples))
+        corrupted_tail_examples = pandas.DataFrame(columns=list(pos_examples))
+        #corrupting heads
+        for i, node in enumerate(head_nodes):
+            if not node == head:
+                corrupted_head_examples.loc[i] = [node, relation, tail]
+        corrupted_head_examples.reset_index(drop=True, inplace=True)
+        neg_corrupted_head_examples, _ = get_diff(corrupted_head_examples, pos_examples)
+        if filtered:
+            corrupted_head_examples = neg_corrupted_head_examples
+            corrupted_head_examples['value']=0
+        else:
+            neg_indices = set(neg_corrupted_head_examples.index)
+            corrupted_head_examples['value']=1
+            corrupted_head_examples['value'][neg_indices]=0
+        corrupted_head_dict[(head,relation,tail)] = corrupted_head_examples
+        #corrupting tails
+        for i, node in enumerate(tail_nodes):
+            if not node == tail:
+                corrupted_tail_examples.loc[i] = [head, relation, node]
+        corrupted_tail_examples.reset_index(drop=True, inplace=True)
+        neg_corrupted_tail_examples, _ = get_diff(corrupted_tail_examples, pos_examples )
+        if filtered:
+            corrupted_tail_examples = neg_corrupted_tail_examples
+            corrupted_tail_examples['value'] = 0
+        else:
+            neg_indices = set(neg_corrupted_tail_examples.index)
+            corrupted_tail_examples['value'] = 1
+            corrupted_tail_examples['value'][neg_indices] = 0
+        corrupted_tail_dict[(head,relation,tail)] = corrupted_tail_examples
+
+
+    if path:
+        i = 0
+        all_corrupted_head = pandas.DataFrame(columns=['number']+list(pos_examples)+['value'])
+        for key, df in sorted(corrupted_head_dict.items()):
+            h, r, t = key
+            true_example = pandas.DataFrame([[h,r,t]], columns=list(df))
+            true_example['value']=1
+            true_example['number']=i
+            df['value']=0
+            df['number']=i
+            all_corrupted_head = all_corrupted_head.append(true_example)
+            all_corrupted_head = all_corrupted_head.append(df)
+            i+=1
+
+        i = 0
+        all_corrupted_tail = pandas.DataFrame(columns=['number'] +list(pos_examples)+['value'])
+        for key, df in sorted(corrupted_tail_dict.items()):
+            h, r, t = key
+            true_example = pandas.DataFrame([[h,r,t]], columns=list(df))
+            true_example['value']=1
+            true_example['number']=i
+            df['value']=0
+            df['number']=i
+            all_corrupted_tail = all_corrupted_tail.append(true_example)
+            all_corrupted_tail = all_corrupted_tail.append(df)
+            i+=1
+        all_corrupted_head.to_csv(os.path.join(path, 'corrupted_heads.csv'), sep='\t', index=False, header=False)
+
+    return corrupted_head_dict, corrupted_tail_dict
 
 

@@ -143,15 +143,17 @@ def main(args_list=None):
     parser.add_argument('--tmo_tn_edges', type=str, help='Path to true_negatives_edges.csv file of t-minus-one graph (required for --mode time')
     parser.add_argument('--tmo_nodes', type=str, help='Path to nodes.csv file of t-minus-one graph (required for --mode time')
 
-    # Hyperparameter Optimization
-    parser.add_argument('-c', action='store_true', help='Apply hyperparameter optimization via cross validation')
-
-    # Training
-    parser.add_argument('-t', action='store_true', help='Apply Training')
-
-    # Testing and Evaluation
-    parser.add_argument('-e', action='store_true', help='Apply Test and Evaluation')
-
+    # Training and Evaluation
+    parser.add_argument('-e', action='store_true', help='Apply Training and Evaluation')
+    parser.add_argument('--model_cls', type=str, help='class of the model to be trained/evaluated (required with -e)')
+    parser.add_argument('--model_args', nargs='+', help='arguments of the model to be trained/evaluated')
+    parser.add_argument('--no_train', action='store_true', help='No training is being performed, trained model id provided via --model')
+    parser.add_argument('--trained_model', type=str, help='Path to trained model (required with --no_train)')
+    parser.add_argument('--no_eval', action='store_true', help='No evaluation is being performed, only training')
+    parser.add_argument('--test', type=str, help='Path to test set file (required with -e)')
+    parser.add_argument('--train', type=str, help='Path to trainings set file (alternative: --cv_folder)')
+    #parser.add_argument('--cv_folder', type=str, help='Path to cross validation folder (alternative: --train)')
+    #todo create crossval for eval (multiple train test sets instead ov val sets)
     #todo info from config file
 
     if args_list:
@@ -173,6 +175,8 @@ def main(args_list=None):
         create_graph(args)
     if args.s:
         create_train_test_splits(args)
+    if args.e:
+        train_and_evaluate(args)
 
     logging.info('Finished!')
 

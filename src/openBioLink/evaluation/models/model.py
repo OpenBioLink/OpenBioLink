@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class Model (ABC):
 
     @abstractmethod
-    def __init__(self):
+    def __init__(self, model):
         ...
 
     @abstractmethod
@@ -12,7 +12,7 @@ class Model (ABC):
         ...
 
     @abstractmethod
-    def get_prediction_scores(self):
+    def get_ranked_predictions(self, examples):
         ...
 
     def _split_list_in_batches(self, input_list, batch_size):
