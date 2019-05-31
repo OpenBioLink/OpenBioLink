@@ -1,8 +1,8 @@
-from models.model import Model
+from .models.model import Model
 import numpy
 import pandas
 import utils
-from metricTypes import RankMetricType, ThresholdMetricType
+from .metricTypes import RankMetricType, ThresholdMetricType
 
 class Evaluation():
     def __init__(self, model: Model, training_set_path=None, test_set_path=None):
