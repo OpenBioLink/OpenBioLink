@@ -1,21 +1,17 @@
 import pandas
 import numpy
-
-RANDOM_STATE = 42
-COL_NAMES_EDGES = ['id1', 'edgeType', 'id2', 'qscore']
-
+import globalConfig as glob
+from . import ttsConfig as ttsConst
 
 class Sampler():
-    def __init__(self, meta_edges_dic,col_names_edges, nodes):
+    def __init__(self, meta_edges_dic, nodes):
         self.meta_edges_dic = meta_edges_dic
-        global COL_NAMES_EDGES
-        COL_NAMES_EDGES = col_names_edges
         self.nodes= nodes
 
 
     def generate_n_random_samples(self, n, nodeType1, edgeType, nodeType2, exclude_df):
         #nodeType1, edgeType, nodeType2 = self.meta_edges_dic[meta_edge_triple_key]
-        samples = pandas.DataFrame(columns=COL_NAMES_EDGES)
+        samples = pandas.DataFrame(columns=ttsConst.COL_NAMES_EDGES)
         nodes_nodeType1 = self.nodes.loc[self.nodes['nodeType'] == nodeType1]
         num_nodes1, _ = nodes_nodeType1.shape
         nodes_nodeType2 = self.nodes.loc[self.nodes['nodeType'] == nodeType2]
@@ -23,19 +19,19 @@ class Sampler():
 
         i = 0
         while True:
-            node1 = nodes_nodeType1.sample(n=1, random_state=(RANDOM_STATE+i))
+            node1 = nodes_nodeType1.sample(n=1, random_state=(glob.RANDOM_STATE+i))
             node1.reset_index()
-            node2 = nodes_nodeType2.sample(n=1, random_state=(RANDOM_STATE+((i+100)%13)))
+            node2 = nodes_nodeType2.sample(n=1, random_state=(glob.RANDOM_STATE+((i+100)%13)))
             node2.reset_index()
             if not (((exclude_df['id1'] == node1.iloc[0].id) &
                      (exclude_df['id2'] == node2.iloc[0].id) &
                      (exclude_df['edgeType'] == edgeType)).any() or
                     (node1.iloc[0].id == node2.iloc[0].id)):  # no self loops
                 samples = samples.append(pandas.DataFrame([[node1.iloc[0].id, edgeType, node2.iloc[0].id, 0]],
-                                                          columns=COL_NAMES_EDGES),
+                                                          columns=ttsConst.COL_NAMES_EDGES),
                                          ignore_index=True)
                 exclude_df = exclude_df.append(pandas.DataFrame([[node1.iloc[0].id, edgeType, node2.iloc[0].id, 0]],
-                                                                columns=COL_NAMES_EDGES),
+                                                                columns=ttsConst.COL_NAMES_EDGES),
                                                ignore_index=True)
                 num_samples, _ = samples.shape
                 if num_samples >= n:
@@ -49,9 +45,8 @@ class Sampler():
 
 
 class NegativeSampler(Sampler):
-    def __init__(self, meta_edges_dic, tn_edgeTypes, all_tn, nodes, col_names_edges):
-
-        super().__init__(meta_edges_dic, col_names_edges, nodes)
+    def __init__(self, meta_edges_dic, tn_edgeTypes, all_tn, nodes):
+        super().__init__(meta_edges_dic, nodes)
         self.meta_edges_dic = meta_edges_dic
         self.tn_edgeTypes = tn_edgeTypes
         self.all_tn = all_tn
@@ -113,10 +108,10 @@ class NegativeSampler(Sampler):
                                               (self.all_tn['id2'].str.startswith(nodeType2))]
         count_existing_tn, _ = tn_examples.shape
         if count <= count_existing_tn:
-            random_tn_sample = tn_examples.sample(n=count, random_state=RANDOM_STATE)
+            random_tn_sample = tn_examples.sample(n=count, random_state=glob.RANDOM_STATE)
             neg_samples = neg_samples.append(random_tn_sample, ignore_index=True)
         else:
-            random_tn_sample = tn_examples.sample(n=count_existing_tn, random_state=RANDOM_STATE)
+            random_tn_sample = tn_examples.sample(n=count_existing_tn, random_state=glob.RANDOM_STATE)
             exclude_df = exclude_df.append(random_tn_sample)
             neg_samples = neg_samples.append(random_tn_sample, ignore_index=True)
             neg_samples = neg_samples.append(

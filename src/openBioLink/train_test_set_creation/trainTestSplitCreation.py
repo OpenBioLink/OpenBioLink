@@ -8,15 +8,15 @@ import graphProperties as graphProp
 import utils
 from .sampler import NegativeSampler
 from .trainTestSetWriter import TrainTestSetWriter
+import globalConfig as glob
+from . import ttsConfig as ttsConst
 
-RANDOM_STATE = 42  # do not change for reproducibility
-random.seed(RANDOM_STATE)
-numpy.random.seed(RANDOM_STATE)
-COL_NAMES_EDGES = ['id1', 'edgeType', 'id2', 'qscore']
-COL_NAMES_SAMPLES = ['id1', 'edgeType', 'id2', 'qscore', 'value']
+random.seed(glob.RANDOM_STATE)
+numpy.random.seed(glob.RANDOM_STATE)
 
 
 # TODO: no self loops in neg samples, not reproducible(?)
+#todo create corrupted triples?
 
 
 class TrainTestSetCreation():
@@ -34,21 +34,21 @@ class TrainTestSetCreation():
 
 
         with open(nodes_path) as file:
-            self.nodes = pandas.read_csv(file, sep=sep, names=['id', 'nodeType'])
+            self.nodes = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_NODES)
 
         with open(graph_path) as file:
-            self.all_tp = pandas.read_csv(file, sep=sep, names=COL_NAMES_EDGES)
-            self.all_tp['value'] = 1
-        self.tp_edgeTypes = list(self.all_tp['edgeType'].unique())
+            self.all_tp = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_EDGES)
+            self.all_tp[ttsConst.VALUE_COL_NAME] = 1
+        self.tp_edgeTypes = list(self.all_tp[ttsConst.EDGE_TYPE_COL_NAME].unique())
 
         with open(tn_graph_path) as file:
-            self.all_tn = pandas.read_csv(file, sep=sep, names=COL_NAMES_EDGES)
-            self.all_tn['value'] = 0
-        self.tn_edgeTypes = list(self.all_tn['edgeType'].unique())
+            self.all_tn = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_EDGES)
+            self.all_tn[ttsConst.VALUE_COL_NAME] = 0
+        self.tn_edgeTypes = list(self.all_tn[ttsConst.EDGE_TYPE_COL_NAME].unique())
 
         self.meta_edges_dic = {}
         if not meta_edge_triples:
-            from ..graph_creation.metadata_edge import edgeMetadata as meta
+            from graph_creation.metadata_edge import edgeMetadata as meta
             for metaEdge in utils.get_leaf_subclasses(meta.EdgeMetadata):
                 edgeType =  str(metaEdge.EDGE_INMETA_CLASS.EDGE_TYPE)
                 node1Type = str(metaEdge.EDGE_INMETA_CLASS.NODE1_TYPE)
@@ -61,8 +61,8 @@ class TrainTestSetCreation():
                 #todo does this work?
 
         # check for transient onto edges
-        transitiv_IS_A_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp['edgeType'] == 'IS_A'])
-        transitiv_PART_OF_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp['edgeType'] == 'PART_OF'])
+        transitiv_IS_A_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp[ttsConst.EDGE_TYPE_COL_NAME] == 'IS_A'])
+        transitiv_PART_OF_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp[ttsConst.EDGE_TYPE_COL_NAME] == 'PART_OF'])
         if transitiv_IS_A_edges:
             print('WARNING: transient edges in IS_A: ({a},b,c) for a IS_A b and a IS_A c', transitiv_IS_A_edges)
         if transitiv_PART_OF_edges:
@@ -74,17 +74,17 @@ class TrainTestSetCreation():
             logging.error('either all three or none of these variables must be provided') #todo better + exit
         if t_minus_one_nodes_path and t_minus_one_graph_path and t_minus_one_tn_graph_path:
             with open(t_minus_one_nodes_path) as file:
-                self.tmo_nodes = pandas.read_csv(file, sep=sep, names=['id', 'nodeType'])
+                self.tmo_nodes = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_NODES)
 
             with open(t_minus_one_graph_path) as file:
-                self.tmo_all_tp = pandas.read_csv(file, sep=sep, names=COL_NAMES_EDGES)
-                self.tmo_all_tp['value'] = 1
-            self.tmo_tp_edgeTypes = list(self.all_tp['edgeType'].unique())
+                self.tmo_all_tp = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_EDGES)
+                self.tmo_all_tp[ttsConst.VALUE_COL_NAME] = 1
+            self.tmo_tp_edgeTypes = list(self.all_tp[ttsConst.EDGE_TYPE_COL_NAME].unique())
 
             with open(t_minus_one_tn_graph_path) as file:
-                self.tmo_all_tn = pandas.read_csv(file, sep=sep, names=COL_NAMES_EDGES)
-                self.tmo_all_tn['value'] = 1
-            self.tmo_tn_edgeTypes = list(self.all_tp['edgeType'].unique())
+                self.tmo_all_tn = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_EDGES)
+                self.tmo_all_tn[ttsConst.VALUE_COL_NAME] = 1
+            self.tmo_tn_edgeTypes = list(self.all_tp[ttsConst.EDGE_TYPE_COL_NAME].unique())
 
 
 
@@ -96,21 +96,21 @@ class TrainTestSetCreation():
 
         # create positive and negative examples
         positive_samples = self.all_tp
-        negative_sampler = NegativeSampler(self.meta_edges_dic,self.tn_edgeTypes,self.all_tn, self.nodes, COL_NAMES_EDGES)
+        negative_sampler = NegativeSampler(self.meta_edges_dic,self.tn_edgeTypes,self.all_tn, self.nodes)
         negative_samples = negative_sampler.generate_random_neg_samples(positive_samples)
         all_samples = (positive_samples.append(negative_samples, ignore_index=True)).reset_index(drop=True)
 
         # generate, train-, test-, validation-sets
-        test_set = all_samples.sample(frac=test_frac, random_state=RANDOM_STATE)
+        test_set = all_samples.sample(frac=test_frac, random_state=glob.RANDOM_STATE)
         train_val_set = all_samples.drop(list(test_set.index.values))
-        nodes_in_train_val_set = train_val_set['id1'].tolist()+train_val_set['id2'].tolist()
+        nodes_in_train_val_set = train_val_set[ttsConst.NODE1_ID_COL_NAME].tolist() + train_val_set[ttsConst.NODE2_ID_COL_NAME].tolist()
         new_test_nodes = self.get_additional_nodes(old_nodes_list=nodes_in_train_val_set,
-                                                   new_nodes_list=self.nodes['id'].tolist())
+                                                   new_nodes_list=self.nodes[ttsConst.ID_NODE_COL_NAME].tolist())
         if graphProp.DIRECTED:
             train_val_set = utils.remove_bidir_edges(remain_set=train_val_set, remove_set=test_set)
         if crossval:
             train_val_set_tuples = self.create_cross_val(train_val_set, val)
-            new_val_nodes = [self.get_additional_nodes(t['id1'].tolist()+t['id2'].tolist(), nodes_in_train_val_set)
+            new_val_nodes = [self.get_additional_nodes(t[ttsConst.NODE1_ID_COL_NAME].tolist() + t[ttsConst.NODE2_ID_COL_NAME].tolist(), nodes_in_train_val_set)
                              for t,v, in train_val_set_tuples]
         else:
             #train_set = train_val_set.sample(frac=(1 - val_frac), random_state=RANDOM_STATE)
@@ -120,7 +120,7 @@ class TrainTestSetCreation():
         if graphProp.DIRECTED:
             train_val_set_tuples = [(utils.remove_bidir_edges(remain_set=t, remove_set=v),v)
                                     for t,v in train_val_set_tuples]
-        writer = TrainTestSetWriter(COL_NAMES_SAMPLES)
+        writer = TrainTestSetWriter(ttsConst.COL_NAMES_SAMPLES)
         writer.print_sets(train_val_set_tuples=train_val_set_tuples,
                           new_val_nodes=new_val_nodes,
                           test_set=test_set,
@@ -137,8 +137,7 @@ class TrainTestSetCreation():
         tmo_negative_sampler = NegativeSampler(self.meta_edges_dic,
                                            self.tmo_tn_edgeTypes,
                                            self.tmo_all_tn,
-                                           self.tmo_nodes,
-                                           COL_NAMES_EDGES)
+                                           self.tmo_nodes)
         tmo_negative_samples = tmo_negative_sampler.generate_random_neg_samples(tmo_positive_samples)
         tmo_all_samples = (tmo_positive_samples.append(tmo_negative_samples, ignore_index=True)).reset_index(drop=True)
         train_set = tmo_all_samples
@@ -147,8 +146,7 @@ class TrainTestSetCreation():
         test_negative_sampler = NegativeSampler(self.meta_edges_dic,
                                            self.tn_edgeTypes,
                                            test_tn_samples,
-                                           self.nodes,
-                                           COL_NAMES_EDGES)
+                                           self.nodes)
         #todo like that, neg samples are restricted to edge_types appearing in test_sample --> good idea?
         test_negative_samples = test_negative_sampler.generate_random_neg_samples(test_positive_samples)
 
@@ -157,7 +155,7 @@ class TrainTestSetCreation():
             train_set = utils.remove_bidir_edges(remain_set=train_set, remove_set=test_set)
 
         train_val_set_tuple = (train_set,pandas.DataFrame())
-        writer = TrainTestSetWriter(COL_NAMES_SAMPLES)
+        writer = TrainTestSetWriter(ttsConst.COL_NAMES_SAMPLES)
         writer.print_sets(train_val_set_tuples=[train_val_set_tuple],
                           test_set=test_set,
                           new_test_nodes=new_test_nodes)

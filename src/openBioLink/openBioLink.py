@@ -5,11 +5,10 @@ import os
 import sys
 
 import globalConfig as glob
-from graph_creation import graphCreationConfig as gcConst
 import graphProperties as graphProp
-from graph_creation.types.qualityType import QualityType
+from graph_creation import graphCreationConfig as gcConst
 from graph_creation.graphCreation import Graph_Creation
-
+from graph_creation.types.qualityType import QualityType
 from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
 
@@ -65,30 +64,37 @@ def create_graph(args):
 
 
 def create_train_test_splits(args):
-    if args.meta:
-        pass
-        #fixme read out triplets from path
+
+    if args.tts_sep == 't':
+        sep = '\t'
+    elif args.tts_sep =='n':
+        sep = '\n'
+    else:
+        sep = args.tts_sep
     tts = TrainTestSetCreation(graph_path=args.edges,
                                tn_graph_path=args.tn_edges,
                                nodes_path=args.nodes,
+                               sep=sep,
                                #meta_edge_triples=args.meta,
                                t_minus_one_graph_path=args.tmo_edges,
                                t_minus_one_tn_graph_path=args.tmo_tn_edges,
                                t_minus_one_nodes_path=args.tmo_nodes)
-    tts.time_slice_split()
-    #tts = TrainTestSetCreation(graph_path=args.edges, tn_graph_path=args.tn_edges, nodes_path=args.nodes, meta_edge_triples=args.meta)
-    #tts.random_edge_split(val_frac=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds)
+    if args.mode == 'time':
+        tts.time_slice_split()
+    elif args.mode == 'rand':
+        tts.random_edge_split(val=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds)
+    tts.random_edge_split(crossval=False)
 
 
-
-    #tts.random_edge_split(graph_path=args.edges, tn_graph_path=args.tn_edges, nodes_path=args.nodes,
-    #                      val_frac=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds, meta_edge_triples=args.meta)
-    #tts.random_edge_split('test\\test_data\\edges.csv', 'test\\test_data\\TN_edges.csv',  'test\\test_data\\nodes.csv', val_frac=0.2, test_frac = 0.2, crossval= None, folds = None)
+def train_and_evaluate(args):
+    #model args to dict
+    #create (list?) of train
+    pass
 
 
 def check_args_validity(args, parser):
     if not (args.g or args.s or args.c or args.t or args.e):
-        parser.error("at least one action is required [-g, -s, -c, -t, -e]")
+        parser.error("at least one action is required [-g, -s, -e]")
     if args.skip and args.no_interact is None:
         parser.error("option --skip requires --no_interact")
         #fixme
@@ -126,8 +132,8 @@ def main(args_list=None):
     parser.add_argument('--edges', type=str, help='Path to edges.csv file (required with action -s')
     parser.add_argument('--tn_edges', type=str, help='Path to true_negatives_edges.csv file (required with action -s)')
     parser.add_argument('--nodes', type=str, help='Path to nodes.csv file (required with action -s)')
+    parser.add_argument('--tts_sep', type=str, default='t', help='Separator of edge, tn-edge and nodes file (e.g. t=tab, n=newline, or any other character) (default=t)')
     parser.add_argument('--mode', type=str, help='Mode of train-test-set split, options=[rand, time]')
-
     parser.add_argument('--test_frac', type=float, default='0.2', help='Fraction of test set as float (default= 0.2)')
     parser.add_argument('--crossval', action='store_true', help='Multiple train-validation-sets are generated')
     parser.add_argument('--val', type=float, default='0.2',help='Fraction of validation set as float (default= 0.2) or number of folds as int')
