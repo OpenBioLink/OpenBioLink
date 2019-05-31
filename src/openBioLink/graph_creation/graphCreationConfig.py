@@ -14,8 +14,4 @@ TN_ID_NO_MAPPING_FILE_NAME = 'tn_ids_no_mapping.tsv'
 TN_STATS_FILE_NAME = 'tn_stats.txt'
 
 
-INTERACTIVE_MODE = True
-SKIP_EXISTING_FILES = True
-
-
 

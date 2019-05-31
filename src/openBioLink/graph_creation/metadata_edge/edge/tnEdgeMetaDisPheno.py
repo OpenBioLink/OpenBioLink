@@ -10,7 +10,7 @@ from ...metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
 
 
 class TnEdgeMetaDisPheno(TnEdgeRegularMetadata):
-    NAME = 'Negative Edge - Disease_observable_Phenotype' #todo better wording
+    NAME = 'Negative Edge - Disease_observable_Phenotype' #todo ms better wording
 
     LQ_CUTOFF_TEXT = []
     MQ_CUTOFF_TEXT = []

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import gui.gui as gui
-import evaluation.metricTypes as Metrics
+from evaluation.metricTypes import RankMetricType, ThresholdMetricType
 
 
 class EvalFrame(tk.Frame):
@@ -12,12 +12,14 @@ class EvalFrame(tk.Frame):
         self.controller = controller
         self.info_text = ""
         titles_panel = tk.Frame(self)
-        metrics = [Metrics.MetricType[item] for item in dir(Metrics.MetricType) if not item.startswith("__")]
+        rank_metrics = [RankMetricType[item] for item in dir(RankMetricType) if not item.startswith("__")]
+        threshold_metrics = [ThresholdMetricType[item] for item in dir(ThresholdMetricType) if not item.startswith("__")]
+
         self.info = tk.Button(titles_panel, text=" ? ", command=lambda: gui.show_info_box(self.info_text))
         self.title = tk.Label(titles_panel, text="(3) Testing and Evaluation", font=controller.title_font)
         metrics_frame = tk.Frame(self)
         self.metrics_dicr = {}
-        for metric in metrics:
+        for metric in rank_metrics:
             self.metrics_dicr[metric.value] = tk.BooleanVar(value=True)
             cb = tk.Checkbutton(metrics_frame, text=metric.value, variable=self.metrics_dicr[metric.value])
             cb.pack(anchor='w')

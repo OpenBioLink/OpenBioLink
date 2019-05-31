@@ -1,6 +1,6 @@
 import pandas
 import numpy
-import globalConfig as glob
+import globalConfig as globConst
 from . import ttsConfig as ttsConst
 
 class Sampler():
@@ -10,7 +10,6 @@ class Sampler():
 
 
     def generate_n_random_samples(self, n, nodeType1, edgeType, nodeType2, exclude_df):
-        #nodeType1, edgeType, nodeType2 = self.meta_edges_dic[meta_edge_triple_key]
         samples = pandas.DataFrame(columns=ttsConst.COL_NAMES_EDGES)
         nodes_nodeType1 = self.nodes.loc[self.nodes['nodeType'] == nodeType1]
         num_nodes1, _ = nodes_nodeType1.shape
@@ -19,13 +18,14 @@ class Sampler():
 
         i = 0
         while True:
-            node1 = nodes_nodeType1.sample(n=1, random_state=(glob.RANDOM_STATE+i))
+            #todo better way of selecing two random but reproducable nodes
+            node1 = nodes_nodeType1.sample(n=1, random_state=(globConst.RANDOM_STATE + i))
             node1.reset_index()
-            node2 = nodes_nodeType2.sample(n=1, random_state=(glob.RANDOM_STATE+((i+100)%13)))
+            node2 = nodes_nodeType2.sample(n=1, random_state=(globConst.RANDOM_STATE + ((i + 100) % 13)))
             node2.reset_index()
             if not (((exclude_df['id1'] == node1.iloc[0].id) &
                      (exclude_df['id2'] == node2.iloc[0].id) &
-                     (exclude_df['edgeType'] == edgeType)).any() or
+                     (exclude_df['edgeType'] == edgeType)) or #testme if works without any
                     (node1.iloc[0].id == node2.iloc[0].id)):  # no self loops
                 samples = samples.append(pandas.DataFrame([[node1.iloc[0].id, edgeType, node2.iloc[0].id, 0]],
                                                           columns=ttsConst.COL_NAMES_EDGES),
@@ -38,8 +38,21 @@ class Sampler():
                     break
             i += 1
             if i >= num_nodes1 * num_nodes2:
-                # fixme throw error not enough samples could be genereated from set
-                break
+                # testme
+
+                message = 'Not enough examples could be generated for edge type %s %s %s, num_nodes1=%d, num_nodes2=%d'
+                if globConst.GUI_MODE:
+                    import gui.gui as gui
+                    gui.askForExit(message)
+                    break
+                elif globConst.INTERACTIVE_MODE:
+                    import cli.Cli as cli #testme
+                    cli.ask_for_exit(message)
+                    break
+                else:
+                    import sys
+                    sys.exit()
+
         return samples
 
 
@@ -108,10 +121,10 @@ class NegativeSampler(Sampler):
                                               (self.all_tn['id2'].str.startswith(nodeType2))]
         count_existing_tn, _ = tn_examples.shape
         if count <= count_existing_tn:
-            random_tn_sample = tn_examples.sample(n=count, random_state=glob.RANDOM_STATE)
+            random_tn_sample = tn_examples.sample(n=count, random_state=globConst.RANDOM_STATE)
             neg_samples = neg_samples.append(random_tn_sample, ignore_index=True)
         else:
-            random_tn_sample = tn_examples.sample(n=count_existing_tn, random_state=glob.RANDOM_STATE)
+            random_tn_sample = tn_examples.sample(n=count_existing_tn, random_state=globConst.RANDOM_STATE)
             exclude_df = exclude_df.append(random_tn_sample)
             neg_samples = neg_samples.append(random_tn_sample, ignore_index=True)
             neg_samples = neg_samples.append(

@@ -1,7 +1,7 @@
+import globalConfig
 from .fileReader import FileReader
 from .parser.oboParser import OboParser
-from ..cli import Cli
-from .. import graphCreationConfig as gcConst
+from cli import Cli
 import globalConfig as globConst
 import numpy as np
 import sys
@@ -39,7 +39,7 @@ class OboReader(FileReader):
 
                 no_occurences = [x for x in defined_cols if x not in df_cols]
                 info_string = 'Reader %s should parse %s but there are no occurrences in file %s. '  %(str(self.readerType), str(no_occurences), self.in_path)
-                if gcConst.INTERACTIVE_MODE:
+                if globalConfig.INTERACTIVE_MODE:
                     ask_continue_string =  info_string +'Continue if you do not need these edges in your graph'
                     if globConst.GUI_MODE:
                         from gui import gui

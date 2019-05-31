@@ -3,11 +3,13 @@ import os
 
 from tqdm import tqdm
 import logging
+
+import globalConfig
 import graphProperties as graphProp
 from . import graphCreationConfig as gcConst
 import globalConfig as globConst
 import utils
-from .cli import Cli
+from cli import Cli
 from edge import Edge
 from node import Node
 
@@ -51,7 +53,7 @@ class GraphCreator():
     def create_nodes_and_edges (self, edge_metadata, tn= None):
         if not os.path.isfile(edge_metadata.edges_file_path):
             message ='File does not exist: %s ! Edgetype %s will not be created' %(edge_metadata.edges_file_path, str(edge_metadata.edgeType))
-            if gcConst.INTERACTIVE_MODE:
+            if globalConfig.INTERACTIVE_MODE:
                 if globConst.GUI_MODE:
                     from gui import gui
                     gui.askForExit(message)
@@ -74,7 +76,7 @@ class GraphCreator():
                 if not os.path.isfile(mapping_path):
                     message = 'File does not exist: %s ! Edgetype %s will not be created' % (
                     edge_metadata.edges_file_path, str(edge_metadata.edgeType))
-                    if gcConst.INTERACTIVE_MODE:
+                    if globalConfig.INTERACTIVE_MODE:
                         if globConst.GUI_MODE:
                             from gui import gui
                             gui.askForExit(message)

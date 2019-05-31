@@ -3,6 +3,7 @@ import os
 
 from tqdm import tqdm
 
+import globalConfig
 import globalConfig as globConst
 from . import graphCreationConfig as gcConst
 import graphProperties as graphProp
@@ -12,7 +13,7 @@ from .graphWriter import GraphWriter
 from .metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
 from .metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 from .metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
-from .cli import Cli
+from cli import Cli
 from .file_downloader.fileDownloader import *
 from .file_processor.fileProcessor import *
 from .file_reader.fileReader import *
@@ -64,10 +65,10 @@ class Graph_Creation():
             self.init_custom_sources_bottom_up(use_db_metadata_classes)
         if use_edge_metadata_classes is not None:
             self.init_custom_sources_top_down(use_edge_metadata_classes)
-        #graphProp.USED_EDGE_TYPES = [str(x.__class__.__name__) for x in self.edge_metadata]
 
+        graphProp.EDGE_TYPES = [str(x.__class__.__name__) for x in self.edge_metadata]
+        #testme
 
-        # todo set here edge types as glob variable
 
 
 # ----------- download ----------
@@ -75,8 +76,8 @@ class Graph_Creation():
     def download_db_files(self):
         skip = None
         for_all = False
-        if not gcConst.INTERACTIVE_MODE:
-            skip =gcConst.SKIP_EXISTING_FILES
+        if not globalConfig.INTERACTIVE_MODE:
+            skip = globalConfig.SKIP_EXISTING_FILES
             for_all = True
         if not os.path.exists(gcConst.O_FILE_PATH):
             os.makedirs(gcConst.O_FILE_PATH)
@@ -97,8 +98,8 @@ class Graph_Creation():
     def create_input_files(self):
         skip = None
         for_all = False
-        if not gcConst.INTERACTIVE_MODE:
-            skip =gcConst.SKIP_EXISTING_FILES
+        if not globalConfig.INTERACTIVE_MODE:
+            skip = globalConfig.SKIP_EXISTING_FILES
             for_all = True
         if not os.path.exists(gcConst.IN_FILE_PATH):
             os.makedirs(gcConst.IN_FILE_PATH)
@@ -223,13 +224,14 @@ class Graph_Creation():
                       'Consider manually exclude edges instead of DB resources.' % (
                       str([x.__class__.__name__ for x in additional_remove_metaEdges]),
                       str([str(x) for x in additional_remove_mapping_infileType]))
+            logging.warning(message)
             if globConst.GUI_MODE:
                 from gui import gui
                 gui.askForExit(message)
-            else:
+            elif globConst.INTERACTIVE_MODE:
                 Cli.ask_for_exit(message)
-            logging.warning(message)
-            #todo what to do in non interactive mode
+            else:
+                sys.exit()
 
             self.edge_metadata = [x for x in self.edge_metadata if x not in additional_remove_metaEdges]
             self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x not in additional_remove_metaEdges]

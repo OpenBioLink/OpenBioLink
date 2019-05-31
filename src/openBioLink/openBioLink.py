@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 
+import globalConfig
 import globalConfig as glob
 import graphProperties as graphProp
 from graph_creation import graphCreationConfig as gcConst
@@ -15,8 +16,8 @@ from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 def create_graph(args):
     graphProp.DIRECTED = not args.undir
     graphProp.QUALITY = args.qual
-    gcConst.INTERACTIVE_MODE = not args.no_interact
-    gcConst.SKIP_EXISTING_FILES = args.skip
+    globalConfig.INTERACTIVE_MODE = not args.no_interact
+    globalConfig.SKIP_EXISTING_FILES = args.skip
 
     use_db_metadata_classes = None
     use_edge_metadata_classes = None
@@ -82,7 +83,7 @@ def create_train_test_splits(args):
     if args.mode == 'time':
         tts.time_slice_split()
     elif args.mode == 'rand':
-        tts.random_edge_split(val=args.val_frac, test_frac=args.test_frac, crossval=args.crossval, folds=args.folds)
+        tts.random_edge_split(val=args.val_frac, test_frac=args.test_frac, crossval=args.crossval)
     tts.random_edge_split(crossval=False)
 
 
@@ -97,7 +98,7 @@ def check_args_validity(args, parser):
         parser.error("at least one action is required [-g, -s, -e]")
     if args.skip and args.no_interact is None:
         parser.error("option --skip requires --no_interact")
-        #fixme
+        #fixme continue here
 
 
 def main(args_list=None):
@@ -118,7 +119,6 @@ def main(args_list=None):
     parser.add_argument('--qual', type=str, help= 'quality level od the output-graph, options = [hq, mq, lq], (default = None -> all entries are used)')
     parser.add_argument('--no_interact', action='store_true', help='Disables interactive mode - existing files will be replaced (default = interactive)')
     parser.add_argument('--skip', action='store_true', help='Existing files will be skipped - in combination with --no_interact (default = replace)')
-    #todo list would be nicer
     parser.add_argument('--no_dl', action='store_true', help='No download is being performed (e.g. when local data is used)')
     parser.add_argument('--no_in', action='store_true', help='No input_files are created (e.g. when local data is used)')
     parser.add_argument('--no_create', action='store_true', help='No graph is created (e.g. when only in-files should be created)')
@@ -153,8 +153,8 @@ def main(args_list=None):
     parser.add_argument('--test', type=str, help='Path to test set file (required with -e)')
     parser.add_argument('--train', type=str, help='Path to trainings set file (alternative: --cv_folder)')
     #parser.add_argument('--cv_folder', type=str, help='Path to cross validation folder (alternative: --train)')
-    #todo create crossval for eval (multiple train test sets instead ov val sets)
-    #todo info from config file
+    #niceToHave (6) create crossval for eval (multiple train test sets instead ov val sets)
+    #niceToHave (7) option to load info from config file
 
     if args_list:
         args = parser.parse_args(args_list)

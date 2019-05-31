@@ -22,7 +22,6 @@ def get_leaf_subclasses(cls, classSet=None):
  #def get_all_subclasses(self, cls):
     #    return set(cls.__subclasses__()).union([x for c in cls.__subclasses__() for x in self.get_all_subclasses(c)])
 
-#todo 2 remove bidir edges
 def remove_bidir_edges_from_df (data):
     no_rows, _ = data.shape
     no_edges = int(no_rows / 2)
@@ -107,15 +106,15 @@ def file_exists(url):
 
 ############# FROM TRAIN TEST SPLIT #################################
 
-def get_diff(df1, df2):
+def get_diff(df1, df2, path=None):
     diff = pandas.merge(df1, df2, how='outer', indicator=True).loc[lambda x: x['_merge'] != 'both']
     left_only = diff.loc[lambda x: x._merge == 'left_only'].drop(['_merge'], axis=1)
     right_only = diff.loc[lambda x: x._merge == 'right_only'].drop(['_merge'], axis=1)
-    # fixme naming convention for output to ensure same output
-    # todo option to print
+    if path:
+        left_only.to_csv(os.path.join(path, 'diff_left_only.csv'), sep='\t', index=False, header=False)
+        left_only.to_csv(os.path.join(path, 'diff_right_only.csv'), sep='\t', index=False, header=False)
     return left_only, right_only
 
-#todo 2 remove bidir edges
 def remove_bidir_edges(remain_set, remove_set):
     if not remain_set.empty and not remove_set.empty:
         remove_set_copy = remove_set.copy()
@@ -135,7 +134,7 @@ def remove_bidir_edges(remain_set, remove_set):
     else:
         return remain_set
 
-
+#nicetohave (2) more lvl transitivity
 def check_for_transitive_edges(df):
     direct_child_dict = {}
     for row in df[['id1', 'id2']].itertuples():
@@ -144,16 +143,14 @@ def check_for_transitive_edges(df):
             direct_child_dict[parent] = {child}
         else:
             direct_child_dict[parent].add(child)
-    # fixme check for cycles
+    # fix me check for cycles
     all_children = set()
     return (
     [((child_set & direct_child_dict[c]), parent, c) for (parent, child_set) in direct_child_dict.items() for c in
      child_set if c in direct_child_dict.keys() if (child_set & direct_child_dict[c])])
-
 # def get_all_childs(self,direct_child_dict, current_parent, past_parents, all_children):
 #    for child in direct_child_dict[current_parent]:
 #        pass
-# fixme continue here (more lvl transitivity
 
 
 
@@ -166,7 +163,6 @@ def calc_corrupted_triples(pos_examples: pandas.DataFrame, nodes:pandas.DataFram
     corrupted_head_dict = {}
     corrupted_tail_dict = {}
 
-    #todo style code dup
     for quadruple in pos_examples.itertuples():
         _, head, relation,tail = quadruple
         head_nodes = nodes_dic[head.split('_')[0]]['id']
@@ -177,60 +173,49 @@ def calc_corrupted_triples(pos_examples: pandas.DataFrame, nodes:pandas.DataFram
         for i, node in enumerate(head_nodes):
             if not node == head:
                 corrupted_head_examples.loc[i] = [node, relation, tail]
-        corrupted_head_examples.reset_index(drop=True, inplace=True)
-        neg_corrupted_head_examples, _ = get_diff(corrupted_head_examples, pos_examples)
-        if filtered:
-            corrupted_head_examples = neg_corrupted_head_examples
-            corrupted_head_examples['value']=0
-        else:
-            neg_indices = set(neg_corrupted_head_examples.index)
-            corrupted_head_examples['value']=1
-            corrupted_head_examples['value'][neg_indices]=0
-        corrupted_head_dict[(head,relation,tail)] = corrupted_head_examples
+        corrupted_head_dict[(head,relation,tail)] = _insert_values_for_corrupted_examples(corrupted_head_examples, pos_examples, filtered)
         #corrupting tails
         for i, node in enumerate(tail_nodes):
             if not node == tail:
                 corrupted_tail_examples.loc[i] = [head, relation, node]
-        corrupted_tail_examples.reset_index(drop=True, inplace=True)
-        neg_corrupted_tail_examples, _ = get_diff(corrupted_tail_examples, pos_examples )
-        if filtered:
-            corrupted_tail_examples = neg_corrupted_tail_examples
-            corrupted_tail_examples['value'] = 0
-        else:
-            neg_indices = set(neg_corrupted_tail_examples.index)
-            corrupted_tail_examples['value'] = 1
-            corrupted_tail_examples['value'][neg_indices] = 0
-        corrupted_tail_dict[(head,relation,tail)] = corrupted_tail_examples
+        corrupted_tail_dict[(head,relation,tail)] = _insert_values_for_corrupted_examples(corrupted_tail_examples, pos_examples, filtered)
 
 
     if path:
-        i = 0
-        all_corrupted_head = pandas.DataFrame(columns=['number']+list(pos_examples)+['value'])
-        for key, df in sorted(corrupted_head_dict.items()):
-            h, r, t = key
-            true_example = pandas.DataFrame([[h,r,t]], columns=list(df))
-            true_example['value']=1
-            true_example['number']=i
-            df['value']=0
-            df['number']=i
-            all_corrupted_head = all_corrupted_head.append(true_example)
-            all_corrupted_head = all_corrupted_head.append(df)
-            i+=1
-
-        i = 0
-        all_corrupted_tail = pandas.DataFrame(columns=['number'] +list(pos_examples)+['value'])
-        for key, df in sorted(corrupted_tail_dict.items()):
-            h, r, t = key
-            true_example = pandas.DataFrame([[h,r,t]], columns=list(df))
-            true_example['value']=1
-            true_example['number']=i
-            df['value']=0
-            df['number']=i
-            all_corrupted_tail = all_corrupted_tail.append(true_example)
-            all_corrupted_tail = all_corrupted_tail.append(df)
-            i+=1
+        all_corrupted_head = _group_corrupted_examples(corrupted_head_dict, ['number']+list(pos_examples)+['value'])
+        all_corrupted_tail = _group_corrupted_examples(corrupted_tail_dict, ['number']+list(pos_examples)+['value'])
         all_corrupted_head.to_csv(os.path.join(path, 'corrupted_heads.csv'), sep='\t', index=False, header=False)
+        all_corrupted_tail.to_csv(os.path.join(path, 'corrupted_tails.csv'), sep='\t', index=False, header=False)
 
     return corrupted_head_dict, corrupted_tail_dict
+
+
+def _insert_values_for_corrupted_examples (corrupted_head_examples, pos_examples, filtered):
+    corrupted_head_examples.reset_index(drop=True, inplace=True)
+    neg_corrupted_head_examples, _ = get_diff(corrupted_head_examples, pos_examples)
+    if filtered:
+        corrupted_head_examples = neg_corrupted_head_examples
+        corrupted_head_examples['value'] = 0
+    else:
+        neg_indices = set(neg_corrupted_head_examples.index)
+        corrupted_head_examples['value'] = 1
+        corrupted_head_examples['value'][neg_indices] = 0
+    return corrupted_head_examples
+
+
+def _group_corrupted_examples (corrupted_dict, col_names):
+     i = 0
+     all_corrupted = pandas.DataFrame(columns=col_names)
+     for key, df in sorted(corrupted_dict.items()):
+         h, r, t = key
+         true_example = pandas.DataFrame([[h, r, t]], columns=list(df))
+         true_example['value'] = 1
+         true_example['number'] = i
+         df['value'] = 0
+         df['number'] = i
+         all_corrupted = all_corrupted.append(true_example)
+         all_corrupted = all_corrupted.append(df)
+         i += 1
+     return all_corrupted
 
 

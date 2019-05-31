@@ -7,7 +7,7 @@ from ...metadata_infile.edge.inMetaEdgeCdtPath import InMetaEdgeCdtPath
 
 
 class EdgeMetaGenePath(EdgeRegularMetadata):
-    NAME = 'Edge - Gene_association_Pathway' #todo wording
+    NAME = 'Edge - Gene_association_Pathway' #todo ms wording
 
 
     EDGE_INMETA_CLASS = InMetaEdgeCdtPath

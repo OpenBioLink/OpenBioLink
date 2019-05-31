@@ -2,7 +2,7 @@ from ...types.dbType import DbType
 from ...file_reader.csvReader import CsvReader
 from ...types.readerType import ReaderType
 from ...metadata_db_file.mapping.dbMetaMapDisGeNet import DbMetaMapDisGeNet
-from ... import graphCreationConfig as g
+from ... import graphCreationConfig as gcConst
 import os
 
 class MapDisGeNetReader(CsvReader):
@@ -11,7 +11,7 @@ class MapDisGeNetReader(CsvReader):
 
     def __init__(self):
         super().__init__(
-        in_path = os.path.join(g.O_FILE_PATH, self.DB_META_CLASS.OFILE_NAME),
+        in_path = os.path.join(gcConst.O_FILE_PATH, self.DB_META_CLASS.OFILE_NAME),
         sep = '|',
             cols=self.DB_META_CLASS.COLS,
             use_cols=self.DB_META_CLASS.FILTER_COLS,

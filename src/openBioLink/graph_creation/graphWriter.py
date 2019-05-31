@@ -36,10 +36,10 @@ class GraphWriter ():
             GraphWriter().write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
 
 
-        #todo adjacency matrix
+        #niceToHave adjacency matrix
         #key, value = nodes_dic
         #d = {x: i for i, x in enumerate(value)}
-    #todo outputformat for graph DB
+        #niceToHave outputformat for graph DB
 
     def output_graph_in_single_file(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
         with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + '.csv'), 'w') as out_file:

@@ -1,6 +1,7 @@
 import os
 import unittest
 
+import globalConfig
 from src.openBioLink.graph_creation import graphCreationConfig as gcConst
 from src.openBioLink import graphProperties as graphProp
 from src.openBioLink.graph_creation.graphCreation import Graph_Creation
@@ -111,8 +112,8 @@ class TestGraphCreation(unittest.TestCase):
 
         # global variables
         graphProp.QUALITY = None
-        gcConst.INTERACTIVE_MODE = False
-        gcConst.SKIP_EXISTING_FILES = False
+        globalConfig.INTERACTIVE_MODE = False
+        globalConfig.SKIP_EXISTING_FILES = False
 
         directed_tuple =  True, 'TR_DIR_'
         undirected_tuple =  False, 'TR_NOT_'

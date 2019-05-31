@@ -9,7 +9,7 @@ from ...metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
 
 
 class EdgeMetaDisPheno(EdgeRegularMetadata):
-    NAME = 'Edge - Disease_observable_Phenotype' #todo better wording
+    NAME = 'Edge - Disease_observable_Phenotype' #todo ms better wording
 
     LQ_CUTOFF_TEXT = []
     MQ_CUTOFF_TEXT = []
