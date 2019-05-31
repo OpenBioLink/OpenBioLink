@@ -13,4 +13,5 @@
 /test/test_data/graph_files
 /test/test_data/in_files
 __pycache__
+/test/test_data/train_test_data
 
