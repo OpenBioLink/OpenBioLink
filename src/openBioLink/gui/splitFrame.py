@@ -14,7 +14,7 @@ class SplitFrame(tk.Frame):
         self.controller = controller
         self.info_text=""
         titles_panel = tk.Frame(self)
-        self.info = tk.Button(titles_panel, text=" ? ", command=lambda: gui.show_info_box(self.info_text))
+        self.info = tk.Button(titles_panel, text=" help ", command=lambda: gui.show_info_box(self.info_text))
         self.title = tk.Label(titles_panel, text="(2) Split Creation", font=controller.title_font)
 
         self.mode_panel = self._create_mode_element(self)
@@ -102,7 +102,7 @@ class SplitFrame(tk.Frame):
         # cross val
         self.crossval = tk.BooleanVar(value=False)
         crossval_box = tk.Checkbutton(el, text='cross validation', variable=self.crossval)
-        self.folds = tk.StringVar(value='5') #todo int
+        self.folds = tk.StringVar(value='5')
         folds_frame = tk.Frame(el)
         folds_label = tk.Label(folds_frame, text='folds / validation set fraction:')
         folds_value = tk.Entry(folds_frame, textvariable=self.folds, width=5)
@@ -214,7 +214,7 @@ class SplitFrame(tk.Frame):
         self.tmo_nodes_path.set(filedialog.askopenfilename())
 
     def update(self):
-        #todo check if graph creation action is performed
+        #fixme check if graph creation action is performed
         graph_files_folder = os.path.join(self.controller.ARGS_LIST_GLOBAL[1], gcConst.GRAPH_FILES_FOLDER_NAME)
         edge_path = os.path.join(graph_files_folder, 'edges.csv')
         if os.path.exists(edge_path) or 'GraphCreationFrame' in self.controller.selected_frames:

@@ -22,5 +22,5 @@ class EdgeStringPtmodeProcessor(FileProcessor):
         return data
 
     def individual_postprocessing(self, data):
-        return utils.remove_bidir_edges_from_df(data)
+        return utils.make_undir(data)
 

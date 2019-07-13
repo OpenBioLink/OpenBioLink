@@ -5,6 +5,7 @@ import random
 import numpy
 import pandas
 
+import globalConfig
 import globalConfig as glob
 import graphProperties as graphProp
 import utils
@@ -31,17 +32,17 @@ class TrainTestSetCreation():
 
 
         with open(nodes_path) as file:
-            self.nodes = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_NODES)
+            self.nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
 
         with open(graph_path) as file:
-            self.all_tp = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_EDGES)
-            self.all_tp[ttsConst.VALUE_COL_NAME] = 1
-        self.tp_edgeTypes = list(self.all_tp[ttsConst.EDGE_TYPE_COL_NAME].unique())
+            self.all_tp = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
+            self.all_tp[globalConfig.VALUE_COL_NAME] = 1
+        self.tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
         with open(tn_graph_path) as file:
-            self.all_tn = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_EDGES)
-            self.all_tn[ttsConst.VALUE_COL_NAME] = 0
-        self.tn_edgeTypes = list(self.all_tn[ttsConst.EDGE_TYPE_COL_NAME].unique())
+            self.all_tn = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
+            self.all_tn[globalConfig.VALUE_COL_NAME] = 0
+        self.tn_edgeTypes = list(self.all_tn[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
         self.meta_edges_dic = {}
         #niceToHave (1)
@@ -75,17 +76,17 @@ class TrainTestSetCreation():
             sys.exit()
         if t_minus_one_nodes_path and t_minus_one_graph_path and t_minus_one_tn_graph_path:
             with open(t_minus_one_nodes_path) as file:
-                self.tmo_nodes = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_NODES)
+                self.tmo_nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
 
             with open(t_minus_one_graph_path) as file:
-                self.tmo_all_tp = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_EDGES)
-                self.tmo_all_tp[ttsConst.VALUE_COL_NAME] = 1
-            self.tmo_tp_edgeTypes = list(self.all_tp[ttsConst.EDGE_TYPE_COL_NAME].unique())
+                self.tmo_all_tp = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
+                self.tmo_all_tp[globalConfig.VALUE_COL_NAME] = 1
+            self.tmo_tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
             with open(t_minus_one_tn_graph_path) as file:
-                self.tmo_all_tn = pandas.read_csv(file, sep=sep, names=ttsConst.COL_NAMES_EDGES)
-                self.tmo_all_tn[ttsConst.VALUE_COL_NAME] = 1
-            self.tmo_tn_edgeTypes = list(self.all_tp[ttsConst.EDGE_TYPE_COL_NAME].unique())
+                self.tmo_all_tn = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
+                self.tmo_all_tn[globalConfig.VALUE_COL_NAME] = 1
+            self.tmo_tn_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
 
 
@@ -104,17 +105,19 @@ class TrainTestSetCreation():
         # generate, train-, test-, validation-sets
         test_set = all_samples.sample(frac=test_frac, random_state=glob.RANDOM_STATE)
         train_val_set = all_samples.drop(list(test_set.index.values))
-        nodes_in_train_val_set = train_val_set[ttsConst.NODE1_ID_COL_NAME].tolist() + train_val_set[ttsConst.NODE2_ID_COL_NAME].tolist()
+        nodes_in_train_val_set = train_val_set[globalConfig.NODE1_ID_COL_NAME].tolist() + train_val_set[
+            globalConfig.NODE2_ID_COL_NAME].tolist()
         new_test_nodes = self.get_additional_nodes(old_nodes_list=nodes_in_train_val_set,
-                                                   new_nodes_list=self.nodes[ttsConst.ID_NODE_COL_NAME].tolist())
+                                                   new_nodes_list=self.nodes[globalConfig.ID_NODE_COL_NAME].tolist())
         if new_test_nodes:
             logging.info('the test set contains nodes, that are not present in the trainings-set')
         if graphProp.DIRECTED:
-            train_val_set = utils.remove_bidir_edges(remain_set=train_val_set, remove_set=test_set)
+            train_val_set = utils.remove_reverse_edges(remain_set=train_val_set, remove_set=test_set)
         if crossval:
             train_val_set_tuples = self.create_cross_val(train_val_set, val)
-            new_val_nodes = [self.get_additional_nodes( t[ttsConst.NODE1_ID_COL_NAME].tolist() + t[ttsConst.NODE2_ID_COL_NAME].tolist(),
-                                                        nodes_in_train_val_set )
+            new_val_nodes = [self.get_additional_nodes(t[globalConfig.NODE1_ID_COL_NAME].tolist() + t[
+                globalConfig.NODE2_ID_COL_NAME].tolist(),
+                                                       nodes_in_train_val_set)
                              for t,v, in train_val_set_tuples]
             if new_val_nodes:
                 logging.info('some validation sets contain nodes, that are not present in the trainings-set')
@@ -124,9 +127,9 @@ class TrainTestSetCreation():
             train_val_set_tuples = [(train_val_set, pandas.DataFrame())]
             new_val_nodes = None
         if graphProp.DIRECTED:
-            train_val_set_tuples = [(utils.remove_bidir_edges(remain_set=t, remove_set=v),v)
+            train_val_set_tuples = [(utils.remove_reverse_edges(remain_set=t, remove_set=v), v)
                                     for t,v in train_val_set_tuples]
-        writer = TrainTestSetWriter(ttsConst.COL_NAMES_SAMPLES)
+        writer = TrainTestSetWriter(globalConfig.COL_NAMES_SAMPLES)
         writer.print_sets(train_val_set_tuples=train_val_set_tuples,
                           new_val_nodes=new_val_nodes,
                           test_set=test_set,
@@ -160,10 +163,10 @@ class TrainTestSetCreation():
 
         test_set = (test_positive_samples.append(test_negative_samples, ignore_index=True)).reset_index(drop=True)
         if graphProp.DIRECTED:
-            train_set = utils.remove_bidir_edges(remain_set=train_set, remove_set=test_set)
+            train_set = utils.remove_reverse_edges(remain_set=train_set, remove_set=test_set)
 
         train_val_set_tuple = (train_set,pandas.DataFrame())
-        writer = TrainTestSetWriter(ttsConst.COL_NAMES_SAMPLES)
+        writer = TrainTestSetWriter(globalConfig.COL_NAMES_SAMPLES)
         writer.print_sets(train_val_set_tuples=[train_val_set_tuple],
                           test_set=test_set,
                           new_test_nodes=new_test_nodes)

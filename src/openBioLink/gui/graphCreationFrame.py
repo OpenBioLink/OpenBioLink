@@ -24,7 +24,7 @@ class GraphCreationFrame(tk.Frame):
         self.selected_meta_edges = None
 
         titles_panel = tk.Frame(self)
-        self.info = tk.Button(titles_panel, text=" ? ", command=lambda: gui.show_info_box(self.info_text))
+        self.info = tk.Button(titles_panel, text=" help ", command=lambda: gui.show_info_box(self.info_text))
         self.title = tk.Label(titles_panel, text="(1) Graph Creation", font=controller.title_font)
 
         self.actions_el = self._create_action_el(self)

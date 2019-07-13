@@ -13,7 +13,7 @@ class StartPage(tk.Frame):
         self.info_text="select "
 
         titles_panel = tk.Frame(self)
-        info = tk.Button(titles_panel, text=" ? ", command=lambda: gui.show_info_box(self.info_text))
+        info = tk.Button(titles_panel, text=" help ", command=lambda: gui.show_info_box(self.info_text))
         title = tk.Label(titles_panel, text="Select Actions", font=controller.title_font)
 
         self.working_dir_el = self._create_working_dir_el(self)

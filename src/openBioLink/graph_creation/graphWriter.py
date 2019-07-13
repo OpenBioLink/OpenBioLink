@@ -16,6 +16,9 @@ class GraphWriter ():
         graph_prop_list = [item for item in dir(graphProp) if not item.startswith("__")]
         graph_prop_dict = {var: getattr(graphProp, var) for var in graph_prop_list}
         with open(os.path.join(self.graph_dir_path,'graph_props.json'), 'w') as json_file:
+            for k,v in graph_prop_dict.items():
+                if not type(v) == str:
+                    graph_prop_dict[k] = str(v)
             json.dump(graph_prop_dict, json_file, indent=4)
 
     @staticmethod
@@ -36,10 +39,10 @@ class GraphWriter ():
             GraphWriter().write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
 
 
-        #niceToHave adjacency matrix
+        #niceToHave (8) adjacency matrix
         #key, value = nodes_dic
         #d = {x: i for i, x in enumerate(value)}
-        #niceToHave outputformat for graph DB
+        #niceToHave (8) outputformat for graph DB
 
     def output_graph_in_single_file(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
         with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + '.csv'), 'w') as out_file:

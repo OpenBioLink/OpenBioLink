@@ -2,7 +2,9 @@ import os
 import sys
 import tkinter as tk
 from tkinter import font  as tkfont, messagebox
+from tkinter.ttk import Style
 
+import openBioLink
 from .confirmFrame import ConfirmFrame
 from .console import ConsoleFrame
 from .graphCreationFrame import GraphCreationFrame
@@ -12,7 +14,6 @@ from .evaluationFrame import EvalFrame
 
 app = None
 
-
 class BimegGui(tk.Tk):
     ARGS_LIST_GLOBAL = []
     ARGS_LIST_GRAPH_CREATION = []
@@ -21,6 +22,7 @@ class BimegGui(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
+
         # Define Fonts
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
         self.info_font= tkfont.Font(family='Helvetica', size=7, slant="italic")
@@ -87,13 +89,9 @@ class BimegGui(tk.Tk):
         if messagebox.askokcancel("Start", "Do you want to start now?"):
             self.show_frame("ConsoleFrame")
             arg_list = self.get_args()
-            #openBioLink.main(args_list=arg_list) #fixme CHANGE HERE
-            #todo start detached
+            openBioLink.main(args_list=arg_list)
+            #fixme start detached
             #app.destroy()
-
-
-
-
 
 
 #################### ASK FOR EXIT ############################
@@ -183,9 +181,6 @@ def skipExistingFiles(file_path):
             on_closing()
     return skip, for_all
 
-#################### DISPLAY LOGGING IN GUI ############################
-
-
 
 #################### MAIN GUI ############################
 
@@ -205,6 +200,9 @@ def start_gui():
 
     global app
     app = BimegGui()
+    app.style = Style()
+    app.style.theme_use('xpnative')
+    print(app.style.theme_use())
 
     app.protocol("WM_DELETE_WINDOW", on_closing)
     app.mainloop()

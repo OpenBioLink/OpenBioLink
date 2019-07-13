@@ -9,6 +9,7 @@ import pykeen.utilities.pipeline as pipeline
 import torch
 import torch.optim as optim
 
+import globalConfig as globConst
 from .model import Model
 
 
@@ -25,21 +26,21 @@ class PyKeen_BasicModel (Model):
         self.rel_to_id = None
         self.output_directory = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\results"
         os.makedirs(self.output_directory, exist_ok=True)
-        #todo load variables from config
+        #fixme load variables from config
 
 
     def train(self, examples=None):
         ### prepare input examples
         if examples is None:
             examples = pandas.read_csv(self.config[keenConst.TRAINING_SET_PATH], sep="\t",
-                                      names=['id1', 'edge', 'id2', 'qscore', 'value'])
+                                      names=globConst.COL_NAMES_SAMPLES)
 
-        pos_examples = examples[examples['value'] == 1]
-        neg_examples = examples[examples['value'] == 0]
+        pos_examples = examples[examples[globConst.VALUE_COL_NAME] == 1]
+        neg_examples = examples[examples[globConst.VALUE_COL_NAME] == 0]
 
-        pos_triples = pos_examples[['id1', 'edge', 'id2']].values
-        neg_triples = neg_examples[['id1', 'edge', 'id2']].values
-        all_triples = examples[['id1', 'edge', 'id2']].values
+        pos_triples = pos_examples[globConst.COL_NAMES_TRIPLES].values
+        neg_triples = neg_examples[globConst.COL_NAMES_TRIPLES].values
+        all_triples = examples[globConst.COL_NAMES_TRIPLES].values
 
         self.entity_to_id, self.rel_to_id = pipeline.create_mappings(triples=all_triples)
 
@@ -138,9 +139,9 @@ class PyKeen_BasicModel (Model):
         ### prepare input examples
         if examples is None:
             examples = pandas.read_csv(self.config[keenConst.TEST_SET_PATH], sep="\t",
-                                   names=['id1', 'edge', 'id2', 'qscore', 'value'])
+                                   names=globConst.COL_NAMES_SAMPLES)
 
-        test_triples = examples[['id1', 'edge', 'id2']].values
+        test_triples = examples[globConst.COL_NAMES_TRIPLES].values
 
         self.entity_to_id, self.rel_to_id = pipeline.create_mappings(triples=test_triples)
         id_to_entity = {value: key for key, value in self.entity_to_id.items()}
@@ -176,10 +177,10 @@ class PyKeen_BasicModel (Model):
         ranked_scores = np.reshape(predicted_scores[sorted_indices], newshape=(-1, 1))
 
         #ranked_triples = np.concatenate([ranked_subject_column,ranked_predicate_column, ranked_object_column , ranked_scores], axis=1)
-        ranked_triples = pandas.DataFrame({'id1':[x for sublist in ranked_subject_column.tolist() for x in sublist],
-                                           'edge': [x for sublist in ranked_predicate_column.tolist() for x in sublist],
-                                           'id2':[x for sublist in ranked_object_column.tolist() for x in sublist],
-                                           'score' : [x for sublist in ranked_scores.tolist() for x in sublist]})
+        ranked_triples = pandas.DataFrame({globConst.NODE1_ID_COL_NAME:[x for sublist in ranked_subject_column.tolist() for x in sublist],
+                                           globConst.EDGE_TYPE_COL_NAME: [x for sublist in ranked_predicate_column.tolist() for x in sublist],
+                                           globConst.NODE2_ID_COL_NAME:[x for sublist in ranked_object_column.tolist() for x in sublist],
+                                           globConst.SCORE_COL_NAME : [x for sublist in ranked_scores.tolist() for x in sublist]})
         return ranked_triples, sorted_indices
 
 
@@ -254,8 +255,8 @@ class TransE_PyKeen (PyKeen_BasicModel):
                 batch_size= 8,
                 preferred_device= "cpu"
             )
-        #todo if config is string --> load json, if json is dic --> alles gut
-        # todo check if device available
+        #fixme if config is string --> load json, if json is dic --> alles gut
+        # fixme check if device available
 
 
 
@@ -285,8 +286,8 @@ class TransR_PyKeen(PyKeen_BasicModel):
         os.makedirs(self.output_directory, exist_ok=True)
         self.device = torch.device('cpu')
         self.kge_model = None
-        # todo check if device available
 
+#fixme implement other models
 
 
 

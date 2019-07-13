@@ -22,6 +22,7 @@ class GraphCreator():
         self.tn_path_stats = os.path.join(output_dir, gcConst.TN_STATS_FILE_NAME)
         self.path_no_mappings = os.path.join(output_dir, gcConst.ID_NO_MAPPING_FILE_NAME)
         self.path_stats = os.path.join(output_dir, gcConst.STATS_FILE_NAME)
+        os.makedirs(output_dir, exist_ok=True)
         open(self.tn_path_no_mappings, 'w').close()
         open(self.tn_path_stats, 'w').close()
         open(self.path_no_mappings, 'w').close()
@@ -146,7 +147,7 @@ class GraphCreator():
                                 bimeg_id2 = edge_metadata.node2_type.name + '_' + id2
                                 edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore))
                                 # add an edge in the other direction when edge is undirectional and graph is directional
-                                if not edge_metadata.is_directional and graphProp.DIRECTED:
+                                if (not edge_metadata.is_directional) and graphProp.DIRECTED:
                                     edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore))
                                 nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
                                 nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))

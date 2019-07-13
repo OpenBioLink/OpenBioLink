@@ -1,9 +1,11 @@
 import os
 import unittest
+import sys
+
+sys.path.append(os.path.abspath('src/openBioLink'))
 
 import globalConfig
-from src.openBioLink.graph_creation import graphCreationConfig as gcConst
-from src.openBioLink import graphProperties as graphProp
+import graphProperties as graphProp
 from src.openBioLink.graph_creation.graphCreation import Graph_Creation
 from src.openBioLink.graph_creation.metadata_db_file import *
 
@@ -15,7 +17,10 @@ class TestGraphCreation(unittest.TestCase):
         #creates test graph from test o_files and compares against true reference test graph
         #tests directed and undirected version of graph (and TN-graph)
         #well as the output into a single as well as in separate files
-
+        #globalConfig = __import__('../../src/openBioLink/graphCreation.py')
+        #graphProp = __import__('../../src/openBioLink/globalConfig.py')
+        #graphProp = __import__('../../src/graph_creation/graphCreation.py')
+        #graphProp = __import__('../../src/openBioLink/graphCreation.py')
         manual_db_file_metadata = []
 
         #EDGES --------------------------------------------------
@@ -105,7 +110,8 @@ class TestGraphCreation(unittest.TestCase):
         dbMetaOntoUberon.OFILE_NAME = 'UBERON_ontology.obo'
         manual_db_file_metadata.append(dbMetaOntoUberon)
 
-        test_folder = os.path.dirname(os.path.realpath(__file__))
+        current_folder = os.path.dirname(os.path.realpath(__file__))
+        test_folder = os.path.abspath(os.path.join(current_folder, os.pardir))
         test_data_folder = os.path.join(test_folder, 'test_data')
         output_data_folder = os.path.join(test_data_folder, 'graph_files')
         true_ref_folder = os.path.join(test_data_folder, 'TR_files')
@@ -123,8 +129,8 @@ class TestGraphCreation(unittest.TestCase):
             graph_is_directed, true_ref_file_prefix = case
             print('\n##########################################')
             print('GRAPH IS DIRECTED: ' + str(graph_is_directed) + '\n')
-            graphProp.DIRECTED = graph_is_directed
             with self.subTest(graph_is_directed=graph_is_directed):
+                graphProp.DIRECTED = graph_is_directed
 
                 graph_creator = Graph_Creation(test_data_folder, manual_db_file_metadata)
                 graph_creator.create_input_files()

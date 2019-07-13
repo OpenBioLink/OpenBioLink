@@ -1,7 +1,8 @@
 import pandas
 import numpy
+
+import globalConfig
 import globalConfig as globConst
-from . import ttsConfig as ttsConst
 
 class Sampler():
     def __init__(self, meta_edges_dic, nodes):
@@ -10,10 +11,10 @@ class Sampler():
 
 
     def generate_n_random_samples(self, n, nodeType1, edgeType, nodeType2, exclude_df):
-        samples = pandas.DataFrame(columns=ttsConst.COL_NAMES_EDGES)
-        nodes_nodeType1 = self.nodes.loc[self.nodes['nodeType'] == nodeType1]
+        samples = pandas.DataFrame(columns=globalConfig.COL_NAMES_EDGES)
+        nodes_nodeType1 = self.nodes.loc[self.nodes[globConst.NODE_TYPE_COL_NAME] == nodeType1]
         num_nodes1, _ = nodes_nodeType1.shape
-        nodes_nodeType2 = self.nodes.loc[self.nodes['nodeType'] == nodeType2]
+        nodes_nodeType2 = self.nodes.loc[self.nodes[globConst.NODE_TYPE_COL_NAME] == nodeType2]
         num_nodes2, _ = nodes_nodeType2.shape
 
         i = 0
@@ -23,15 +24,15 @@ class Sampler():
             node1.reset_index()
             node2 = nodes_nodeType2.sample(n=1, random_state=(globConst.RANDOM_STATE + ((i + 100) % 13)))
             node2.reset_index()
-            if not (((exclude_df['id1'] == node1.iloc[0].id) &
-                     (exclude_df['id2'] == node2.iloc[0].id) &
-                     (exclude_df['edgeType'] == edgeType)) or #testme if works without any
+            if not (((exclude_df[globConst.NODE1_ID_COL_NAME] == node1.iloc[0].id) &
+                     (exclude_df[globConst.NODE2_ID_COL_NAME] == node2.iloc[0].id) &
+                     (exclude_df[globConst.EDGE_TYPE_COL_NAME] == edgeType)) or #testme if works without any
                     (node1.iloc[0].id == node2.iloc[0].id)):  # no self loops
                 samples = samples.append(pandas.DataFrame([[node1.iloc[0].id, edgeType, node2.iloc[0].id, 0]],
-                                                          columns=ttsConst.COL_NAMES_EDGES),
+                                                          columns=globalConfig.COL_NAMES_EDGES),
                                          ignore_index=True)
                 exclude_df = exclude_df.append(pandas.DataFrame([[node1.iloc[0].id, edgeType, node2.iloc[0].id, 0]],
-                                                                columns=ttsConst.COL_NAMES_EDGES),
+                                                                columns=globalConfig.COL_NAMES_EDGES),
                                                ignore_index=True)
                 num_samples, _ = samples.shape
                 if num_samples >= n:
@@ -80,9 +81,9 @@ class NegativeSampler(Sampler):
         elif distrib =='orig':
             for key, value in self.meta_edges_dic.items():
                 nodeType1, edgeType, nodeType2 = value
-                num_entry = len(pos_samples.loc[(pos_samples['id1'].str.startswith(nodeType1)) &
-                                                       (pos_samples['edgeType'] == edgeType) &
-                                                       (pos_samples['id2'].str.startswith(nodeType2))])
+                num_entry = len(pos_samples.loc[(pos_samples[globConst.NODE1_ID_COL_NAME].str.startswith(nodeType1)) &
+                                                       (pos_samples[globConst.EDGE_TYPE_COL_NAME] == edgeType) &
+                                                       (pos_samples[globConst.NODE2_ID_COL_NAME].str.startswith(nodeType2))])
                 if num_entry>0:
                     neg_samples_count_metaEdges[key] = num_entry
                 # todo count positive examples with edgetype
@@ -90,10 +91,10 @@ class NegativeSampler(Sampler):
         # generate a negative sub-sample for each negative meta_edge type
         for meta_edge_triple_key, count in sorted(neg_samples_count_metaEdges.items()):
             nodeType1, edgeType, nodeType2 = self.meta_edges_dic[meta_edge_triple_key]
-            pos_samples_of_meta_edge = pos_samples.loc[(pos_samples['id1'].str.startswith(nodeType1)) &
-                                                       (pos_samples['edgeType'] == edgeType) &
-                                                       (pos_samples['id2'].str.startswith(nodeType2))]
-            #todo why don't we need this?
+            pos_samples_of_meta_edge = pos_samples.loc[(pos_samples[globConst.NODE1_ID_COL_NAME].str.startswith(nodeType1)) &
+                                                       (pos_samples[globConst.EDGE_TYPE_COL_NAME] == edgeType) &
+                                                       (pos_samples[globConst.NODE2_ID_COL_NAME].str.startswith(nodeType2))]
+            #testme why don't we need this?
             #exclude_df = exclude_df.append(neg_samples,ignore_index=True)
             if edgeType in self.tn_edgeTypes: #only onto edgesTypes can appear multiple times, there should be no onto tn
                 neg_samples = neg_samples.append(self.subsample_with_tn(meta_edge_triple_key=meta_edge_triple_key,
@@ -107,7 +108,7 @@ class NegativeSampler(Sampler):
                                                                                         nodeType2=nodeType2,
                                                                                         exclude_df=pos_samples_of_meta_edge)
                                                            , ignore_index=True)
-        neg_samples['value'] = 0
+        neg_samples[globConst.VALUE_COL_NAME] = 0
 
         return neg_samples
 
@@ -116,9 +117,9 @@ class NegativeSampler(Sampler):
     def subsample_with_tn(self, meta_edge_triple_key, count, col_names, exclude_df):
         neg_samples = pandas.DataFrame(columns=col_names)
         nodeType1, edgeType, nodeType2 = self.meta_edges_dic[meta_edge_triple_key]
-        tn_examples = self.all_tn.loc[(self.all_tn['id1'].str.startswith(nodeType1)) &
-                                              (self.all_tn['edgeType'] == edgeType)&
-                                              (self.all_tn['id2'].str.startswith(nodeType2))]
+        tn_examples = self.all_tn.loc[(self.all_tn[globConst.NODE1_ID_COL_NAME].str.startswith(nodeType1)) &
+                                              (self.all_tn[globConst.EDGE_TYPE_COL_NAME] == edgeType)&
+                                              (self.all_tn[globConst.NODE2_ID_COL_NAME].str.startswith(nodeType2))]
         count_existing_tn, _ = tn_examples.shape
         if count <= count_existing_tn:
             random_tn_sample = tn_examples.sample(n=count, random_state=globConst.RANDOM_STATE)

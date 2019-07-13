@@ -1,16 +1,21 @@
 import argparse
 import cProfile
+import json
 import logging
 import os
 import sys
+import torch
 
 import globalConfig
 import globalConfig as glob
 import graphProperties as graphProp
+from evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from graph_creation import graphCreationConfig as gcConst
 from graph_creation.graphCreation import Graph_Creation
 from graph_creation.types.qualityType import QualityType
 from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
+from evaluation.models.modelTypes import ModelTypes
+from evaluation.evaluation import Evaluation
 
 
 def create_graph(args):
@@ -21,6 +26,7 @@ def create_graph(args):
 
     use_db_metadata_classes = None
     use_edge_metadata_classes = None
+    #todo via enums
     if args.dbs:
         db_module_names = ['.'.join(y) for y in [x.split('.')[0:-1] for x in args.dbs]]
         db_cls_names = [x.split('.')[-1] for x in args.dbs]
@@ -63,6 +69,13 @@ def create_graph(args):
 
         graph_creator.create_graph(one_file_sep=single_sep, multi_file_sep=multisep_sep, print_qscore=(not args.no_qscore))
 
+        #with open(os.path.join(globalConfig.WORKING_DIR, globalConfig.GRAPH_PROP_FILE_NAME), 'w') as f:
+        #    graph_prop_dict  = {x: y for x, y in graphProp.__dict__.items() if not x.startswith('__')}
+        #    for k,v in  graph_prop_dict.items():
+        #        if not type(v)==str:
+        #            graph_prop_dict[k] = str(v)
+        #    json.dump(graph_prop_dict, f, indent=4)
+
 
 def create_train_test_splits(args):
 
@@ -88,18 +101,49 @@ def create_train_test_splits(args):
 
 
 def train_and_evaluate(args):
-    #model args to dict
-    #create (list?) of train
-    pass
+
+    model_cls = ModelTypes[args.model_cls].value
+    if args.trained_model:
+        model = model_cls()
+        model.load_state_dict(torch.load(args.trained_model))
+        #testme
+    elif args.config:
+        model = model_cls(args.config)
+    else:
+        model = model_cls()
+    e = Evaluation(model=model, training_set_path=args.train, test_set_path=args.test)
+
+    if not args.no_train:
+        e.train()
+    if  not args.no_eval:
+        metric_strings = args.metrics
+        metrics = [x for x in list(RankMetricType.__members__.values()) if x.name in metric_strings] + \
+        [x for x in list(ThresholdMetricType.__members__.values()) if x.name in metric_strings]
+        int_ks = [int(k) for k in args.ks]
+
+        e.evaluate(metrics=metrics,ks=int_ks,corrupted_triples_folder=args.corrupted, nodes_path=args.eval_nodes)
+
 
 
 def check_args_validity(args, parser):
-    if not (args.g or args.s or args.c or args.t or args.e):
+    # global checks
+    if not (args.g or args.s or args.e):
         parser.error("at least one action is required [-g, -s, -e]")
     if args.skip and args.no_interact is None:
         parser.error("option --skip requires --no_interact")
-        #fixme continue here
-
+    #graph creation checks
+    if args.g:
+        if args.no_in and not args.no_dl and not args.no_create:
+            parser.error("Graph Creation: downloading graph files and creating the graph withour creating in_files is not possible")
+    #train test split checks
+    if args.s:
+        if not args.edges or not args.tn_edges or not args.nodes:
+            parser.error("Train Test Split: paths to the edge file (--edges), negative edge file (--tn_edges) "
+                         "and nodes file (--nodes) must be provided with option -s")
+    if args.crossval and (not args.tmo_edges or not args.tmo_tn_edges or not args.tmo_nodes):
+                parser.error("Train Test Split: paths to the t-1 edge file (--tmo_edges),"
+                             " t-1 negative edge file (--tmo_tn_edges) and t-1 nodes file (--tmo_nodes) "
+                             "must be provided with option --crossval")
 
 def main(args_list=None):
     if (len(sys.argv) < 2) and not args_list:
@@ -133,12 +177,12 @@ def main(args_list=None):
     parser.add_argument('--tn_edges', type=str, help='Path to true_negatives_edges.csv file (required with action -s)')
     parser.add_argument('--nodes', type=str, help='Path to nodes.csv file (required with action -s)')
     parser.add_argument('--tts_sep', type=str, default='t', help='Separator of edge, tn-edge and nodes file (e.g. t=tab, n=newline, or any other character) (default=t)')
-    parser.add_argument('--mode', type=str, help='Mode of train-test-set split, options=[rand, time]')
+    parser.add_argument('--mode', type=str, default='rand', help='Mode of train-test-set split, options=[rand, time], (default=rand)')
     parser.add_argument('--test_frac', type=float, default='0.2', help='Fraction of test set as float (default= 0.2)')
     parser.add_argument('--crossval', action='store_true', help='Multiple train-validation-sets are generated')
     parser.add_argument('--val', type=float, default='0.2',help='Fraction of validation set as float (default= 0.2) or number of folds as int')
-    #parser.add_argument('--folds', type=int, default=0, help='Define the number of folds - if not specified, number is calculated via val_frac)')
-    #parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges are not in BiMeG)')
+    #niceToHave (1)
+    #parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges are not in OpenBioLink Benchmark Data)')
     parser.add_argument('--tmo_edges', type=str, help='Path to edges.csv file of t-minus-one graph (required for --mode time')
     parser.add_argument('--tmo_tn_edges', type=str, help='Path to true_negatives_edges.csv file of t-minus-one graph (required for --mode time')
     parser.add_argument('--tmo_nodes', type=str, help='Path to nodes.csv file of t-minus-one graph (required for --mode time')
@@ -146,14 +190,18 @@ def main(args_list=None):
     # Training and Evaluation
     parser.add_argument('-e', action='store_true', help='Apply Training and Evaluation')
     parser.add_argument('--model_cls', type=str, help='class of the model to be trained/evaluated (required with -e)')
-    parser.add_argument('--model_args', nargs='+', help='arguments of the model to be trained/evaluated')
+    parser.add_argument('--config', type=str, help='Path to the model\' config file')
     parser.add_argument('--no_train', action='store_true', help='No training is being performed, trained model id provided via --model')
     parser.add_argument('--trained_model', type=str, help='Path to trained model (required with --no_train)')
     parser.add_argument('--no_eval', action='store_true', help='No evaluation is being performed, only training')
     parser.add_argument('--test', type=str, help='Path to test set file (required with -e)')
-    parser.add_argument('--train', type=str, help='Path to trainings set file (alternative: --cv_folder)')
+    parser.add_argument('--train', type=str, help='Path to trainings set file')# (alternative: --cv_folder)')
+    parser.add_argument('--corrupted', type=str, help='path to the corrupted triples (required for ranked triples if no nodes file is provided')
+    parser.add_argument('--eval_nodes', type=str, help='path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation')
+    parser.add_argument('--metrics', nargs='+', help='evaluation metrics')
+    parser.add_argument('--ks', nargs='+', help='k\'s for hits@k metric')
     #parser.add_argument('--cv_folder', type=str, help='Path to cross validation folder (alternative: --train)')
-    #niceToHave (6) create crossval for eval (multiple train test sets instead ov val sets)
+
     #niceToHave (7) option to load info from config file
 
     if args_list:
@@ -193,3 +241,6 @@ if __name__ == '__main__':
 
     pr.disable()
     pr.print_stats( sort="time")
+
+
+    #todo crossval eval

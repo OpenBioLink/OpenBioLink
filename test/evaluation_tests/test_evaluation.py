@@ -6,68 +6,68 @@ import pandas
 
 from src.openBioLink.evaluation.evaluation import Evaluation
 from src.openBioLink.evaluation.metricTypes import ThresholdMetricType, RankMetricType
-
-from src.openBioLink.evaluation.models.model import Model
 from src.openBioLink.evaluation.models.pykeen_models import TransR_PyKeen
+from src.openBioLink.globalConfig import *
 
 
 class TestEvaluation(TestCase):
     @patch("src.openBioLink.evaluation.evaluation.utils.calc_corrupted_triples")
     def test_evaluate(self, mocked_calc_corrupted_triples):
         #given
+        col_names_ranked_examples = [NODE1_ID_COL_NAME, EDGE_TYPE_COL_NAME, NODE2_ID_COL_NAME, SCORE_COL_NAME]
         ranked_examples_head = pandas.read_csv(StringIO("GO_GO:0000006,PART_OF,GO_GO:0000006,1.922283\n" +
                                                         "GO_GO:0000003,PART_OF,GO_GO:0000006,2.189748\n" +
                                                         "GO_GO:0000002,PART_OF,GO_GO:0000006,3.179066\n" +
                                                         "GO_GO:0000001,PART_OF,GO_GO:0000006,3.620234\n"),
-                                               names=['id1', 'edge', 'id2', 'score'])
+                                               names=col_names_ranked_examples)
         sorted_indices_head = [0, 3, 2, 1]
 
         ranked_examples_head2 = pandas.read_csv(StringIO("GO_GO:0000001,PART_OF,GO_GO:0000002,1.263816\n" +
                                                          "GO_GO:0000002,PART_OF,GO_GO:0000002,2.264960\n" +
                                                          "GO_GO:0000006,PART_OF,GO_GO:0000002,3.537443\n" +
                                                          "GO_GO:0000003,PART_OF,GO_GO:0000002,4.244024\n"),
-                                               names=['id1', 'edge', 'id2', 'score'])
+                                               names=col_names_ranked_examples)
         sorted_indices_head2 = [3, 2, 0, 1]
 
         ranked_examples_tail = pandas.read_csv(StringIO("GO_GO:0000003,PART_OF,GO_GO:0000003,2.264960\n" +
                                                         "GO_GO:0000003,PART_OF,GO_GO:0000002,4.244024\n" +
                                                         "GO_GO:0000003,PART_OF,GO_GO:0000006,4.899477\n" +
                                                         "GO_GO:0000003,PART_OF,GO_GO:0000001,5.633906\n"),
-                                               names=['id1', 'edge', 'id2', 'score'])
+                                               names=col_names_ranked_examples)
         sorted_indices_tail = [1, 2, 3, 0]
 
         ranked_examples_tail2 = pandas.read_csv(StringIO("GO_GO:0000001,PART_OF,GO_GO:0000002,1.263816\n" +
                                                         "GO_GO:0000001,PART_OF,GO_GO:0000003,1.605833\n" +
                                                         "GO_GO:0000001,PART_OF,GO_GO:0000001,2.264960\n" +
                                                         "GO_GO:0000001,PART_OF,GO_GO:0000006,2.484512\n" ),
-                                               names=['id1', 'edge', 'id2', 'score'])
+                                               names=col_names_ranked_examples)
         sorted_indices_tail2 = [3, 2, 1, 0]
 
 
-
+        example_col_names = [NODE1_ID_COL_NAME, EDGE_TYPE_COL_NAME, NODE2_ID_COL_NAME, VALUE_COL_NAME]
         examples_head = pandas.read_csv(StringIO("GO_GO:0000006,PART_OF,GO_GO:0000006,0\n" +
                                                  "GO_GO:0000003,PART_OF,GO_GO:0000006,1\n" +
                                                  "GO_GO:0000002,PART_OF,GO_GO:0000006,0\n" +
                                                  "GO_GO:0000001,PART_OF,GO_GO:0000006,0\n"),
-                                        names=['id1', 'edge', 'id2', 'value'])
+                                        names=example_col_names)
 
         examples_head2 = pandas.read_csv(StringIO("GO_GO:0000001,PART_OF,GO_GO:0000002,1\n" +
                                                   "GO_GO:0000002,PART_OF,GO_GO:0000002,0\n" +
                                                   "GO_GO:0000006,PART_OF,GO_GO:0000002,0\n" +
                                                   "GO_GO:0000003,PART_OF,GO_GO:0000002,0\n"),
-                                        names=['id1', 'edge', 'id2', 'value'])
+                                        names=example_col_names)
 
         examples_tail = pandas.read_csv(StringIO("GO_GO:0000003,PART_OF,GO_GO:0000003,1\n" +
                                                  "GO_GO:0000003,PART_OF,GO_GO:0000002,0\n" +
                                                  "GO_GO:0000003,PART_OF,GO_GO:0000006,1\n" +
                                                  "GO_GO:0000003,PART_OF,GO_GO:0000001,0\n"),
-                                        names=['id1', 'edge', 'id2', 'value'])
+                                        names=example_col_names)
 
         examples_tail2 = pandas.read_csv(StringIO("GO_GO:0000001,PART_OF,GO_GO:0000002,1\n" +
                                                   "GO_GO:0000001,PART_OF,GO_GO:0000003,0\n" +
                                                   "GO_GO:0000001,PART_OF,GO_GO:0000001,0\n" +
                                                   "GO_GO:0000001,PART_OF,GO_GO:0000006,0\n" ),
-                                        names=['id1', 'edge', 'id2', 'value'])
+                                        names=example_col_names)
 
         corrupted_heads_dict = {('GO_GO:0000003','PART_OF',"GO_GO:0000006"): examples_head,
                                 ('GO_GO:0000001','PART_OF','GO_GO:0000002'):examples_head2
