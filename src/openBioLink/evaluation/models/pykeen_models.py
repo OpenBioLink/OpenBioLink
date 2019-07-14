@@ -1,4 +1,3 @@
-import json
 import os
 import pickle
 
@@ -11,6 +10,9 @@ import torch.optim as optim
 
 import globalConfig as globConst
 from .model import Model
+import evaluation.evalConfig as evalConst
+import json
+import train_test_set_creation.ttsConfig as ttsConst
 
 
 ## ** code adapted from pykeen: https://github.com/SmartDataAnalytics/PyKEEN **
@@ -19,14 +21,18 @@ from .model import Model
 class PyKeen_BasicModel (Model):
     def __init__(self, kge_model = None, config=None):
         super().__init__(kge_model)
-        self.config=config
+        if type(config) == str:
+            with open(config) as file:
+                content = file.read()
+                self.config = json.loads(content)
+        else:
+            self.config=config
         self.device = torch.device('cpu')
         self.kge_model = None
         self.entity_to_id = None
         self.rel_to_id = None
-        self.output_directory = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\results"
+        self.output_directory = os.path.join(os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FILE_NAME),'model_output')
         os.makedirs(self.output_directory, exist_ok=True)
-        #fixme load variables from config
 
 
     def train(self, examples=None):
@@ -241,8 +247,10 @@ class TransE_PyKeen (PyKeen_BasicModel):
         super().__init__(config)
         if not config:
             self.config = dict(
-                training_set_path = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\cross_val\\fold_0\\train_sample.csv",
-                #test_set_path = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\cross_val\\fold_0\\val_sample.csv",
+                training_set_path = os.path.join(os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
+                                                 ttsConst.TRAIN_FILE_NAME),
+                test_set_path = os.path.join(os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
+                                             ttsConst.TEST_FILE_NAME),
                 execution_mode= "Training_mode",
                 random_seed= 42,
                 kg_embedding_model_name= "TransE",
@@ -255,7 +263,7 @@ class TransE_PyKeen (PyKeen_BasicModel):
                 batch_size= 8,
                 preferred_device= "cpu"
             )
-        #fixme if config is string --> load json, if json is dic --> alles gut
+
         # fixme check if device available
 
 
@@ -267,8 +275,10 @@ class TransR_PyKeen(PyKeen_BasicModel):
 
         if not config:
             self.config = dict(
-                training_set_path="C:\\Users\\anna\\PycharmProjects\\masterthesis\\cross_val\\fold_0\\train_sample.csv",
-                test_set_path = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\cross_val\\fold_0\\val_sample.csv",
+                training_set_path=os.path.join(os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
+                                               ttsConst.TRAIN_FILE_NAME),
+                test_set_path=os.path.join(os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
+                                           ttsConst.TEST_FILE_NAME),
                 execution_mode="Training_mode",
                 random_seed=42,
                 kg_embedding_model_name="TransR",
@@ -289,10 +299,3 @@ class TransR_PyKeen(PyKeen_BasicModel):
 
 #fixme implement other models
 
-
-
-
-#py = TransR_PyKeen()
-#py.train()
-#res = py.get_ranked_predictions()
-#print('foo')
