@@ -15,4 +15,5 @@
 __pycache__
 /test/test_data/train_test_data
 playground*
+/test_venv
 

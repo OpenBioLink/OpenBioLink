@@ -29,7 +29,14 @@ class TrainTestSetWriter():
 
 
         if num_folds>1:
+            t_set, v_set = train_val_set_tuples[0]
+            fill_train_set = t_set.append(v_set)
+            fill_train_set[COL_NAMES_SAMPLES].to_csv(os.path.join(folder_path, ttsConst.TRAIN_FILE_NAME),
+                                                sep='\t',
+                                                index=False,
+                                                header=False)
             folder_path = os.path.join(folder_path, ttsConst.CROSS_VAL_FOLDER_NAME)
+
         i = 0
         for (train_set, val_set), new_val_nodes_for_fold in zip(train_val_set_tuples,new_val_nodes):
             if num_folds > 1:
