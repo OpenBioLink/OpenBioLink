@@ -1,11 +1,13 @@
 import csv
+import inspect
 import logging
 import os
 import urllib.request
 from functools import reduce
 
+import numpy as np
 import pandas
-import inspect
+from tqdm import tqdm
 
 import evaluation.evalConfig as evalConst
 import globalConfig as globConst
@@ -252,7 +254,7 @@ def get_diff(df1, df2, path=None):
 
 def remove_reverse_edges(remain_set, remove_set):
     """"
-    removes the reverse edges of the remove_set from the remain_set (return = remain-remove^-1)
+    removes the reverse edges of the remove_set from the remain_set (return = remain-remove^-1), sets may not contain duplicates!
         Parameters
         ----------
             remain_set : pandas.DataFrame
@@ -267,6 +269,8 @@ def remove_reverse_edges(remain_set, remove_set):
     """
     #todo independent from globals
     if not remain_set.empty and not remove_set.empty:
+        remain_set.reset_index(drop=True, inplace=True)
+        remove_set.reset_index(drop=True, inplace=True)
         remove_set_copy = remove_set.copy()
         # changing columns of node1_id and node2_id
         cols_other_dir = list(remove_set_copy.columns)
@@ -277,8 +281,11 @@ def remove_reverse_edges(remain_set, remove_set):
         remove_set_copy.columns = cols_other_dir
         temp = pandas.merge(remain_set, remove_set_copy, how='left',
                             left_on=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME],
-                            right_on=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME])
+                            right_on=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME]
+                            )
         temp.set_index(remain_set.index)
+        temp.drop_duplicates(inplace=True)
+
         # todo value should always be different? are there examples with diff qscore?
         remove = temp[(temp['value_x'] == temp['value_y'])] # if no match would be found in remove_set, value_y would be NaN
         remain = remain_set.drop(remove.index.values)
@@ -313,14 +320,14 @@ def remove_reverse_edges(remain_set, remove_set):
 
 
 
-def calc_corrupted_triples(pos_examples: pandas.DataFrame, nodes:pandas.DataFrame, filtered=True, path=None):
+def calc_corrupted_triples(pos_examples, nodes,  filtered=False, path=None):
     """"
     calculates the corrupted triples (both corrupted heads as well as corrupted tails) for given true positive examples
         Parameters
         ----------
-            pos_examples : pandas.DataFrame
+            pos_examples : pandas.DataFrame #todo
                 DataFrame with true examples of edges, columns = [node1_id, edgeType, node2_id]
-            nodes : pandas.DataFrame
+            nodes : pandas.DataFrame #todo #todo
                 DataFrame with all nodes of the graph columns = [node_id, node_type]
             filtered : bool, optional, default = True
                 if filtered is true, filtered corrupted triples are created; that means, that only those corrupted triples,
@@ -337,38 +344,55 @@ def calc_corrupted_triples(pos_examples: pandas.DataFrame, nodes:pandas.DataFram
     nodeTypes = nodes[globConst.NODE_TYPE_COL_NAME].unique()
     nodes_dic = {nodeType: nodes[nodes[globConst.NODE_TYPE_COL_NAME] == nodeType][[globConst.ID_NODE_COL_NAME]] for nodeType in nodeTypes}
 
-    corrupted_head_dict = {}
-    corrupted_tail_dict = {}
+    unfiltered_corrupted_head_dict = {}
+    unfiltered_corrupted_tail_dict = {}
+    filtered_corrupted_head_dict = {}
+    filtered_corrupted_tail_dict = {}
 
-    for quadruple in pos_examples.itertuples():
+    print('calculating corrupted triples')
+    for quadruple in tqdm(pos_examples.itertuples(), total=pos_examples.shape[0]):
         _, head, relation,tail = quadruple
-        head_nodes = nodes_dic[head.split('_')[0]][globConst.ID_NODE_COL_NAME]
-        tail_nodes = nodes_dic[tail.split('_')[0]][globConst.ID_NODE_COL_NAME]
-        all_corrupted_heads = pandas.DataFrame(columns=list(pos_examples))
-        all_corrupted_tails = pandas.DataFrame(columns=list(pos_examples))
+        corrupted_head_nodes = (nodes_dic[head.split('_')[0]][globConst.ID_NODE_COL_NAME]).tolist()
+        corrupted_head_nodes.remove(head)
+        corrputed_tail_nodes = (nodes_dic[tail.split('_')[0]][globConst.ID_NODE_COL_NAME]).tolist()
+        corrputed_tail_nodes.remove(tail)
+        col_names = list(pos_examples)
+        all_corrupted_heads = pandas.DataFrame(columns=col_names)
+        all_corrupted_tails = pandas.DataFrame(columns=col_names)
         #corrupting heads
-        for i, node in enumerate(head_nodes):
-            if not node == head:
-                all_corrupted_heads.loc[i] = [node, relation, tail]
-        #corrupting tails
-        for i, node in enumerate(tail_nodes):
-            if not node == tail:
-                all_corrupted_tails.loc[i] = [head, relation, node]
-        corrupted_head_dict[(head,relation,tail)] = _get_corrupted_examples(all_corrupted_heads, pos_examples, filtered)
-        corrupted_tail_dict[(head,relation,tail)] = _get_corrupted_examples(all_corrupted_tails, pos_examples, filtered)
+        tail_array = [tail]*(len(corrupted_head_nodes))
+        relation_array = [relation]*(len(corrupted_head_nodes))
+        all_corrupted_heads = all_corrupted_heads.append(pandas.DataFrame({col_names[0]: corrupted_head_nodes,
+                                                     col_names[1]: relation_array,
+                                                     col_names[2]: tail_array}))
 
-    [corrupted_head_dict[x].reset_index(inplace=True, drop=True) for x in corrupted_head_dict.keys()]
-    [corrupted_tail_dict[x].reset_index(inplace=True, drop=True) for x in corrupted_tail_dict.keys()]
+        #corrupting tails
+        head_array = [tail] * (len(corrputed_tail_nodes))
+        relation_array = [relation] * (len(corrputed_tail_nodes))
+        all_corrupted_tails = all_corrupted_tails.append(pandas.DataFrame({col_names[0]: head_array,
+                                                     col_names[1]: relation_array,
+                                                     col_names[2]: corrputed_tail_nodes}))
+
+        all_corrupted_heads[globConst.VALUE_COL_NAME] = 0
+        all_corrupted_tails[globConst.VALUE_COL_NAME] = 0
+        unfiltered_corrupted_head_dict[(head,relation,tail)] = all_corrupted_heads
+        unfiltered_corrupted_tail_dict[(head,relation,tail)] = all_corrupted_tails
+        if filtered:
+            filtered_corrupted_head_dict[(head,relation,tail)] = _get_corrupted_examples(all_corrupted_heads[col_names], pos_examples, True)
+            filtered_corrupted_tail_dict[(head,relation,tail)] = _get_corrupted_examples(all_corrupted_tails[col_names], pos_examples, True)
+
+    [unfiltered_corrupted_head_dict[x].reset_index(inplace=True, drop=True) for x in unfiltered_corrupted_head_dict.keys()]
+    [unfiltered_corrupted_tail_dict[x].reset_index(inplace=True, drop=True) for x in unfiltered_corrupted_tail_dict.keys()]
 
     if path:
-        all_corrupted_head = _group_corrupted_examples(corrupted_head_dict,
+        all_corrupted_head = _group_corrupted_examples(unfiltered_corrupted_head_dict,
                                                        [evalConst.CORRUPTED_GROUP_COL_NAME]+list(pos_examples)+[globConst.VALUE_COL_NAME])
-        all_corrupted_tail = _group_corrupted_examples(corrupted_tail_dict,
+        all_corrupted_tail = _group_corrupted_examples(unfiltered_corrupted_tail_dict,
                                                        [evalConst.CORRUPTED_GROUP_COL_NAME]+list(pos_examples)+[globConst.VALUE_COL_NAME])
         all_corrupted_head.to_csv(os.path.join(path, evalConst.CORRUPTED_HEADS_FILE_NAME), sep='\t', index=False, header=False)
         all_corrupted_tail.to_csv(os.path.join(path, evalConst.CORRUPTED_TAILS_FILE_NAME), sep='\t', index=False, header=False)
 
-    return corrupted_head_dict, corrupted_tail_dict
+    return unfiltered_corrupted_head_dict, unfiltered_corrupted_tail_dict, filtered_corrupted_head_dict, filtered_corrupted_tail_dict
 
 
 def _get_corrupted_examples (corrupted_triples, pos_examples, filtered):
@@ -390,15 +414,14 @@ def _get_corrupted_examples (corrupted_triples, pos_examples, filtered):
                 DataFrame contains all valid corrupted triples, incl value (1 for positive example, 0 for negative example)
                 columns = [node1_id, edgeType, node2_id, value]
     """
-    corrupted_triples.reset_index(drop=True, inplace=True)
-    true_neg_triples, _ = get_diff(corrupted_triples, pos_examples)
     if filtered:
+        corrupted_triples.reset_index(drop=True, inplace=True)
+        true_neg_triples, _ = get_diff(corrupted_triples, pos_examples)
         corrupted_triples = true_neg_triples
         corrupted_triples[globConst.VALUE_COL_NAME] = 0
     else:
-        neg_indices = set(true_neg_triples.index)
-        corrupted_triples[globConst.VALUE_COL_NAME] = 1
-        corrupted_triples[globConst.VALUE_COL_NAME][neg_indices] = 0
+        corrupted_triples[globConst.VALUE_COL_NAME] = 0
+        #corrupted_triples[globConst.VALUE_COL_NAME][neg_indices] = 0
     return corrupted_triples
 
 
