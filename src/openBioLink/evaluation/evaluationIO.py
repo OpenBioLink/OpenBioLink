@@ -5,7 +5,8 @@ import globalConfig as globConst
 import pandas
 
 def write_metric_results(metrics_results):
-    with open(os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FILE_NAME), 'w') as fp:
+    eval_dir = os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME)
+    with open(os.path.join(eval_dir, evalConst.EVAL_OUTPUT_FILE_NAME), 'w') as fp:
         json_metrics = {x.value: y for x, y in metrics_results.items()}
         json.dump(json_metrics, fp, indent=4)
 

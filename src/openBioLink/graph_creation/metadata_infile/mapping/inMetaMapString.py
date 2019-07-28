@@ -8,7 +8,7 @@ class InMetaMapString(InfileMetadata):
     USE_COLS = ['ncbiID', 'stringID']
     SOURCE_COL = 1
     TARGET_COL = 0
-    MAPPING_SEP = None
+    MAPPING_SEP = '|'
     INFILE_TYPE = InfileType.IN_MAP_STRING
 
     def __init__(self):

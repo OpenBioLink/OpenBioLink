@@ -1,6 +1,6 @@
 import os
 import pickle
-
+from tqdm import tqdm
 import numpy as np
 import pandas
 import pykeen.constants as keenConst
@@ -11,6 +11,7 @@ import torch.optim as optim
 import globalConfig as globConst
 from .model import Model
 import evaluation.evalConfig as evalConst
+from torch import nn
 import json
 import train_test_set_creation.ttsConfig as ttsConst
 
@@ -19,8 +20,8 @@ import train_test_set_creation.ttsConfig as ttsConst
 
 
 class PyKeen_BasicModel (Model):
-    def __init__(self, kge_model = None, config=None):
-        super().__init__(kge_model)
+    def __init__(self, config=None):
+        super().__init__()
         if type(config) == str:
             with open(config) as file:
                 content = file.read()
@@ -34,8 +35,6 @@ class PyKeen_BasicModel (Model):
         self.output_directory = os.path.join(os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FILE_NAME),'model_output')
         os.makedirs(self.output_directory, exist_ok=True)
 
-
-    def train(self, examples=None):
         ### prepare input examples
         if examples is None:
             examples = pandas.read_csv(self.config[keenConst.TRAINING_SET_PATH], sep="\t",
@@ -65,7 +64,7 @@ class PyKeen_BasicModel (Model):
         self.config[keenConst.NUM_ENTITIES] = len(self.entity_to_id)
         self.config[keenConst.NUM_RELATIONS] = len(self.rel_to_id)
 
-        ### prepare model
+        ## prepare model
         self.kge_model = pipeline.get_kge_model(config=self.config)
         self.kge_model = self.kge_model.to(self.device)
 
@@ -74,7 +73,7 @@ class PyKeen_BasicModel (Model):
         num_pos_examples = mapped_pos_train_triples.shape[0]
 
         ### train model
-        for _ in range(self.config[keenConst.NUM_EPOCHS]):
+        for _ in tqdm(range(self.config[keenConst.NUM_EPOCHS])):
             # create batches
             indices_pos = np.arange(num_pos_examples)
             np.random.shuffle(indices_pos)
@@ -88,7 +87,7 @@ class PyKeen_BasicModel (Model):
                                                       batch_size=self.config["batch_size"])
             current_epoch_loss = 0.
 
-            for pos_batch, neg_batch in zip(pos_batches, neg_batches):
+            for pos_batch, neg_batch in tqdm(zip(pos_batches, neg_batches),total=len(neg_batches)):
                 if len(pos_batch) == len(neg_batch):
                     current_batch_size = len(pos_batch)
                 else:
@@ -136,7 +135,6 @@ class PyKeen_BasicModel (Model):
         self.output_train_results(results)
 
         return self.kge_model, loss_per_epoch
-
 
 
     def get_ranked_predictions(self, examples= None):
@@ -244,7 +242,6 @@ class PyKeen_BasicModel (Model):
 class TransE_PyKeen (PyKeen_BasicModel):
 
     def __init__(self, config = None):
-        super().__init__(config)
         if not config:
             self.config = dict(
                 training_set_path = os.path.join(os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
@@ -260,9 +257,13 @@ class TransE_PyKeen (PyKeen_BasicModel):
                 scoring_function= 1,
                 normalization_of_entities=2,
                 num_epochs= 20,
-                batch_size= 8,
+                batch_size= 256,
                 preferred_device= "cpu"
             )
+        else:
+            self.config = config
+        super().__init__(self.config)
+
 
         # fixme check if device available
 
@@ -271,7 +272,6 @@ class TransE_PyKeen (PyKeen_BasicModel):
 class TransR_PyKeen(PyKeen_BasicModel):
 
     def __init__(self, config=None):
-        super().__init__(config)
 
         if not config:
             self.config = dict(
@@ -288,14 +288,18 @@ class TransR_PyKeen(PyKeen_BasicModel):
                 learning_rate=0.01,
                 scoring_function=1,
                 normalization_of_entities=2,
-                num_epochs=20,
-                batch_size=8,
+                num_epochs=1,
+                batch_size=256,
                 preferred_device="cpu"
             )
-        self.output_directory = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\results"
-        os.makedirs(self.output_directory, exist_ok=True)
-        self.device = torch.device('cpu')
-        self.kge_model = None
+        else:
+            self.config = config
+        super().__init__(self.config)
+
+        #self.output_directory = "C:\\Users\\anna\\PycharmProjects\\masterthesis\\results"
+        #os.makedirs(self.output_directory, exist_ok=True)
+        #self.device = torch.device('cpu')
+        #self.kge_model = None
 
 #fixme implement other models
 

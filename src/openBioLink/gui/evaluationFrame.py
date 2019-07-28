@@ -89,6 +89,8 @@ class EvalFrame(tk.Frame):
 
         else:
             self.metrics_frame.pack_forget()
+        if (self.hits.get() or self.mrr.get()) and self.evaluate.get():
+            self.node_or_corrupted_file_el.pack(side='top', fill='x')
 
 
 

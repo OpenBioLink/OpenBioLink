@@ -202,7 +202,6 @@ def start_gui():
     app = BimegGui()
     app.style = Style()
     app.style.theme_use('xpnative')
-    print(app.style.theme_use())
 
     app.protocol("WM_DELETE_WINDOW", on_closing)
     app.mainloop()
