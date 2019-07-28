@@ -222,7 +222,7 @@ class SplitFrame(tk.Frame):
         tn_edge_path = os.path.join(graph_files_folder, 'TN_edges.csv')
         if os.path.exists(tn_edge_path) or 'GraphCreationFrame' in self.controller.selected_frames:
             self.tn_path.set(tn_edge_path)
-        nodes_path = os.path.join(graph_files_folder, 'nodes.csv')
+        nodes_path = os.path.join(graph_files_folder, 'ALL_nodes.csv')
         if os.path.exists(nodes_path) or 'GraphCreationFrame' in self.controller.selected_frames:
             self.nodes_path.set(nodes_path)
 

@@ -25,7 +25,7 @@ class TrainTestSetWriter():
                                            index=False,
                                            header=False)
 
-        nodes_df = pandas.DataFrame({'id': nodes_in_train_val_set})
+        nodes_df = pandas.DataFrame({'id': list(nodes_in_train_val_set)})
         nodes_df['nodeType'] = [x[0] for x in nodes_df['id'].str.split('_')]
         nodes_df.to_csv(os.path.join(folder_path, ttsConst.TTS_NODES_FILE_NAME),
                                            sep='\t',

@@ -35,10 +35,10 @@ class TrainTestSetCreation():
         with open(nodes_path) as file:
             self.nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
         #todo CHANGE HERE!!! #fixme #testme
-        tn_nodes_path = os.path.join(os.path.abspath(os.path.join(nodes_path, os.pardir)), 'TN_nodes.csv')
-        with open(tn_nodes_path) as file:
-            tn_nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
-            self.nodes = self.nodes.append(tn_nodes)
+        #tn_nodes_path = os.path.join(os.path.abspath(os.path.join(nodes_path, os.pardir)), 'TN_nodes.csv')
+        #with open(tn_nodes_path) as file:
+        #    tn_nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
+        #    self.nodes = self.nodes.append(tn_nodes)
 
         with open(graph_path) as file:
             self.all_tp = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
