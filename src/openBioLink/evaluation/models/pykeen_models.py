@@ -215,8 +215,16 @@ class PyKeen_BasicModel (Model):
         #    relation_label_to_id=self.rel_to_id,
         #)
         mapped_test_triples = torch.tensor(mapped_test_triples, dtype=torch.long, device=self.device)
-
-        predicted_scores = self.kge_model.predict(mapped_test_triples)
+        borders = []
+        i=0
+        while True: #todo #fixme explore further size limitations
+            borders.append(min(i*1000,len(mapped_test_triples)) )
+            if i*1000>len(mapped_test_triples):
+                break
+            i+=1
+        predicted_scores = []
+        [predicted_scores.extend(self.kge_model.predict(mapped_test_triples[borders[i-1]:borders[i]])) for i,_ in enumerate(borders) if i>0 ] #todo maybe here a loop and batches?
+        predicted_scores = np.array(predicted_scores)
         _, sorted_indices = torch.sort(torch.tensor(predicted_scores, dtype=torch.float),
                                        descending=False)
 
