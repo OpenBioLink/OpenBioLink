@@ -104,9 +104,15 @@ def create_train_test_splits(args):
 def train_and_evaluate(args):
 
     model_cls = ModelTypes[args.model_cls].value
-    if args.trained_model:
+    if args.trained_model: #todo load with
+        if args.config:
+            config = args.config
+            #model = model_cls(args.config)
+        else :
+            config = None
         model = model_cls()
-        model.load_state_dict(torch.load(args.trained_model))
+        model.kge_model = model_cls.load_model(config)
+        #model.kge_model.load_state_dict(torch.load(args.trained_model))
         #testme
     elif args.config:
         model = model_cls(args.config)

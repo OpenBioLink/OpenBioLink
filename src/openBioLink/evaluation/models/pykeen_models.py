@@ -29,10 +29,52 @@ class PyKeen_BasicModel (Model):
         else:
             self.config=config
         self.device = torch.device('cpu')
+
+        self.config[keenConst.NUM_ENTITIES] = None
+        self.config[keenConst.NUM_RELATIONS] = None
+
+        ## prepare model
+        #self.kge_model = pipeline.get_kge_model(config=self.config)
+        #self.kge_model = self.kge_model.to(self.device)
+
+
         self.kge_model = None
         self.entity_to_id = None
         self.rel_to_id = None
-        self.output_directory = os.path.join(os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FILE_NAME),'model_output')
+        self.output_directory = os.path.join(os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME),'model_output')
+
+    @staticmethod
+    def load_model(config):
+        if type(config) == str:
+            with open(config) as file:
+                content = file.read()
+                model_dir = os.path.abspath(os.path.join(config, os.pardir))
+                config_dict = json.loads(content)
+        else:
+            config_dict=config
+            model_dir = None
+        # Load configuration file
+        with open(os.path.join(model_dir, 'configuration.json')) as f:
+            config = json.load(f)
+
+        # Load entity to id mapping
+        with open(os.path.join(model_dir, 'entity_to_id.json')) as f:
+            entity_to_id = json.load(f)
+
+        # Load relation to id mapping
+        with open(os.path.join(model_dir, 'relation_to_id.json')) as f:
+            relation_to_id = json.load(f)
+        kge_model = pipeline.get_kge_model(config=config)
+
+        if model_dir is not None:
+            path_to_model = os.path.join(model_dir, 'trained_model.pkl')
+            kge_model.load_state_dict(torch.load(path_to_model))
+        return kge_model
+
+
+
+    def train(self, examples=None):
+
         os.makedirs(self.output_directory, exist_ok=True)
 
         ### prepare input examples
