@@ -118,6 +118,18 @@ class TestUtils(unittest.TestCase):
         #then
         self.assertTrue(result.equals(utils.remove_reverse_edges(remove_set=remove, remain_set=remain)))
 
+    def test_remove_reverse_edges_diff_indices(self):
+        #given
+        remove = pandas.DataFrame({'id1':[0,1,2,3], 'edgeType': list('xxxx'), 'id2' : list('abcd'),  'value': list('xxxx')})
+        remove.set_index(pandas.Index(list('asdf')), inplace=True)
+        remain = pandas.DataFrame({'id1':['a','b','c',11], 'edgeType': list('xyxx'), 'id2' : [0, 1,2,13],  'value': list('xxyx')})
+        remain.set_index(pandas.Index(list('wert')), inplace=True)
+        result = pandas.DataFrame({'id1':['b','c',11], 'edgeType': list('yxx'), 'id2' : [ 1,2,13],  'value': list('xyx')},
+                                  index=[1,2,3]).set_index(pandas.Index(list('ert')))
+        #then
+        self.assertTrue(result.equals(utils.remove_reverse_edges(remove_set=remove, remain_set=remain)))
+
+
 
 
     def test_calc_corrupted_triples(self):

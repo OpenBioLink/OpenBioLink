@@ -1,21 +1,18 @@
 import argparse
 import cProfile
-import json
 import logging
 import os
 import sys
-import torch
 
 import globalConfig
 import globalConfig as glob
 import graphProperties as graphProp
+from evaluation.evaluation import Evaluation
 from evaluation.metricTypes import RankMetricType, ThresholdMetricType
-from graph_creation import graphCreationConfig as gcConst
+from evaluation.models.modelTypes import ModelTypes
 from graph_creation.graphCreation import Graph_Creation
 from graph_creation.types.qualityType import QualityType
 from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
-from evaluation.models.modelTypes import ModelTypes
-from evaluation.evaluation import Evaluation
 
 
 def create_graph(args):
@@ -94,10 +91,14 @@ def create_train_test_splits(args):
                                t_minus_one_tn_graph_path=args.tmo_tn_edges,
                                t_minus_one_nodes_path=args.tmo_nodes)
     if args.mode == 'time':
+        print("\n\n############### creating time slice split #################################")
+        logging.info('## Start creating time slice split ##')
         tts.time_slice_split()
     elif args.mode == 'rand':
-        tts.random_edge_split(val=args.val_frac, test_frac=args.test_frac, crossval=args.crossval)
-    tts.random_edge_split(crossval=False)
+        print("\n\n############### creating random slice split #################################")
+        logging.info('## Start creating random slice split ##')
+        tts.random_edge_split(val=args.val, test_frac=args.test_frac, crossval=args.crossval)
+    #tts.random_edge_split(crossval=False)
 
 
 def train_and_evaluate(args):
@@ -114,14 +115,17 @@ def train_and_evaluate(args):
     e = Evaluation(model=model, training_set_path=args.train, test_set_path=args.test)
 
     if not args.no_train:
+        print('starting training')
         e.train()
     if  not args.no_eval:
+        print('starting evaluation')
+
         metric_strings = args.metrics
         metrics = [x for x in list(RankMetricType.__members__.values()) if x.name in metric_strings] + \
         [x for x in list(ThresholdMetricType.__members__.values()) if x.name in metric_strings]
         int_ks = [int(k) for k in args.ks]
 
-        e.evaluate(metrics=metrics,ks=int_ks,corrupted_triples_folder=args.corrupted, nodes_path=args.eval_nodes)
+        e.evaluate(metrics=metrics,ks=int_ks, nodes_path=args.eval_nodes)
 
 
 
@@ -143,7 +147,7 @@ def check_args_validity(args, parser):
     if args.crossval and (not args.tmo_edges or not args.tmo_tn_edges or not args.tmo_nodes):
                 parser.error("Train Test Split: paths to the t-1 edge file (--tmo_edges),"
                              " t-1 negative edge file (--tmo_tn_edges) and t-1 nodes file (--tmo_nodes) "
-                             "must be provided with option --crossval")
+                             "must be provided with option --crossval") #todo what?
 
 def main(args_list=None):
     if (len(sys.argv) < 2) and not args_list:
@@ -196,7 +200,7 @@ def main(args_list=None):
     parser.add_argument('--no_eval', action='store_true', help='No evaluation is being performed, only training')
     parser.add_argument('--test', type=str, help='Path to test set file (required with -e)')
     parser.add_argument('--train', type=str, help='Path to trainings set file')# (alternative: --cv_folder)')
-    parser.add_argument('--corrupted', type=str, help='path to the corrupted triples (required for ranked triples if no nodes file is provided')
+    parser.add_argument('--corrupted', type=str, help='path to the corrupted triples (required for ranked triples if no nodes file is provided') #fixme no longer an option
     parser.add_argument('--eval_nodes', type=str, help='path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation')
     parser.add_argument('--metrics', nargs='+', help='evaluation metrics')
     parser.add_argument('--ks', nargs='+', help='k\'s for hits@k metric')

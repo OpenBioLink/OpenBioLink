@@ -251,7 +251,7 @@ class SplitFrame(tk.Frame):
             self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(['--test_frac', self.test_frac.get()])
 
             if self.crossval.get():
-                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.append('-crossval')
+                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.append('--crossval') #todo crossval
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(['--val', self.folds.get()])
 
         self.controller.show_next_frame()
