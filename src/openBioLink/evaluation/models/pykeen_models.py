@@ -117,7 +117,6 @@ class PyKeen_BasicModel (Model):
         loss_per_epoch = []
         num_pos_examples = mapped_pos_train_triples.shape[0]
         num_neg_examples = mapped_neg_train_triples.shape[0]
-        print(num_pos_examples - num_neg_examples)
 
         ### train model
         for _ in tqdm(range(self.config[keenConst.NUM_EPOCHS])):
@@ -192,19 +191,21 @@ class PyKeen_BasicModel (Model):
             examples = pandas.read_csv(self.config[keenConst.TEST_SET_PATH], sep="\t",
                                    names=globConst.COL_NAMES_SAMPLES)
 
-        test_triples = examples[globConst.COL_NAMES_TRIPLES].values
+            test_triples = examples[globConst.COL_NAMES_TRIPLES].values
 
-        self.entity_to_id, self.rel_to_id = pipeline.create_mappings(triples=test_triples)
-        id_to_entity = {value: key for key, value in self.entity_to_id.items()}
-        id_to_rel = {value: key for key, value in self.rel_to_id.items()}
+            self.entity_to_id, self.rel_to_id = pipeline.create_mappings(triples=test_triples)
+            id_to_entity = {value: key for key, value in self.entity_to_id.items()}
+            id_to_rel = {value: key for key, value in self.rel_to_id.items()}
 
-        # Note: pipeline.create_mapped_triples changes order, therefore:
-        subject_column = np.vectorize(self.entity_to_id.get)(test_triples[:, 0:1])
-        relation_column = np.vectorize(self.rel_to_id.get)(test_triples[:, 1:2])
-        object_column = np.vectorize(self.entity_to_id.get)(test_triples[:, 2:3])
-        triples_of_ids = np.concatenate([subject_column, relation_column, object_column], axis=1)
+            # Note: pipeline.create_mapped_triples changes order, therefore:
+            subject_column = np.vectorize(self.entity_to_id.get)(test_triples[:, 0:1])
+            relation_column = np.vectorize(self.rel_to_id.get)(test_triples[:, 1:2])
+            object_column = np.vectorize(self.entity_to_id.get)(test_triples[:, 2:3])
+            triples_of_ids = np.concatenate([subject_column, relation_column, object_column], axis=1)
 
-        mapped_test_triples = np.array(triples_of_ids, dtype=np.long)
+            mapped_test_triples = np.array(triples_of_ids, dtype=np.long)
+        else:
+            mapped_test_triples = examples
         #todo use unique
         #return np.unique(ar=triples_of_ids, axis=0), entity_label_to_id, relation_label_to_id
 
@@ -220,19 +221,17 @@ class PyKeen_BasicModel (Model):
                                        descending=False)
 
         sorted_indices = sorted_indices.cpu().numpy()
-        ranked_mapped_test_triples = mapped_test_triples[sorted_indices,:]
-
-        ranked_subject_column = np.vectorize(id_to_entity.get)(ranked_mapped_test_triples[:, 0:1])
-        ranked_predicate_column = np.vectorize(id_to_rel.get)(ranked_mapped_test_triples[:, 1:2])
-        ranked_object_column = np.vectorize(id_to_entity.get)(ranked_mapped_test_triples[:, 2:3])
+        ranked_test_triples = mapped_test_triples[sorted_indices,:]
+        ranked_test_triples = np.array(ranked_test_triples)
         ranked_scores = np.reshape(predicted_scores[sorted_indices], newshape=(-1, 1))
+        ranked_test_triples = np.column_stack((ranked_test_triples, ranked_scores))
 
         #ranked_triples = np.concatenate([ranked_subject_column,ranked_predicate_column, ranked_object_column , ranked_scores], axis=1)
-        ranked_triples = pandas.DataFrame({globConst.NODE1_ID_COL_NAME:[x for sublist in ranked_subject_column.tolist() for x in sublist],
-                                           globConst.EDGE_TYPE_COL_NAME: [x for sublist in ranked_predicate_column.tolist() for x in sublist],
-                                           globConst.NODE2_ID_COL_NAME:[x for sublist in ranked_object_column.tolist() for x in sublist],
-                                           globConst.SCORE_COL_NAME : [x for sublist in ranked_scores.tolist() for x in sublist]})
-        return ranked_triples, sorted_indices
+        #ranked_triples = pandas.DataFrame({globConst.NODE1_ID_COL_NAME:[x for sublist in ranked_subject_column.tolist() for x in sublist],
+        #                                   globConst.EDGE_TYPE_COL_NAME: [x for sublist in ranked_predicate_column.tolist() for x in sublist],
+        #                                   globConst.NODE2_ID_COL_NAME:[x for sublist in ranked_object_column.tolist() for x in sublist],
+        #                                   globConst.SCORE_COL_NAME : [x for sublist in ranked_scores.tolist() for x in sublist]})
+        return ranked_test_triples, sorted_indices
 
 
     def output_train_results(self, results):
