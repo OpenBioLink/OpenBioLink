@@ -83,8 +83,11 @@ class PyKeen_BasicModel (Model):
                                       names=globConst.COL_NAMES_SAMPLES)
 
         pos_examples = examples[examples[globConst.VALUE_COL_NAME] == 1]
-        neg_examples = examples[examples[globConst.VALUE_COL_NAME] == 0]
+        neg_examples = examples[examples[globConst.VALUE_COL_NAME] == 0] #fixme pos and neg must be same length!
 
+        num_examples = min(len(neg_examples), len(pos_examples))
+        pos_examples = pos_examples.sample(num_examples, random_state=globConst.RANDOM_STATE)
+        neg_examples = neg_examples.sample(num_examples, random_state=globConst.RANDOM_STATE)
         pos_triples = pos_examples[globConst.COL_NAMES_TRIPLES].values
         neg_triples = neg_examples[globConst.COL_NAMES_TRIPLES].values
         all_triples = examples[globConst.COL_NAMES_TRIPLES].values
@@ -113,6 +116,8 @@ class PyKeen_BasicModel (Model):
         optimizer = optim.SGD(self.kge_model.parameters(), lr=self.config[keenConst.LEARNING_RATE])
         loss_per_epoch = []
         num_pos_examples = mapped_pos_train_triples.shape[0]
+        num_neg_examples = mapped_neg_train_triples.shape[0]
+        print(num_pos_examples - num_neg_examples)
 
         ### train model
         for _ in tqdm(range(self.config[keenConst.NUM_EPOCHS])):
@@ -122,7 +127,7 @@ class PyKeen_BasicModel (Model):
             mapped_pos_train_triples = mapped_pos_train_triples[indices_pos]
             pos_batches = self._split_list_in_batches(input_list=mapped_pos_train_triples,
                                                       batch_size=self.config["batch_size"])
-            indices_neg = np.arange(num_pos_examples)
+            indices_neg = np.arange(num_neg_examples) #todo neg und pos not equal, should there be a factor?
             np.random.shuffle(indices_neg)
             mapped_neg_train_triples = mapped_neg_train_triples[indices_neg]
             neg_batches = self._split_list_in_batches(input_list=mapped_neg_train_triples,
