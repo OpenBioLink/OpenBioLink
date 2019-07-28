@@ -159,8 +159,25 @@ class Graph_Creation():
                         multi_file_sep=multi_file_sep,
                         prefix='TN_',
                         print_qscore=print_qscore)
+        all_nodes_dic = nodes_dic.copy()
+        for key, values in tn_nodes_dic.items():
+            if key in all_nodes_dic.keys():
+                temp = set(all_nodes_dic[key])
+                temp.update(set(values))
+                values = temp
+            all_nodes_dic[key] = values
+        gw.output_graph(all_nodes_dic,
+                        None,
+                        one_file_sep=one_file_sep,
+                        multi_file_sep=None,
+                        prefix='ALL_',
+                        print_qscore=False,
+                        node_edge_list=False
+                        )
         graphProp.EDGE_TYPES = list(edges_dic.keys())
         graphProp.NODE_TYPES = list(nodes_dic.keys())
+
+
 
         gw.output_graph_props()
 

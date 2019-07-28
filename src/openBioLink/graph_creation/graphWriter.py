@@ -22,7 +22,7 @@ class GraphWriter ():
             json.dump(graph_prop_dict, json_file, indent=4)
 
     @staticmethod
-    def output_graph(nodes_dic: dict, edges_dic : dict, one_file_sep = None, multi_file_sep = None, prefix= None, print_qscore=True, node_edge_list = True):
+    def output_graph(nodes_dic: dict = None, edges_dic : dict = None, one_file_sep = None, multi_file_sep = None, prefix= None, print_qscore=True, node_edge_list = True):
         if not prefix:
             prefix=''
 
@@ -45,19 +45,21 @@ class GraphWriter ():
         #niceToHave (8) outputformat for graph DB
 
     def output_graph_in_single_file(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
-        with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + '.csv'), 'w') as out_file:
-            writer = csv.writer(out_file, delimiter=file_sep, lineterminator='\n')
-            for key, value in nodes_dic.items():
-                for node in value:
-                    writer.writerow(list(node))
-        with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + '.csv'), 'w') as out_file:
-            writer = csv.writer(out_file, delimiter=file_sep, lineterminator='\n')
-            for key, value in edges_dic.items():
-                for edge in value:
-                    if qscore:
-                        writer.writerow(list(edge))
-                    else:
-                        writer.writerow(edge.to_sub_rel_obj_list())
+        if nodes_dic is not None:
+            with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + '.csv'), 'w') as out_file:
+                writer = csv.writer(out_file, delimiter=file_sep, lineterminator='\n')
+                for key, value in nodes_dic.items():
+                    for node in value:
+                        writer.writerow(list(node))
+        if edges_dic is not None:
+            with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + '.csv'), 'w') as out_file:
+                writer = csv.writer(out_file, delimiter=file_sep, lineterminator='\n')
+                for key, value in edges_dic.items():
+                    for edge in value:
+                        if qscore:
+                            writer.writerow(list(edge))
+                        else:
+                            writer.writerow(edge.to_sub_rel_obj_list())
 
 
     def output_graph_in_multi_files(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
