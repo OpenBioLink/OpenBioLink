@@ -1,6 +1,7 @@
 import os
 import globalConfig as globConst
 import train_test_set_creation.ttsConfig as ttsConst
+import pandas
 
 COL_NAMES_SAMPLES = ''
 class TrainTestSetWriter():
@@ -9,7 +10,7 @@ class TrainTestSetWriter():
         COL_NAMES_SAMPLES = col_names_samples
 
 
-    def print_sets(self, train_val_set_tuples:list, test_set, new_val_nodes=None, new_test_nodes=None):
+    def print_sets(self, train_val_set_tuples:list, test_set, nodes_in_train_val_set, new_val_nodes=None, new_test_nodes=None):
         if new_test_nodes is None:
             new_test_nodes = []
         if new_val_nodes is None:
@@ -23,6 +24,14 @@ class TrainTestSetWriter():
                                            sep='\t',
                                            index=False,
                                            header=False)
+
+        nodes_df = pandas.DataFrame({'id': nodes_in_train_val_set})
+        nodes_df['nodeType'] = [x[0] for x in nodes_df['id'].str.split('_')]
+        nodes_df.to_csv(os.path.join(folder_path, ttsConst.TTS_NODES_FILE_NAME),
+                                           sep='\t',
+                                           index=False,
+                                           header=False)
+
         if new_test_nodes:
             with open(os.path.join(folder_path, ttsConst.NEW_TEST_NODES_FILE_NAME), 'w', newline='\n') as file:
                 file.writelines(list('\n'.join(new_test_nodes)))

@@ -1,5 +1,6 @@
 import logging
 import math
+import os
 import random
 
 import numpy
@@ -33,6 +34,11 @@ class TrainTestSetCreation():
 
         with open(nodes_path) as file:
             self.nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
+        #todo CHANGE HERE!!! #fixme #testme
+        tn_nodes_path = os.path.join(os.path.abspath(os.path.join(nodes_path, os.pardir)), 'TN_nodes.csv')
+        with open(tn_nodes_path) as file:
+            tn_nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
+            self.nodes = self.nodes.append(tn_nodes)
 
         with open(graph_path) as file:
             self.all_tp = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
@@ -70,7 +76,7 @@ class TrainTestSetCreation():
         #          transitiv_PART_OF_edges)
 
         #for time slices
-        if not ((bool(t_minus_one_graph_path) == bool(t_minus_one_tn_graph_path)) == (bool(t_minus_one_nodes_path))):
+        if not (bool(t_minus_one_graph_path) == bool(t_minus_one_tn_graph_path) == (bool(t_minus_one_nodes_path))):
             import sys
             logging.error('either all three or none of these variables must be provided')
             sys.exit()
@@ -97,26 +103,31 @@ class TrainTestSetCreation():
             test_frac = 0.2
 
         # create positive and negative examples
-        positive_samples = self.all_tp
-        negative_sampler = NegativeSampler(self.meta_edges_dic,self.tn_edgeTypes,self.all_tn, self.nodes)
+        positive_samples = self.all_tp.copy()
+        negative_sampler = NegativeSampler(self.meta_edges_dic,self.tn_edgeTypes,self.all_tn.copy(), self.nodes)
         negative_samples = negative_sampler.generate_random_neg_samples(positive_samples)
         all_samples = (positive_samples.append(negative_samples, ignore_index=True)).reset_index(drop=True)
 
         # generate, train-, test-, validation-sets
         test_set = all_samples.sample(frac=test_frac, random_state=glob.RANDOM_STATE)
         train_val_set = all_samples.drop(list(test_set.index.values))
-        nodes_in_train_val_set = train_val_set[globalConfig.NODE1_ID_COL_NAME].tolist() + train_val_set[
-            globalConfig.NODE2_ID_COL_NAME].tolist()
+        nodes_in_train_val_set = train_val_set[globalConfig.NODE1_ID_COL_NAME].tolist() \
+                                 + train_val_set[globalConfig.NODE2_ID_COL_NAME].tolist()
         new_test_nodes = self.get_additional_nodes(old_nodes_list=nodes_in_train_val_set,
                                                    new_nodes_list=self.nodes[globalConfig.ID_NODE_COL_NAME].tolist())
         if new_test_nodes:
             logging.info('the test set contains nodes, that are not present in the trainings-set')
+            new_node_in_edge = test_set[globalConfig.NODE1_ID_COL_NAME].isin(new_test_nodes)\
+                               | test_set[globalConfig.NODE2_ID_COL_NAME].isin(new_test_nodes)
+            edges_with_new_nodes = test_set.loc[new_node_in_edge]
+            test_set = test_set.drop(list(edges_with_new_nodes.index.values))
+
         if graphProp.DIRECTED:
             train_val_set = utils.remove_reverse_edges(remain_set=train_val_set, remove_set=test_set)
         if crossval:
             train_val_set_tuples = self.create_cross_val(train_val_set, val)
-            new_val_nodes = [self.get_additional_nodes(t[globalConfig.NODE1_ID_COL_NAME].tolist() + t[
-                globalConfig.NODE2_ID_COL_NAME].tolist(),
+            new_val_nodes = [self.get_additional_nodes(t[globalConfig.NODE1_ID_COL_NAME].tolist()
+                                                       + t[globalConfig.NODE2_ID_COL_NAME].tolist(),
                                                        nodes_in_train_val_set)
                              for t,v, in train_val_set_tuples]
             if new_val_nodes:
@@ -133,7 +144,8 @@ class TrainTestSetCreation():
         writer.print_sets(train_val_set_tuples=train_val_set_tuples,
                           new_val_nodes=new_val_nodes,
                           test_set=test_set,
-                          new_test_nodes=new_test_nodes)
+                          new_test_nodes=new_test_nodes,
+                          nodes_in_train_val_set = set(nodes_in_train_val_set))
         #nicetohave (3) option to remove examples with new nodes
         return train_val_set_tuples, test_set
 
@@ -143,6 +155,7 @@ class TrainTestSetCreation():
         new_test_nodes = self.get_additional_nodes(self.tmo_nodes['id'].tolist(), self.nodes['id'].tolist())
         if new_test_nodes:
             logging.info('the test set contains nodes, that are not present in the trainings-set')
+            #fixme fix problem of nodes not contained in trainingsset
         #nicetohave (4) like that, neg samples are restricted to edge_types appearing in test_sample --> good idea?
         #nicetohave (4) idea: calculate nodes like above, then tmo_nodes= test_nodes --> mehr auswahl bei neg examples
         tmo_positive_samples = self.tmo_all_tp
@@ -169,7 +182,7 @@ class TrainTestSetCreation():
         writer = TrainTestSetWriter(globalConfig.COL_NAMES_SAMPLES)
         writer.print_sets(train_val_set_tuples=[train_val_set_tuple],
                           test_set=test_set,
-                          new_test_nodes=new_test_nodes)
+                          new_test_nodes=new_test_nodes) #todo #fixme
         return (train_val_set_tuple, test_set)
 
         #niceToHave (5) slice size?

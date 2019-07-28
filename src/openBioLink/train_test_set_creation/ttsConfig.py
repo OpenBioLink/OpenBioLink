@@ -8,3 +8,5 @@ VAL_FILE_NAME = "val_sample.csv"
 
 NEW_TEST_NODES_FILE_NAME = "new_test_nodes.csv"
 NEW_VAL_NODES_FILE_NAME = "new_val_nodes.csv"
+
+TTS_NODES_FILE_NAME = "tts_nodes.csv"
