@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
 
-import gui.gui as gui
+from gui import gui as gui
 
 
 class StartPage(tk.Frame):

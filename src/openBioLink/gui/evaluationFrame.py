@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
-import gui.gui as gui
+from gui import gui as gui
 from evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from evaluation.models.modelTypes import ModelTypes
 import evaluation.evalConfig as evalConst
@@ -262,8 +262,7 @@ class EvalFrame(tk.Frame):
         if os.path.exists(train_path) or 'SplitFrame' in self.controller.selected_frames:
             self.train_path.set(train_path)
 
-        graph_files_folder = os.path.join(self.controller.ARGS_LIST_GLOBAL[1], gcConst.GRAPH_FILES_FOLDER_NAME)
-        nodes_path = os.path.join(graph_files_folder, 'nodes.csv')
+        nodes_path = os.path.join(tts_files_folder, 'tts_nodes.csv')
         if os.path.exists(nodes_path) or 'GraphCreationFrame' in self.controller.selected_frames:
             self.nodes_or_corr_path.set(nodes_path)
 

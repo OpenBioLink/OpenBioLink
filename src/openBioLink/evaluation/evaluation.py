@@ -184,7 +184,7 @@ class Evaluation:
 
     def evaluate_threshold_metrics(self, metrics, nodes_path):
         metric_results={}
-        nodes = pandas.read_csv(nodes_path, sep="\t", names=globConst.COL_NAMES_NODES) #todo change here
+        #nodes = pandas.read_csv(nodes_path, sep="\t", names=globConst.COL_NAMES_NODES) #todo change here
         #tn_nodes = pandas.read_csv("C:/Users/anna/PycharmProjects/masterthesis/this_is_a_test\\graph_files\\TN_nodes.csv", sep="\t", names=globConst.COL_NAMES_NODES)
         #new_nodes = pandas.read_csv("C:/Users/anna/PycharmProjects/masterthesis/this_is_a_test\\graph_files\\TN_nodes.csv", sep="\t", names=globConst.COL_NAMES_NODES)
         #nodes = nodes.append(tn_nodes)
@@ -194,9 +194,9 @@ class Evaluation:
         #edges_with_new_nodes = test_set.loc[new_node_in_edge]
         #test_set = test_set.drop(list(edges_with_new_nodes.index.values))
        #
-        nodes_array = nodes.values
+        #nodes_array = nodes.values
 
-        mapped_test_examples, _ = self.get_mapped_triples_and_nodes(triples=self.test_examples.values, nodes=nodes_array) #todo change here
+        mapped_test_examples, _ = self.get_mapped_triples_and_nodes(triples=self.test_examples.values) #, nodes=nodes_array) #todo change here
         values = self.test_examples.values[:,4].tolist()
         mapped_test_examples = np.column_stack((mapped_test_examples,  values ))
         ranked_test_examples, sorted_indices = self.model.get_ranked_predictions(mapped_test_examples)

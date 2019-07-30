@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-
-import gui.gui as gui
+from gui import gui as gui
 import utils
 
 from graph_creation.metadata_db_file import DbMetadata

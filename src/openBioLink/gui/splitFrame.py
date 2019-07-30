@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
 
-import gui.gui as gui
+from gui import gui as gui
 
 from graph_creation import graphCreationConfig as gcConst
 
