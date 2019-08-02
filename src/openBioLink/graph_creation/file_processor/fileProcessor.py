@@ -18,16 +18,16 @@ class FileProcessor():
         data = data.drop(drop_list, axis=1)
         data = data.dropna()
         if self.mapping_sep is not None and not data.empty:
-            temp = data[data[self.use_cols[0]].str.contains(self.mapping_sep)]
+            temp = data[data[self.use_cols[0]].str.contains(self.mapping_sep,regex=False)]
             for row in temp.itertuples():
                 for alt in row[1].split(self.mapping_sep):
                     data = data.append(pandas.DataFrame([[alt.lstrip(), row[2]]], columns=self.use_cols))
-            data = data[~data[self.use_cols[0]].str.contains(self.mapping_sep)]
-            temp = data[data[self.use_cols[1]].str.contains(self.mapping_sep)]
+            data = data[~data[self.use_cols[0]].str.contains(self.mapping_sep, regex=False)]
+            temp = data[data[self.use_cols[1]].str.contains(self.mapping_sep, regex=False)]
             for row in temp.itertuples():
                 for alt in row[2].split(self.mapping_sep):
                     data = data.append(pandas.DataFrame([[row[1], alt.lstrip()]], columns=self.use_cols))
-            data = data[~data[self.use_cols[1]].str.contains(self.mapping_sep)]
+            data = data[~data[self.use_cols[1]].str.contains(self.mapping_sep, regex=False)]
         return data
 
 
