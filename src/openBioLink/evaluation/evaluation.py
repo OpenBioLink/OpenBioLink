@@ -158,10 +158,10 @@ class Evaluation:
         return metric_results
 
     def get_rank_lists(self, params):
-        unfiltered_head = None
-        unfiltered_tail = None
-        filtered_head = None
-        filtered_tail = None
+        unfiltered_head_ranks = None
+        unfiltered_tail_ranks = None
+        filtered_head_ranks = None
+        filtered_tail_ranks = None
         pos_example, mapped_nodes, nodes_dic, mapped_pos_triples, filtered_setting, unfiltered_setting = params
         unfiltered_corrupted_head, \
         unfiltered_corrupted_tail, \
@@ -173,12 +173,12 @@ class Evaluation:
             filtered=filtered_setting,
             pos_examples=mapped_pos_triples)
         if unfiltered_setting:
-            unfiltered_head = self.get_rank_for_corrupted_examples(unfiltered_corrupted_head, pos_example)
-            unfiltered_tail = self.get_rank_for_corrupted_examples(unfiltered_corrupted_tail, pos_example)
+            unfiltered_head_ranks = self.get_rank_for_corrupted_examples(unfiltered_corrupted_head, pos_example)
+            unfiltered_tail_ranks = self.get_rank_for_corrupted_examples(unfiltered_corrupted_tail, pos_example)
         if filtered_setting:
-            filtered_head = self.get_rank_for_corrupted_examples(filtered_corrupted_head, pos_example)
-            filtered_tail = self.get_rank_for_corrupted_examples(filtered_corrupted_tail, pos_example)
-        return (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail )
+            filtered_head_ranks = self.get_rank_for_corrupted_examples(filtered_corrupted_head, pos_example)
+            filtered_tail_ranks = self.get_rank_for_corrupted_examples(filtered_corrupted_tail, pos_example)
+        return (unfiltered_head_ranks, unfiltered_tail_ranks, filtered_head_ranks, filtered_tail_ranks )
 
 
 
@@ -269,8 +269,8 @@ class Evaluation:
 
 
     def get_first_positive_rank (self, labels):
-        rank = next(x for x in labels if x==1)
-        return rank
+        rank = next(i for i, l in enumerate(labels) if l==1)
+        return rank+1
 
     def get_mapped_triples_and_nodes(self, triples=None, nodes=None):
         mapped_triples = None

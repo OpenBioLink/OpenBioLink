@@ -17,7 +17,7 @@ class MapStringReader(CsvReader):
             cols=self.DB_META_CLASS.COLS,
             use_cols=self.DB_META_CLASS.FILTER_COLS,
             nr_lines_header=self.DB_META_CLASS.HEADER,
-        dtypes = None,
+        dtypes = {col_name : 'str' for col_name in self.DB_META_CLASS.FILTER_COLS},
             readerType= ReaderType.READER_MAP_STRING,
         dbType = DbType.DB_MAP_STRING
         )

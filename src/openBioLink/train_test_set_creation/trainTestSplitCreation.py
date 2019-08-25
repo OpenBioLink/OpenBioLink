@@ -202,6 +202,7 @@ class TrainTestSetCreation():
         nel_total, _ = df.shape
         if n_folds < 1: #n_folds is fraction
             n_folds = math.ceil(1/n_folds)
+        n_folds = int(n_folds)
         nel_per_chunk = math.ceil(nel_total / n_folds)
         rand_index = list(df.index.values)
         random.shuffle(rand_index)

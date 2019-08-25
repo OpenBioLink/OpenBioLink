@@ -150,10 +150,10 @@ def check_args_validity(args, parser):
         if not args.edges or not args.tn_edges or not args.nodes:
             parser.error("Train Test Split: paths to the edge file (--edges), negative edge file (--tn_edges) "
                          "and nodes file (--nodes) must be provided with option -s")
-    if args.crossval and (not args.tmo_edges or not args.tmo_tn_edges or not args.tmo_nodes):
-                parser.error("Train Test Split: paths to the t-1 edge file (--tmo_edges),"
-                             " t-1 negative edge file (--tmo_tn_edges) and t-1 nodes file (--tmo_nodes) "
-                             "must be provided with option --crossval") #todo what?
+    #if args.crossval and (not args.tmo_edges or not args.tmo_tn_edges or not args.tmo_nodes):
+    #            parser.error("Train Test Split: paths to the t-1 edge file (--tmo_edges),"
+    #                         " t-1 negative edge file (--tmo_tn_edges) and t-1 nodes file (--tmo_nodes) "
+    #                         "must be provided with option --crossval") #todo what?
 
 def main(args_list=None):
     if (len(sys.argv) < 2) and not args_list:
