@@ -1,6 +1,7 @@
 import unittest
 import utils
 import pandas
+import numpy as np
 
 
 class TestUtils(unittest.TestCase):
@@ -10,10 +11,12 @@ class TestUtils(unittest.TestCase):
         # given
         class A:
             pass
+        cls = A
         # when
-        leaf_classes = utils.get_leaf_subclasses(A)
+        result = utils.get_leaf_subclasses(cls)
         # then
-        self.assertEqual(set(leaf_classes), {A})
+        true_result = {A}
+        self.assertEqual(true_result, result)
 
     def test_get_leaf_subclasses_one_lvl(self):
         # given
@@ -21,10 +24,12 @@ class TestUtils(unittest.TestCase):
             pass
         class B (A):
             pass
+        cls = A
         # when
-        leaf_classes = utils.get_leaf_subclasses(A)
+        result = utils.get_leaf_subclasses(cls)
         # then
-        self.assertEqual(set(leaf_classes), {B})
+        true_result = {B}
+        self.assertEqual(true_result, result)
 
     def test_get_leaf_subclasses_two_lvl(self):
         # given
@@ -34,10 +39,12 @@ class TestUtils(unittest.TestCase):
             pass
         class C (B):
             pass
+        cls = A
         # when
-        leaf_classes = utils.get_leaf_subclasses(A)
+        result = utils.get_leaf_subclasses(cls)
         # then
-        self.assertEqual(set(leaf_classes), {C})
+        true_result = {C}
+        self.assertEqual(true_result, result)
 
     def test_get_leaf_subclasses_diff_lvls(self):
         # given
@@ -49,40 +56,53 @@ class TestUtils(unittest.TestCase):
             pass
         class D (A):
             pass
+        cls = A
         # when
-        leaf_classes = utils.get_leaf_subclasses(A)
+        result = utils.get_leaf_subclasses(cls)
         # then
-        self.assertEqual(set(leaf_classes), {C,D})
+        true_result = {C,D}
 
     def test_get_leaf_subclasses_None(self):
         # given
+        cls = None
         # when
-        leaf_classes = utils.get_leaf_subclasses(None)
+        result = utils.get_leaf_subclasses(cls)
         # then
-        self.assertEqual(None, None)
+        true_result = None
+        self.assertEqual(true_result, result)
 
 
     # ----- make_undir -------
     def test_make_undir_all_undir(self):
         # given
         df = pandas.DataFrame({'id1': list('abc'), 'id2': list('xyz')})
+        # when
+        result = utils.make_undir(df)
         # then
-        self.assertTrue(df.equals(utils.make_undir(df)))
+        true_result = df
+        np.array_equal(true_result, result)
+
+
 
     def test_make_undir_all_dir(self):
         # given
         df = pandas.DataFrame({'id1': list('abcd'), 'id2': list('badc')})
-        undir = pandas.DataFrame({'id1': list('ac'), 'id2': list('bd')})
-        # then
-        self.assertTrue(undir.equals(utils.make_undir(df)))
+        # when
+        result = utils.make_undir(df)
+        #then
+        true_result = pandas.DataFrame({'id1': list('ac'), 'id2': list('bd')})
+        np.array_equal(true_result, result)
+
+
 
     def test_make_undir_mixed(self):
         # given
         df = pandas.DataFrame({'id1': list('abc'), 'id2': list('cxa')})
-        undir = pandas.DataFrame({'id1': list('ab'), 'id2': list('cx')})
-        # then
-        self.assertTrue(undir.equals(utils.make_undir(df)))
-
+        #when
+        result = utils.make_undir(df)
+        #then
+        true_result = pandas.DataFrame({'id1': list('ab'), 'id2': list('cx')})
+        np.array_equal(true_result, result)
 
     def test_db_mapping_file_to_dic(self):
         #given
@@ -92,9 +112,11 @@ class TestUtils(unittest.TestCase):
             # z	baz
             # q		c
         file_path = 'test_mapping_file.tsv'
-        dic =  {'x': ['a'], 'y': ['a; b'], 'q': ['c']}
+        #when
+        result = utils.db_mapping_file_to_dic(file_path, 0, 2, '\t')
         #then
-        self.assertEqual(utils.db_mapping_file_to_dic(file_path, 0, 2, '\t'),dic )
+        true_result =  {'x': ['a'], 'y': ['a; b'], 'q': ['c']}
+        self.assertEqual(true_result, result )
 
 
 
@@ -110,13 +132,17 @@ class TestUtils(unittest.TestCase):
         self.fail()
 
 
+    # ----- remove_reverse_edges -------
     def test_remove_reverse_edges(self):
         #given
         remove = pandas.DataFrame({'id1':[0,1,2,3], 'edgeType': list('xxxx'), 'id2' : list('abcd'),  'value': list('xxxx')})
         remain = pandas.DataFrame({'id1':['a','b','c',11], 'edgeType': list('xyxx'), 'id2' : [0, 1,2,13],  'value': list('xxyx')})
-        result = pandas.DataFrame({'id1':['b','c',11], 'edgeType': list('yxx'), 'id2' : [ 1,2,13],  'value': list('xyx')}, index=[1,2,3])
+        #when
+        result = utils.remove_reverse_edges(remove_set=remove, remain_set=remain)
         #then
-        self.assertTrue(result.equals(utils.remove_reverse_edges(remove_set=remove, remain_set=remain)))
+        true_result = pandas.DataFrame({'id1':['b','c',11], 'edgeType': list('yxx'), 'id2' : [ 1,2,13],  'value': list('xyx')}, index=[1,2,3])
+        np.array_equal(true_result.values, result.values)
+
 
     def test_remove_reverse_edges_diff_indices(self):
         #given
@@ -124,10 +150,13 @@ class TestUtils(unittest.TestCase):
         remove.set_index(pandas.Index(list('asdf')), inplace=True)
         remain = pandas.DataFrame({'id1':['a','b','c',11], 'edgeType': list('xyxx'), 'id2' : [0, 1,2,13],  'value': list('xxyx')})
         remain.set_index(pandas.Index(list('wert')), inplace=True)
-        result = pandas.DataFrame({'id1':['b','c',11], 'edgeType': list('yxx'), 'id2' : [ 1,2,13],  'value': list('xyx')},
-                                  index=[1,2,3]).set_index(pandas.Index(list('ert')))
+        #when
+        result = utils.remove_reverse_edges(remove_set=remove, remain_set=remain)
         #then
-        self.assertTrue(result.equals(utils.remove_reverse_edges(remove_set=remove, remain_set=remain)))
+        true_result = pandas.DataFrame({'id1':['b','c',11], 'edgeType': list('yxx'), 'id2' : [ 1,2,13],  'value': list('xyx')},
+                                  index=[1,2,3]).set_index(pandas.Index(list('ert')))
+        np.array_equal(true_result.values, result.values)
+
 
 
 

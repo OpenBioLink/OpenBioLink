@@ -144,7 +144,7 @@ def check_args_validity(args, parser):
     #graph creation checks
     if args.g:
         if args.no_in and not args.no_dl and not args.no_create:
-            parser.error("Graph Creation: downloading graph files and creating the graph withour creating in_files is not possible")
+            parser.error("Graph Creation: downloading graph files and creating the graph without creating in_files is not possible")
     #train test split checks
     if args.s:
         if not args.edges or not args.tn_edges or not args.nodes:

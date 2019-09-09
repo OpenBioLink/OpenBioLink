@@ -23,10 +23,44 @@ class GraphCreator():
         self.path_no_mappings = os.path.join(output_dir, gcConst.ID_NO_MAPPING_FILE_NAME)
         self.path_stats = os.path.join(output_dir, gcConst.STATS_FILE_NAME)
         os.makedirs(output_dir, exist_ok=True)
-        open(self.tn_path_no_mappings, 'w').close()
-        open(self.tn_path_stats, 'w').close()
+        open(self.tn_path_no_mappings, "w").close()
+        with open(self.tn_path_stats, "w", encoding="utf8") as file:
+            file.write('Edge Type'  + '\t' + \
+                       'Node1 Type' + '\t' + \
+                       'Node2 Type'  + '\t' + \
+                       'Nr edges'  + '\t' + \
+                       'Nr edges no mapping'  + '\t' + \
+                       'Nr edges below cutoff'  + '\t' + \
+                       'Edges coverage'  + '\t' + \
+                       'Duplicated edges'  + '\t' + \
+                       'Nr edges return direction' +  '\t' + \
+                       'Nr edges after mapping (final nr)'  + '\t' + \
+                       'Nr nodes1 no mapping'  + '\t' + \
+                       'Nr nodes2 no mapping'  + '\t' + \
+                       'Nr nodes1'  + '\t' + \
+                       'Nr nodes2' + '\t' + \
+                       'nodes1 coverage'  + '\t' + \
+                       'nodes2 coverage' +
+                       '\n')
         open(self.path_no_mappings, 'w').close()
-        open(self.path_stats, 'w').close()
+        with open(self.path_stats, "w", encoding="utf8") as file:
+            file.write('Edge Type' + '\t' + \
+                       'Node1 Type' + '\t' + \
+                       'Node2 Type' + '\t' + \
+                       'Nr edges' + '\t' + \
+                       'Nr edges no mapping' + '\t' + \
+                       'Nr edges below cutoff' + '\t' + \
+                       'Edges coverage' + '\t' + \
+                       'Duplicated edges' + '\t' + \
+                       'Nr edges return direction' + '\t' + \
+                       'Nr edges after mapping (final nr)' + '\t' + \
+                       'Nr nodes1 no mapping' + '\t' + \
+                       'Nr nodes2 no mapping' + '\t' + \
+                       'Nr nodes1' + '\t' + \
+                       'Nr nodes2' + '\t' + \
+                       'nodes1 coverage' + '\t' + \
+                       'nodes2 coverage' +
+                       '\n')
 
 
 
@@ -96,6 +130,7 @@ class GraphCreator():
         ids1 = set()
         ids2 = set()
         nr_edges = 0
+        nr_edges_return_dir = 0
         nr_edges_after_mapping = 0
         nr_edges_incl_dup = 0
         nr_edges_below_cutoff = 0
@@ -149,6 +184,8 @@ class GraphCreator():
                                 # add an edge in the other direction when edge is undirectional and graph is directional
                                 if (not edge_metadata.is_directional) and graphProp.DIRECTED:
                                     edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore))
+                                    nr_edges_incl_dup += 1
+                                    nr_edges_return_dir+=1
                                 nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
                                 nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))
 
@@ -168,9 +205,9 @@ class GraphCreator():
         nr_edges_after_mapping = len(edges)
 
         if not no_cutoff_defined and nr_edges_below_cutoff==0:
-            logging.warning("No edges of type %s were cut off by quality cutoff, maybe the metric has changed?" %edge_metadata.edgeType.value)
+            logging.warning("No edges of type %s were cut off by quality cutoff, maybe the metric has changed?" %edge_metadata.edgeType.name)
         if nr_edges_after_mapping==0:
-            logging.warning("No edges of type %s are left after mapping and cutoff!"%edge_metadata.edgeType.value)
+            logging.warning("No edges of type %s are left after mapping and cutoff!"%edge_metadata.edgeType.name)
 
         # print statistics
         stats_dic = {
@@ -182,6 +219,7 @@ class GraphCreator():
             'nr_edges_no_mapping': nr_edges_no_mapping,
             'nr_edges_after_mapping': nr_edges_after_mapping,
             'nr_edges_incl_dup': nr_edges_incl_dup,
+            'nr_edges_return_dir': nr_edges_return_dir,
             'ids1_no_mapping': ids1_no_mapping,
             'ids2_no_mapping': ids2_no_mapping,
             'ids1':ids1,
@@ -209,7 +247,7 @@ class GraphCreator():
 
         stats_string = '\nEdge Type: ' + str(edgeType) + '\n' + \
                        'Node1 Type: ' + str(stats_dic['node1_type']) + '\n' + \
-                       'Node1 Type: ' + str(stats_dic['node2_type']) + '\n' + \
+                       'Node2 Type: ' + str(stats_dic['node2_type']) + '\n' + \
                        'Nr edges: ' + str(stats_dic['nr_edges']) + '\n' + \
                        'Nr edges no mapping: ' + str(stats_dic['nr_edges_no_mapping']) + '\n' + \
                        'Nr edges below cutoff: ' + str(stats_dic['nr_edges_below_cutoff']) + '\n' + \
@@ -223,6 +261,24 @@ class GraphCreator():
                        'nodes1 coverage: ' + str(1-(len(stats_dic['ids1_no_mapping'])/ len(stats_dic['ids1']))) + '\n' + \
                        'nodes2 coverage: ' + str(1-(len(stats_dic['ids2_no_mapping'])/ len(stats_dic['ids2']))) + '\n' + \
                        '######################################################################################\n'
+
+        stats_string = str(edgeType) + '\t' +\
+                         str(stats_dic['node1_type']) + '\t' +\
+                         str(stats_dic['node2_type']) + '\t' +\
+                         str(stats_dic['nr_edges']) + '\t' + \
+                         str(stats_dic['nr_edges_no_mapping']) + '\t' + \
+                         str(stats_dic['nr_edges_below_cutoff']) + '\t' + \
+                         str(1 - (stats_dic['nr_edges_no_mapping'] / stats_dic['nr_edges'])) + '\t' + \
+                         str( stats_dic['nr_edges_incl_dup'] - stats_dic['nr_edges_after_mapping']) + '\t' + \
+                         str(stats_dic['nr_edges_return_dir']) + '\t' + \
+                         str(stats_dic['nr_edges_after_mapping']) + '\t' + \
+                         str(len(stats_dic['ids1_no_mapping'])) + '\t' + \
+                         str(len(stats_dic['ids2_no_mapping'])) + '\t' + \
+                         str(len(stats_dic['ids1'])) + '\t' + \
+                         str(len(stats_dic['ids2'])) + '\t' + \
+                         str( 1 - (len(stats_dic['ids1_no_mapping']) / len(stats_dic['ids1']))) + '\t' + \
+                         str( 1 - (len(stats_dic['ids2_no_mapping']) / len(stats_dic['ids2']))) + \
+                       '\n'
         with open(path_stats, 'a') as out_file:
             out_file.write(stats_string)
 

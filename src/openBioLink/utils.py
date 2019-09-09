@@ -7,9 +7,7 @@ from functools import reduce
 
 import numpy as np
 import pandas
-from tqdm import tqdm
 
-import evaluation.evalConfig as evalConst
 import globalConfig as globConst
 
 
@@ -468,9 +466,6 @@ def create_mappings(elements):
     return element_label_to_id
 
 def map_elements(elements, mapping):
-    for a in elements:
-        for b in a:
-            mapping[b]
     return np.vectorize(mapping.get)(elements)
 
 
