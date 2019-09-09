@@ -84,7 +84,7 @@ def create_train_test_splits(args):
         sep = args.tts_sep
     tts = TrainTestSetCreation(graph_path=args.edges,
                                tn_graph_path=args.tn_edges,
-                               nodes_path=args.nodes,
+                               all_nodes_path=args.nodes,
                                sep=sep,
                                #meta_edge_triples=args.meta,
                                t_minus_one_graph_path=args.tmo_edges,
@@ -150,6 +150,13 @@ def check_args_validity(args, parser):
         if not args.edges or not args.tn_edges or not args.nodes:
             parser.error("Train Test Split: paths to the edge file (--edges), negative edge file (--tn_edges) "
                          "and nodes file (--nodes) must be provided with option -s")
+        if args.crossval:
+            n_folds=args.val
+            if n_folds == 0 or n_folds == 1 or (n_folds > 1 and not float(n_folds).is_integer()):
+                parser.error("fold entry must be either an int>1 (number of folds) or a float >0 and <1 (validation fraction)")
+        if args.mode == 'time':
+            if not (bool(args.tmo_edges) and bool(args.tmo_tn_edges) and (bool(args.tmo_nodes))):
+                parser.error('for time slice mode, edge-, tn-edge- and node-file of the t-minus-one graph must be provided')
     #if args.crossval and (not args.tmo_edges or not args.tmo_tn_edges or not args.tmo_nodes):
     #            parser.error("Train Test Split: paths to the t-1 edge file (--tmo_edges),"
     #                         " t-1 negative edge file (--tmo_tn_edges) and t-1 nodes file (--tmo_nodes) "

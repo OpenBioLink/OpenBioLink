@@ -224,15 +224,17 @@ def file_exists(url):
 
 ############# FROM TRAIN TEST SPLIT #################################
 
-def get_diff(df1, df2, path=None):
+def get_diff(df1, df2, ignore_qscore=False, path=None):
     """"
     takes DataFrames with same column names and returns their differences
         Parameters
         ----------
-            df1 : pandas.DataFram
+            df1 : pandas.DataFrame
                 left DataFrame of the merge
             df2 : pandas.DataFrame
                 right DataFrame of the join
+            ignore_qscore : bool
+                whether the quality score columns should be ignored when merging the data frames
             path : str, optional
                 if provided, the differences are saved as csv files in the provided path
 
@@ -243,12 +245,27 @@ def get_diff(df1, df2, path=None):
             right_only : pandas.DataFrame
                 DataFrame containing rows that only appear in df2, but not df1
     """
-    diff = pandas.merge(df1, df2, how='outer', indicator=True).loc[lambda x: x['_merge'] != 'both']
-    left_only = diff.loc[lambda x: x._merge == 'left_only'].drop(['_merge'], axis=1)
-    right_only = diff.loc[lambda x: x._merge == 'right_only'].drop(['_merge'], axis=1)
+    if ignore_qscore:
+        all_cols = globConst.COL_NAMES_SAMPLES
+        cols = globConst.COL_NAMES_TRIPLES + [globConst.VALUE_COL_NAME]
+        diff = pandas.merge(df1, df2,
+                            how='outer',
+                            left_on=cols,
+                            right_on=cols,
+                            indicator=True).loc[lambda x: x['_merge'] != 'both']
+        left_only = diff.loc[lambda x: x._merge == 'left_only']
+        left_only[globConst.QSCORE_COL_NAME] = left_only[globConst.QSCORE_COL_NAME+'_x']
+        left_only = left_only[all_cols]
+        right_only = diff.loc[lambda x: x._merge == 'right_only']
+        right_only[globConst.QSCORE_COL_NAME] = right_only[globConst.QSCORE_COL_NAME+'_y']
+        right_only = right_only[all_cols]
+    else:
+        diff = pandas.merge(df1, df2, how='outer', indicator=True).loc[lambda x: x['_merge'] != 'both']
+        left_only = diff.loc[lambda x: x._merge == 'left_only'].drop(['_merge'], axis=1)
+        right_only = diff.loc[lambda x: x._merge == 'right_only'].drop(['_merge'], axis=1)
     if path:
         left_only.to_csv(os.path.join(path, 'diff_left_only.csv'), sep='\t', index=False, header=False)
-        left_only.to_csv(os.path.join(path, 'diff_right_only.csv'), sep='\t', index=False, header=False)
+        right_only.to_csv(os.path.join(path, 'diff_right_only.csv'), sep='\t', index=False, header=False)
     return left_only, right_only
 
 

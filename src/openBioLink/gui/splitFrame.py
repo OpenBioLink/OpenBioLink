@@ -241,7 +241,7 @@ class SplitFrame(tk.Frame):
             self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(['--mode', 'time'])
             self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(['--tmo_edges', self.tmo_edge_path.get()])
             self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(['--tmo_tn_edges', self.tmo_tn_path.get()])
-            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(['--tmo_edges', self.tmo_nodes_path.get()])
+            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(['--tmo_nodes', self.tmo_nodes_path.get()])
 
         elif self.mode.get() == 'rand':
             if self.test_frac.get() == '' :
