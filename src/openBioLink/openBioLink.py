@@ -104,7 +104,7 @@ def create_train_test_splits(args):
 def train_and_evaluate(args):
 
     model_cls = ModelTypes[args.model_cls].value
-    if args.trained_model: #todo load with
+    if args.trained_model: #fixme when model provided, config also has to be
         if args.config:
             config = args.config
             #model = model_cls(args.config)
@@ -118,8 +118,8 @@ def train_and_evaluate(args):
         model = model_cls(args.config)
     else:
         model = model_cls()
-    e = Evaluation(model=model, training_set_path=args.train, test_set_path=args.test)
-
+    e = Evaluation(model=model, training_set_path=args.train, test_set_path=args.test, nodes_path=args.eval_nodes, mappings_avail=bool(args.trained_model))
+    #todo doku: mappings have to be in model folder with correct name, or change here
     if not args.no_train:
         print('starting training')
         e.train()
@@ -131,7 +131,7 @@ def train_and_evaluate(args):
         [x for x in list(ThresholdMetricType.__members__.values()) if x.name in metric_strings]
         int_ks = [int(k) for k in args.ks]
 
-        e.evaluate(metrics=metrics,ks=int_ks, nodes_path=args.eval_nodes)
+        e.evaluate(metrics=metrics,ks=int_ks)
 
 
 

@@ -43,7 +43,6 @@ class Graph_Creation():
         self.readerType_processor_map = utils.cls_list_to_dic(self.file_processors, 'readerType')
         self.infileType_inMetadata_map = {x.infileType: x for x in self.infile_metadata}
 
-
         #if not glob.DIRECTED:
         ## remove onto
         #    if use_edge_metadata_classes is None:
@@ -177,11 +176,7 @@ class Graph_Creation():
         graphProp.EDGE_TYPES = list(edges_dic.keys())
         graphProp.NODE_TYPES = list(nodes_dic.keys())
 
-
-
         gw.output_graph_props()
-
-
 
 
 

@@ -98,7 +98,7 @@ class NegativeSampler(Sampler):
                                                  , ignore_index=True)
         neg_samples[globConst.VALUE_COL_NAME] = 0
 
-        return neg_samples[col_names]
+        return neg_samples[col_names+[globConst.VALUE_COL_NAME]]
 
 
     def subsample_with_tn(self, meta_edge_triple_key, subsample_size, exclude_df, col_names=globConst.COL_NAMES_EDGES):

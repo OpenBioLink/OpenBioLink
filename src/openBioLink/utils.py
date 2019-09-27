@@ -197,7 +197,7 @@ def cls_list_to_dic(clsList, keyAttr, condition = None):
     return dic
 
 
-def file_exists(url):
+def url_exists(url):
     """"
     checks, whether an URL exists
 
@@ -337,7 +337,7 @@ def remove_reverse_edges(remain_set, remove_set):
 
 def calc_corrupted_triples(pos_example, nodes, nodes_dic, filtered=False, path=None, pos_examples = None):
     """"
-    calculates the corrupted triples (both corrupted heads as well as corrupted tails) for given true positive examples
+    calculates the corrupted triples (both corrupted heads as well as corrupted tails) for given true positive example
         Parameters
         ----------
             pos_examples : pandas.DataFrame #todo
@@ -356,7 +356,6 @@ def calc_corrupted_triples(pos_example, nodes, nodes_dic, filtered=False, path=N
         Returns
         ----------
     """
-
     filtered_corrupted_heads = None
     filtered_corrupted_tails = None
     head, relation, tail = pos_example
@@ -365,7 +364,7 @@ def calc_corrupted_triples(pos_example, nodes, nodes_dic, filtered=False, path=N
     corrupted_head_nodes = corrupted_head_nodes[corrupted_head_nodes!=head]
     tail_node_type = nodes[np.where(nodes[:,0]==tail)][0,1]
     corrupted_tail_nodes = nodes_dic[tail_node_type]
-    corrupted_tail_nodes = corrupted_tail_nodes[corrupted_tail_nodes!=head]
+    corrupted_tail_nodes = corrupted_tail_nodes[corrupted_tail_nodes!=tail]
 
     #corrupting heads
     tail_array = np.full(len(corrupted_head_nodes), tail)
@@ -374,7 +373,7 @@ def calc_corrupted_triples(pos_example, nodes, nodes_dic, filtered=False, path=N
     unfiltered_corrupted_heads = np.column_stack((corrupted_head_nodes, relation_array, tail_array, value_array))
 
     #corrupting tails
-    head_array = np.full(len(corrupted_tail_nodes), tail)
+    head_array = np.full(len(corrupted_tail_nodes), head)
     relation_array = np.full(len(corrupted_tail_nodes), relation)
     value_array = np.zeros(len(corrupted_tail_nodes))
     unfiltered_corrupted_tails = np.column_stack((head_array, relation_array, corrupted_tail_nodes, value_array))
@@ -394,7 +393,7 @@ def calc_corrupted_triples(pos_example, nodes, nodes_dic, filtered=False, path=N
     return unfiltered_corrupted_heads, unfiltered_corrupted_tails, filtered_corrupted_heads, filtered_corrupted_tails
 
 
-def _get_corrupted_examples (corrupted_triples, pos_examples, filtered):
+def _get_corrupted_examples(corrupted_triples, pos_examples, filtered):
     """"
     Creates a dataset of corrupted triples according to the 'filtered' setting
         Parameters
@@ -426,7 +425,7 @@ def _get_corrupted_examples (corrupted_triples, pos_examples, filtered):
     return corrupted_triples_df.values
 
 
-def _group_corrupted_examples (corrupted_dict, col_names):
+def _group_corrupted_examples(corrupted_dict, col_names):
     """"
      Parameters
      ----------
@@ -464,6 +463,7 @@ def _group_corrupted_examples (corrupted_dict, col_names):
 def create_mappings(elements):
     element_label_to_id = { element_label : id  for id, element_label in enumerate(elements)}
     return element_label_to_id
+
 
 def map_elements(elements, mapping):
     return np.vectorize(mapping.get)(elements)
