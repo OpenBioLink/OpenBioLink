@@ -4,11 +4,35 @@ import evaluation.evalConfig as evalConst
 import globalConfig as globConst
 import pandas
 
+def write_mappings(node_label_to_id=None, node_types_to_id=None, relation_label_to_id=None):
+    model_dir = os.path.join(os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME),
+                                    evalConst.MODEL_DIR)
+    os.makedirs(model_dir, exist_ok=True)
+
+    if node_label_to_id is not None:
+        with open(os.path.join(model_dir, evalConst.MODEL_ENTITY_NAME_MAPPING_NAME), 'w') as file:
+            json.dump(node_label_to_id, file, indent=4, sort_keys=True)
+    if node_types_to_id is not None:
+        with open(os.path.join(model_dir, evalConst.MODEL_ENTITY_TYPE_MAPPING_NAME), 'w') as file:
+            json.dump(node_types_to_id, file, indent=4, sort_keys=True)
+    if relation_label_to_id is not None:
+        with open(os.path.join(model_dir, evalConst.MODEL_RELATION_TYPE_MAPPING_NAME), 'w') as file:
+            json.dump(relation_label_to_id, file, indent=4, sort_keys=True)
+
+
 def write_metric_results(metrics_results):
     eval_dir = os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME)
+    os.makedirs(eval_dir, exist_ok=True)
+
     with open(os.path.join(eval_dir, evalConst.EVAL_OUTPUT_FILE_NAME), 'w') as fp:
         json_metrics = {x.value: y for x, y in metrics_results.items()}
         json.dump(json_metrics, fp, indent=4)
+
+def read_mapping(path):
+    with open(path) as f:
+        string = f.read()
+        return json.loads(string)
+
 
 def read_corrupted_triples(path, sep = '\t'):
     heads_path = os.path.join(path, evalConst.CORRUPTED_HEADS_FILE_NAME)
