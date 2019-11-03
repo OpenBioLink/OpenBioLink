@@ -1,7 +1,10 @@
+import os
 import unittest
-import utils
+import src.openBioLink.utils as utils
 import pandas
 import numpy as np
+
+from edgeType import EdgeType
 
 
 class TestUtils(unittest.TestCase):
@@ -130,6 +133,110 @@ class TestUtils(unittest.TestCase):
 
     def test_get_diff(self):
         self.fail()
+
+    # ----- remove_parent_duplicates_and_reverses -----
+
+    def test_remove_parent_parent_in_remain(self):
+        #given
+        remove = pandas.DataFrame(
+            {'id1': ['a'],
+             'edgeType':[EdgeType.GENE_REACTION_GENE],
+             'id2': ["0"],
+             'value': list('x')})
+        remain = pandas.DataFrame(
+            {'id1': ['a', 'b', 'c'],
+             'edgeType': [EdgeType.GENE_GENE, EdgeType.GENE_GENE, EdgeType.GENE_GENE],
+             'id2': ["0", "1", "2"],
+             'value': list('xxy')})
+        #when
+        result = utils.remove_parent_duplicates_and_reverses(remove_set=remove, remain_set=remain)
+        #then
+        true_result = pandas.DataFrame(
+            {'id1': ['b', 'c'],
+             'edgeType': [ EdgeType.GENE_GENE, EdgeType.GENE_GENE],
+             'id2': [ "1", "2"],
+             'value': list('xy')})
+        np.testing.assert_array_equal(true_result.values, result.values)
+
+    def test_remove_parent_parent_in_remove(self):
+        #given
+        remove = pandas.DataFrame(
+            {'id1': ['a'],
+             'edgeType':[EdgeType.GENE_GENE],
+             'id2': ["0"],
+             'value': list('x')})
+        remain = pandas.DataFrame(
+            {'id1': ['a', 'b', 'c'],
+             'edgeType': [EdgeType.GENE_REACTION_GENE, EdgeType.GENE_REACTION_GENE, EdgeType.GENE_REACTION_GENE],
+             'id2': ["0", "1", "2"],
+             'value': list('xxy')})
+        #when
+        result = utils.remove_parent_duplicates_and_reverses(remove_set=remove, remain_set=remain)
+        #then
+        true_result = pandas.DataFrame(
+            {'id1': ['a', 'b', 'c'],
+             'edgeType': [EdgeType.GENE_REACTION_GENE, EdgeType.GENE_REACTION_GENE, EdgeType.GENE_REACTION_GENE],
+             'id2': ["0", "1", "2"],
+             'value': list('xxy')})
+        np.testing.assert_array_equal(true_result.values, result.values)
+
+    def test_remove_parent_reverse_parent(self):
+        #given
+        remove = pandas.DataFrame(
+            {'id1': ['a'],
+             'edgeType':[EdgeType.GENE_REACTION_GENE],
+             'id2': ["0"],
+             'value': list('x')})
+        remain = pandas.DataFrame(
+            {'id1': ['0', 'b', 'c'],
+             'edgeType': [EdgeType.GENE_GENE, EdgeType.GENE_GENE, EdgeType.GENE_GENE],
+             'id2': ["a", "1", "2"],
+             'value': list('xxy')})
+        #when
+        result = utils.remove_parent_duplicates_and_reverses(remove_set=remove, remain_set=remain)
+        #then
+        true_result = pandas.DataFrame(
+            {'id1': ['b', 'c'],
+             'edgeType': [EdgeType.GENE_GENE, EdgeType.GENE_GENE],
+             'id2': ["1", "2"],
+             'value': list('xy')})
+        np.testing.assert_array_equal(true_result.values, result.values)
+
+    def test_remove_parent_child_and_parent_and_sibling_in_remain(self):
+        # given
+        remove = pandas.DataFrame(
+            {'id1': ['a'],
+             'edgeType': [EdgeType.GENE_REACTION_GENE],
+             'id2': ["0"],
+             'value': list('x')})
+        remain = pandas.DataFrame(
+            {'id1': ['a', 'a', 'a'],
+             'edgeType': [EdgeType.GENE_GENE, EdgeType.GENE_EXPRESSION_GENE, EdgeType.GENE_REACTION_GENE],
+             'id2': ["0", "0", "0"],
+             'value': list('xxx')})
+        # when
+        result = utils.remove_parent_duplicates_and_reverses(remove_set=remove, remain_set=remain)
+        # then
+        true_result = pandas.DataFrame(
+            {'id1': ['a', 'a'],
+             'edgeType': [EdgeType.GENE_EXPRESSION_GENE, EdgeType.GENE_REACTION_GENE],
+             'id2': ["0", "0"],
+             'value': list('xx')})
+        np.testing.assert_array_equal(true_result.values, result.values)
+
+    def test_remove_parent_empty_remove(self):
+        # given
+        remove = pandas.DataFrame()
+        remain = pandas.DataFrame(
+            {'id1': ['a', 'a', 'a'],
+             'edgeType': [EdgeType.GENE_GENE, EdgeType.GENE_EXPRESSION_GENE, EdgeType.GENE_REACTION_GENE],
+             'id2': ["0", "0", "0"],
+             'value': list('xxx')})
+        # when
+        result = utils.remove_parent_duplicates_and_reverses(remove_set=remove, remain_set=remain)
+        # then
+        true_result = remain.copy()
+        np.testing.assert_array_equal(true_result.values, result.values)
 
 
     # ----- remove_reverse_edges -------
