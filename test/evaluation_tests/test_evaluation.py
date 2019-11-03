@@ -1,3 +1,4 @@
+import os
 from io import StringIO
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -84,21 +85,22 @@ class TestEvaluation(TestCase):
         sorted_test_indices = sorted_indices_head + [x+len(sorted_indices_head) for x in sorted_indices_tail]
 
         model = TransR_PyKeen()
-        model.get_ranked_predictions = MagicMock(side_effect=lambda x:
+        model.get_ranked_and_sorted_predictions = MagicMock(side_effect=lambda x:
             (ranked_examples_head,sorted_indices_head) if x is examples_head
             else (ranked_examples_head2,sorted_indices_head2) if x is examples_head2
             else (ranked_examples_tail,sorted_indices_tail) if x is examples_tail
             else (ranked_examples_tail2,sorted_indices_tail2) if x is examples_tail2
             else (ranked_test_examples,sorted_test_indices) if x is test_examples
             else None
-        )
+                                                            )
         metrics = [RankMetricType.HITS_AT_K, RankMetricType.HITS_AT_K_UNFILTERED, RankMetricType.MRR, RankMetricType.MRR_UNFILTERED,
                    ThresholdMetricType.ROC, ThresholdMetricType.ROC_AUC, ThresholdMetricType.PR_REC_CURVE, ThresholdMetricType.PR_AUC]
 
         #when
-        e = Evaluation(model, test_set_path='foo2.csv')
+        path = os.path.dirname(os.path.abspath(__file__))
+        e = Evaluation(model, test_set_path=os.path.join(path, 'foo2.csv'))
         e.test_examples = test_examples
-        result = e.evaluate(metrics, nodes_path='foo.csv')
+        result = e.evaluate(metrics, nodes_path=os.path.join(path,'foo.csv'))
 
         #then
         assert result is not None

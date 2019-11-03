@@ -16,7 +16,7 @@ class TestSources(unittest.TestCase):
             with self.subTest(cls):
                 url = cls.URL
                 #if url.startswith('ftp'):
-                self.assertTrue(utils.file_exists(url))
+                self.assertTrue(utils.url_exists(url))
                 #else:
                     #assert(request.urlopen(cls.URL).status==200)
 

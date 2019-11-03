@@ -4,6 +4,8 @@ from src.openBioLink.train_test_set_creation.trainTestSplitCreation import Train
 import numpy as np
 import pandas as pd
 import random
+import os
+
 
 
 class TestTrainTestSetCreation(TestCase):
@@ -219,12 +221,13 @@ class TestTrainTestSetCreation(TestCase):
         #tests:
         # *) removal of edges containing PATHWAY_KEGG:hsa04000 in test_set
         #given
-        edges_path = 'tmo_t_data/edges.csv'
-        tn_edges_path = 'tmo_t_data/TN_edges.csv'
-        nodes_path = 'tmo_t_data/nodes.csv'
-        tmo_edges_path = 'tmo_t_data/tmo_edges.csv'
-        tmo_tn_edges_path = 'tmo_t_data/tmo_TN_edges.csv'
-        tmo_nodes_path = 'tmo_t_data/tmo_nodes.csv'
+        path = os.path.dirname(os.path.abspath(__file__))
+        edges_path = os.path.join(path,'tmo_t_data/edges.csv')
+        tn_edges_path = os.path.join(path,'tmo_t_data/TN_edges.csv')
+        nodes_path = os.path.join(path,'tmo_t_data/nodes.csv')
+        tmo_edges_path = os.path.join(path,'tmo_t_data/tmo_edges.csv')
+        tmo_tn_edges_path = os.path.join(path,'tmo_t_data/tmo_TN_edges.csv')
+        tmo_nodes_path = os.path.join(path,'tmo_t_data/tmo_nodes.csv')
         ttsc = TrainTestSetCreation(graph_path=edges_path,
                                     tn_graph_path=tn_edges_path,
                                     all_nodes_path=nodes_path,
@@ -251,12 +254,13 @@ class TestTrainTestSetCreation(TestCase):
             #tests:
             # *) vanished edge: GENE_10	GENE_OVEREXPRESSED_ANATOMY	ANATOMY_UBERON:0000001	high quality	1
             #given
-            edges_path = 'tmo_t_data/vanishing_edges.csv'
-            tn_edges_path = 'tmo_t_data/TN_edges.csv'
-            nodes_path = 'tmo_t_data/nodes.csv'
-            tmo_edges_path = 'tmo_t_data/tmo_edges.csv'
-            tmo_tn_edges_path = 'tmo_t_data/tmo_TN_edges.csv'
-            tmo_nodes_path = 'tmo_t_data/tmo_nodes.csv'
+            path = os.path.dirname(os.path.abspath(__file__))
+            edges_path = os.path.join(path,'tmo_t_data/vanishing_edges.csv')
+            tn_edges_path = os.path.join(path,'tmo_t_data/TN_edges.csv')
+            nodes_path = os.path.join(path,'tmo_t_data/nodes.csv')
+            tmo_edges_path = os.path.join(path,'tmo_t_data/tmo_edges.csv')
+            tmo_tn_edges_path = os.path.join(path,'tmo_t_data/tmo_TN_edges.csv')
+            tmo_nodes_path = os.path.join(path,'tmo_t_data/tmo_nodes.csv')
             ttsc = TrainTestSetCreation(graph_path=edges_path,
                                         tn_graph_path=tn_edges_path,
                                         all_nodes_path=nodes_path,
