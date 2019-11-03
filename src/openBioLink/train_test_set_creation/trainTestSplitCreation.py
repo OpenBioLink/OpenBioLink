@@ -131,6 +131,8 @@ class TrainTestSetCreation():
         # generate, train-, test-, validation-sets
         test_set = all_samples.sample(frac=test_frac, random_state=glob.RANDOM_STATE)
         train_val_set = all_samples.drop(list(test_set.index.values))
+        test_set = utils.remove_parent_duplicates_and_reverses(remain_set=test_set, remove_set=train_val_set)
+
         nodes_in_train_val_set = train_val_set[globalConfig.NODE1_ID_COL_NAME].tolist() \
                                  + train_val_set[globalConfig.NODE2_ID_COL_NAME].tolist()
         new_test_nodes = self.get_additional_nodes(old_nodes_list=nodes_in_train_val_set,
@@ -142,6 +144,7 @@ class TrainTestSetCreation():
                             + test_set[globalConfig.NODE2_ID_COL_NAME].tolist()
         if graphProp.DIRECTED:
             train_val_set = utils.remove_reverse_edges(remain_set=train_val_set, remove_set=test_set)
+
         if crossval:
             train_val_set_tuples = self.create_cross_val(train_val_set, val)
             new_val_nodes = None
@@ -161,6 +164,9 @@ class TrainTestSetCreation():
         if graphProp.DIRECTED:
             train_val_set_tuples = [(utils.remove_reverse_edges(remain_set=t, remove_set=v), v)
                                     for t,v in train_val_set_tuples]
+        train_val_set_tuples = [(t, utils.remove_parent_duplicates_and_reverses(remain_set=v, remove_set=t))
+                                for t, v in train_val_set_tuples]
+
         self.writer.print_sets(train_val_set_tuples=train_val_set_tuples,
                           new_val_nodes=new_val_nodes,
                           test_set=test_set,
@@ -198,6 +204,7 @@ class TrainTestSetCreation():
         test_negative_samples[globalConfig.VALUE_COL_NAME] = 0
 
         test_set = (test_positive_samples.append(test_negative_samples, ignore_index=True)).reset_index(drop=True)
+        test_set = utils.remove_parent_duplicates_and_reverses(remain_set=test_set, remove_set=train_set)
         new_test_nodes = self.get_additional_nodes(old_nodes_list=self.tmo_nodes[globalConfig.ID_NODE_COL_NAME].tolist(),
                                                    new_nodes_list=self.all_nodes[globalConfig.ID_NODE_COL_NAME].tolist())
         if new_test_nodes:

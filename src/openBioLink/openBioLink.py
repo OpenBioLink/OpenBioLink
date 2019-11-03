@@ -246,7 +246,6 @@ def main(args_list=None):
     logging.info('Finished!')
 
 
-
 if __name__ == '__main__':
     logger = logging.getLogger()
     logger.setLevel('INFO')

@@ -9,6 +9,7 @@ import numpy as np
 import pandas
 
 import globalConfig as globConst
+from edgeType import EdgeType
 
 
 def get_leaf_subclasses(cls, class_set=None):
@@ -266,6 +267,15 @@ def get_diff(df1, df2, ignore_qscore=False, path=None):
         right_only.to_csv(os.path.join(path, 'diff_right_only.csv'), sep='\t', index=False, header=False)
     return left_only, right_only
 
+
+def remove_parent_duplicates_and_reverses(remain_set, remove_set):
+    if not remain_set.empty and not remove_set.empty:
+        remove_set_copy = remove_set.copy()
+        remove_set_copy[globConst.EDGE_TYPE_COL_NAME] = remove_set_copy[globConst.EDGE_TYPE_COL_NAME].apply(lambda x: EdgeType[x].get_parent() if type(x) == str else x.get_parent())
+        remain_set, _ = get_diff(remain_set, remove_set_copy)
+        remain_set = remove_reverse_edges(remain_set, remove_set_copy)
+    return remain_set
+    #testme
 
 def remove_reverse_edges(remain_set, remove_set):
     """"
