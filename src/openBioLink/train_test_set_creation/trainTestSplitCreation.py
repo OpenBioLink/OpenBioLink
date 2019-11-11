@@ -67,15 +67,19 @@ class TrainTestSetCreation():
         self.writer = TrainTestSetWriter()
         with open(all_nodes_path) as file:
             self.all_nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
+            self.all_nodes = self.all_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
 
         with open(graph_path) as file:
             self.all_tp = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
             self.all_tp[globalConfig.VALUE_COL_NAME] = 1
+            self.all_tp = self.all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
         self.tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
         with open(tn_graph_path) as file:
             self.all_tn = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
             self.all_tn[globalConfig.VALUE_COL_NAME] = 0
+            self.all_tn = self.all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
+
         self.tn_edgeTypes = list(self.all_tn[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
         self.meta_edges_dic = {}
@@ -103,15 +107,18 @@ class TrainTestSetCreation():
         if t_minus_one_nodes_path and t_minus_one_graph_path and t_minus_one_tn_graph_path:
             with open(t_minus_one_nodes_path) as file:
                 self.tmo_nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
+                self.tmo_nodes = self.tmo_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
 
             with open(t_minus_one_graph_path) as file:
                 self.tmo_all_tp = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
                 self.tmo_all_tp[globalConfig.VALUE_COL_NAME] = 1
+                self.tmo_all_tp = self.tmo_all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
             self.tmo_tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
             with open(t_minus_one_tn_graph_path) as file:
                 self.tmo_all_tn = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
                 self.tmo_all_tn[globalConfig.VALUE_COL_NAME] = 0
+                self.tmo_all_tn = self.tmo_all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
             self.tmo_tn_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
 
