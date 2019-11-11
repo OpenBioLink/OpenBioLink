@@ -277,6 +277,13 @@ def get_diff(df1, df2, ignore_qscore=False, path=None):
     return left_only, right_only
 
 
+def remove_inconsistent_edges(df : pandas.DataFrame):
+    """ removes edges that contain inconsistent information i.e. when an edge is present both as positive and negative example"""
+    return df.drop_duplicates(subset=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME],
+                              keep=False)
+
+
+
 def remove_parent_duplicates_and_reverses(remain_set, remove_set):
     if not remain_set.empty and not remove_set.empty:
         remove_set_copy = remove_set.copy()

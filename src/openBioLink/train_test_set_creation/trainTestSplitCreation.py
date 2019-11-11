@@ -134,6 +134,7 @@ class TrainTestSetCreation():
         negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, self.all_tn.copy(), self.all_nodes)
         negative_samples = negative_sampler.generate_random_neg_samples(positive_samples)
         all_samples = (positive_samples.append(negative_samples, ignore_index=True)).reset_index(drop=True)
+        all_samples = utils.remove_inconsistent_edges(all_samples).reset_index(drop=True)
 
         # generate, train-, test-, validation-sets
         test_set = all_samples.sample(frac=test_frac, random_state=glob.RANDOM_STATE)
@@ -195,6 +196,7 @@ class TrainTestSetCreation():
                                            self.tmo_all_tn,
                                            self.tmo_nodes)
         tmo_negative_samples = tmo_negative_sampler.generate_random_neg_samples(tmo_positive_samples)
+        #todo remove not consistent edges
         tmo_negative_samples[globalConfig.VALUE_COL_NAME] = 0
         tmo_all_samples = (tmo_positive_samples.append(tmo_negative_samples, ignore_index=True)).reset_index(drop=True) #todo ist append nicht in pace?
         train_set = tmo_all_samples
