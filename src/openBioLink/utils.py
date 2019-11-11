@@ -244,6 +244,12 @@ def get_diff(df1, df2, ignore_qscore=False, path=None):
             right_only : pandas.DataFrame
                 DataFrame containing rows that only appear in df2, but not df1
     """
+    df1['id1'] = df1['id1'].astype(str)
+    df1['id2'] = df1['id2'].astype(str)
+    df1['edgeType'] = df1['edgeType'].astype(str)
+    df2['id1'] = df2['id1'].astype(str)
+    df2['id2'] = df2['id2'].astype(str)
+    df2['edgeType'] = df2['edgeType'].astype(str)
     if ignore_qscore:
         all_cols = globConst.COL_NAMES_SAMPLES
         cols = globConst.COL_NAMES_TRIPLES + [globConst.VALUE_COL_NAME]
@@ -255,9 +261,12 @@ def get_diff(df1, df2, ignore_qscore=False, path=None):
         left_only = diff.loc[lambda x: x._merge == 'left_only']
         left_only[globConst.QSCORE_COL_NAME] = left_only[globConst.QSCORE_COL_NAME+'_x']
         left_only = left_only[all_cols]
+        left_only.drop_duplicates(inplace=True, keep=False)
         right_only = diff.loc[lambda x: x._merge == 'right_only']
         right_only[globConst.QSCORE_COL_NAME] = right_only[globConst.QSCORE_COL_NAME+'_y']
         right_only = right_only[all_cols]
+        right_only.drop_duplicates(inplace=True, keep=False)
+
     else:
         diff = pandas.merge(df1, df2, how='outer', indicator=True).loc[lambda x: x['_merge'] != 'both']
         left_only = diff.loc[lambda x: x._merge == 'left_only'].drop(['_merge'], axis=1)
@@ -271,8 +280,15 @@ def get_diff(df1, df2, ignore_qscore=False, path=None):
 def remove_parent_duplicates_and_reverses(remain_set, remove_set):
     if not remain_set.empty and not remove_set.empty:
         remove_set_copy = remove_set.copy()
-        remove_set_copy[globConst.EDGE_TYPE_COL_NAME] = remove_set_copy[globConst.EDGE_TYPE_COL_NAME].apply(lambda x: EdgeType[x].get_parent() if type(x) == str else x.get_parent())
-        remain_set, _ = get_diff(remain_set, remove_set_copy)
+        remove_set_copy[globConst.EDGE_TYPE_COL_NAME] = remove_set_copy[globConst.EDGE_TYPE_COL_NAME]\
+            .apply(lambda x: EdgeType[x].get_parent() if type(x) == str else x.get_parent())
+        remove_set_copy.drop_duplicates(inplace=True, subset=[globConst.NODE1_ID_COL_NAME,
+                                                         globConst.NODE2_ID_COL_NAME,
+                                                         globConst.EDGE_TYPE_COL_NAME])
+        remain_set, _ = get_diff(remain_set, remove_set_copy, ignore_qscore=True)
+        remain_set.drop_duplicates(inplace=True, subset=[globConst.NODE1_ID_COL_NAME,
+                                                         globConst.NODE2_ID_COL_NAME,
+                                                         globConst.EDGE_TYPE_COL_NAME])
         remain_set = remove_reverse_edges(remain_set, remove_set_copy)
     return remain_set
     #testme
