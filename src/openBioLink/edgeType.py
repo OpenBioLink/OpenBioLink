@@ -64,6 +64,6 @@ class EdgeType (Enum):
             return EdgeType.GENE_GENE
         elif self in [EdgeType.GENE_OVEREXPRESSED_ANATOMY,
                       EdgeType.GENE_UNDEREXPRESSED_ANATOMY]:
-            return EdgeType.GENE_EXPRESSION_GENE
+            return EdgeType.GENE_EXPRESSED_ANATOMY
         else:
             return self
