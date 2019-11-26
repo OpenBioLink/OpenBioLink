@@ -262,7 +262,7 @@ class EvalFrame(tk.Frame):
         if os.path.exists(train_path) or 'SplitFrame' in self.controller.selected_frames:
             self.train_path.set(train_path)
 
-        nodes_path = os.path.join(tts_files_folder, 'tts_nodes.csv')
+        nodes_path = os.path.join(tts_files_folder, ttsConst.TRAIN_VAL_NODES_FILE_NAME)
         if os.path.exists(nodes_path) or 'GraphCreationFrame' in self.controller.selected_frames:
             self.nodes_or_corr_path.set(nodes_path)
 
