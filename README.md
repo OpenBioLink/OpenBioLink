@@ -3,21 +3,56 @@
 OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogenous biomedical graph data. It contains benchmark datasets as well as the underlying scrips to create them and to evaluate a costume model on them.
 
 ##Installation
+1) clone the git repository or download the project
+1) Create a new python3.7, or python3.6 virtual environment  *(note: under Windows, only python3.6 will work)*
+e.g.:
+```python3 -m venv my_venv```
+1) activate the virtual environment
+    * windows: ``my_venv\Scrips\activate``
+    * linux/mac: ``source my_venv/bin/activate``
+1) Install a pytorch version suitable for your system https://pytorch.org/
+1) Install the requirements stated in requirements.txt e.g.  ```pip install -r requirements.txt```
 
-Via pip
-* Install a pytorch version suitable for your system
-* ```pip install -r requirements.txt```
+##Benchmark Dataset
+ The [OpenBioLink2020 Dataset](https://samwald.info/res/OpenBioLink_2020/HQ_DIR.zip) is a highly challenging
+ benchmark dataset containing ---:--- edges.
+ The test set does not contain trivially predictable, inverse edges from the training set 
+ and does contain all different edge types, to provide a more realistic edge prediction
+ scenario.
+ 
+ ###Leaderboard
+ 
+ | model | hits@10 | hits@1 | hyperparameter | paper | code |
+|-------|---------|--------|----------------|-------|------|
+|       |         |        |                |       |      |
 
-##Overview
-The OpenBioLink framework consists of three parts (1) graph creation, (2) train-test split creation, (3) training and evaluation.
 
-With the graph creation module and the train-test set module, costumed data sets can be created to suit individual needs. The last module serves as interface to train and evaluate link prediction models.
+To also be able to analyze the effect of the data quality as well as the directionality of the 
+evaluation graph other settings of OpenBioLink2020 are provided, in directed and undirected setting,
+with and without quality cutoff.
 
+* [OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020/HQ_DIR.zip) (default dataset)
+* [OpenBioLink2020: undirected, high quality](https://samwald.info/res/OpenBioLink_2020/HQ_UNDIR.zip)
+* [OpenBioLink2020: directed, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_DIR.zip)
+* [OpenBioLink2020: undirected, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_UNDIR.zip)
+
+ 
 ##Manual
 
+The OpenBioLink framework consists of three parts, called actions
+ 1) graph creation
+ 2) train-test split creation
+ 3) training and evaluation
+
+With the graph creation and the train-test set action, costumed data sets can be created to suit individual needs.
+The last action serves as interface to train and evaluate link prediction models.
+
+####Calling via GUI
 By calling the program without any parameters, the gui is started, 
 providing a handy interface to define parameters needed. In the last step, 
 the corresponding command line options are displayed.
+
+####Calling via command line
 
 ````python openbiolnk.py -p WorkingDirPath [-action] [--options] ...````
 
