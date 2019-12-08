@@ -112,7 +112,7 @@ class Evaluation:
         metrics_results = {}
 
         if num_ranked_metrics > 0:
-            ranked_metrics_results = self.evaluate_ranked_metrics_3(metrics=metrics,
+            ranked_metrics_results = self.evaluate_ranked_metrics_2(metrics=metrics,
                                                                     ks=ks,
                                                                     filtered_setting=filtered_options,
                                                                     unfiltered_setting=unfiltered_options)

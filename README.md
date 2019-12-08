@@ -15,16 +15,17 @@ e.g.:
 
 ## Benchmark Dataset
  The [OpenBioLink2020 Dataset](https://samwald.info/res/OpenBioLink_2020/HQ_DIR.zip) is a highly challenging
- benchmark dataset containing ---:--- edges.
+ benchmark dataset containing over 5 million positive and negative edges.
  The test set does not contain trivially predictable, inverse edges from the training set 
  and does contain all different edge types, to provide a more realistic edge prediction
  scenario.
  
- ### Leaderboard
+ ### Leaderboard    
  
- | model | hits@10 | hits@1 | hyperparameter | paper | code |
-|-------|---------|--------|----------------|-------|------|
-|       |         |        |                |       |      |
+ | model | hits@10 | hits@1 |  paper | code |
+|-------|---------|--------|-------|------|
+|   TransE    |    0.0749     |   0.0125     |       |      |
+|   TransR    |    0.0639     |   0.0096     |       |      |
 
 
 To also be able to analyze the effect of the data quality as well as the directionality of the 
@@ -54,7 +55,7 @@ the corresponding command line options are displayed.
 
 #### Calling via command line
 
-````python openbiolnk.py -p WorkingDirPath [-action] [--options] ...````
+````python openBioLink.py -p WORKING_DIR_PATH [-action] [--options] ...````
 
 **Action: Graph Creation**
 ````
