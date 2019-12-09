@@ -24,8 +24,8 @@ e.g.:
  
  | model | hits@10 | hits@1 |  paper | code |
 |-------|---------|--------|-------|------|
-|   TransE    |    0.0749     |   0.0125     |       |      |
-|   TransR    |    0.0639     |   0.0096     |       |      |
+|   TransE (Baseline)   |    0.0749     |   0.0125     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
+|   TransR (Baseline)   |    0.0639     |   0.0096     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 
 
 To also be able to analyze the effect of the data quality as well as the directionality of the 
