@@ -2,6 +2,10 @@
 
 OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogenous biomedical graph data. It contains benchmark datasets as well as the underlying scrips to create them and to evaluate a costume model on them.
 
+[Manuscript preprint](https://github.com/OpenBioLink/OpenBioLink/raw/master/paper/preprint.pdf)
+
+[Supplementary data](https://github.com/OpenBioLink/OpenBioLink/raw/master/paper/supplementary%20data.pdf)
+
 ## Installation
 1) clone the git repository or download the project
 1) Create a new python3.7, or python3.6 virtual environment  *(note: under Windows, only python3.6 will work)*
