@@ -1,6 +1,6 @@
 # OpenBioLink
 
-OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogenous biomedical graph data. It contains benchmark datasets as well as the underlying scrips to create them and to evaluate a costume model on them.
+OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as the underlying scrips to create them and to evaluate a costume model on them.
 
 [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)
 
