@@ -4,7 +4,7 @@ import queue
 from tkinter import ttk, N, S, E, W
 from tkinter.scrolledtext import ScrolledText
 
-from .gui import *
+from openbiolink.gui.gui import *
 
 logger = logging.getLogger()
 

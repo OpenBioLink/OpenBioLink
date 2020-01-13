@@ -1,8 +1,10 @@
-#from ..types.dbType import DbType
-from ..file_reader.csvReader import CsvReader
-#from ..types.readerType import ReaderType
-from .. import graphCreationConfig as g
+# from openbiolink.graph_creationtypes.dbType import DbType
 import os
+
+# from openbiolink.graph_creationtypes.readerType import ReaderType
+from openbiolink.graph_creation import graphCreationConfig as g
+from openbiolink.graph_creation.file_reader.csvReader import CsvReader
+
 
 class MyCsvReader(CsvReader):
     """ to create a new csv file reader:

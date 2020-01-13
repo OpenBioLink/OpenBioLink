@@ -1,14 +1,13 @@
+import os
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
-from gui import gui as gui
-from evaluation.metricTypes import RankMetricType, ThresholdMetricType
-from evaluation.models.modelTypes import ModelTypes
-import evaluation.evalConfig as evalConst
+import openbiolink.evaluation.evalConfig as evalConst
+import openbiolink.train_test_set_creation.ttsConfig as ttsConst
+from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
+from openbiolink.evaluation.models.modelTypes import ModelTypes
+from openbiolink.gui import gui as gui
 
-import os
-import train_test_set_creation.ttsConfig as ttsConst
-import graph_creation.graphCreationConfig as gcConst
 
 class EvalFrame(tk.Frame):
 

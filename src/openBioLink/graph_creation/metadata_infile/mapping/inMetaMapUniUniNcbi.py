@@ -1,5 +1,5 @@
-from ...types.infileType import InfileType
-from ...metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.types.infileType import InfileType
 
 
 class InMetaMapUniUniNcbi(InfileMetadata):

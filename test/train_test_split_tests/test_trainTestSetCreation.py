@@ -1,6 +1,6 @@
 from unittest import TestCase
-import src.openBioLink.globalConfig as globalConst
-from src.openBioLink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
+import src.openbiolink.globalConfig as globalConst
+from src.openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 import numpy as np
 import pandas as pd
 import random

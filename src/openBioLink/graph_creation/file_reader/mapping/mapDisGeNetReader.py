@@ -1,9 +1,11 @@
-from ...types.dbType import DbType
-from ...file_reader.csvReader import CsvReader
-from ...types.readerType import ReaderType
-from ...metadata_db_file.mapping.dbMetaMapDisGeNet import DbMetaMapDisGeNet
-from ... import graphCreationConfig as gcConst
 import os
+
+from openbiolink.graph_creation import graphCreationConfig as gcConst
+from openbiolink.graph_creation.file_reader.csvReader import CsvReader
+from openbiolink.graph_creation.metadata_db_file.mapping.dbMetaMapDisGeNet import DbMetaMapDisGeNet
+from openbiolink.graph_creation.types.dbType import DbType
+from openbiolink.graph_creation.types.readerType import ReaderType
+
 
 class MapDisGeNetReader(CsvReader):
 

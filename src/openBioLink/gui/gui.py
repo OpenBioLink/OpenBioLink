@@ -4,13 +4,13 @@ import tkinter as tk
 from tkinter import font  as tkfont, messagebox
 from tkinter.ttk import Style
 
-import openBioLink
-from .confirmFrame import ConfirmFrame
-from .console import ConsoleFrame
-from .graphCreationFrame import GraphCreationFrame
-from .splitFrame import SplitFrame
-from .startPage import StartPage
-from .evaluationFrame import EvalFrame
+from openbiolink import openBioLink
+from openbiolink.gui.confirmFrame import ConfirmFrame
+from openbiolink.gui.console import ConsoleFrame
+from openbiolink.gui.evaluationFrame import EvalFrame
+from openbiolink.gui.graphCreationFrame import GraphCreationFrame
+from openbiolink.gui.splitFrame import SplitFrame
+from openbiolink.gui.startPage import StartPage
 
 app = None
 

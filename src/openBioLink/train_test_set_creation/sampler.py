@@ -1,10 +1,11 @@
-import pandas
 import numpy
-
-import globalConfig as globConst
-import train_test_set_creation.ttsConfig as ttsConst
+import pandas
 from tqdm import tqdm
-import utils
+
+import openbiolink.train_test_set_creation.ttsConfig as ttsConst
+from openbiolink import globalConfig as globConst
+from openbiolink import utils
+
 
 class Sampler():
 

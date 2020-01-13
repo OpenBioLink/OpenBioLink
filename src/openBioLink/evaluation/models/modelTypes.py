@@ -1,5 +1,8 @@
 from enum import Enum
-import evaluation.models.pykeen_models as pykeen_models
+
+import openbiolink.evaluation.models.pykeen_models as pykeen_models
+
+
 class ModelTypes(Enum):
 
     #PYKEEN_TRANS_E = 'TransE_PyKeen'

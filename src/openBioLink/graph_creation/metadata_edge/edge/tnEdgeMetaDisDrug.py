@@ -1,13 +1,14 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...types.qualityType import QualityType
-from ...metadata_edge.edge.edgeMetaDisDrug import EdgeMetaDisDrug
-from ...metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
-from ...metadata_infile import InMetaMapOntoDoAltid
-from ...metadata_infile.edge.inMetaEdgeDrugCentralContraInd import InMetaEdgeDrugCentralContraInd
-from ...metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
-from ...metadata_infile.mapping.inMetaMapDrugCentralPubchem import InMetaMapDrugCentralPubchem
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.edge.edgeMetaDisDrug import EdgeMetaDisDrug
+from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile import InMetaMapOntoDoAltid
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeDrugCentralContraInd import \
+    InMetaEdgeDrugCentralContraInd
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapDrugCentralPubchem import InMetaMapDrugCentralPubchem
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class TnEdgeMetaDisDrug(TnEdgeRegularMetadata):

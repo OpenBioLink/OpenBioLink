@@ -1,7 +1,7 @@
-from ...types.infileType import InfileType
-from ...types.readerType import ReaderType
-from ..fileProcessor import FileProcessor
-from ...metadata_infile import InMetaEdgeStitchInhibition
+from openbiolink.graph_creation.file_processor.fileProcessor import FileProcessor
+from openbiolink.graph_creation.metadata_infile import InMetaEdgeStitchInhibition
+from openbiolink.graph_creation.types.infileType import InfileType
+from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class EdgeStitchInhibitionProcessor(FileProcessor):

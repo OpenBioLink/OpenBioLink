@@ -3,23 +3,23 @@ import os
 
 from tqdm import tqdm
 
-import globalConfig
-import globalConfig as globConst
-from . import graphCreationConfig as gcConst
-import graphProperties as graphProp
-import utils
-from .graphCreator import GraphCreator
-from .graphWriter import GraphWriter
-from .metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from .metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from .metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
-from cli import Cli
-from .file_downloader.fileDownloader import *
-from .file_processor.fileProcessor import *
-from .file_reader.fileReader import *
-from .file_writer.fileWriter import *
-from .metadata_db_file import *
-from .metadata_infile import *
+import openbiolink.graphProperties as graphProp
+from openbiolink import globalConfig
+from openbiolink import globalConfig as globConst
+from openbiolink import utils
+from openbiolink.cli import Cli
+from openbiolink.graph_creation import graphCreationConfig as gcConst
+from openbiolink.graph_creation.file_downloader.fileDownloader import *
+from openbiolink.graph_creation.file_processor.fileProcessor import *
+from openbiolink.graph_creation.file_reader.fileReader import *
+from openbiolink.graph_creation.file_writer.fileWriter import *
+from openbiolink.graph_creation.graphCreator import GraphCreator
+from openbiolink.graph_creation.graphWriter import GraphWriter
+from openbiolink.graph_creation.metadata_db_file import *
+from openbiolink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile import *
 
 
 class Graph_Creation():
@@ -84,7 +84,7 @@ class Graph_Creation():
             o_file_path = os.path.join(gcConst.O_FILE_PATH, db_file.ofile_name)
             if not for_all:
                 if globConst.GUI_MODE:
-                    from gui.gui import skipExistingFiles
+                    from openbiolink.gui.gui import skipExistingFiles
                     skip, for_all = skipExistingFiles(o_file_path)
                 else:
                     skip, for_all = Cli.skip_existing_files(o_file_path)
@@ -114,7 +114,7 @@ class Graph_Creation():
                     first_processor = self.readerType_processor_map[reader.readerType][0]
                     first_processor_out_path = os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name)
                     if globConst.GUI_MODE:
-                        from gui.gui import skipExistingFiles
+                        from openbiolink.gui.gui import skipExistingFiles
                         skip, for_all = skipExistingFiles(first_processor_out_path)
                     else:
                         skip, for_all = Cli.skip_existing_files(first_processor_out_path)
@@ -127,7 +127,7 @@ class Graph_Creation():
                         out_file_path = os.path.join(gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name)
                         if not for_all:
                             if globConst.GUI_MODE:
-                                from gui.gui import skipExistingFiles
+                                from openbiolink.gui.gui import skipExistingFiles
                                 skip, for_all = skipExistingFiles(out_file_path)
                             else:
                                 skip, for_all = Cli.skip_existing_files(out_file_path)
@@ -238,7 +238,7 @@ class Graph_Creation():
                       str([str(x) for x in additional_remove_mapping_infileType]))
             logging.warning(message)
             if globConst.GUI_MODE:
-                from gui import gui
+                from openbiolink.gui import gui
                 gui.askForExit(message)
             elif globConst.INTERACTIVE_MODE:
                 Cli.ask_for_exit(message)

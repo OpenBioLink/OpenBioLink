@@ -1,11 +1,11 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from gui import gui as gui
-import utils
 
-from graph_creation.metadata_db_file import DbMetadata
-from graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from openbiolink import utils
+from openbiolink.graph_creation.metadata_db_file import DbMetadata
+from openbiolink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from openbiolink.gui import gui as gui
 
 
 class GraphCreationFrame(tk.Frame):

@@ -8,8 +8,8 @@ from functools import reduce
 import numpy as np
 import pandas
 
-import globalConfig as globConst
-from edgeType import EdgeType
+from openbiolink import globalConfig as globConst
+from openbiolink.edgeType import EdgeType
 
 
 def get_leaf_subclasses(cls, class_set=None):

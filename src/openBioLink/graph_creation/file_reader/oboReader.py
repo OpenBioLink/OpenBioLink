@@ -1,11 +1,13 @@
-import globalConfig
-from .fileReader import FileReader
-from .parser.oboParser import OboParser
-from cli import Cli
-import globalConfig as globConst
-import numpy as np
-import sys
 import logging
+import sys
+
+import numpy as np
+
+from openbiolink import globalConfig
+from openbiolink import globalConfig as globConst
+from openbiolink.cli import Cli
+from openbiolink.graph_creation.file_reader.fileReader import FileReader
+from openbiolink.graph_creation.file_reader.parser.oboParser import OboParser
 
 
 class OboReader(FileReader):
@@ -42,7 +44,7 @@ class OboReader(FileReader):
                 if globalConfig.INTERACTIVE_MODE:
                     ask_continue_string =  info_string +'Continue if you do not need these edges in your graph'
                     if globConst.GUI_MODE:
-                        from gui import gui
+                        from openbiolink.gui import gui
                         gui.askForExit(ask_continue_string)
                     else:
                         Cli.ask_for_exit(ask_continue_string)

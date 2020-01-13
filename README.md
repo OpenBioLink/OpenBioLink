@@ -7,6 +7,14 @@ OpenBioLink is a resource and evaluation framework for evaluating link predictio
 [Supplementary data](https://github.com/OpenBioLink/OpenBioLink/raw/master/paper/supplementary%20data.pdf)
 
 ## Installation
+
+### Pip
+#### Linux/Mac
+```pip install openbiolink```
+#### Windows
+```pip install openbiolink -f https://download.pytorch.org/whl/torch_stable.html```
+
+### Source
 1) clone the git repository or download the project
 1) Create a new python3.7, or python3.6 virtual environment  *(note: under Windows, only python3.6 will work)*
 e.g.:
@@ -58,8 +66,8 @@ providing a handy interface to define parameters needed. In the last step,
 the corresponding command line options are displayed.
 
 #### Calling via command line
-
-````python openBioLink.py -p WORKING_DIR_PATH [-action] [--options] ...````
+From folder src
+```python -m openbiolink.openBioLink -p WORKING_DIR_PATH [-action] [--options] ...```
 
 **Action: Graph Creation**
 ````

@@ -1,4 +1,4 @@
-from . import EdgeMetadata
+from openbiolink.graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
 
 
 class EdgeOntoMetadata(EdgeMetadata):

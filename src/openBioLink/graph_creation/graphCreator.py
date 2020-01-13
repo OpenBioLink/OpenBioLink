@@ -1,17 +1,17 @@
 import csv
+import logging
 import os
 
 from tqdm import tqdm
-import logging
 
-import globalConfig
-import graphProperties as graphProp
-from . import graphCreationConfig as gcConst
-import globalConfig as globConst
-import utils
-from cli import Cli
-from edge import Edge
-from node import Node
+import openbiolink.graphProperties as graphProp
+from openbiolink import globalConfig
+from openbiolink import globalConfig as globConst
+from openbiolink import utils
+from openbiolink.cli import Cli
+from openbiolink.edge import Edge
+from openbiolink.graph_creation import graphCreationConfig as gcConst
+from openbiolink.node import Node
 
 
 class GraphCreator():
@@ -90,7 +90,7 @@ class GraphCreator():
             message ='File does not exist: %s ! Edgetype %s will not be created' %(edge_metadata.edges_file_path, str(edge_metadata.edgeType))
             if globalConfig.INTERACTIVE_MODE:
                 if globConst.GUI_MODE:
-                    from gui import gui
+                    from openbiolink.gui import gui
                     gui.askForExit(message)
                 else:
                     Cli.ask_for_exit(message)
@@ -113,7 +113,7 @@ class GraphCreator():
                     edge_metadata.edges_file_path, str(edge_metadata.edgeType))
                     if globalConfig.INTERACTIVE_MODE:
                         if globConst.GUI_MODE:
-                            from gui import gui
+                            from openbiolink.gui import gui
                             gui.askForExit(message)
                         else:
                             Cli.ask_for_exit(message)

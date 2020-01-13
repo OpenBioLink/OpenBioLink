@@ -1,5 +1,5 @@
-from ..types.qualityType import QualityType
-from . import EdgeMetadata
+from openbiolink.graph_creation.metadata_edge.edgeMetadata import EdgeMetadata
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class EdgeRegularMetadata(EdgeMetadata):

@@ -4,15 +4,15 @@ import logging
 import os
 import sys
 
-import globalConfig
-import globalConfig as glob
-import graphProperties as graphProp
-from evaluation.evaluation import Evaluation
-from evaluation.metricTypes import RankMetricType, ThresholdMetricType
-from evaluation.models.modelTypes import ModelTypes
-from graph_creation.graphCreation import Graph_Creation
-from graph_creation.types.qualityType import QualityType
-from train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
+import openbiolink.graphProperties as graphProp
+from openbiolink import globalConfig
+from openbiolink import globalConfig as glob
+from openbiolink.evaluation.evaluation import Evaluation
+from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
+from openbiolink.evaluation.models.modelTypes import ModelTypes
+from openbiolink.graph_creation.graphCreation import Graph_Creation
+from openbiolink.graph_creation.types.qualityType import QualityType
+from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
 
 def create_graph(args):
@@ -165,7 +165,7 @@ def check_args_validity(args, parser):
 def main(args_list=None):
     if (len(sys.argv) < 2) and not args_list:
         glob.GUI_MODE = True
-        import gui.gui as gui
+        import openbiolink.gui.gui as gui
         gui.start_gui()
         return
 

@@ -9,10 +9,11 @@ import torch
 import torch.optim as optim
 from tqdm import tqdm
 
-import globalConfig as globConst
-import train_test_set_creation.ttsConfig as ttsConst
-from .model import Model
-import evaluation.evalConfig as evalConst
+import openbiolink.evaluation.evalConfig as evalConst
+import openbiolink.train_test_set_creation.ttsConfig as ttsConst
+from openbiolink import globalConfig as globConst
+from openbiolink.evaluation.models.model import Model
+
 
 ## ** code adapted from pykeen: https://github.com/SmartDataAnalytics/PyKEEN **
 
