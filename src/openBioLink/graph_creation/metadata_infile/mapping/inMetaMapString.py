@@ -1,9 +1,8 @@
-from ...types.infileType import InfileType
-from ...metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.types.infileType import InfileType
 
 
 class InMetaMapString(InfileMetadata):
-
     CSV_NAME = "DB_String_mapping_gene_ncbi_string.csv"
     USE_COLS = ['ncbiID', 'stringID']
     SOURCE_COL = 1

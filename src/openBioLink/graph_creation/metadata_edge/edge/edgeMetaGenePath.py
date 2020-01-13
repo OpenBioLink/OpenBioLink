@@ -1,19 +1,17 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...types.qualityType import QualityType
-from ...metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from ...metadata_infile.edge.inMetaEdgeCdtPath import InMetaEdgeCdtPath
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeCdtPath import InMetaEdgeCdtPath
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class EdgeMetaGenePath(EdgeRegularMetadata):
-    NAME = 'Edge - Gene_association_Pathway' #todo ms wording
-
+    NAME = 'Edge - Gene_association_Pathway'  # todo ms wording
 
     EDGE_INMETA_CLASS = InMetaEdgeCdtPath
 
-    def __init__(self, quality : QualityType):
-
+    def __init__(self, quality: QualityType):
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         super().__init__(is_directional=True,
                          edges_file_path=edges_file_path,

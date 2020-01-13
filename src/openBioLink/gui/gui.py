@@ -4,15 +4,16 @@ import tkinter as tk
 from tkinter import font  as tkfont, messagebox
 from tkinter.ttk import Style
 
-import openBioLink
-from .confirmFrame import ConfirmFrame
-from .console import ConsoleFrame
-from .graphCreationFrame import GraphCreationFrame
-from .splitFrame import SplitFrame
-from .startPage import StartPage
-from .evaluationFrame import EvalFrame
+from openbiolink import openBioLink
+from openbiolink.gui.confirmFrame import ConfirmFrame
+from openbiolink.gui.console import ConsoleFrame
+from openbiolink.gui.evaluationFrame import EvalFrame
+from openbiolink.gui.graphCreationFrame import GraphCreationFrame
+from openbiolink.gui.splitFrame import SplitFrame
+from openbiolink.gui.startPage import StartPage
 
 app = None
+
 
 class BimegGui(tk.Tk):
     ARGS_LIST_GLOBAL = []
@@ -25,10 +26,10 @@ class BimegGui(tk.Tk):
 
         # Define Fonts
         self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
-        self.info_font= tkfont.Font(family='Helvetica', size=7, slant="italic")
+        self.info_font = tkfont.Font(family='Helvetica', size=7, slant="italic")
         # Define base container
         self.container = tk.Frame(self)
-        #self.wm_geometry('600x470')
+        # self.wm_geometry('600x470')
         self.container.pack(side="top", fill="both", expand=True)
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
@@ -68,14 +69,14 @@ class BimegGui(tk.Tk):
             self.next_frame_index += 1
 
     def show_previous_frame(self):
-        if self.next_frame_index==1:
+        if self.next_frame_index == 1:
             self.next_frame_index = 0
             self.show_frame("StartPage")
             self.selected_frames = ['ConfirmFrame']
 
         else:
             self.next_frame_index -= 1
-            self.show_frame(self.selected_frames[self.next_frame_index-1])
+            self.show_frame(self.selected_frames[self.next_frame_index - 1])
 
     def show_frame(self, page_name):
         """ Show a frame for the given page name """
@@ -90,8 +91,8 @@ class BimegGui(tk.Tk):
             self.show_frame("ConsoleFrame")
             arg_list = self.get_args()
             openBioLink.main(args_list=arg_list)
-            #fixme start detached
-            #app.destroy()
+            # fixme start detached
+            # app.destroy()
 
 
 #################### ASK FOR EXIT ############################
@@ -117,19 +118,21 @@ class AskForExitPopup:
         self.win.destroy()
         return False
 
+
 def askForExit(message):
     exit = AskForExitPopup(message)
     if exit:
         on_closing()
+
 
 #################### SKIP EXISTING FILES ############################
 
 class SkipExistingFilesPopup:
     def __init__(self, file_path):
         self.skip = None
-        self.for_all=False
+        self.for_all = False
         self.win = tk.Toplevel()
-        message = 'The file %s already exists'%(file_path)
+        message = 'The file %s already exists' % (file_path)
         l = tk.Label(self.win, text=message)
 
         button_panel = tk.Frame(self.win)
@@ -154,21 +157,25 @@ class SkipExistingFilesPopup:
         self.for_all = None
 
     def go_on(self):
-            self.win.destroy()
-            self.skip = None
-            self.for_all = False
+        self.win.destroy()
+        self.skip = None
+        self.for_all = False
+
     def go_on_for_all(self):
-            self.win.destroy()
-            self.skip = False
-            self.for_all = True
+        self.win.destroy()
+        self.skip = False
+        self.for_all = True
+
     def skip_this(self):
-            self.win.destroy()
-            self.skip = True
-            self.for_all=False
+        self.win.destroy()
+        self.skip = True
+        self.for_all = False
+
     def skip_all(self):
-            self.win.destroy()
-            self.skip = True
-            self.for_all = True
+        self.win.destroy()
+        self.skip = True
+        self.for_all = True
+
 
 def skipExistingFiles(file_path):
     skip = None
@@ -192,12 +199,11 @@ def on_closing():
 
 def show_info_box(msg):
     if not bool(msg):
-        msg='No info available'
-    messagebox.showinfo('Info',msg)
+        msg = 'No info available'
+    messagebox.showinfo('Info', msg)
 
 
 def start_gui():
-
     global app
     app = BimegGui()
     app.style = Style()

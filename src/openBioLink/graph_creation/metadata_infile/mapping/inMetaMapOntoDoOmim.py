@@ -1,9 +1,8 @@
-from ...types.infileType import InfileType
-from ...metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.types.infileType import InfileType
 
 
 class InMetaMapOntoDoOmim(InfileMetadata):
-
     CSV_NAME = "DB_ONTO_mapping_DO_OMIM.csv"
     USE_COLS = ['ID', 'OMIM']
     SOURCE_COL = 1

@@ -1,6 +1,5 @@
-from ...types.infileType import InfileType
-
-from ...metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.types.infileType import InfileType
 
 
 class InMetaMapDrugCentralPubchem(InfileMetadata):
@@ -14,7 +13,6 @@ class InMetaMapDrugCentralPubchem(InfileMetadata):
     TARGET_COL = 0
     MAPPING_SEP = None
     INFILE_TYPE = InfileType.IN_MAP_DRUGCENTRAL_PUBCHEM
-
 
     def __init__(self):
         super().__init__(csv_name=InMetaMapDrugCentralPubchem.CSV_NAME,

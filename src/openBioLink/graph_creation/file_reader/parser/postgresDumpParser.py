@@ -7,7 +7,7 @@ import pandas as pd
 class PostgresDumpParser():
 
     @staticmethod
-    def table_to_df(f, table_name, cols = None):
+    def table_to_df(f, table_name, cols=None):
 
         data_started = False
         df = None
@@ -21,7 +21,7 @@ class PostgresDumpParser():
                 if df is None:
                     df = pd.DataFrame([row], columns=cols)
                 else:
-                    if len(row)== len(cols):
+                    if len(row) == len(cols):
                         df = df.append(pd.DataFrame([row], columns=cols), ignore_index=True)
                     else:
                         logging.info('postgresParser -> row ignored: ', row)
@@ -31,7 +31,9 @@ class PostgresDumpParser():
                 if cols is None:
                     cols = [x.strip() for x in entry_list]
                 else:
-                    if not(len(cols)== len(entry_list)) :
-                        logging.error("PostgresDumpParser: Number of columns provided for table %s are different from number found in table. %d provided, %d found" %(table_name, len(cols), len(entry_list)))
+                    if not (len(cols) == len(entry_list)):
+                        logging.error(
+                            "PostgresDumpParser: Number of columns provided for table %s are different from number found in table. %d provided, %d found" % (
+                            table_name, len(cols), len(entry_list)))
                         sys.exit()
         return df

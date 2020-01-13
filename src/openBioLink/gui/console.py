@@ -4,9 +4,10 @@ import queue
 from tkinter import ttk, N, S, E, W
 from tkinter.scrolledtext import ScrolledText
 
-from .gui import *
+from openbiolink.gui.gui import *
 
 logger = logging.getLogger()
+
 
 class QueueHandler(logging.Handler):
     """Class to send logging records to a queue
@@ -14,6 +15,7 @@ class QueueHandler(logging.Handler):
     It can be used from different threads
     The ConsoleUi class polls this queue to display records in a ScrolledText widget
     """
+
     # Example from Moshe Kaplan: https://gist.github.com/moshekaplan/c425f861de7bbf28ef06
     # (https://stackoverflow.com/questions/13318742/python-logging-to-tkinter-text-widget) is not thread safe!
     # See https://stackoverflow.com/questions/43909849/tkinter-python-crashes-on-new-thread-trying-to-log-on-main-thread
@@ -35,7 +37,7 @@ class ConsoleUi:
         self.scrolled_text = ScrolledText(frame, state='disabled', height=12)
         self.scrolled_text.grid(row=0, column=0, sticky=(N, S, W, E))
         self.scrolled_text.configure(font='TkFixedFont')
-        self.scrolled_text.tag_config('INFO', foreground='black' )
+        self.scrolled_text.tag_config('INFO', foreground='black')
         self.scrolled_text.tag_config('DEBUG', foreground='gray')
         self.scrolled_text.tag_config('WARNING', foreground='orange')
         self.scrolled_text.tag_config('ERROR', foreground='red')
@@ -87,5 +89,5 @@ class ConsoleFrame(tk.Frame):
         buttons_panel.pack(side='bottom', padx=15, fill='x')
         next_button.pack(side='left', anchor='w', pady=(5, 10))
 
-    #def quit(self, *args):
+    # def quit(self, *args):
     #    self.root.destroy()

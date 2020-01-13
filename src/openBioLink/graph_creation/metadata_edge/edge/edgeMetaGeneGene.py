@@ -1,10 +1,10 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...types.qualityType import QualityType
-from ...metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from ...metadata_infile.edge.inMetaEdgeString import InMetaEdgeString
-from ...metadata_infile.mapping.inMetaMapString import InMetaMapString
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeString import InMetaEdgeString
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapString import InMetaMapString
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class EdgeMetaGeneGene(EdgeRegularMetadata):
@@ -18,8 +18,7 @@ class EdgeMetaGeneGene(EdgeRegularMetadata):
     MAP1_META_CLASS = InMetaMapString
     MAP2_META_CLASS = InMetaMapString
 
-    def __init__(self, quality : QualityType= None):
-
+    def __init__(self, quality: QualityType = None):
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.MAP1_META_CLASS.CSV_NAME)
         super().__init__(is_directional=False,
@@ -28,5 +27,7 @@ class EdgeMetaGeneGene(EdgeRegularMetadata):
                          edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
                          node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE, node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
                          colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL, quality=quality,
-                         mapping1_file=mapping_file1, map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL, map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
-                         mapping2_file=mapping_file1, map2_sourceindex=self.MAP1_META_CLASS.SOURCE_COL, map2_targetindex=self.MAP1_META_CLASS.TARGET_COL)
+                         mapping1_file=mapping_file1, map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL,
+                         map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
+                         mapping2_file=mapping_file1, map2_sourceindex=self.MAP1_META_CLASS.SOURCE_COL,
+                         map2_targetindex=self.MAP1_META_CLASS.TARGET_COL)

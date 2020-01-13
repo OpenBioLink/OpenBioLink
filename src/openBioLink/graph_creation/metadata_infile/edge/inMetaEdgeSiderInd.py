@@ -1,7 +1,7 @@
-from edgeType import EdgeType
-from ...types.infileType import InfileType
-from ...metadata_infile.infileMetadata import InfileMetadata
-from nodeType import NodeType
+from openbiolink.edgeType import EdgeType
+from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.types.infileType import InfileType
+from openbiolink.nodeType import NodeType
 
 
 class InMetaEdgeSiderInd(InfileMetadata):
@@ -15,8 +15,8 @@ class InMetaEdgeSiderInd(InfileMetadata):
     EDGE_TYPE = EdgeType.DIS_DRUG
     INFILE_TYPE = InfileType.IN_EDGE_SIDER_IND
 
-
     MAPPING_SEP = None
+
     def __init__(self):
         super().__init__(csv_name=InMetaEdgeSiderInd.CSV_NAME,
                          cols=self.USE_COLS,

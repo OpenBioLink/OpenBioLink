@@ -1,11 +1,11 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from ...metadata_infile import InMetaMapOntoDoAltid
-from ...metadata_infile.edge.inMetaEdgeDisGeNet import InMetaEdgeDisGeNet
-from ...metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
-from ...types.qualityType import QualityType
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile import InMetaMapOntoDoAltid
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeDisGeNet import InMetaEdgeDisGeNet
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class EdgeMetaGeneDis(EdgeRegularMetadata):
@@ -19,8 +19,7 @@ class EdgeMetaGeneDis(EdgeRegularMetadata):
     MAP2_META_CLASS = InMetaMapDisGeNet
     MAP2_ALT_ID_META_CLASS = InMetaMapOntoDoAltid
 
-    def __init__(self, quality : QualityType= None):
-
+    def __init__(self, quality: QualityType = None):
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         mapping_file2 = os.path.join(glob.IN_FILE_PATH, self.MAP2_META_CLASS.CSV_NAME)
         altid_mapping_file2 = os.path.join(glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME)
@@ -31,7 +30,8 @@ class EdgeMetaGeneDis(EdgeRegularMetadata):
                          edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
                          node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE, node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
                          colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL, quality=quality,
-                         mapping2_file=mapping_file2, map2_sourceindex=self.MAP2_META_CLASS.SOURCE_COL, map2_targetindex=self.MAP2_META_CLASS.TARGET_COL,
+                         mapping2_file=mapping_file2, map2_sourceindex=self.MAP2_META_CLASS.SOURCE_COL,
+                         map2_targetindex=self.MAP2_META_CLASS.TARGET_COL,
                          altid_mapping2_file=altid_mapping_file2,
                          altid_map2_sourceindex=self.MAP2_ALT_ID_META_CLASS.SOURCE_COL,
                          altid_map2_targetindex=self.MAP2_ALT_ID_META_CLASS.TARGET_COL

@@ -1,7 +1,7 @@
-from edgeType import EdgeType
-from ...types.infileType import InfileType
-from ...metadata_infile.infileMetadata import InfileMetadata
-from nodeType import NodeType
+from openbiolink.edgeType import EdgeType
+from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.types.infileType import InfileType
+from openbiolink.nodeType import NodeType
 
 
 class InMetaEdgeStitch(InfileMetadata):
@@ -14,7 +14,6 @@ class InMetaEdgeStitch(InfileMetadata):
     NODE2_TYPE = NodeType.DRUG
     EDGE_TYPE = EdgeType.GENE_DRUG
     INFILE_TYPE = InfileType.IN_EDGE_STITCH
-
 
     MAPPING_SEP = None
 

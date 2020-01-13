@@ -1,5 +1,5 @@
-from ...metadata_db_file.edge.dbMetadataEdge import DbMetadataEdge
-from ...types.dbType import DbType
+from openbiolink.graph_creation.metadata_db_file.edge.dbMetadataEdge import DbMetadataEdge
+from openbiolink.graph_creation.types.dbType import DbType
 
 
 class DbMetaEdgeDrugCentral(DbMetadataEdge):
@@ -30,7 +30,6 @@ class DbMetaEdgeDrugCentral(DbMetadataEdge):
     ]
 
     DB_TYPE = DbType.DB_EDGE_DRUGCENTRAL
-
 
     def __init__(self):
         super().__init__(url=DbMetaEdgeDrugCentral.URL,

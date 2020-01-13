@@ -1,8 +1,8 @@
-from ...metadata_db_file.onto.dbMetadataOnto import DbMetadataOnto
-from ...types.dbType import DbType
+from openbiolink.graph_creation.metadata_db_file.onto.dbMetadataOnto import DbMetadataOnto
+from openbiolink.graph_creation.types.dbType import DbType
 
 
-class DbMetaOntoUberon (DbMetadataOnto):
+class DbMetaOntoUberon(DbMetadataOnto):
     NAME = 'Onto - HPO - is_a, part_of'
     URL = "http://ontologies.berkeleybop.org/uberon/ext.obo"
     OFILE_NAME = "UBERON_ontology.obo"

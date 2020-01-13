@@ -1,7 +1,9 @@
 import pandas
+
+
 class OboParser(object):
 
-    def obo_to_df(self,content, quadruple_list):
+    def obo_to_df(self, content, quadruple_list):
         """each quadruple consists of (1) beginning of the line, (2) split character,
         (3) index of split element being the id, (4) the name of dict entry (col_name)"""
 
@@ -39,13 +41,8 @@ class OboParser(object):
     def to_string(self, list):
         string = ''
         for e in list:
-            if string =='':
+            if string == '':
                 string = e
             else:
                 string = string + ';' + e
         return string
-
-
-
-
-

@@ -1,12 +1,12 @@
-from edgeType import EdgeType
-from ...types.infileType import InfileType
-from ...metadata_infile.infileMetadata import InfileMetadata
-from nodeType import NodeType
+from openbiolink.edgeType import EdgeType
+from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
+from openbiolink.graph_creation.types.infileType import InfileType
+from openbiolink.nodeType import NodeType
 
 
 class InMetaEdgeBgeeNoExpr(InfileMetadata):
     CSV_NAME = "DB_Bgee_gene_anatomy_no_expr.csv"
-    USE_COLS = ['gene_id', 'anatomical_entity','call_quality' ]
+    USE_COLS = ['gene_id', 'anatomical_entity', 'call_quality']
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2

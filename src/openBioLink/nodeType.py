@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class NodeType (Enum):
+class NodeType(Enum):
     GENE = 0
     GO = 1
     DIS = 2

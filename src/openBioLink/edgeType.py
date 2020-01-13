@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class EdgeType (Enum):
+class EdgeType(Enum):
     IS_A = 0
     PART_OF = 1
 
@@ -43,14 +43,14 @@ class EdgeType (Enum):
 
     def get_parent(self):
         if self in [EdgeType.DRUG_ACTIVATION_GENE,
-                     EdgeType.DRUG_BINDING_GENE,
-                     EdgeType.DRUG_CATALYSIS_GENE,
-                     EdgeType.DRUG_EXPRESSION_GENE,
-                     EdgeType.DRUG_INHIBITION_GENE,
-                     EdgeType.DRUG_PREDBIND_GENE,
-                     EdgeType.DRUG_REACTION_GENE,
-                     EdgeType.DRUG_BINDACT_GENE,
-                     EdgeType.DRUG_BINDINH_GENE]:
+                    EdgeType.DRUG_BINDING_GENE,
+                    EdgeType.DRUG_CATALYSIS_GENE,
+                    EdgeType.DRUG_EXPRESSION_GENE,
+                    EdgeType.DRUG_INHIBITION_GENE,
+                    EdgeType.DRUG_PREDBIND_GENE,
+                    EdgeType.DRUG_REACTION_GENE,
+                    EdgeType.DRUG_BINDACT_GENE,
+                    EdgeType.DRUG_BINDINH_GENE]:
             return EdgeType.GENE_DRUG
         elif self in [EdgeType.GENE_ACTIVATION_GENE,
                       EdgeType.GENE_BINDING_GENE,

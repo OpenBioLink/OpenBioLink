@@ -1,14 +1,13 @@
+import os
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
-from gui import gui as gui
-from evaluation.metricTypes import RankMetricType, ThresholdMetricType
-from evaluation.models.modelTypes import ModelTypes
-import evaluation.evalConfig as evalConst
+import openbiolink.evaluation.evalConfig as evalConst
+import openbiolink.train_test_set_creation.ttsConfig as ttsConst
+from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
+from openbiolink.evaluation.models.modelTypes import ModelTypes
+from openbiolink.gui import gui as gui
 
-import os
-import train_test_set_creation.ttsConfig as ttsConst
-import graph_creation.graphCreationConfig as gcConst
 
 class EvalFrame(tk.Frame):
 
@@ -36,20 +35,19 @@ class EvalFrame(tk.Frame):
         self.node_or_corrupted_file_el = self._create_nodes_or_corrupted_path_el(paths_box)
 
         self.metrics_box = tk.LabelFrame(options_panel, text='choose metrics')
-        self.metrics_frame=tk.Frame(self.metrics_box)
+        self.metrics_frame = tk.Frame(self.metrics_box)
         self.rank_metrics_dict = {}
         self.threshold_metrics_dict = {}
 
         self.hits_at_k_el = self._create_hits_at_k_el(self.metrics_frame)
         self.mrr_el = self._create_mrr_el(self.metrics_frame)
-        self.hits_at_k_el.pack(side='top', fill='x', pady=(10,5))
+        self.hits_at_k_el.pack(side='top', fill='x', pady=(10, 5))
         self.mrr_el.pack(side='top', fill='x', pady=5)
         ttk.Separator(self.metrics_frame, orient='horizontal').pack(side='top', fill='x', pady=10, padx=10, anchor='s')
         for metric in threshold_metrics:
             self.threshold_metrics_dict[metric] = tk.BooleanVar(value=True)
             cb = tk.Checkbutton(self.metrics_frame, text=metric.value, variable=self.threshold_metrics_dict[metric])
-            cb.pack(anchor='w',  padx=5,pady=5)
-
+            cb.pack(anchor='w', padx=5, pady=5)
 
         self.buttons_panel = tk.Frame(self)
         self.next_button = tk.Button(self.buttons_panel, text="Next", command=lambda: self.next_page(), height=1,
@@ -63,10 +61,10 @@ class EvalFrame(tk.Frame):
         self.info.pack(side="right", fill="x", pady=5, padx=15)
         self.actions_el.pack(side='top', fill='both', padx=15, pady=5, expand=True)
 
-        options_panel.pack(side='top',fill='both', padx=15, pady=5, expand=True)
-        self.metrics_box.pack(side='left',fill='both', expand=True, padx=(0,5))
-        self.metrics_frame.pack(side='top',fill='both', expand=True)
-        paths_box.pack(side='left', fill='both', expand=True, padx=(5,0))
+        options_panel.pack(side='top', fill='both', padx=15, pady=5, expand=True)
+        self.metrics_box.pack(side='left', fill='both', expand=True, padx=(0, 5))
+        self.metrics_frame.pack(side='top', fill='both', expand=True)
+        paths_box.pack(side='left', fill='both', expand=True, padx=(5, 0))
         self.config_path_el.pack(side='top', fill='x')
         self.pack_file_paths()
         self.node_or_corrupted_file_el.pack(side='top', fill='x')
@@ -76,14 +74,13 @@ class EvalFrame(tk.Frame):
         self.prev_button.pack(side='left', anchor='w', pady=(5, 10))
         self.next_button.pack(side='right', anchor='e', pady=(5, 10))
 
-
     def pack_file_paths(self):
         self.unpack_file_paths()
         if self.train.get():
             self.train_file_el.pack(side='top', fill='x')
         elif self.evaluate.get():
             self.trained_model_file_el.pack(side='top', fill='x')
-        if self.evaluate.get() :
+        if self.evaluate.get():
             self.test_file_el.pack(side='top', fill='x')
             self.metrics_frame.pack(side='top', fill='both', expand=True)
 
@@ -91,8 +88,6 @@ class EvalFrame(tk.Frame):
             self.metrics_frame.pack_forget()
         if (self.hits.get() or self.mrr.get()) and self.evaluate.get():
             self.node_or_corrupted_file_el.pack(side='top', fill='x')
-
-
 
     def toggl_ranked_metrics(self):
         if not self.hits.get():
@@ -120,19 +115,18 @@ class EvalFrame(tk.Frame):
         self.evaluate = tk.BooleanVar(value=True)
         eval_box = tk.Checkbutton(el, text='perform evaluation', variable=self.evaluate, command=self.pack_file_paths)
         models = [ModelTypes[item].name for item in dir(ModelTypes) if
-                             not item.startswith("__")]
+                  not item.startswith("__")]
         self.select_choices_models = models
         self.select_model = tk.StringVar()
         select_menu = tk.OptionMenu(el, self.select_model, *self.select_choices_models)
         select_menu.configure(width=20)
-        train_box.pack(side='left',padx=5, anchor='w')
-        eval_box.pack(side='left',padx=5, anchor='w')
-        #ttk.Separator(el, orient='vertical').pack(side='left', fill='y', padx=10, anchor='w')
-        select_menu.pack(side='right', padx=(5,15), anchor='w')
+        train_box.pack(side='left', padx=5, anchor='w')
+        eval_box.pack(side='left', padx=5, anchor='w')
+        # ttk.Separator(el, orient='vertical').pack(side='left', fill='y', padx=10, anchor='w')
+        select_menu.pack(side='right', padx=(5, 15), anchor='w')
 
         tk.Label(el, text='model:').pack(side='right')
         return el
-
 
     def _create_hits_at_k_el(self, parent):
         el = tk.Frame(parent)
@@ -164,9 +158,9 @@ class EvalFrame(tk.Frame):
         mrr_cb = tk.Checkbutton(panel, text='MRR', variable=self.mrr,
                                 command=self.toggl_ranked_metrics)
         mrr_filtered_cb = tk.Checkbutton(panel, text='filtered',
-                                          variable=self.rank_metrics_dict[RankMetricType.MRR])
+                                         variable=self.rank_metrics_dict[RankMetricType.MRR])
         mrr_unfiltered_cb = tk.Checkbutton(panel, text='unfiltered',
-                                            variable=self.rank_metrics_dict[RankMetricType.MRR_UNFILTERED])
+                                           variable=self.rank_metrics_dict[RankMetricType.MRR_UNFILTERED])
         panel.pack(side='top', fill='x', padx=5)
         mrr_cb.pack(side='left')
         mrr_filtered_cb.pack(side='right')
@@ -176,7 +170,7 @@ class EvalFrame(tk.Frame):
     def _create_config_path_el(self, parent):
         el = tk.Frame(parent)
         panel = tk.Frame(el)
-        self.config_path= tk.StringVar()
+        self.config_path = tk.StringVar()
         button = tk.Button(panel, text="select path ...", command=lambda: self.browse_config_file())
         label = tk.Entry(el, textvariable=self.config_path)
         panel.pack(side='top', fill='x')
@@ -184,6 +178,7 @@ class EvalFrame(tk.Frame):
         button.pack(side='right', anchor='w', padx=5, pady=5)
         label.pack(fill='x', padx=5, pady=5)
         return el
+
     def _create_train_path_el(self, parent):
         el = tk.Frame(parent)
         panel = tk.Frame(el)
@@ -195,6 +190,7 @@ class EvalFrame(tk.Frame):
         train_button.pack(side='right', anchor='w', padx=5, pady=5)
         train_label.pack(fill='x', padx=5, pady=5)
         return el
+
     def _create_test_path_el(self, parent):
         el = tk.Frame(parent)
         panel = tk.Frame(el)
@@ -206,6 +202,7 @@ class EvalFrame(tk.Frame):
         test_button.pack(side='right', anchor='w', padx=5, pady=5)
         test_label.pack(fill='x', padx=5, pady=5)
         return el
+
     def _create_trained_model_path_el(self, parent):
         el = tk.Frame(parent)
         panel = tk.Frame(el)
@@ -217,6 +214,7 @@ class EvalFrame(tk.Frame):
         button.pack(side='right', anchor='w', padx=5, pady=5)
         label.pack(fill='x', padx=5, pady=5)
         return el
+
     def _create_nodes_or_corrupted_path_el(self, parent):
         el = tk.Frame(parent)
         panel = tk.Frame(el)
@@ -234,7 +232,6 @@ class EvalFrame(tk.Frame):
         label.pack(fill='x', padx=5, pady=5)
         return el
 
-
     def browse_test_file(self):
         self.test_path.set(filedialog.askopenfilename())
 
@@ -250,9 +247,8 @@ class EvalFrame(tk.Frame):
     def browse_config_file(self):
         self.config_path.set(filedialog.askopenfilename())
 
-
     def update(self):
-        #fixme check if graph creation action is performed
+        # fixme check if graph creation action is performed
         tts_files_folder = os.path.join(self.controller.ARGS_LIST_GLOBAL[1], ttsConst.TTS_FOLDER_NAME)
         test_path = os.path.join(tts_files_folder, ttsConst.TEST_FILE_NAME)
         if os.path.exists(test_path) or 'SplitFrame' in self.controller.selected_frames:
@@ -265,7 +261,6 @@ class EvalFrame(tk.Frame):
         nodes_path = os.path.join(tts_files_folder, ttsConst.TRAIN_VAL_NODES_FILE_NAME)
         if os.path.exists(nodes_path) or 'GraphCreationFrame' in self.controller.selected_frames:
             self.nodes_or_corr_path.set(nodes_path)
-
 
     def next_page(self):
         if not self.train.get() and not self.evaluate.get():
@@ -280,17 +275,20 @@ class EvalFrame(tk.Frame):
                 return
         if self.evaluate.get():
             if not self.train.get() and not self.trained_model_path.get():
-                messagebox.showerror('ERROR', 'Please either provide a path to your trained model or choose \'perform training')
+                messagebox.showerror('ERROR',
+                                     'Please either provide a path to your trained model or choose \'perform training')
                 return
             if not self.test_path.get():
                 messagebox.showerror('ERROR', 'Please provide a trainings path')
                 return
             if (self.hits.get() or self.mrr.get()) and not self.nodes_or_corr_path.get():
-                messagebox.showerror('ERROR', 'Ranked metrics (his@K, MRR) require either a nodes file or a file of corrupted triples')
+                messagebox.showerror('ERROR',
+                                     'Ranked metrics (his@K, MRR) require either a nodes file or a file of corrupted triples')
                 return
             if all([not self.mrr.get(), not self.hits.get()]) \
-                and all([not x.get() for _,x in self.threshold_metrics_dict.items()]):
-                messagebox.showerror('ERROR', '\'Perform evaluation\' is chosen, but no evaluation metrics are selected')
+                    and all([not x.get() for _, x in self.threshold_metrics_dict.items()]):
+                messagebox.showerror('ERROR',
+                                     '\'Perform evaluation\' is chosen, but no evaluation metrics are selected')
                 return
         self.controller.ARGS_LIST_EVAL = []
         self.controller.ARGS_LIST_EVAL.append('-e')
@@ -306,22 +304,19 @@ class EvalFrame(tk.Frame):
             self.controller.ARGS_LIST_EVAL.append('--no_eval')
         else:
             self.controller.ARGS_LIST_EVAL.extend(['--test', self.test_path.get()])
-            ranked_metrics = [x.name for x,y in self.rank_metrics_dict.items() if y.get()]
-            threshold_metrics = [x.name for x,y in self.threshold_metrics_dict.items() if y.get()]
+            ranked_metrics = [x.name for x, y in self.rank_metrics_dict.items() if y.get()]
+            threshold_metrics = [x.name for x, y in self.threshold_metrics_dict.items() if y.get()]
             self.controller.ARGS_LIST_EVAL.append('--metrics')
             self.controller.ARGS_LIST_EVAL.extend(ranked_metrics)
             self.controller.ARGS_LIST_EVAL.extend(threshold_metrics)
-            if RankMetricType.HITS_AT_K in self.rank_metrics_dict.keys() or  RankMetricType.HITS_AT_K_UNFILTERED in self.rank_metrics_dict.keys():
+            if RankMetricType.HITS_AT_K in self.rank_metrics_dict.keys() or RankMetricType.HITS_AT_K_UNFILTERED in self.rank_metrics_dict.keys():
                 self.controller.ARGS_LIST_EVAL.append('--ks')
                 import ast
                 self.controller.ARGS_LIST_EVAL.extend([str(x) for x in ast.literal_eval(self.ks.get())])
-            #if metrics
-            if self.select_node_corrupted.get()=='nodes path':
+            # if metrics
+            if self.select_node_corrupted.get() == 'nodes path':
                 self.controller.ARGS_LIST_EVAL.extend(['--eval_nodes', self.nodes_or_corr_path.get()])
-            elif self.select_node_corrupted.get()=='corrupted triples path':
+            elif self.select_node_corrupted.get() == 'corrupted triples path':
                 self.controller.ARGS_LIST_EVAL.extend(['--corrupted', self.nodes_or_corr_path.get()])
 
         self.controller.show_next_frame()
-
-
-

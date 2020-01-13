@@ -3,7 +3,7 @@ import zipfile
 from abc import ABC, abstractmethod
 
 
-class FileReader (ABC):
+class FileReader(ABC):
 
     def __init__(self, in_path, readerType, dbType):
         self.in_path = in_path
@@ -24,5 +24,4 @@ class FileReader (ABC):
 
     @abstractmethod
     def read_file(self):
-        ... # return pandas.Dataframe
-
+        ...  # return pandas.Dataframe

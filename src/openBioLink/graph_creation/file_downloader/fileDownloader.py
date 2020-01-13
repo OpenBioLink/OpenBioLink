@@ -4,7 +4,7 @@ import urllib.error
 import urllib.request
 
 
-class FileDownloader ():
+class FileDownloader():
     @staticmethod
     def download(url, o_file_path):
         opener = urllib.request.build_opener()
@@ -13,7 +13,5 @@ class FileDownloader ():
         try:
             urllib.request.urlretrieve(url, o_file_path)
         except urllib.error.HTTPError as err:
-            logging.error ('HTTP %s %s:  %s' %(err.code, err.msg, err.geturl()))
+            logging.error('HTTP %s %s:  %s' % (err.code, err.msg, err.geturl()))
             sys.exit()
-
-

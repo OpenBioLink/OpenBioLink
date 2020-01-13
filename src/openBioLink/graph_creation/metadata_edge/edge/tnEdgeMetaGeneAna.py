@@ -1,12 +1,12 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...types.qualityType import QualityType
-from ...metadata_edge.edge.edgeMetaGeneAna import EdgeMetaGeneAna
-from ...metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
-from ...metadata_infile import InMetaMapOntoUberonAltid
-from ...metadata_infile.edge.inMetaEdgeBgeeNoExpr import InMetaEdgeBgeeNoExpr
-from ...metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMapUniEnsNcbi
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.edge.edgeMetaGeneAna import EdgeMetaGeneAna
+from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile import InMetaMapOntoUberonAltid
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeBgeeNoExpr import InMetaEdgeBgeeNoExpr
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMapUniEnsNcbi
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class TnEdgeMetaGeneAna(TnEdgeRegularMetadata):
@@ -16,14 +16,12 @@ class TnEdgeMetaGeneAna(TnEdgeRegularMetadata):
     MQ_CUTOFF_TEXT = None
     HQ_CUTOFF_TEXT = ['silver quality']
 
-
     EDGE_INMETA_CLASS = InMetaEdgeBgeeNoExpr
     TP_EDGE_CLASS = EdgeMetaGeneAna
     MAP1_META_CLASS = InMetaMapUniEnsNcbi
     MAP2_ALT_ID_META_CLASS = InMetaMapOntoUberonAltid
 
-
-    def __init__(self, quality : QualityType= None):
+    def __init__(self, quality: QualityType = None):
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.MAP1_META_CLASS.CSV_NAME)
         altid_mapping2_file = os.path.join(glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME)
@@ -35,7 +33,7 @@ class TnEdgeMetaGeneAna(TnEdgeRegularMetadata):
                          node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
                          node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
                          colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL,
-                         quality= quality,
+                         quality=quality,
                          mapping1_file=mapping_file1,
                          map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL,
                          map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
