@@ -71,6 +71,8 @@ class Evaluation:
             else:
                 pass #fixme error nodes must be provided when eval
             self.relation_label_to_id = io.read_mapping(os.path.join(output_directory, evalConst.MODEL_RELATION_TYPE_MAPPING_NAME))
+        self.id_to_relation_label = {v:k for k,v in self.relation_label_to_id.items()}
+
 
 
     def train(self):
@@ -126,7 +128,7 @@ class Evaluation:
 
         return metrics_results
 
-    # ---------------------------- START -----------------------------------------
+    # new, experimental calculation
     def evaluate_ranked_metrics_3(self, ks, metrics, unfiltered_setting = True, filtered_setting = False):
         metric_results = {}
         k_raw_corrupted_head = []
@@ -214,6 +216,7 @@ class Evaluation:
         return metric_results
 
 
+    # classic calculation, with multi threading
     def evaluate_ranked_metrics_2(self, ks, metrics, unfiltered_setting = True, filtered_setting = False):
         metric_results = {}
 
@@ -230,42 +233,61 @@ class Evaluation:
         print('calculating corrupted triples')
 
         p = Pool(processes=multiprocessing.cpu_count()-1)
-        params = [(pos_example, mapped_nodes, nodes_dic, mapped_pos_triples, filtered_setting, unfiltered_setting) for pos_example in mapped_pos_triples]
-        #print(params) #todo here
-        rank_lists = p.map(self.get_rank_lists,params)
-        filtered_ranks_corrupted_heads = [filtered_head for (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail) in rank_lists]
-        filtered_ranks_corrupted_tails = [filtered_tail for (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail) in rank_lists]
-        unfiltered_ranks_corrupted_heads = [unfiltered_head for (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail) in rank_lists]
-        unfiltered_ranks_corrupted_tails = [unfiltered_tail for (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail) in rank_lists]
 
-        filtered_num_examples = len(filtered_ranks_corrupted_heads)
-        unfiltered_num_examples = len(unfiltered_ranks_corrupted_heads)
+        results_per_edge_type = dict()
+        for edgeType in np.unique(mapped_pos_triples[:,1]):
 
+            params = [(pos_example, mapped_nodes, nodes_dic, mapped_pos_triples, filtered_setting, unfiltered_setting) for pos_example in mapped_pos_triples if pos_example[1]==edgeType]
+            #testme
+            rank_lists = p.map(self.get_rank_lists,params)
+            filtered_ranks_corrupted_heads = [filtered_head for (_, _, filtered_head, _) in rank_lists]
+            filtered_ranks_corrupted_tails = [filtered_tail for (_, _, _, filtered_tail) in rank_lists]
+            unfiltered_ranks_corrupted_heads = [unfiltered_head for (unfiltered_head, _, _, _) in rank_lists]
+            unfiltered_ranks_corrupted_tails = [unfiltered_tail for (_, unfiltered_tail, _, _) in rank_lists]
+
+            filtered_num_examples = len(filtered_ranks_corrupted_heads)
+            unfiltered_num_examples = len(unfiltered_ranks_corrupted_heads)
+
+            results_per_edge_type[self.id_to_relation_label[edgeType]] = (filtered_ranks_corrupted_heads,   #0
+                                                                          filtered_ranks_corrupted_tails,   #1
+                                                                          unfiltered_ranks_corrupted_heads, #2
+                                                                          unfiltered_ranks_corrupted_tails, #3
+                                                                          filtered_num_examples,            #4
+                                                                          unfiltered_num_examples)          #5
         # HITS@K
         if RankMetricType.HITS_AT_K in metrics:
-            metric_results[RankMetricType.HITS_AT_K] = self.calculate_hits_at_k(ks= ks,
-                                                                                ranks_corrupted_heads=filtered_ranks_corrupted_heads,
-                                                                                ranks_corrupted_tails=filtered_ranks_corrupted_tails,
-                                                                                num_examples=filtered_num_examples)
+            metric_results[RankMetricType.HITS_AT_K] = {k : self.calculate_hits_at_k(ks= ks,
+                                                                                ranks_corrupted_heads=v[0],
+                                                                                ranks_corrupted_tails=v[1],
+                                                                                num_examples=v[4])
+                                                        for k,v in results_per_edge_type.items()
+                                                        }
         # HITS@K unfiltered
         if RankMetricType.HITS_AT_K_UNFILTERED in metrics:
-            metric_results[RankMetricType.HITS_AT_K_UNFILTERED] = self.calculate_hits_at_k(ks= ks,
-                                                                                ranks_corrupted_heads=unfiltered_ranks_corrupted_heads,
-                                                                                ranks_corrupted_tails=unfiltered_ranks_corrupted_tails,
-                                                                                num_examples=unfiltered_num_examples)
+            metric_results[RankMetricType.HITS_AT_K_UNFILTERED] = {k : self.calculate_hits_at_k(ks= ks,
+                                                                                ranks_corrupted_heads=v[2],
+                                                                                ranks_corrupted_tails=v[3],
+                                                                                num_examples=v[5])
+                                                                   for k,v in results_per_edge_type.items()
+                                                                   }
         # MRR
         if RankMetricType.MRR in metrics:
-            metric_results[RankMetricType.MRR] = self.calculate_mrr(ranks_corrupted_heads=filtered_ranks_corrupted_heads,
-                                                                    ranks_corrupted_tails=filtered_ranks_corrupted_tails,
-                                                                    num_examples=filtered_num_examples)
+            metric_results[RankMetricType.MRR] = {k : self.calculate_mrr(ranks_corrupted_heads=v[0],
+                                                                    ranks_corrupted_tails=v[1],
+                                                                    num_examples=v[4])
+                                                                   for k,v in results_per_edge_type.items()
+                                                                   }
         # MRR unfiltered
         if RankMetricType.MRR_UNFILTERED in metrics:
-            metric_results[RankMetricType.MRR] = self.calculate_mrr(ranks_corrupted_heads=unfiltered_ranks_corrupted_heads,
-                                                                    ranks_corrupted_tails=unfiltered_ranks_corrupted_tails,
-                                                                    num_examples=unfiltered_num_examples)
+            metric_results[RankMetricType.MRR] = {k : self.calculate_mrr(ranks_corrupted_heads=v[2],
+                                                                    ranks_corrupted_tails=v[3],
+                                                                    num_examples=v[5])
+                                                                   for k,v in results_per_edge_type.items()
+                                                                   }
         return metric_results
 
 
+    # classic calculation, no multi threading (also,no evaluation per edge type)
     def evaluate_ranked_metrics_1(self, ks, metrics, unfiltered_setting = True, filtered_setting = False):
             metric_results = {}
 
@@ -337,6 +359,7 @@ class Evaluation:
         filtered_head_ranks = None
         filtered_tail_ranks = None
         pos_example, mapped_nodes, nodes_dic, mapped_pos_triples, filtered_setting, unfiltered_setting = params
+
         unfiltered_corrupted_head, \
         unfiltered_corrupted_tail, \
         filtered_corrupted_head, \
@@ -361,38 +384,57 @@ class Evaluation:
         values = self.test_examples.values[:,4].tolist()
         mapped_test_examples = np.column_stack((mapped_test_examples,  values ))
         ranked_test_examples, sorted_indices = self.model.get_ranked_and_sorted_predictions(mapped_test_examples)
-        ranked_scores = ranked_test_examples[:,4].tolist()
-        ranked_labels = ranked_test_examples[:,3].tolist() #todo change here!!
-        # ROC Curve
-        if ThresholdMetricType.ROC in metrics:
-            fpr, tpr = self.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
-            metric_results[ThresholdMetricType.ROC] = (fpr, tpr)
-        # Precision Recall Curve
-        if ThresholdMetricType.PR_REC_CURVE in metrics:
-            pr, rec = self.calculate_pr_curve(ranked_labels, ranked_scores)
-            metric_results[ThresholdMetricType.PR_REC_CURVE] = (pr, rec)
-        # ROC AUC
-        if ThresholdMetricType.ROC_AUC:
-            if ThresholdMetricType.ROC in metric_results.keys():
-                fpr, tpr = metric_results[ThresholdMetricType.ROC]
-            else:
+        #ranked_scores = ranked_test_examples[:,4].tolist()
+        #ranked_labels = ranked_test_examples[:,3].tolist() #todo change here!!
+        ROC_per_edge_type = dict()
+        ROC_AUC_per_edge_type = dict()
+        PR_per_edge_type = dict()
+        PR_AUC__per_edge_type = dict()
+        for edgeType in np.unique(ranked_test_examples[:, 1]):
+            ranked_scores = [row[4] for row in ranked_test_examples if row[1]==edgeType]
+            ranked_labels = [row[3] for row in ranked_test_examples if row[1]==edgeType]
+
+
+            # ROC Curve
+            if ThresholdMetricType.ROC in metrics:
                 fpr, tpr = self.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
-                #todo ? auch unique?
-            roc_auc = self.calculate_auc(fpr, tpr)
-            metric_results[ThresholdMetricType.ROC_AUC] = roc_auc
-        # Precision Recall AUC
-        if ThresholdMetricType.PR_AUC:
-            if ThresholdMetricType.PR_AUC in metric_results.keys():
-                pr, rec = metric_results[ThresholdMetricType.PR_REC_CURVE]
-            else:
-                pr, rec = self.calculate_pr_curve(labels=ranked_labels, scores=ranked_scores)
-                pr = np.asarray(pr)
-                rec = np.asarray(rec)
-            _, indices = np.unique(pr, return_index=True)
-            pr_unique = pr[indices]
-            rec_unique = rec[indices]
-            pr_auc = self.calculate_auc(pr_unique, rec_unique)
-            metric_results[ThresholdMetricType.PR_AUC] = pr_auc
+                ROC_per_edge_type[self.id_to_relation_label[edgeType]]= (fpr, tpr)
+
+            # Precision Recall Curve
+            if ThresholdMetricType.PR_REC_CURVE in metrics:
+                pr, rec = self.calculate_pr_curve(ranked_labels, ranked_scores)
+                PR_per_edge_type[self.id_to_relation_label[edgeType]]= (pr, rec)
+
+            # ROC AUC
+            if ThresholdMetricType.ROC_AUC:
+                if ThresholdMetricType.ROC in metric_results.keys():
+                    fpr, tpr = ROC_per_edge_type[self.id_to_relation_label[edgeType]]
+                else:
+                    fpr, tpr = self.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
+                    #todo ? auch unique?
+                if len(fpr)>=2:
+                    roc_auc = self.calculate_auc(fpr, tpr)
+                    ROC_AUC_per_edge_type[self.id_to_relation_label[edgeType]] = roc_auc
+            # Precision Recall AUC
+            if ThresholdMetricType.PR_AUC:
+                if ThresholdMetricType.PR_AUC in metric_results.keys():
+                    pr, rec = PR_per_edge_type[self.id_to_relation_label[edgeType]]
+                else:
+                    pr, rec = self.calculate_pr_curve(labels=ranked_labels, scores=ranked_scores)
+                    pr = np.asarray(pr)
+                    rec = np.asarray(rec)
+                _, indices = np.unique(pr, return_index=True)
+                pr_unique = pr[indices]
+                rec_unique = rec[indices]
+                if len(pr_unique)>=2:
+                    pr_auc = self.calculate_auc(pr_unique, rec_unique)
+                    PR_AUC__per_edge_type[self.id_to_relation_label[edgeType]] = pr_auc
+
+        metric_results[ThresholdMetricType.ROC] = ROC_per_edge_type
+        metric_results[ThresholdMetricType.PR_REC_CURVE] = PR_per_edge_type
+        metric_results[ThresholdMetricType.ROC_AUC] = ROC_AUC_per_edge_type
+        metric_results[ThresholdMetricType.PR_AUC] = PR_AUC__per_edge_type
+
         return metric_results
 
 
@@ -416,12 +458,6 @@ class Evaluation:
                                              utils.map_elements(triples[:, 1:2], self.relation_label_to_id),
                                              utils.map_elements(triples[:, 2:3], self.node_label_to_id)))
         return mapped_triples, mapped_nodes
-
-
-    def create_mappings(self, relations, node_types, node_labels=None ):
-        self.node_label_to_id = utils.create_mappings(node_labels)
-        self.node_types_to_id = utils.create_mappings(node_types)
-        self.relation_label_to_id = utils.create_mappings(relations)
 
 
     @staticmethod
