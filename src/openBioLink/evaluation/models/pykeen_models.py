@@ -34,11 +34,9 @@ class PyKeen_BasicModel (Model):
         self.kge_model = None
 
     @staticmethod
-    def load_model(config): #todo
+    def load_model(config):
         if type(config) == str:
-            with open(config) as file:
-                content = file.read()
-                model_dir = os.path.abspath(os.path.join(config, os.pardir))
+            model_dir = os.path.abspath(os.path.join(config, os.pardir))
         else:
             model_dir = None
         with open(os.path.join(model_dir, 'configuration.json')) as f:

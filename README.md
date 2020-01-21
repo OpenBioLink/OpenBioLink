@@ -110,6 +110,12 @@ the corresponding command line options are displayed.
     --ks [K]                k's for hits@k metric (integer list)
 ````
 
+##Evaluating your own Model
+
+Currently, models provided in pykeen can be tested in the framework. To add your own models, please perform the following steps:
+1) implement the model interface ``src/openBioLink/evaluation/models/model.py`` 
+1) add your model to the modeltypes ``src/openBioLink/evaluation/models/modelTypes.py``
+ 
 
 # Train-test-split creation
 
