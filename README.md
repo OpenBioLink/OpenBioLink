@@ -110,3 +110,88 @@ the corresponding command line options are displayed.
     --ks [K]                k's for hits@k metric (integer list)
 ````
 
+
+# Train-test-split creation
+
+## Random split
+ In the random split setting, first, negative sampling is performed. Afterwards, the whole dataset (containing positive 
+ and negative examples) is split randomly according to the defined ratio. Finally, post-processing steps are performed to
+ facilitate training and to avoid information leakage.
+ 
+ ## Time-slice split
+ In the time-slice split setting, for both of the provided time slices, first, negative sampling is performed. Afterwards,
+ the first time slice (t-1 graph) is used as training sample, while the difference between the first and the second time 
+ slice serves as the test set. Finally, post-processing steps are performed to
+ facilitate training and to avoid information leakage.
+ 
+ Generally, the time slice setting is trickier to implement than the random split strategy, as it requires more manual evaluation and 
+ knowledge of the data. One of the most difficult factors is the change of the source databases over time. For example, 
+ a database might change its quality score, or even its ID-format. Also, the number of relationships stored might increase 
+ sharply due to new mapping files being used. This might also result in ‘vanishing edges’, where edges that were present
+ in the t-1 graph are no longer existent in the current graph. Although the OpenBioLink toolbox tries to aid the user with 
+ different kinds of warnings to identify such difficulties in the data, it is unfortunately not possible to automatically detect nor solve all these problems, making some manual pre- and post-processing of the data inevitable.
+ 
+
+## Negative sampling
+First, the distribution of edges of different types is calculated to know how many samples are needed from each edge type. 
+For now, this distribution corresponds to the original distribution (uniform distribution could a future extension).
+Then, subsamples are either – where possible – taken from existing true negative edges or are created using type-based sampling.
+ 
+In type-based sampling, head and tail node are randomly sampled from a reduced pool of all nodes, which only 
+includes nodes with types that are compatible with the corresponding head- or tail-role of the given relation type.
+E.g., for the relation type GENE_DRUG, one random node of type GENE is selected as head node and one
+random node of type DRUG is selected as tail.
+
+In most cases where true negative edges exist, however, their number is smaller than the number of positive examples. 
+In these cases, all true negative samples are used for the negative set, which is then extended by samples created by type-based 
+sampling.
+ 
+ 
+ ## Train-test-set post-processing
+ **To facilitate model application**
+ * Edges that contain nodes that are not present in the training set are dropped from the test set. This facilitates use of embedding-based models that usually cannot make predictions for nodes that have not been embedded during training.
+
+**Avoiding train-test information leakage and trivial predictions in the test set**
+ * **Removal of reverse edges** If the graph is directed, reverse edges are removed from the training set. 
+The reason for this is that if the original edge a-b was undirected, both directions a→b and a←b are materialized in the directed graph. 
+ If one of these directed edges would be present in the training set and one in the test set, the prediction would be trivial.
+ Therefore, in these cases, the reverse edges from the training set are removed. (Note that edges are removed from the training set instead of the test set because this is advantagous for maintaining the train-test-set ratio)
+ * **Removal of super-properties**
+ Some types of edges have sub-property characteristics, meaning that relationship x indicates a generic interaction between two entities (e.g. _protein_interaction_protein_), 
+ while relationship y further describes this relationship in more detail (e.g., _protein_activation_protein_). This means that the presence of x between two nodes does not imply 
+ the existence of a relation y between those same entities, but the presence of y necessarily implies the existence of x. These kinds of relationships 
+ could cause information leakage in the datasets, therefore super-relations of relations present in the training set are removed 
+ from the test set.
+
+
+# Source Databases
+
+| source type                    | source name                                  | license                                     |
+|--------------------------------|----------------------------------------------|---------------------------------------------|
+| edge (gene-gene)               | [STRING](https://string-db.org/)             | CC BY                                       |
+| edge (gene-go)                 | [GO](http://geneontology.org/)               | CC BY                                       |
+| edge (gene-disease)            | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |
+| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
+| edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                        |
+| edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                       |
+| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | [CTD](http://ctdbase.org/about/legal.jsp)   |
+| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
+| edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                    |
+| edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                 |
+| ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                       |
+| ontology (diseases)            | [DO](http://disease-ontology.org/)           | CC 0                                        |
+| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
+| ontology (anatomy)             | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
+| mapping (UMLS-DO)              | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |
+| mapping (STRING-NCBI)          | [STRING](https://string-db.org/)             | CC BY                                       |
+| mapping (ENSEMBL/UNIPROT-NCBI) | [UniProt](https://www.uniprot.org/)          | CC BY                                       |
+| id (genes)                     | [NCBI](https://www.ncbi.nlm.nih.gov/gene)    | Public Domain                               |
+| id (go)                        | [GO](http://geneontology.org/)               | CC BY                                       |
+| id (anatomy)                   | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
+| id (disease)                   | [DO](http://disease-ontology.org/)           | CC 0                                        |
+| id (drug)                      | [PubChem](https://pubchem.ncbi.nlm.nih.gov/) | Public Domain                               |
+| id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
+| id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                       |
+| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | [KEGG](https://www.kegg.jp/kegg/legal.html) |
+
+ 
