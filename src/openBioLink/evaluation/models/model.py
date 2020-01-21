@@ -1,11 +1,28 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod, ABCMeta
+
 import numpy as np
 
 
-class Model (ABC):
+class RequiredAttrMeta(ABCMeta):
+        required_attributes = []
+        def __call__(self, *args, **kwargs):
+            obj = super().__call__(*args, **kwargs)
+            for attr_name in obj.required_attributes:
+                    getattr(obj, attr_name)
+            return obj
+
+
+class Model (metaclass=RequiredAttrMeta):
+
+    required_attributes = ['kge_model']
 
     @abstractmethod
     def __init__(self):
+        ...
+
+    @staticmethod
+    @abstractmethod
+    def load_model(config_path:str):
         ...
 
     @abstractmethod
@@ -14,6 +31,7 @@ class Model (ABC):
 
     @abstractmethod
     def get_ranked_and_sorted_predictions(self, examples):
+        # returns ranked_test_triples, sorted_indices
         ...
 
     @abstractmethod
