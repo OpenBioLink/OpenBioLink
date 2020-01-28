@@ -1,10 +1,10 @@
 import os
 import unittest
-import src.openBioLink.utils as utils
+import src.openbiolink.utils as utils
 import pandas
 import numpy as np
 
-from edgeType import EdgeType
+from src.openbiolink.edgeType import EdgeType
 
 
 class TestUtils(unittest.TestCase):

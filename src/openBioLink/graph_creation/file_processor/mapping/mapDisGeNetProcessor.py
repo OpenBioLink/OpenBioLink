@@ -1,8 +1,7 @@
-from ...metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
-
-from ...types.readerType import ReaderType
-from ...file_processor.fileProcessor import FileProcessor
-from ...types.infileType import InfileType
+from openbiolink.graph_creation.file_processor.fileProcessor import FileProcessor
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
+from openbiolink.graph_creation.types.infileType import InfileType
+from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class MapDisGeNetProcessor(FileProcessor):

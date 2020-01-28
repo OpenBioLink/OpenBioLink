@@ -1,8 +1,8 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from ...metadata_infile import InMetaOntoUberonPartOf
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
+from openbiolink.graph_creation.metadata_infile import InMetaOntoUberonPartOf
 
 
 class EdgeMetaAnatomyOntoPartOf(EdgeOntoMetadata):

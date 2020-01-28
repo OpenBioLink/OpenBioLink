@@ -1,8 +1,8 @@
-import utils
-from ...types.infileType import InfileType
-from ...types.readerType import ReaderType
-from ..fileProcessor import FileProcessor
-from ...metadata_infile import InMetaEdgeStringPtmod
+from openbiolink import utils
+from openbiolink.graph_creation.file_processor.fileProcessor import FileProcessor
+from openbiolink.graph_creation.metadata_infile import InMetaEdgeStringPtmod
+from openbiolink.graph_creation.types.infileType import InfileType
+from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class EdgeStringPtmodeProcessor(FileProcessor):

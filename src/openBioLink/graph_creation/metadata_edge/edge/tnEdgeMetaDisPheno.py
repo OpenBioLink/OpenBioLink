@@ -1,12 +1,12 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...types.qualityType import QualityType
-from ...metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
-from ...metadata_infile import InMetaMapOntoDoAltid, InMetaMapOntoHpoAltid
-from ...metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDis
-from ...metadata_infile.edge.inMetaEdgeTnHpoDis import InMetaEdgeTnHpoDis
-from ...metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile import InMetaMapOntoDoAltid, InMetaMapOntoHpoAltid
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDis
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeTnHpoDis import InMetaEdgeTnHpoDis
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class TnEdgeMetaDisPheno(TnEdgeRegularMetadata):

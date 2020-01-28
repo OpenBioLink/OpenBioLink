@@ -1,1 +1,1 @@
-from .fileWriter import FileWriter
+from openbiolink.graph_creation.file_writer.fileWriter import FileWriter

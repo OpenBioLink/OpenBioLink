@@ -1,19 +1,18 @@
 import logging
 import math
-import os
 import random
 import sys
 
 import numpy
 import pandas
 
-import globalConfig
-import globalConfig as glob
-import graphProperties as graphProp
-import utils
-from graph_creation.metadata_edge import edgeMetadata as meta
-from .sampler import NegativeSampler
-from .trainTestSetWriter import TrainTestSetWriter
+import openbiolink.graphProperties as graphProp
+from openbiolink import globalConfig
+from openbiolink import globalConfig as glob
+from openbiolink import utils
+from openbiolink.graph_creation.metadata_edge import edgeMetadata as meta
+from openbiolink.train_test_set_creation.sampler import NegativeSampler
+from openbiolink.train_test_set_creation.trainTestSetWriter import TrainTestSetWriter
 
 random.seed(glob.RANDOM_STATE)
 numpy.random.seed(glob.RANDOM_STATE)

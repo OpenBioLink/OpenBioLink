@@ -1,6 +1,5 @@
-from ...metadata_db_file.mapping.dbMetadataMapping import DbMetadataMapping
-from ...types.dbType import DbType
-
+from openbiolink.graph_creation.metadata_db_file.mapping.dbMetadataMapping import DbMetadataMapping
+from openbiolink.graph_creation.types.dbType import DbType
 
 
 class DbMetaMapUniprot(DbMetadataMapping):

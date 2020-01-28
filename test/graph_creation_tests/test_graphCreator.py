@@ -2,12 +2,12 @@ import os
 import unittest
 import sys
 
-sys.path.append(os.path.abspath('src/openBioLink'))
+sys.path.append(os.path.abspath('src/openbiolink'))
 
 import globalConfig
 import graphProperties as graphProp
-from src.openBioLink.graph_creation.graphCreation import Graph_Creation
-from src.openBioLink.graph_creation.metadata_db_file import *
+from src.openbiolink.graph_creation.graphCreation import Graph_Creation
+from src.openbiolink.graph_creation.metadata_db_file import *
 
 
 class TestGraphCreation(unittest.TestCase):
@@ -17,10 +17,10 @@ class TestGraphCreation(unittest.TestCase):
         #creates test graph from test o_files and compares against true reference test graph
         #tests directed and undirected version of graph (and TN-graph)
         #well as the output into a single as well as in separate files
-        #globalConfig = __import__('../../src/openBioLink/graphCreation.py')
-        #graphProp = __import__('../../src/openBioLink/globalConfig.py')
+        #globalConfig = __import__('../../src/openbiolink/graphCreation.py')
+        #graphProp = __import__('../../src/openbiolink/globalConfig.py')
         #graphProp = __import__('../../src/graph_creation/graphCreation.py')
-        #graphProp = __import__('../../src/openBioLink/graphCreation.py')
+        #graphProp = __import__('../../src/openbiolink/graphCreation.py')
         manual_db_file_metadata = []
 
         #EDGES --------------------------------------------------

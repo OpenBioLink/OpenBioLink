@@ -1,12 +1,12 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...types.qualityType import QualityType
-from ...metadata_edge.edge.edgeMetaGeneAna import EdgeMetaGeneAna
-from ...metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
-from ...metadata_infile import InMetaMapOntoUberonAltid
-from ...metadata_infile.edge.inMetaEdgeBgeeNoExpr import InMetaEdgeBgeeNoExpr
-from ...metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMapUniEnsNcbi
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.edge.edgeMetaGeneAna import EdgeMetaGeneAna
+from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile import InMetaMapOntoUberonAltid
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeBgeeNoExpr import InMetaEdgeBgeeNoExpr
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapUniEnsNcbi import InMetaMapUniEnsNcbi
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class TnEdgeMetaGeneAna(TnEdgeRegularMetadata):

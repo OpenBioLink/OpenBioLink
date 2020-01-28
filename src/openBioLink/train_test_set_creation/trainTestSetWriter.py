@@ -1,7 +1,10 @@
 import os
-import globalConfig as globConst
-import train_test_set_creation.ttsConfig as ttsConst
+
 import pandas
+
+import openbiolink.train_test_set_creation.ttsConfig as ttsConst
+from openbiolink import globalConfig as globConst
+
 
 class TrainTestSetWriter():
     def __init__(self):

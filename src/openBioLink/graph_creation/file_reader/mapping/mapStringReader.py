@@ -1,9 +1,10 @@
-from ...types.dbType import DbType
-from ...file_reader.csvReader import CsvReader
-from ...types.readerType import ReaderType
-from ...metadata_db_file.mapping.dbMetaMapString import DbMetaMapString
-from ... import graphCreationConfig as g
 import os
+
+from openbiolink.graph_creation import graphCreationConfig as g
+from openbiolink.graph_creation.file_reader.csvReader import CsvReader
+from openbiolink.graph_creation.metadata_db_file.mapping.dbMetaMapString import DbMetaMapString
+from openbiolink.graph_creation.types.dbType import DbType
+from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class MapStringReader(CsvReader):

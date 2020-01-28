@@ -1,4 +1,5 @@
-from nodeType import NodeType
+from openbiolink.nodeType import NodeType
+
 
 class Node :
     def __init__(self, id: str, type : NodeType, name = "" ):

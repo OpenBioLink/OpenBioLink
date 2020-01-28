@@ -5,14 +5,14 @@ from unittest.mock import MagicMock, patch
 
 import pandas
 
-from src.openBioLink.evaluation.evaluation import Evaluation
-from src.openBioLink.evaluation.metricTypes import ThresholdMetricType, RankMetricType
-from src.openBioLink.evaluation.models.pykeen_models import TransR_PyKeen
-from src.openBioLink.globalConfig import *
+from src.openbiolink.evaluation.evaluation import Evaluation
+from src.openbiolink.evaluation.metricTypes import ThresholdMetricType, RankMetricType
+from src.openbiolink.evaluation.models.pykeen_models import TransR_PyKeen
+from src.openbiolink.globalConfig import *
 
 
 class TestEvaluation(TestCase):
-    @patch("src.openBioLink.evaluation.evaluation.utils.calc_corrupted_triples")
+    @patch("src.openbiolink.evaluation.evaluation.utils.calc_corrupted_triples")
     def test_evaluate(self, mocked_calc_corrupted_triples):
         #given
         col_names_ranked_examples = [NODE1_ID_COL_NAME, EDGE_TYPE_COL_NAME, NODE2_ID_COL_NAME, SCORE_COL_NAME]

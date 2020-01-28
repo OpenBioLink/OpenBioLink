@@ -1,9 +1,10 @@
 import csv
-import os
-from . import graphCreationConfig as gcConst
-import globalConfig as globConst
-import graphProperties as graphProp
 import json
+import os
+
+import openbiolink.graphProperties as graphProp
+from openbiolink import globalConfig as globConst
+from openbiolink.graph_creation import graphCreationConfig as gcConst
 
 
 class GraphWriter ():

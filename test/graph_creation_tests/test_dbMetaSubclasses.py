@@ -1,9 +1,9 @@
 import unittest
 
-from src.openBioLink import utils
-from src.openBioLink.graph_creation.types.dbType import DbType
-from src.openBioLink.graph_creation.file_reader import *
-from src.openBioLink.graph_creation.metadata_db_file import *
+from src.openbiolink import utils
+from src.openbiolink.graph_creation.types.dbType import DbType
+from src.openbiolink.graph_creation.file_reader import *
+from src.openbiolink.graph_creation.metadata_db_file import *
 
 
 class TestDbMetaSubclasses(unittest.TestCase):

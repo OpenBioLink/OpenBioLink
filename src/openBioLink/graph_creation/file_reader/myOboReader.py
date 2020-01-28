@@ -1,9 +1,9 @@
 import os
 
-from .. import graphCreationConfig as g
-#from ..types.dbType import DbType
-#from ..types.readerType import ReaderType
-from .oboReader import OboReader
+from openbiolink.graph_creation import graphCreationConfig as g
+# from openbiolink.graph_creationtypes.dbType import DbType
+# from openbiolink.graph_creationtypes.readerType import ReaderType
+from openbiolink.graph_creation.file_reader.oboReader import OboReader
 
 
 class MyOntoReader(OboReader):

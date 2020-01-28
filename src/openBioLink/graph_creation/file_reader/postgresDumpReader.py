@@ -1,5 +1,6 @@
-from .fileReader import FileReader
-from .parser.postgresDumpParser import PostgresDumpParser as dcp
+from openbiolink.graph_creation.file_reader.fileReader import FileReader
+from openbiolink.graph_creation.file_reader.parser.postgresDumpParser import PostgresDumpParser as dcp
+
 
 class PostgresDumpReader(FileReader):
 

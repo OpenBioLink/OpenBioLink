@@ -1,8 +1,8 @@
 import unittest
 import urllib.request as request
 
-from src.openBioLink import utils
-from src.openBioLink.graph_creation.metadata_db_file import DbMetadata
+from src.openbiolink import utils
+from src.openbiolink.graph_creation.metadata_db_file import DbMetadata
 
 
 class TestSources(unittest.TestCase):

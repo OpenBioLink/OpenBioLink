@@ -1,11 +1,11 @@
 import os
 
-from ... import graphCreationConfig as glob
-from ...metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from ...metadata_infile import InMetaMapOntoDoAltid
-from ...metadata_infile.edge.inMetaEdgeDisGeNet import InMetaEdgeDisGeNet
-from ...metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
-from ...types.qualityType import QualityType
+from openbiolink.graph_creation import graphCreationConfig as glob
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from openbiolink.graph_creation.metadata_infile import InMetaMapOntoDoAltid
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeDisGeNet import InMetaEdgeDisGeNet
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapDisGeNet import InMetaMapDisGeNet
+from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class EdgeMetaGeneDis(EdgeRegularMetadata):

@@ -1,4 +1,4 @@
-from ...metadata_db_file.dbMetadata import DbMetadata
+from openbiolink.graph_creation.metadata_db_file.dbMetadata import DbMetadata
 
 
 class DbMetadataMapping (DbMetadata):

@@ -1,8 +1,11 @@
-import os
 import json
-import evaluation.evalConfig as evalConst
-import globalConfig as globConst
+import os
+
 import pandas
+
+import openbiolink.evaluation.evalConfig as evalConst
+from openbiolink import globalConfig as globConst
+
 
 def write_mappings(node_label_to_id=None, node_types_to_id=None, relation_label_to_id=None):
     model_dir = os.path.join(os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME),

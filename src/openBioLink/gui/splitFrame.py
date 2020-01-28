@@ -2,9 +2,8 @@ import os
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
 
-from gui import gui as gui
-
-from graph_creation import graphCreationConfig as gcConst
+from openbiolink.graph_creation import graphCreationConfig as gcConst
+from openbiolink.gui import gui as gui
 
 
 class SplitFrame(tk.Frame):

@@ -1,20 +1,19 @@
 import multiprocessing
 import os
 import random
-import time
 from multiprocessing import Pool
 
 import numpy as np
 import pandas
+from sortedcontainers import SortedList
 from tqdm import tqdm
 
-import evaluation.evalConfig as evalConst
-import evaluation.evaluationIO as io
-import globalConfig as globConst
-import utils
-from .metricTypes import RankMetricType, ThresholdMetricType
-from .models.model import Model
-from sortedcontainers import SortedList
+import openbiolink.evaluation.evalConfig as evalConst
+import openbiolink.evaluation.evaluationIO as io
+from openbiolink import globalConfig as globConst
+from openbiolink import utils
+from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
+from openbiolink.evaluation.models.model import Model
 
 
 class Evaluation:
