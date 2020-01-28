@@ -9,10 +9,8 @@ OpenBioLink is a resource and evaluation framework for evaluating link predictio
 ## Installation
 
 ### Pip
-#### Linux/Mac
-```pip install openbiolink```
-#### Windows
-```pip install openbiolink -f https://download.pytorch.org/whl/torch_stable.html```
+1) Install a pytorch version suitable for your system https://pytorch.org/
+1) ```pip install openbiolink```
 
 ### Source
 1) clone the git repository or download the project
