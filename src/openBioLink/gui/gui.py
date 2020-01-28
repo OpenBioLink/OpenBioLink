@@ -98,6 +98,7 @@ class BimegGui(tk.Tk):
 
 class AskForExitPopup:
     def __init__(self, message):
+        self.exit = False
         win = self.win = tk.Toplevel()
 
         l = tk.Label(self.win, text=message)
@@ -111,15 +112,15 @@ class AskForExitPopup:
 
     def cancel(self):
         self.win.destroy()
-        return True
+        self.exit = True
 
     def go_on(self):
         self.win.destroy()
-        return False
+        self.exit = False
 
 def askForExit(message):
-    exit = AskForExitPopup(message)
-    if exit:
+    popup = AskForExitPopup(message)
+    if popup.exit:
         on_closing()
 
 #################### SKIP EXISTING FILES ############################
