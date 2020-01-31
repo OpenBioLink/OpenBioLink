@@ -1,5 +1,6 @@
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
+from openbiolink.namespace import *
 
 
 class InMetaMapDrugCentralPubchem(InfileMetadata):
@@ -11,6 +12,7 @@ class InMetaMapDrugCentralPubchem(InfileMetadata):
     ]
     SOURCE_COL = 1
     TARGET_COL = 0
+    TARGET_NAMESPACE = Namespace(Namespaces.PUBCHEM, False)
     MAPPING_SEP = None
     INFILE_TYPE = InfileType.IN_MAP_DRUGCENTRAL_PUBCHEM
 

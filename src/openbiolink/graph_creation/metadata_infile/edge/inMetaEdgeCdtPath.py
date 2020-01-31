@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
-
+from openbiolink.namespace import *
 
 class InMetaEdgeCdtPath(InfileMetadata):
     CSV_NAME = "DB_CDT_gene_pathway.csv"
@@ -11,7 +11,9 @@ class InMetaEdgeCdtPath(InfileMetadata):
     NODE2_COL = 1
     QSCORE_COL = None
     NODE1_TYPE = NodeType.GENE
+    NODE1_NAMESPACE = Namespace(Namespaces.NCBI, False)
     NODE2_TYPE = NodeType.PATHWAY
+    NODE2_NAMESPACE = Namespace(Namespaces.MULTI, mapping={"hsa_M":"M","REACT": Namespaces.REACTOME.value})
     EDGE_TYPE = EdgeType.GENE_PATHWAY
     INFILE_TYPE = InfileType.IN_EDGE_CDT_PATH
     MAPPING_SEP = None

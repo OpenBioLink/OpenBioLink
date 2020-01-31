@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
-
+from openbiolink.namespace import *
 
 class InMetaOntoHpoIsA(InfileMetadata):
 
@@ -12,7 +12,9 @@ class InMetaOntoHpoIsA(InfileMetadata):
     NODE2_COL = 1
     QSCORE_COL = None
     NODE1_TYPE = NodeType.PHENOTYPE
+    NODE1_NAMESPACE = Namespace(Namespaces.HPO)
     NODE2_TYPE = NodeType.PHENOTYPE
+    NODE2_NAMESPACE = Namespace(Namespaces.HPO)
     EDGE_TYPE = EdgeType.IS_A
     MAPPING_SEP = ';'
     INFILE_TYPE = InfileType.IN_ONTO_HPO_IS_A

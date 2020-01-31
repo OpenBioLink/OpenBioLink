@@ -1,5 +1,6 @@
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
+from openbiolink.namespace import *
 
 
 class InMetaMapOntoGoAltid(InfileMetadata):
@@ -8,6 +9,7 @@ class InMetaMapOntoGoAltid(InfileMetadata):
     USE_COLS = ['ID', 'ALT_ID']
     SOURCE_COL = 1
     TARGET_COL = 0
+    TARGET_NAMESPACE = Namespace(Namespaces.GO)
     MAPPING_SEP = ';'  # ';' sep is created while parsing
     INFILE_TYPE = InfileType.IN_MAP_ONTO_GO_ALT_ID
 

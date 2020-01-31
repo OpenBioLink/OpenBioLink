@@ -32,13 +32,17 @@ class TnEdgeMetaGeneUnderAna(TnEdgeRegularMetadata):
                          colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
                          edgeType=self.TP_EDGE_CLASS.EDGE_INMETA_CLASS.EDGE_TYPE,
                          node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
+                         node1_namespace=self.EDGE_INMETA_CLASS.NODE1_NAMESPACE,
                          node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
+                         node2_namespace=self.EDGE_INMETA_CLASS.NODE2_NAMESPACE,
                          colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL,
                          quality=quality,
                          mapping1_file=mapping_file1,
+                         mapping1_targetnamespace=self.MAP1_META_CLASS.TARGET_NAMESPACE,
                          map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL,
                          map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
                          altid_mapping2_file=altid_mapping2_file,
+                         altid_mapping2_targetnamespace=self.MAP2_ALT_ID_META_CLASS.TARGET_NAMESPACE,
                          altid_map2_sourceindex=self.MAP2_ALT_ID_META_CLASS.SOURCE_COL,
                          altid_map2_targetindex=self.MAP2_ALT_ID_META_CLASS.TARGET_COL
                          )

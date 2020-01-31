@@ -23,12 +23,20 @@ class EdgeMetaDrugPheno(EdgeRegularMetadata):
 
         super().__init__(is_directional=True,
                          edges_file_path=edges_file_path,
-                         colindex1=self.EDGE_INMETA_CLASS.NODE1_COL, colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
+                         colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
+                         colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
                          edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
-                         node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE, node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
+                         node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
+                         node1_namespace=self.EDGE_INMETA_CLASS.NODE1_NAMESPACE,
+                         node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
+                         node2_namespace=self.EDGE_INMETA_CLASS.NODE2_NAMESPACE,
                          colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL,
-                         mapping2_file=mapping_file2, map2_sourceindex=self.MAP2_META_CLASS.SOURCE_COL, map2_targetindex=self.MAP2_META_CLASS.TARGET_COL,
+                         mapping2_file=mapping_file2,
+                         mapping2_targetnamespace=self.MAP2_META_CLASS.TARGET_NAMESPACE,
+                         map2_sourceindex=self.MAP2_META_CLASS.SOURCE_COL,
+                         map2_targetindex=self.MAP2_META_CLASS.TARGET_COL,
                          altid_mapping2_file=altid_mapping_file2,
+                         altid_mapping2_targetnamespace=self.MAP2_ALT_ID_META_CLASS.TARGET_NAMESPACE,
                          altid_map2_sourceindex=self.MAP2_ALT_ID_META_CLASS.SOURCE_COL,
                          altid_map2_targetindex=self.MAP2_ALT_ID_META_CLASS.TARGET_COL
                          )

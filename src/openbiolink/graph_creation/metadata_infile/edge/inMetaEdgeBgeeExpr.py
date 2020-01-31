@@ -2,6 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
+from openbiolink.namespace import *
 
 
 class InMetaEdgeBgeeExpr(InfileMetadata):
@@ -11,7 +12,9 @@ class InMetaEdgeBgeeExpr(InfileMetadata):
     NODE2_COL = 1
     QSCORE_COL = 2
     NODE1_TYPE = NodeType.GENE
+    NODE1_NAMESPACE=Namespace(Namespaces.BGEEGENE, False)
     NODE2_TYPE = NodeType.ANATOMY
+    NODE2_NAMESPACE=Namespace(Namespaces.MULTI)
     EDGE_TYPE = EdgeType.GENE_EXPRESSED_ANATOMY
     INFILE_TYPE = InfileType.IN_EDGE_BGEE_EXPR
     MAPPING_SEP = None

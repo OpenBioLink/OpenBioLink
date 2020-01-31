@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
-
+from openbiolink.namespace import *
 
 class InMetaEdgeStringExpression(InfileMetadata):
     CSV_NAME = "DB_STRING_gene_expression_gene.csv"
@@ -11,7 +11,9 @@ class InMetaEdgeStringExpression(InfileMetadata):
     NODE2_COL = 1
     QSCORE_COL = 2
     NODE1_TYPE = NodeType.GENE
+    NODE1_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.", ""})
     NODE2_TYPE = NodeType.GENE
+    NODE2_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.", ""})
     EDGE_TYPE = EdgeType.GENE_EXPRESSION_GENE
     INFILE_TYPE = InfileType.IN_EDGE_STRING_EXPRESSION
 

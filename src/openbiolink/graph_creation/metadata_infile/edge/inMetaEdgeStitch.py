@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
-
+from openbiolink.namespace import *
 
 class InMetaEdgeStitch(InfileMetadata):
     CSV_NAME = "DB_STITCH_gene_drug.csv"
@@ -11,7 +11,9 @@ class InMetaEdgeStitch(InfileMetadata):
     NODE2_COL = 1
     QSCORE_COL = 2
     NODE1_TYPE = NodeType.GENE
+    NODE1_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.",""})
     NODE2_TYPE = NodeType.DRUG
+    NODE2_NAMESPACE = Namespace(Namespaces.PUBCHEM, False)
     EDGE_TYPE = EdgeType.GENE_DRUG
     INFILE_TYPE = InfileType.IN_EDGE_STITCH
 

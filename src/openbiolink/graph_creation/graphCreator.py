@@ -151,18 +151,25 @@ class GraphCreator():
                     qscore = None
                 edge_id1 = None
                 edge_id2 = None
+                namespace1 = None
+                namespace2 = None
                 ids1.add(raw_id1)
                 ids2.add(raw_id2)
 
                 #apply mapping
                 if (edge_metadata.mapping1_file is not None and raw_id1 in mapping1):
                     edge_id1 = mapping1.get(raw_id1)
+                    namespace1 = edge_metadata.mapping1_targetnamespace
                 elif(edge_metadata.mapping1_file is None):
                     edge_id1 = [raw_id1]
+                    namespace1 = edge_metadata.node1_namespace
+
                 if (edge_metadata.mapping2_file is not None and raw_id2 in mapping2):
                     edge_id2 = mapping2.get(raw_id2)
+                    namespace2 = edge_metadata.mapping2_targetnamespace
                 elif (edge_metadata.mapping2_file is None):
                     edge_id2 = [raw_id2]
+                    namespace2 = edge_metadata.node2_namespace
 
                 #if mapped successfully
                 if edge_id1 is not None and edge_id2 is not None:
@@ -170,16 +177,18 @@ class GraphCreator():
                         #apply alt_id mapping 1
                         if (edge_metadata.altid_mapping1_file is not None and id1 in altid_mapping1):
                             id1 = altid_mapping1[id1][0] #there should only be one
+                            namespace1 = edge_metadata.altid_mapping1_targetnamespace
                         for id2 in edge_id2:
                             # apply alt_id mapping 2
                             if (edge_metadata.altid_mapping2_file is not None and id2 in altid_mapping2):
                                 id2 = altid_mapping2[id2][0] #there should only be one
+                                namespace2 = edge_metadata.altid_mapping2_targetnamespace
                             #check for quality cutoff
                             within_num_cutoff= edge_metadata.cutoff_num is not None and float(qscore) > edge_metadata.cutoff_num
                             within_text_cutoff = edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt
                             if no_cutoff_defined or within_num_cutoff or within_text_cutoff:
-                                bimeg_id1 = edge_metadata.node1_type.name + '_' + id1
-                                bimeg_id2 = edge_metadata.node2_type.name + '_' + id2
+                                bimeg_id1 = namespace1.resolve(id1)
+                                bimeg_id2 = namespace2.resolve(id2)
                                 edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore))
                                 # add an edge in the other direction when edge is undirectional and graph is directional
                                 if (not edge_metadata.is_directional) and graphProp.DIRECTED:
