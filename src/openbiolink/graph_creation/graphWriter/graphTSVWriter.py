@@ -7,7 +7,7 @@ from openbiolink import globalConfig as globConst
 from openbiolink.graph_creation import graphCreationConfig as gcConst
 
 
-class GraphWriter ():
+class GraphTSVWriter:
 
     def __init__(self):
         self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
@@ -31,13 +31,13 @@ class GraphWriter ():
             one_file_sep = ','
         # one file
         if one_file_sep is not None:
-            GraphWriter().output_graph_in_single_file(prefix=prefix, file_sep=one_file_sep, nodes_dic=nodes_dic, edges_dic=edges_dic, qscore=print_qscore)
+            GraphTSVWriter().output_graph_in_single_file(prefix=prefix, file_sep=one_file_sep, nodes_dic=nodes_dic, edges_dic=edges_dic, qscore=print_qscore)
         # separate files
         if multi_file_sep is not None:
-            GraphWriter().output_graph_in_multi_files(prefix, multi_file_sep, nodes_dic, edges_dic, qscore=print_qscore)
+            GraphTSVWriter().output_graph_in_multi_files(prefix, multi_file_sep, nodes_dic, edges_dic, qscore=print_qscore)
         # lists of all nodes and metaedges
         if node_edge_list:
-            GraphWriter().write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
+            GraphTSVWriter().write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
 
 
         #niceToHave (8) adjacency matrix

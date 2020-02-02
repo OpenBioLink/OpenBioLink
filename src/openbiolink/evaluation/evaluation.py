@@ -14,6 +14,7 @@ from openbiolink import globalConfig as globConst
 from openbiolink import utils
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from openbiolink.evaluation.models.model import Model
+from openbiolink.tqdmbuf import TqdmBuffer
 
 
 class Evaluation:
@@ -150,7 +151,8 @@ class Evaluation:
         tail_tuples = np.unique(tail_tuples, axis=0)
         head_ranks = []
         # corrupting tail
-        for head, relation in tqdm(head_tuples):
+        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        for head, relation in tqdm(head_tuples, file = tqdmbuffer):
             data = mapped_pos_triples[np.where((mapped_pos_triples[:, 0] == head) *
                                                (mapped_pos_triples[:, 1] == relation))]
 
@@ -177,7 +179,8 @@ class Evaluation:
                         k_raw_corrupted_tail[i].append(0)
 
         # corrupting head
-        for relation, tail in tqdm(tail_tuples):
+        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        for relation, tail in tqdm(tail_tuples, file = tqdmbuffer):
             data = mapped_pos_triples[np.where((mapped_pos_triples[:, 1] == relation) *
                                                (mapped_pos_triples[:, 2] == tail))]
 
@@ -284,8 +287,8 @@ class Evaluation:
             unfiltered_ranks_corrupted_tails = []
 
             print('calculating corrupted triples')
-
-            for pos_example in tqdm(mapped_pos_triples, total=mapped_pos_triples.shape[0]):
+            tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+            for pos_example in tqdm(mapped_pos_triples, total=mapped_pos_triples.shape[0], file = tqdmbuffer):
                 unfiltered_corrupted_head, \
                 unfiltered_corrupted_tail, \
                 filtered_corrupted_head, \
@@ -447,7 +450,8 @@ class Evaluation:
         for _ in range(1000):
             drop_indices_candidates = random.sample(edges.index.values.tolist(), n)
             drop_indices = []
-            for drop_index in tqdm(drop_indices_candidates):
+            tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+            for drop_index in tqdm(drop_indices_candidates, file = tqdmbuffer):
                 if i==n:
                     break
                 drop_edge_candidate = edges.loc[drop_index]

@@ -1,5 +1,6 @@
 import os
 import sys
+import threading
 import tkinter as tk
 from tkinter import font  as tkfont, messagebox
 from tkinter.ttk import Style
@@ -89,7 +90,9 @@ class BimegGui(tk.Tk):
         if messagebox.askokcancel("Start", "Do you want to start now?"):
             self.show_frame("ConsoleFrame")
             arg_list = self.get_args()
-            openBioLink.main(args_list=arg_list)
+            thread = threading.Thread(target=openBioLink.main, args=[arg_list], daemon=True)
+            thread.start()
+
             #fixme start detached
             #app.destroy()
 

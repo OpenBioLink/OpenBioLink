@@ -14,12 +14,13 @@ from openbiolink.graph_creation.file_processor.fileProcessor import *
 from openbiolink.graph_creation.file_reader.fileReader import *
 from openbiolink.graph_creation.file_writer.fileWriter import *
 from openbiolink.graph_creation.graphCreator import GraphCreator
-from openbiolink.graph_creation.graphWriter import GraphWriter
+from openbiolink.graph_creation.graphWriter import *
 from openbiolink.graph_creation.metadata_db_file import *
 from openbiolink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
 from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
 from openbiolink.graph_creation.metadata_infile import *
+from openbiolink.tqdmbuf import TqdmBuffer
 
 
 class Graph_Creation():
@@ -80,7 +81,8 @@ class Graph_Creation():
             for_all = True
         if not os.path.exists(gcConst.O_FILE_PATH):
             os.makedirs(gcConst.O_FILE_PATH)
-        for db_file in tqdm(self.db_file_metadata):
+        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        for db_file in tqdm(self.db_file_metadata,file = tqdmbuffer):
             o_file_path = os.path.join(gcConst.O_FILE_PATH, db_file.ofile_name)
             if not for_all:
                 if globConst.GUI_MODE:
@@ -102,7 +104,8 @@ class Graph_Creation():
             for_all = True
         if not os.path.exists(gcConst.IN_FILE_PATH):
             os.makedirs(gcConst.IN_FILE_PATH)
-        for reader in tqdm(self.file_readers):
+        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        for reader in tqdm(self.file_readers,file = tqdmbuffer):
             if reader.readerType in self.readerType_processor_map:
 
                 #check beforehand if read in content is processed as parsing can be time consuming
@@ -140,18 +143,22 @@ class Graph_Creation():
 
 # ----------- create graph ----------
 
-    def create_graph(self, one_file_sep='\t', multi_file_sep=None, print_qscore = True):
+    def create_graph(self,format='TSV', one_file_sep='\t', multi_file_sep=None, print_qscore = True):
         gc = GraphCreator()
-        gw = GraphWriter()
+        gw = None
+        if format == 'TSV':
+            gw = GraphTSVWriter()
+        elif format == "RDF-N3":
+            gw = GraphRDFWriter()
         #create graph
-        nodes_dic, edges_dic = gc.meta_edges_to_graph(self.edge_metadata)
+        nodes_dic, edges_dic, namespaces_set = gc.meta_edges_to_graph(self.edge_metadata)
         gw.output_graph(nodes_dic,
                         edges_dic,
                         one_file_sep=one_file_sep,
                         multi_file_sep=multi_file_sep,
                         print_qscore=print_qscore)
         #create TN edges
-        tn_nodes_dic, tn_edges_dic = gc.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
+        tn_nodes_dic, tn_edges_dic, tn_namespaces_set = gc.meta_edges_to_graph(self.tn_edge_metadata, tn = True)
         gw.output_graph(tn_nodes_dic,
                         tn_edges_dic,
                         one_file_sep=one_file_sep,
@@ -175,6 +182,7 @@ class Graph_Creation():
                         )
         graphProp.EDGE_TYPES = list(edges_dic.keys())
         graphProp.NODE_TYPES = list(nodes_dic.keys())
+        graphProp.NODE_NAMESPACES = list(namespaces_set)
 
         gw.output_graph_props()
 

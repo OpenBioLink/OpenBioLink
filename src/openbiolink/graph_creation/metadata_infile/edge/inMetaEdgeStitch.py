@@ -11,7 +11,7 @@ class InMetaEdgeStitch(InfileMetadata):
     NODE2_COL = 1
     QSCORE_COL = 2
     NODE1_TYPE = NodeType.GENE
-    NODE1_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.",""})
+    NODE1_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.":""})
     NODE2_TYPE = NodeType.DRUG
     NODE2_NAMESPACE = Namespace(Namespaces.PUBCHEM, False)
     EDGE_TYPE = EdgeType.GENE_DRUG

@@ -12,6 +12,7 @@ from openbiolink.cli import Cli
 from openbiolink.edge import Edge
 from openbiolink.graph_creation import graphCreationConfig as gcConst
 from openbiolink.node import Node
+from openbiolink.tqdmbuf import TqdmBuffer
 
 
 class GraphCreator():
@@ -67,7 +68,9 @@ class GraphCreator():
     def meta_edges_to_graph(self, edge_metadata_list, tn = None):
         edges_dic = {}
         nodes_dic = {}
-        for d in tqdm(edge_metadata_list):
+        namespaces_set = set()
+        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        for d in tqdm(edge_metadata_list,file=tqdmbuffer):
             nodes1, nodes2, edges = self.create_nodes_and_edges(d, tn)
             if str(d.edgeType) in edges_dic:
                 edges_dic[str(d.edgeType)].update(edges)
@@ -81,7 +84,9 @@ class GraphCreator():
                 nodes_dic[str(d.node2_type)].update(nodes2)
             else:
                 nodes_dic[str(d.node2_type)] = nodes2
-        return nodes_dic, edges_dic
+            namespaces_set.update([str(node.namespace) for node in nodes1])
+            namespaces_set.update([str(node.namespace) for node in nodes2])
+        return nodes_dic, edges_dic, namespaces_set
 
 
 
@@ -195,8 +200,8 @@ class GraphCreator():
                                     edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore))
                                     nr_edges_incl_dup += 1
                                     nr_edges_return_dir+=1
-                                nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
-                                nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))
+                                nodes1.add(Node(bimeg_id1, edge_metadata.node1_type, namespace1))
+                                nodes2.add(Node(bimeg_id2, edge_metadata.node2_type, namespace2))
 
                                 nr_edges_incl_dup += 1
                             else:
@@ -206,9 +211,9 @@ class GraphCreator():
                 else:
                     nr_edges_no_mapping += 1
                     if (edge_id1 is None and edge_metadata.mapping1_file is not None):
-                        ids1_no_mapping.add(raw_id1)
+                        ids1_no_mapping.add(edge_metadata.node1_namespace.resolve(raw_id1))
                     if (edge_id2 is None and edge_metadata.mapping2_file is not None):
-                        ids2_no_mapping.add(raw_id2)
+                        ids2_no_mapping.add(edge_metadata.node2_namespace.resolve(raw_id2))
                 nr_edges += 1
 
         nr_edges_after_mapping = len(edges)

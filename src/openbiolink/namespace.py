@@ -1,42 +1,45 @@
 from enum import Enum
 
+
 class Namespaces(Enum):
-    NCBI = "NCBIGENE"
-    GO = "GO"
-    DIS = "DOID"
-    PUBCHEM = "PUBCHEM.COMPOUND"
-    UBERON = "UBERON"
+    BGEEGENE = "BGEE.GENE"
     CL = "CL"
+    DIS = "DOID"
+    ENSEMBL = "ENSEMBL"
+    GO = "GO"
     HPO = "HP"
-    REACTOME = "REACTOME"
     KEGG = "KEGG"
-    BGEEGENE = "BEGEE.GENE"
+    NCBI = "NCBIGENE"
+    PUBCHEM = "PUBCHEM.COMPOUND"
+    REACTOME = "REACTOME"
+    UBERON = "UBERON"
     UMLS = "UMLS"
     UNIPROT = "UNIPROT"
-    ENSEMBL = "ENSEMBL"
+
     MULTI = "MULTI"
     NONE = "NONE"
 
     def __str__(self):
-        return (self.name)
+        return self.name
 
-class Namespace():
-    def __init__(self,namespace,isNamespaceInId=True,mapping=None):
+
+class Namespace:
+    def __init__(self, namespace, isNamespaceInId=True, mapping=None):
         if namespace.value == Namespaces.MULTI:
-            assert isNamespaceInId == True, "Namespace of type MULTI must have the Namespace in the ID"
+            assert isNamespaceInId, "Namespace of type MULTI must have the Namespace in the ID"
         self.namespace = namespace
         self.isNamespaceInID = isNamespaceInId
         self.mapping = mapping
 
-    def resolve(self,id):
-        if self.mapping != None:
+    def resolve(self, id):
+        if self.mapping is not None:
             for key, value in self.mapping.items():
-                id = id.replace(key,value)
-        if self.isNamespaceInID == False:
+                id = id.replace(key, value)
+        if self.namespace == Namespaces.NONE:
+            return id
+        if not self.isNamespaceInID:
             id = self.namespace.value + ":" + id
         return id
 
-
-
-
-
+    def __str__(self):
+        return self.namespace.value

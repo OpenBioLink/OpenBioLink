@@ -13,7 +13,7 @@ class InMetaEdgeStitchActivation(InfileMetadata):
     NODE1_TYPE = NodeType.DRUG
     NODE1_NAMESPACE = Namespace(Namespaces.PUBCHEM, False)
     NODE2_TYPE = NodeType.GENE
-    NODE2_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.",""})
+    NODE2_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.":""})
     EDGE_TYPE = EdgeType.DRUG_ACTIVATION_GENE
     INFILE_TYPE = InfileType.IN_EDGE_STITCH_ACTIVATION
 
