@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="openbiolink", 
+    name="openbiolink",
     version="0.1.0",
     author="Anna Breit, Matthias Samwald, Simon Ott, Laura Graf, Asan Agibetov",
     author_email="matthiassamwald@gmail.com",
@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/OpenBioLink/OpenBioLink",
-    package_dir = {'': 'src'},
+    package_dir={'': 'src'},
     packages=setuptools.find_packages("src"),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -29,4 +29,9 @@ setuptools.setup(
         'sortedcontainers',
     ],
     python_requires='>=3.6',
+    entry_points={
+        "console_scripts": [
+            "openbiolink = openbiolink.openBioLink:main",
+        ],
+    },
 )
