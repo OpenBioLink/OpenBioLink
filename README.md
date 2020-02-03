@@ -1,6 +1,6 @@
 # OpenBioLink
 
-OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as the underlying scrips to create them and to evaluate a costume model on them.
+OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as tools for creating custom benchmarks and training and evaluating models.
 
 [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)
 
@@ -38,8 +38,8 @@ e.g.:
 |   TransR (Baseline)   |    0.0639     |   0.0096     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 
 
-To also be able to analyze the effect of the data quality as well as the directionality of the 
-evaluation graph other settings of OpenBioLink2020 are provided, in directed and undirected setting,
+To allow anayzing the effect of data quality as well as the directionality of the 
+evaluation graph, other variants of OpenBioLink2020 are provided, in directed and undirected setting,
 with and without quality cutoff.
 
 * [OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020/HQ_DIR.zip) (default dataset)
@@ -50,17 +50,17 @@ with and without quality cutoff.
  
 ## Manual
 
-The OpenBioLink framework consists of three parts, called actions
+The OpenBioLink framework consists of three parts, called 'actions':
  1) graph creation
  2) train-test split creation
  3) training and evaluation
 
-With the graph creation and the train-test set action, costumed data sets can be created to suit individual needs.
-The last action serves as interface to train and evaluate link prediction models.
+With the graph creation and the train-test set action, customized datasets can be created to suit individual needs.
+The third action serves as an interface for training and evaluating link prediction models.
 
 #### Calling via GUI
-By calling the program without any parameters, the gui is started, 
-providing a handy interface to define parameters needed. In the last step, 
+By calling the program without any parameters, the GUI is started, 
+providing an interface to define required parameters. In the last step, 
 the corresponding command line options are displayed.
 
 #### Calling via command line
@@ -84,7 +84,7 @@ From folder src
     --dbs [Cls]     custom source databases selection to be used, full class name, options --> see doc
     --mes [Cls]     custom meta edges selection to be used, full class name, options --> see doc
 ````
-**Action: Train- Test Split Generation**
+**Action: Train-Test Split Generation**
  ````
 -s
     --edges Path        Path to edges.csv file (required with action -s
@@ -134,7 +134,7 @@ From folder src
  knowledge of the data. One of the most difficult factors is the change of the source databases over time. For example, 
  a database might change its quality score, or even its ID-format. Also, the number of relationships stored might increase 
  sharply due to new mapping files being used. This might also result in ‘vanishing edges’, where edges that were present
- in the t-1 graph are no longer existent in the current graph. Although the OpenBioLink toolbox tries to aid the user with 
+ in the t-1 graph are no longer existent in the current graph. Although the OpenBioLink toolbox tries to assist the user with 
  different kinds of warnings to identify such difficulties in the data, it is unfortunately not possible to automatically detect nor solve all these problems, making some manual pre- and post-processing of the data inevitable.
  
 
