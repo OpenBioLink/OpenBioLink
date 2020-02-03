@@ -18,7 +18,7 @@ class EdgeTnHpoDisReader(CsvReader):
             cols=self.DB_META_CLASS.COLS,
             use_cols=self.DB_META_CLASS.FILTER_COLS,
             nr_lines_header=self.DB_META_CLASS.HEADER,
-        dtypes = None,
+        dtypes = {col_name : 'str' for col_name in self.DB_META_CLASS.FILTER_COLS},
             readerType= ReaderType.READER_EDGE_TN_HPO_DIS,
         dbType = DbType.DB_EDGE_TN_HPO_DIS
         )
