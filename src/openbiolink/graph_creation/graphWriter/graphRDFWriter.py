@@ -50,7 +50,7 @@ class GraphRDFWriter:
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + '.N3'), 'w') as out_file:
                 for key, value in nodes_dic.items():
                     for node in value:
-                        out_file.write("<" + self.identifiersURL + node.id + "> a #node .\n")
+                        out_file.write("<" + self.identifiersURL + node.id + "> a #" + str(node.type) + " .\n")
         if edges_dic is not None:
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + '.N3'), 'w') as out_file:
                 for key, value in edges_dic.items():
@@ -69,7 +69,7 @@ class GraphRDFWriter:
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + '_' + key + '.N3'),
                       'w') as out_file:
                 for node in value:
-                    out_file.write("<" + self.identifiersURL + node.id + "> a #node .\n")
+                    out_file.write("<" + self.identifiersURL + node.id + "> a #" + str(node.type) + " .\n")
         # write edges
         for key, value in edges_dic.items():
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + '_' + key + '.N3'),

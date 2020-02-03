@@ -77,9 +77,11 @@ From folder src
     --no_dl         No download is being performed (e.g. when local data is used)
     --no_in         No input_files are created (e.g. when local data is used)
     --no_create     No graph is created (e.g. when only in-files should be created)
-    --out_format [Format] [Sep]       Format of graph output, takes 2 arguments: list of file formats 
-                                      [s= single file, m=multiple files] and list of separators 
-                                      (e.g. t=tab, n=newline, or any other character) (default= s t)
+    --out_format [TSV|RDF-N3] [Format] [Sep]       Format of graph output, takes 3 arguments: 
+                                                   - The format of the graph files (Currently TSV or RDF-N3 are supported)
+                                                   - A list of file formats [s= single file, m=multiple files] 
+                                                   - A list of separators (only needed if TSV, e.g. t=tab, n=newline, or any other character)
+                                                   (default= TSV s t)
     --no_qscore     The output files will contain no scores
     --dbs [Cls]     custom source databases selection to be used, full class name, options --> see doc
     --mes [Cls]     custom meta edges selection to be used, full class name, options --> see doc
@@ -171,26 +173,36 @@ The reason for this is that if the original edge a-b was undirected, both direct
 
 
 # Source Databases
+All nodes in the graph are CURIES, meaning you can easily look up the entity online by concatenating https://identifiers.org/ with the ID of the entity, f.e.:
+|CURIE|Identifiers.org|
+|--|--|
+|GO:0006915|https://identifiers.org/GO:0006915|
+|REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
+Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
 
-| source type                    | source name                                  | license                                     |
-|--------------------------------|----------------------------------------------|---------------------------------------------|
-| edge (gene-gene)               | [STRING](https://string-db.org/)             | CC BY                                       |
-| edge (gene-go)                 | [GO](http://geneontology.org/)               | CC BY                                       |
-| edge (gene-disease)            | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |
-| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
-| edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                        |
-| edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                       |
-| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | [CTD](http://ctdbase.org/about/legal.jsp)   |
-| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
-| edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                    |
-| edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                 |
-| ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                       |
-| ontology (diseases)            | [DO](http://disease-ontology.org/)           | CC 0                                        |
-| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
-| ontology (anatomy)             | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
-| mapping (UMLS-DO)              | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |
-| mapping (STRING-NCBI)          | [STRING](https://string-db.org/)             | CC BY                                       |
-| mapping (ENSEMBL/UNIPROT-NCBI) | [UniProt](https://www.uniprot.org/)          | CC BY                                       |
+We are aware of an issue with entities of the Human Phenotype Ontology not resolving correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
+
+| source type                    | source name                                  | license                                     | namespace node 1                                                               | namespace node 2                                                               |
+|--------------------------------|----------------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| edge (gene-gene)               | [STRING](https://string-db.org/)             | CC BY                                       | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
+| edge (gene-gene) - Action      | [STRING](https://string-db.org/)             | CC BY                                       | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
+| edge (gene-go)                 | [GO](http://geneontology.org/)               | CC BY                                       | [UNIPROT](https://registry.identifiers.org/registry/uniprot)                   | [GO](https://registry.identifiers.org/registry/go)                             |
+| edge (gene-disease)            | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [UMLS](https://registry.identifiers.org/registry/umls)                         |
+| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [HP](https://registry.identifiers.org/registry/hp)                             |
+| edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                        | [BGEE.GENE](https://registry.identifiers.org/registry/bgee.gene)               | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)           |
+| edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                       | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) |
+| edge (gene-drug) - Action      | [STITCH](http://stitch.embl.de/)             | CC BY                                       | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
+| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | [CTD](http://ctdbase.org/about/legal.jsp)   | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [KEGG](https://registry.identifiers.org/registry/kegg), [REACTOME](https://registry.identifiers.org/registry/reactome)   |
+| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      | [PUBMED](https://registry.identifiers.org/registry/pubmed), [MIM](https://registry.identifiers.org/registry/mim), DECIPHER  | [HP](https://registry.identifiers.org/registry/hp)                             |
+| edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                    | [UMLS](https://registry.identifiers.org/registry/umls)                         | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) |
+| edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                 | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) | [UMLS](https://registry.identifiers.org/registry/umls)                         |
+| ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                       | [GO](https://registry.identifiers.org/registry/go)                             | [GO](https://registry.identifiers.org/registry/go)                             |
+| ontology (diseases)            | [DO](http://disease-ontology.org/)           | CC 0                                        | [DOID](https://registry.identifiers.org/registry/doid), [UMLS](https://registry.identifiers.org/registry/umls), [PUBMED](https://registry.identifiers.org/registry/pubmed) | [DOID](https://registry.identifiers.org/registry/doid) |
+| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      | [HP](https://registry.identifiers.org/registry/hp)                             | [HP](https://registry.identifiers.org/registry/hp)                             |
+| ontology (anatomy)             | [UBERON](http://uberon.github.io/about.html) | CC BY                                       | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)  | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)       |
+| mapping (UMLS-DO)              | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 | [UMLS](https://registry.identifiers.org/registry/umls)                         | [DOID](https://registry.identifiers.org/registry/doid)                         |
+| mapping (STRING-NCBI)          | [STRING](https://string-db.org/)             | CC BY                                       | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 |
+| mapping (ENSEMBL/UNIPROT-NCBI) | [UniProt](https://www.uniprot.org/)          | CC BY                                       | [ENSEMBL](https://registry.identifiers.org/registry/ensembl), [UNIPROT](https://registry.identifiers.org/registry/uniprot) | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 |
 | id (genes)                     | [NCBI](https://www.ncbi.nlm.nih.gov/gene)    | Public Domain                               |
 | id (go)                        | [GO](http://geneontology.org/)               | CC BY                                       |
 | id (anatomy)                   | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
@@ -200,4 +212,5 @@ The reason for this is that if the original edge a-b was undirected, both direct
 | id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                       |
 | id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | [KEGG](https://www.kegg.jp/kegg/legal.html) |
 
- 
+ *String IDs are a combination of NCBI taxonomy Id and ENSEMBL joined by a dot. In the resulting graph the NCBI taxonomy Id is stripped (is always 9606 for Homo Sapiens).
+

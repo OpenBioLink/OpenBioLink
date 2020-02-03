@@ -11,7 +11,7 @@ class InMetaEdgeHpoDis(InfileMetadata):
     NODE2_COL = 1
     QSCORE_COL = 2
     NODE1_TYPE = NodeType.DIS
-    NODE1_NAMESPACE = Namespace(Namespaces.MULTI)
+    NODE1_NAMESPACE = Namespace(Namespaces.MULTI,mapping={"OMIM":"MIM","PMID":"PUBMED"})
     NODE2_TYPE = NodeType.PHENOTYPE
     NODE2_NAMESPACE = Namespace(Namespaces.HPO)
     EDGE_TYPE = EdgeType.DIS_PHENOTYPE
