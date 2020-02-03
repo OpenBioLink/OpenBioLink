@@ -173,14 +173,7 @@ The reason for this is that if the original edge a-b was undirected, both direct
 
 
 # Source Databases
-All nodes in the graph are CURIES, meaning you can easily look up the entity online by concatenating https://identifiers.org/ with the ID of the entity, f.e.:
-|CURIE|Identifiers.org|
-|--|--|
-|GO:0006915|https://identifiers.org/GO:0006915|
-|REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
-Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
 
-We are aware of an issue with entities of the Human Phenotype Ontology not resolving correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
 
 | source type                    | source name                                  | license                                     | namespace node 1                                                               | namespace node 2                                                               |
 |--------------------------------|----------------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
@@ -213,4 +206,15 @@ We are aware of an issue with entities of the Human Phenotype Ontology not resol
 | id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | [KEGG](https://www.kegg.jp/kegg/legal.html) |
 
  *String IDs are a combination of NCBI taxonomy Id and ENSEMBL joined by a dot. In the resulting graph the NCBI taxonomy Id is stripped (is always 9606 for Homo Sapiens).
+ 
+ All nodes in the graph are CURIES, meaning you can easily look up the entity online by concatenating https://identifiers.org/ with the ID of the entity, f.e.:
+
+|CURIE|Identifiers.org|
+|--|--|
+|GO:0006915|https://identifiers.org/GO:0006915|
+|REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
+
+Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
+
+We are aware of an issue with entities of the Human Phenotype Ontology not resolving correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
 
