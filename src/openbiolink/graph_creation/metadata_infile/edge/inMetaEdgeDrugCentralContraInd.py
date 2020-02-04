@@ -14,6 +14,7 @@ class InMetaEdgeDrugCentralContraInd(InfileMetadata):
     NODE1_COL = 1
     NODE2_COL = 0
     QSCORE_COL = None
+    SOURCE = "DrugCentral"
     NODE1_TYPE = NodeType.DIS
     NODE1_NAMESPACE = Namespace(Namespaces.UMLS, False)
     NODE2_TYPE = NodeType.DRUG

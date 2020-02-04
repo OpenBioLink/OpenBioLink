@@ -11,6 +11,7 @@ class InMetaOntoGoIsA(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
+    SOURCE = "GO"
     NODE1_TYPE = NodeType.GO
     NODE1_NAMESPACE = Namespace(Namespaces.GO)
     NODE2_TYPE = NodeType.GO

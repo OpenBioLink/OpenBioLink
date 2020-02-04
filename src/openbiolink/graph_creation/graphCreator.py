@@ -194,10 +194,10 @@ class GraphCreator():
                             if no_cutoff_defined or within_num_cutoff or within_text_cutoff:
                                 bimeg_id1 = namespace1.resolve(id1)
                                 bimeg_id2 = namespace2.resolve(id2)
-                                edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore))
+                                edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore, edge_metadata.source))
                                 # add an edge in the other direction when edge is undirectional and graph is directional
                                 if (not edge_metadata.is_directional) and graphProp.DIRECTED:
-                                    edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore))
+                                    edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore, edge_metadata.source))
                                     nr_edges_incl_dup += 1
                                     nr_edges_return_dir+=1
                                 nodes1.add(Node(bimeg_id1, edge_metadata.node1_type, namespace1))

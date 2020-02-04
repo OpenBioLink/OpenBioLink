@@ -4,7 +4,7 @@ class EdgeMetadata:
         MAP1_ALT_ID_META_CLASS = None
         MAP2_ALT_ID_META_CLASS = None
 
-        def __init__(self, is_directional, edges_file_path, colindex1, colindex2, edgeType, node1_type, node1_namespace, node2_type, node2_namespace, colindex_qscore = None, cutoff_num = None, cutoff_txt = None,
+        def __init__(self, is_directional, edges_file_path, source, colindex1, colindex2, edgeType, node1_type, node1_namespace, node2_type, node2_namespace, colindex_qscore = None, cutoff_num = None, cutoff_txt = None,
                  mapping1_file = None, mapping1_targetnamespace = None, map1_sourceindex = None, map1_targetindex = None,
                  altid_mapping1_file = None, altid_mapping1_targetnamespace = None, altid_map1_sourceindex = None, altid_map1_targetindex = None,
                  mapping2_file = None, mapping2_targetnamespace = None, map2_sourceindex = None, map2_targetindex = None,
@@ -12,6 +12,7 @@ class EdgeMetadata:
                  ):
             self.is_directional = is_directional
             self.edges_file_path = edges_file_path
+            self.source = source
             self.colindex1= colindex1
             self.colindex2= colindex2
             self.edgeType= edgeType

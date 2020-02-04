@@ -11,6 +11,7 @@ class InMetaOntoHpoIsA(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
+    SOURCE = "HPO"
     NODE1_TYPE = NodeType.PHENOTYPE
     NODE1_NAMESPACE = Namespace(Namespaces.HPO)
     NODE2_TYPE = NodeType.PHENOTYPE

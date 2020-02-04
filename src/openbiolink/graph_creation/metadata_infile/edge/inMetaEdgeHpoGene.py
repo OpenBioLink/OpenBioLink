@@ -10,6 +10,7 @@ class InMetaEdgeHpoGene(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
+    SOURCE = "HPO"
     NODE1_TYPE = NodeType.GENE
     NODE1_NAMESPACE = Namespace(Namespaces.NCBI, False)
     NODE2_TYPE = NodeType.PHENOTYPE

@@ -10,6 +10,7 @@ class InMetaEdgeGo(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
+    SOURCE = "GO"
     NODE1_TYPE = NodeType.GENE
     NODE1_NAMESPACE = Namespace(Namespaces.UNIPROT, False)
     NODE2_TYPE = NodeType.GO

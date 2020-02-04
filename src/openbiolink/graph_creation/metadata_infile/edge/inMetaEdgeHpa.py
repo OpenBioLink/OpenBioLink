@@ -10,6 +10,7 @@ class InMetaEdgeHpa(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
+    SOURCE = "HPA"
     NODE1_TYPE = NodeType.GENE
     NODE1_NAMESPACE = Namespace(Namespaces.NONE)
     NODE2_TYPE = NodeType.ANATOMY

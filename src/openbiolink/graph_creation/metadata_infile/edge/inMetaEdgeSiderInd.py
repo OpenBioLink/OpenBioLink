@@ -10,6 +10,7 @@ class InMetaEdgeSiderInd(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
+    SOURCE = "SIDER"
     NODE1_TYPE = NodeType.DIS
     NODE1_NAMESPACE = Namespace(Namespaces.NONE)
     NODE2_TYPE = NodeType.DRUG

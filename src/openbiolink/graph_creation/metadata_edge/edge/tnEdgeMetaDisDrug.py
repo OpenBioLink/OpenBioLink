@@ -30,6 +30,7 @@ class TnEdgeMetaDisDrug(TnEdgeRegularMetadata):
 
         super().__init__(is_directional=True,
                          edges_file_path=edges_file_path,
+                         source=self.EDGE_INMETA_CLASS.SOURCE,
                          colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
                          colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
                          edgeType= self.TP_EDGE_CLASS.EDGE_INMETA_CLASS.EDGE_TYPE,

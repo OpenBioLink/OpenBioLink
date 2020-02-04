@@ -11,6 +11,7 @@ class InMetaOntoUberonIsA(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
+    SOURCE = "UBERON"
     NODE1_TYPE = NodeType.ANATOMY
     NODE1_NAMESPACE = Namespace(Namespaces.MULTI)
     NODE2_TYPE = NodeType.ANATOMY

@@ -10,7 +10,7 @@ class TnEdgeRegularMetadata(EdgeMetadata):
     MQ_CUTOFF_TEXT = None
     HQ_CUTOFF_TEXT = None
 
-    def __init__(self,  is_directional, edges_file_path, colindex1, colindex2, edgeType, node1_type, node1_namespace, node2_type, node2_namespace, colindex_qscore = None,
+    def __init__(self,  is_directional, edges_file_path, source, colindex1, colindex2, edgeType, node1_type, node1_namespace, node2_type, node2_namespace, colindex_qscore = None,
                  mapping1_file = None, mapping1_targetnamespace = None, map1_sourceindex = None, map1_targetindex = None,
                  altid_mapping1_file = None, altid_mapping1_targetnamespace=None, altid_map1_sourceindex = None, altid_map1_targetindex = None,
                  mapping2_file = None, mapping2_targetnamespace=None, map2_sourceindex = None, map2_targetindex = None,
@@ -30,6 +30,7 @@ class TnEdgeRegularMetadata(EdgeMetadata):
             cutoff_num = None
         super().__init__(is_directional=is_directional,
                          edges_file_path=edges_file_path,
+                         source = source,
                          colindex1=colindex1, colindex2=colindex2,
                          edgeType= edgeType,
                          node1_type=node1_type,

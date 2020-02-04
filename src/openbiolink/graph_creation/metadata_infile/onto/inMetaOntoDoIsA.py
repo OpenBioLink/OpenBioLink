@@ -11,6 +11,7 @@ class InMetaOntoDoIsA(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
+    SOURCE = "DO"
     NODE1_TYPE = NodeType.DIS
     NODE1_NAMESPACE = Namespace(Namespaces.DIS)
     NODE2_TYPE = NodeType.DIS
