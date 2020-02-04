@@ -6,6 +6,21 @@ OpenBioLink is a resource and evaluation framework for evaluating link predictio
 
 [Supplementary data](https://github.com/OpenBioLink/OpenBioLink/raw/master/paper/supplementary%20data.pdf)
 
+The OpenBioLink benchmark aims to meet the following criteria:
+* Openly available
+* Large-scale
+* Wide coverage of current biomedical knowledge and entity types
+* Standardized, balanced train-test split
+* Open-source code for benchmark dataset generation 
+* Open-source code for evaluation (independent of model) 
+* Integrating and differentiating multiple types of biological entities and relations (i.e., formalized as a heterogeneous graph)
+* Minimized information leakage between train and test sets (e.g., avoid inclusion of trivially inferable 
+    relations in the test set)
+* Coverage of true negative relations, where available
+* Differentiating high-quality data from noisy, low-quality data
+* Differentiating benchmarks for directed and undirected graphs in order to be applicable to a wide variety of link prediction methods
+* Clearly defined release cycle with versions of the benchmark and public leaderboard
+
 ## Installation
 
 ### Pip
@@ -36,6 +51,8 @@ e.g.:
 |-------|---------|--------|-------|------|
 |   TransE (Baseline)   |    0.0749     |   0.0125     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 |   TransR (Baseline)   |    0.0639     |   0.0096     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
+
+Please contact us if you want to see your results added to the Leaderboard.
 
 
 To allow anayzing the effect of data quality as well as the directionality of the 
