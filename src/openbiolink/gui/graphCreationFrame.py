@@ -234,6 +234,7 @@ class GraphCreationFrame(tk.Frame):
                 self.single_sep = tk.StringVar(value=None)
                 self.multi_sep = tk.StringVar(value=None)
                 # packing
+                warning.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
                 separator1.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
                 single_out_file_box.pack(side='top', padx=5, anchor='w')
                 separator2.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
@@ -245,6 +246,7 @@ class GraphCreationFrame(tk.Frame):
         format_selector_label = tk.Label(format_selection, text='Format:')
         format_selector = tk.OptionMenu(format_selection, self.format, *choices)
         def forget_packing():
+            warning.pack_forget()
             separator1.pack_forget()
             single_out_file_box.pack_forget()
             single_sep_frame.pack_forget()
@@ -284,6 +286,8 @@ class GraphCreationFrame(tk.Frame):
         separator1 = ttk.Separator(el, orient='horizontal')
         separator2 = ttk.Separator(el, orient='horizontal')
         separator3 = ttk.Separator(el, orient='horizontal')
+
+        warning = tk.Label(el, text='Warning, currrently only N3 graph creation is supported.\n You can not perform a split or evaluation.')
 
         # packing
         format_selection.pack(side='top', padx=5, anchor='w')

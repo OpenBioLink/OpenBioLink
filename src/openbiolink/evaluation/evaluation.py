@@ -14,7 +14,7 @@ from openbiolink import globalConfig as globConst
 from openbiolink import utils
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from openbiolink.evaluation.models.model import Model
-from openbiolink.tqdmbuf import TqdmBuffer
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class Evaluation:

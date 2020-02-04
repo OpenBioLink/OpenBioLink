@@ -57,10 +57,10 @@ class GraphRDFWriter:
                     for edge in value:
                         if qscore:
                             out_file.write("<" + self.identifiersURL + edge.id1 + "> <#" + str(edge.type)
-                                            + ">< " + self.identifiersURL + edge.id2 + "> . #" + str(edge.qScore) + "\n")
+                                            + "> <" + self.identifiersURL + edge.id2 + "> . #" + str(edge.qScore) + "\n")
                         else:
                             out_file.write("<" + self.identifiersURL + edge.id1 + "> <#" + str(edge.type)
-                                            + ">< " + self.identifiersURL + edge.id2 + "> .\n")
+                                            + "> <" + self.identifiersURL + edge.id2 + "> .\n")
 
 
     def output_graph_in_multi_files(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
@@ -80,7 +80,7 @@ class GraphRDFWriter:
                                         + "> <" + self.identifiersURL + edge.id2 + "> . #" + str(edge.qScore) + "\n")
                     else:
                         out_file.write("<" + self.identifiersURL + edge.id1 + "> <#" + self.identifiersURL + str(edge.type)
-                                        + ">< " + self.identifiersURL + edge.id2 + "> .\n")
+                                        + "> <" + self.identifiersURL + edge.id2 + "> .\n")
 
     def write_node_and_edge_list(self, prefix, nodes_list, edges_list):
         with open(os.path.join(self.graph_dir_path, prefix + 'nodes_list.csv'), 'w') as out_file:

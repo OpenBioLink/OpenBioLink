@@ -14,13 +14,13 @@ from openbiolink.graph_creation.file_processor.fileProcessor import *
 from openbiolink.graph_creation.file_reader.fileReader import *
 from openbiolink.graph_creation.file_writer.fileWriter import *
 from openbiolink.graph_creation.graphCreator import GraphCreator
-from openbiolink.graph_creation.graphWriter import *
+from openbiolink.graph_creation.graph_writer import *
 from openbiolink.graph_creation.metadata_db_file import *
 from openbiolink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
 from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
 from openbiolink.graph_creation.metadata_infile import *
-from openbiolink.tqdmbuf import TqdmBuffer
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class Graph_Creation():
@@ -33,6 +33,7 @@ class Graph_Creation():
             os.makedirs(globConst.WORKING_DIR)
 
         self.db_file_metadata = [x() for x in utils.get_leaf_subclasses(DbMetadata)]
+        print(utils.get_leaf_subclasses(DbMetadata))
         self.file_readers = [x() for x in utils.get_leaf_subclasses(FileReader)]
         self.file_processors = [x() for x in utils.get_leaf_subclasses(FileProcessor)]
         self.infile_metadata = [x() for x in utils.get_leaf_subclasses(InfileMetadata)]

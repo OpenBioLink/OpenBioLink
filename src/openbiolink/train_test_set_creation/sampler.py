@@ -5,7 +5,7 @@ from tqdm import tqdm
 import openbiolink.train_test_set_creation.ttsConfig as ttsConst
 from openbiolink import globalConfig as globConst
 from openbiolink import utils
-from openbiolink.tqdmbuf import TqdmBuffer
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class Sampler():

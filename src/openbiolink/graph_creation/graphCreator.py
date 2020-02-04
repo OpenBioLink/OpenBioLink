@@ -12,7 +12,7 @@ from openbiolink.cli import Cli
 from openbiolink.edge import Edge
 from openbiolink.graph_creation import graphCreationConfig as gcConst
 from openbiolink.node import Node
-from openbiolink.tqdmbuf import TqdmBuffer
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class GraphCreator():

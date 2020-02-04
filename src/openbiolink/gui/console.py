@@ -5,7 +5,7 @@ from tkinter import ttk, N, S, E, W
 from tkinter.scrolledtext import ScrolledText
 
 from openbiolink.gui.gui import *
-from openbiolink.tqdmbuf import TqdmBuffer
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 logger = logging.getLogger()
 

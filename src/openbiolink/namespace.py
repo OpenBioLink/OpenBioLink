@@ -2,7 +2,6 @@ from enum import Enum
 
 
 class Namespaces(Enum):
-    BGEEGENE = "BGEE.GENE"
     CL = "CL"
     DIS = "DOID"
     ENSEMBL = "ENSEMBL"

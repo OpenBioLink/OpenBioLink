@@ -16,7 +16,7 @@ from openbiolink.evaluation.models.model import Model
 
 
 ## ** code adapted from pykeen: https://github.com/SmartDataAnalytics/PyKEEN **
-from openbiolink.tqdmbuf import TqdmBuffer
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class PyKeen_BasicModel (Model):

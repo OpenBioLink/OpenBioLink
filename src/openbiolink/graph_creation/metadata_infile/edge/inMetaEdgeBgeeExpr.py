@@ -12,7 +12,7 @@ class InMetaEdgeBgeeExpr(InfileMetadata):
     NODE2_COL = 1
     QSCORE_COL = 2
     NODE1_TYPE = NodeType.GENE
-    NODE1_NAMESPACE=Namespace(Namespaces.BGEEGENE, False)
+    NODE1_NAMESPACE=Namespace(Namespaces.ENSEMBL, False)
     NODE2_TYPE = NodeType.ANATOMY
     NODE2_NAMESPACE=Namespace(Namespaces.MULTI)
     EDGE_TYPE = EdgeType.GENE_EXPRESSED_ANATOMY
