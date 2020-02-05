@@ -82,7 +82,9 @@ the corresponding command line options are displayed.
 
 #### Calling via command line
 From folder src
-```python -m openbiolink.openBioLink -p WORKING_DIR_PATH [-action] [--options] ...```
+```bash
+openbiolink -p WORKING_DIR_PATH [-action] [--options] ...
+```
 
 **Action: Graph Creation**
 ````
