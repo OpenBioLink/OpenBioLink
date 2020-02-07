@@ -64,6 +64,8 @@ with and without quality cutoff.
 * [OpenBioLink2020: directed, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_DIR.zip)
 * [OpenBioLink2020: undirected, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_UNDIR.zip)
 
+Please note that the OpenBioLink benchmark files contain data derived from external ressources. Licensing terms of these external resources are detailed [below](#Source-databases-and-their-licenses). 
+
  
 ## Manual
 
@@ -189,23 +191,23 @@ The reason for this is that if the original edge a-b was undirected, both direct
  from the test set.
 
 
-# Source Databases
+# Source databases and their licenses
 
 | source type                    | source name                                  | license                                     |
 |--------------------------------|----------------------------------------------|---------------------------------------------|
 | edge (gene-gene)               | [STRING](https://string-db.org/)             | CC BY                                       |
 | edge (gene-go)                 | [GO](http://geneontology.org/)               | CC BY                                       |
 | edge (gene-disease)            | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |
-| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
+| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |
 | edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                        |
 | edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                       |
-| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | [CTD](http://ctdbase.org/about/legal.jsp)   |
-| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
+| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | Custom: [CTD](http://ctdbase.org/about/legal.jsp)   |
+| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |
 | edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                    |
 | edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                 |
 | ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                       |
 | ontology (diseases)            | [DO](http://disease-ontology.org/)           | CC 0                                        |
-| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
+| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |
 | ontology (anatomy)             | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
 | mapping (UMLS-DO)              | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |
 | mapping (STRING-NCBI)          | [STRING](https://string-db.org/)             | CC BY                                       |
@@ -215,8 +217,12 @@ The reason for this is that if the original edge a-b was undirected, both direct
 | id (anatomy)                   | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
 | id (disease)                   | [DO](http://disease-ontology.org/)           | CC 0                                        |
 | id (drug)                      | [PubChem](https://pubchem.ncbi.nlm.nih.gov/) | Public Domain                               |
-| id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
+| id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |
 | id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                       |
-| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | [KEGG](https://www.kegg.jp/kegg/legal.html) |
+| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |
 
- 
+The OpenBioLink benchmark files integrate data or identifiers from these sources. The provenance of data items is captured in the benchmark files, and licensing terms of source databases apply to these data items. Please mind these licensing terms when utilizing or redistributing the benchmark files or derivatives thereof.
+
+All original data in the benchmark files created by the OpenBioLink project (not covered by the licenses of external data sources)  are released as [CC 0](https://creativecommons.org/publicdomain/zero/1.0/). 
+
+We offer the benchmark files as-is and make no representations or warranties of any kind concerning the benchmark files, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
