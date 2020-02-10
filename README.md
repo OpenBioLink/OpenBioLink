@@ -193,33 +193,34 @@ The reason for this is that if the original edge a-b was undirected, both direct
 
 # Source databases and their licenses
 
-| source type                    | source name                                  | license                                     |
-|--------------------------------|----------------------------------------------|---------------------------------------------|
-| edge (gene-gene)               | [STRING](https://string-db.org/)             | CC BY                                       |
-| edge (gene-go)                 | [GO](http://geneontology.org/)               | CC BY                                       |
-| edge (gene-disease)            | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |
-| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |
-| edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                        |
-| edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                       |
-| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | Custom: [CTD](http://ctdbase.org/about/legal.jsp)   |
-| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |
-| edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                    |
-| edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                 |
-| ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                       |
-| ontology (diseases)            | [DO](http://disease-ontology.org/)           | CC 0                                        |
-| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |
-| ontology (anatomy)             | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
-| mapping (UMLS-DO)              | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |
-| mapping (STRING-NCBI)          | [STRING](https://string-db.org/)             | CC BY                                       |
-| mapping (ENSEMBL/UNIPROT-NCBI) | [UniProt](https://www.uniprot.org/)          | CC BY                                       |
-| id (genes)                     | [NCBI](https://www.ncbi.nlm.nih.gov/gene)    | Public Domain                               |
-| id (go)                        | [GO](http://geneontology.org/)               | CC BY                                       |
-| id (anatomy)                   | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
-| id (disease)                   | [DO](http://disease-ontology.org/)           | CC 0                                        |
-| id (drug)                      | [PubChem](https://pubchem.ncbi.nlm.nih.gov/) | Public Domain                               |
-| id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |
-| id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                       |
-| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |
+| Source type                    | Source name                                  | License                                     | True neg.   | Score	  |
+|--------------------------------|----------------------------------------------|---------------------------------------------|-------------|---------|
+| edge (gene-gene)               | [STRING](https://string-db.org/)             | CC BY                                       | No	        | Yes     |
+| edge (gene-go)                 | [GO](http://geneontology.org/)               | CC BY                                       | No	        | Yes     |
+| edge (gene-disease)            | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 | No	        | Yes     |
+| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      | No	        | No     |
+| edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                        | Yes	        | Yes     |
+| edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                       | No	        | Yes     |
+| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | Custom: [CTD](http://ctdbase.org/about/legal.jsp)   | No	        | No     |
+| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      | No	        | No     |
+| edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                    | Yes	        | No     |
+| edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                 | No	        | No     |
+| ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                       | 	        |      |
+| ontology (diseases)            | [DO](http://disease-ontology.org/)           | CC 0                                        | 	        |      |
+| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      | 	        |      |
+| ontology (anatomy)             | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |   	        |        |
+| mapping (UMLS-DO)              | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 |   	        |         |
+| mapping (STRING-NCBI)          | [STRING](https://string-db.org/)             | CC BY                                       |   	        |         |
+| mapping (ENSEMBL/UNIPROT-NCBI) | [UniProt](https://www.uniprot.org/)          | CC BY                                       |   	        |         |
+| id (genes)                     | [NCBI](https://www.ncbi.nlm.nih.gov/gene)    | Public Domain                               |   	        |         |
+| id (go)                        | [GO](http://geneontology.org/)               | CC BY                                       |   	        |         |
+| id (anatomy)                   | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |   	        |         |
+| id (disease)                   | [DO](http://disease-ontology.org/)           | CC 0                                        |   	        |         |
+| id (drug)                      | [PubChem](https://pubchem.ncbi.nlm.nih.gov/) | Public Domain                               |   	        |         |
+| id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |   	        |         |
+| id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                       |   	        |         |
+| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |   	        |         |
+
 
 The OpenBioLink benchmark files integrate data or identifiers from these sources. The provenance of data items is captured in the benchmark files, and licensing terms of source databases apply to these data items. Please mind these licensing terms when utilizing or redistributing the benchmark files or derivatives thereof.
 
