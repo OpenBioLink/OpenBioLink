@@ -6,7 +6,7 @@ from openbiolink.nodeType import NodeType
 
 class InMetaEdgeCdtPath(InfileMetadata):
     CSV_NAME = "DB_CDT_gene_pathway.csv"
-    USE_COLS = ['geneID', 'pathID']
+    USE_COLS = ["geneID", "pathID"]
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
@@ -17,6 +17,8 @@ class InMetaEdgeCdtPath(InfileMetadata):
     MAPPING_SEP = None
 
     def __init__(self):
-        super().__init__(csv_name=InMetaEdgeCdtPath.CSV_NAME,
-                         cols=self.USE_COLS,
-                         infileType=InMetaEdgeCdtPath.INFILE_TYPE)
+        super().__init__(
+            csv_name=InMetaEdgeCdtPath.CSV_NAME,
+            cols=self.USE_COLS,
+            infileType=InMetaEdgeCdtPath.INFILE_TYPE,
+        )

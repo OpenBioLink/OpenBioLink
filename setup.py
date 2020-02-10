@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/OpenBioLink/OpenBioLink",
-    package_dir={'': 'src'},
+    package_dir={"": "src"},
     packages=setuptools.find_packages("src"),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -20,18 +20,14 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'numpy',
-        'pandas>=0.23.4',
-        'pykeen==0.0.26',
-        'pytest>=5.0.1',
-        'scikit-learn>=0.19.1',
-        'tqdm>=4.29.1',
-        'sortedcontainers',
+        "numpy",
+        "pandas>=0.23.4",
+        "pykeen==0.0.26",
+        "pytest>=5.0.1",
+        "scikit-learn>=0.19.1",
+        "tqdm>=4.29.1",
+        "sortedcontainers",
     ],
-    python_requires='>=3.6',
-    entry_points={
-        "console_scripts": [
-            "openbiolink = openbiolink.openBioLink:main",
-        ],
-    },
+    python_requires=">=3.6",
+    entry_points={"console_scripts": ["openbiolink = openbiolink.openBioLink:main",],},
 )

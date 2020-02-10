@@ -1,14 +1,20 @@
 import os
 
 from openbiolink.graph_creation import graphCreationConfig as glob
-from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
-from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeStitch import InMetaEdgeStitch
-from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapString import InMetaMapString
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import (
+    EdgeRegularMetadata,
+)
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeStitch import (
+    InMetaEdgeStitch,
+)
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapString import (
+    InMetaMapString,
+)
 from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class EdgeMetaGeneDrug(EdgeRegularMetadata):
-    NAME = 'Edge - Gene_interaction_Drug'
+    NAME = "Edge - Gene_interaction_Drug"
 
     LQ_CUTOFF = 0
     MQ_CUTOFF = 400
@@ -17,14 +23,23 @@ class EdgeMetaGeneDrug(EdgeRegularMetadata):
     EDGE_INMETA_CLASS = InMetaEdgeStitch
     MAP1_META_CLASS = InMetaMapString
 
-    def __init__(self, quality : QualityType= None):
+    def __init__(self, quality: QualityType = None):
 
-        edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
+        edges_file_path = os.path.join(
+            glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME
+        )
         mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.MAP1_META_CLASS.CSV_NAME)
-        super().__init__(is_directional=True,
-                         edges_file_path=edges_file_path,
-                         colindex1=self.EDGE_INMETA_CLASS.NODE1_COL, colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
-                         edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
-                         node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE, node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
-                         colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL, quality=quality,
-                         mapping1_file=mapping_file1, map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL, map1_targetindex=self.MAP1_META_CLASS.TARGET_COL)
+        super().__init__(
+            is_directional=True,
+            edges_file_path=edges_file_path,
+            colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
+            colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
+            edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
+            node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
+            node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
+            colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL,
+            quality=quality,
+            mapping1_file=mapping_file1,
+            map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL,
+            map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
+        )

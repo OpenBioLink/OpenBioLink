@@ -21,6 +21,8 @@ class InMetaEdgeDrugCentralContraInd(InfileMetadata):
     MAPPING_SEP = None
 
     def __init__(self):
-        super().__init__(csv_name=InMetaEdgeDrugCentralContraInd.CSV_NAME,
-                         cols=self.USE_COLS,
-                         infileType=InMetaEdgeDrugCentralContraInd.INFILE_TYPE)
+        super().__init__(
+            csv_name=InMetaEdgeDrugCentralContraInd.CSV_NAME,
+            cols=self.USE_COLS,
+            infileType=InMetaEdgeDrugCentralContraInd.INFILE_TYPE,
+        )

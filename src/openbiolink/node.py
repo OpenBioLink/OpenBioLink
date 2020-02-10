@@ -1,8 +1,8 @@
 from openbiolink.nodeType import NodeType
 
 
-class Node :
-    def __init__(self, id: str, type : NodeType, name = "" ):
+class Node:
+    def __init__(self, id: str, type: NodeType, name=""):
         self.id = id
         self.type = type
 
@@ -12,7 +12,7 @@ class Node :
         return False
 
     def __hash__(self):
-        return hash( (self.id, self.type))
+        return hash((self.id, self.type))
 
     def __iter__(self):
         return iter([self.id, self.type])

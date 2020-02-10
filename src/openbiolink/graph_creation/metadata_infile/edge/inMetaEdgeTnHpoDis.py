@@ -6,7 +6,7 @@ from openbiolink.nodeType import NodeType
 
 class InMetaEdgeTnHpoDis(InfileMetadata):
     CSV_NAME = "DB_Tn_HPO_disease_phenotype.csv"
-    USE_COLS = ['DOI', 'HPO_ID', 'evidence_code']
+    USE_COLS = ["DOI", "HPO_ID", "evidence_code"]
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
@@ -15,9 +15,11 @@ class InMetaEdgeTnHpoDis(InfileMetadata):
     EDGE_TYPE = EdgeType.DIS_PHENOTYPE
     INFILE_TYPE = InfileType.IN_EDGE_TN_HPO_DIS
 
-
     MAPPING_SEP = None
+
     def __init__(self):
-        super().__init__(csv_name=InMetaEdgeTnHpoDis.CSV_NAME,
-                         cols=self.USE_COLS,
-                         infileType=InMetaEdgeTnHpoDis.INFILE_TYPE)
+        super().__init__(
+            csv_name=InMetaEdgeTnHpoDis.CSV_NAME,
+            cols=self.USE_COLS,
+            infileType=InMetaEdgeTnHpoDis.INFILE_TYPE,
+        )

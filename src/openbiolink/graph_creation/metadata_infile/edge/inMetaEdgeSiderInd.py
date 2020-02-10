@@ -6,7 +6,7 @@ from openbiolink.nodeType import NodeType
 
 class InMetaEdgeSiderInd(InfileMetadata):
     CSV_NAME = "DB_SIDER_dis_drug.csv"
-    USE_COLS = ['umlsID', 'stichID', 'method']
+    USE_COLS = ["umlsID", "stichID", "method"]
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
@@ -15,9 +15,11 @@ class InMetaEdgeSiderInd(InfileMetadata):
     EDGE_TYPE = EdgeType.DIS_DRUG
     INFILE_TYPE = InfileType.IN_EDGE_SIDER_IND
 
-
     MAPPING_SEP = None
+
     def __init__(self):
-        super().__init__(csv_name=InMetaEdgeSiderInd.CSV_NAME,
-                         cols=self.USE_COLS,
-                         infileType=InMetaEdgeSiderInd.INFILE_TYPE)
+        super().__init__(
+            csv_name=InMetaEdgeSiderInd.CSV_NAME,
+            cols=self.USE_COLS,
+            infileType=InMetaEdgeSiderInd.INFILE_TYPE,
+        )

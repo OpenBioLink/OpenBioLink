@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class ReaderType(Enum):
     READER_ONTO_GO = 0
     READER_ONTO_DO = 1

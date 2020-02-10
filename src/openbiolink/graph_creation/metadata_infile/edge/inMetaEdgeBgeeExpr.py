@@ -6,7 +6,7 @@ from openbiolink.nodeType import NodeType
 
 class InMetaEdgeBgeeExpr(InfileMetadata):
     CSV_NAME = "DB_Bgee_gene_anatomy_expr.csv"
-    USE_COLS = ['gene_id', 'anatomical_entity','call_quality' ]
+    USE_COLS = ["gene_id", "anatomical_entity", "call_quality"]
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
@@ -17,6 +17,8 @@ class InMetaEdgeBgeeExpr(InfileMetadata):
     MAPPING_SEP = None
 
     def __init__(self):
-        super().__init__(csv_name=InMetaEdgeBgeeExpr.CSV_NAME,
-                         cols=self.USE_COLS,
-                         infileType=InMetaEdgeBgeeExpr.INFILE_TYPE)
+        super().__init__(
+            csv_name=InMetaEdgeBgeeExpr.CSV_NAME,
+            cols=self.USE_COLS,
+            infileType=InMetaEdgeBgeeExpr.INFILE_TYPE,
+        )
