@@ -2,9 +2,7 @@ import os
 
 from openbiolink.graph_creation import graphCreationConfig as glob
 from openbiolink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from openbiolink.graph_creation.metadata_infile.onto.inMetaOntoHpoIsA import (
-    InMetaOntoHpoIsA,
-)
+from openbiolink.graph_creation.metadata_infile.onto.inMetaOntoHpoIsA import InMetaOntoHpoIsA
 
 
 class EdgeMetaPhenoOntoIsA(EdgeOntoMetadata):
@@ -16,9 +14,7 @@ class EdgeMetaPhenoOntoIsA(EdgeOntoMetadata):
 
         super().__init__(
             is_directional=True,
-            edges_file_path=os.path.join(
-                glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME
-            ),
+            edges_file_path=os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME),
             colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
             colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
             edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,

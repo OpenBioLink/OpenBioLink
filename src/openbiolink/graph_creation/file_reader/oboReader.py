@@ -40,15 +40,13 @@ class OboReader(FileReader):
             if len(df_cols) != len(defined_cols):
 
                 no_occurences = [x for x in defined_cols if x not in df_cols]
-                info_string = (
-                    "Reader %s should parse %s but there are no occurrences in file %s. "
-                    % (str(self.readerType), str(no_occurences), self.in_path)
+                info_string = "Reader %s should parse %s but there are no occurrences in file %s. " % (
+                    str(self.readerType),
+                    str(no_occurences),
+                    self.in_path,
                 )
                 if globalConfig.INTERACTIVE_MODE:
-                    ask_continue_string = (
-                        info_string
-                        + "Continue if you do not need these edges in your graph"
-                    )
+                    ask_continue_string = info_string + "Continue if you do not need these edges in your graph"
                     if globConst.GUI_MODE:
                         from openbiolink.gui import gui
 

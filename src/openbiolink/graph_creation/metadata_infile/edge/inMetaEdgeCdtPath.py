@@ -18,7 +18,5 @@ class InMetaEdgeCdtPath(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeCdtPath.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeCdtPath.INFILE_TYPE,
+            csv_name=InMetaEdgeCdtPath.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeCdtPath.INFILE_TYPE,
         )

@@ -2,9 +2,7 @@ import os
 
 from openbiolink.graph_creation import graphCreationConfig as g
 from openbiolink.graph_creation.file_reader.postgresDumpReader import PostgresDumpReader
-from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeDrugCentral import (
-    DbMetaEdgeDrugCentral,
-)
+from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeDrugCentral import DbMetaEdgeDrugCentral
 from openbiolink.graph_creation.types.dbType import DbType
 from openbiolink.graph_creation.types.readerType import ReaderType
 

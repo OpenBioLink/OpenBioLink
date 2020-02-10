@@ -12,9 +12,7 @@ class Edge:
     def __eq__(self, other):
         if isinstance(other, Edge):
             return (
-                self.type == other.type
-                and self.id1 == other.id1
-                and self.id2 == other.id2
+                self.type == other.type and self.id1 == other.id1 and self.id2 == other.id2
             )  # todo only if directional
         return False
 

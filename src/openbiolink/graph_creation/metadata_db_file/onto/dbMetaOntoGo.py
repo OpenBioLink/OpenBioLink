@@ -1,6 +1,4 @@
-from openbiolink.graph_creation.metadata_db_file.onto.dbMetadataOnto import (
-    DbMetadataOnto,
-)
+from openbiolink.graph_creation.metadata_db_file.onto.dbMetadataOnto import DbMetadataOnto
 from openbiolink.graph_creation.types.dbType import DbType
 
 
@@ -18,7 +16,5 @@ class DbMetaOntoGo(DbMetadataOnto):
 
     def __init__(self):
         super().__init__(
-            url=DbMetaOntoGo.URL,
-            ofile_name=DbMetaOntoGo.OFILE_NAME,
-            dbType=DbMetaOntoGo.DB_TYPE,
+            url=DbMetaOntoGo.URL, ofile_name=DbMetaOntoGo.OFILE_NAME, dbType=DbMetaOntoGo.DB_TYPE,
         )

@@ -25,9 +25,7 @@ class BimegGui(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         # Define Fonts
-        self.title_font = tkfont.Font(
-            family="Helvetica", size=18, weight="bold", slant="italic"
-        )
+        self.title_font = tkfont.Font(family="Helvetica", size=18, weight="bold", slant="italic")
         self.info_font = tkfont.Font(family="Helvetica", size=7, slant="italic")
         # Define base container
         self.container = tk.Frame(self)
@@ -149,20 +147,10 @@ class SkipExistingFilesPopup:
 
         button_panel = tk.Frame(self.win)
 
-        go_on_button = tk.Button(
-            button_panel, text="continue anyways", command=self.go_on
-        )
-        go_on_all_button = tk.Button(
-            button_panel,
-            text="continue anyways for all files",
-            command=self.go_on_for_all,
-        )
-        skip_button = tk.Button(
-            button_panel, text="skip this file", command=self.skip_this
-        )
-        skip_all_button = tk.Button(
-            button_panel, text="skip all existing files", command=self.skip_all
-        )
+        go_on_button = tk.Button(button_panel, text="continue anyways", command=self.go_on)
+        go_on_all_button = tk.Button(button_panel, text="continue anyways for all files", command=self.go_on_for_all,)
+        skip_button = tk.Button(button_panel, text="skip this file", command=self.skip_this)
+        skip_all_button = tk.Button(button_panel, text="skip all existing files", command=self.skip_all)
         exit_button = tk.Button(button_panel, text="exit", command=self.exit)
         l.pack(side="top")
         button_panel.pack(side="top")

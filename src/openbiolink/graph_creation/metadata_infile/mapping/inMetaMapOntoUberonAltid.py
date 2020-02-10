@@ -12,6 +12,4 @@ class InMetaMapOntoUberonAltid(InfileMetadata):
     INFILE_TYPE = InfileType.IN_MAP_ONTO_UBERON_ALT_ID
 
     def __init__(self):
-        super().__init__(
-            csv_name=self.CSV_NAME, cols=self.USE_COLS, infileType=self.INFILE_TYPE
-        )
+        super().__init__(csv_name=self.CSV_NAME, cols=self.USE_COLS, infileType=self.INFILE_TYPE)

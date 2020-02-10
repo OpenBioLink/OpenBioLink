@@ -1,13 +1,9 @@
 import os
 
 from openbiolink.graph_creation import graphCreationConfig as glob
-from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import (
-    EdgeRegularMetadata,
-)
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 from openbiolink.graph_creation.metadata_infile import InMetaMapOntoHpoAltid
-from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeHpoGene import (
-    InMetaEdgeHpoGene,
-)
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeHpoGene import InMetaEdgeHpoGene
 from openbiolink.graph_creation.types.qualityType import QualityType
 
 
@@ -19,12 +15,8 @@ class EdgeMetaGenePheno(EdgeRegularMetadata):
 
     def __init__(self, quality: QualityType = None):
 
-        edges_file_path = os.path.join(
-            glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME
-        )
-        altid_mapping_file2 = os.path.join(
-            glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME
-        )
+        edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
+        altid_mapping_file2 = os.path.join(glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME)
 
         super().__init__(
             is_directional=True,

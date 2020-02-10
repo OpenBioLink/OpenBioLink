@@ -131,16 +131,12 @@ class TestGraphCreation(unittest.TestCase):
             with self.subTest(graph_is_directed=graph_is_directed):
                 graphProp.DIRECTED = graph_is_directed
 
-                graph_creator = Graph_Creation(
-                    test_data_folder, manual_db_file_metadata
-                )
+                graph_creator = Graph_Creation(test_data_folder, manual_db_file_metadata)
                 graph_creator.create_input_files()
                 graph_creator.create_graph(one_file_sep="\t", multi_file_sep="\t")
 
                 true_ref_files = [
-                    f
-                    for f in os.listdir(true_ref_folder)
-                    if f.startswith(true_ref_file_prefix)
+                    f for f in os.listdir(true_ref_folder) if f.startswith(true_ref_file_prefix)
                 ]  # os.path.isfile(f) ]
                 missing_elements = []
                 for ref_file_name in true_ref_files:
@@ -148,9 +144,7 @@ class TestGraphCreation(unittest.TestCase):
                         all_lines_in_comp_file = True
                         with open(os.path.join(true_ref_folder, ref_file_name)) as f:
                             ref_file = f.readlines()
-                        with open(
-                            os.path.join(output_data_folder, ref_file_name[7:])
-                        ) as f:
+                        with open(os.path.join(output_data_folder, ref_file_name[7:])) as f:
                             comp_file = f.readlines()
                         comp_dict = {}
                         j = 0

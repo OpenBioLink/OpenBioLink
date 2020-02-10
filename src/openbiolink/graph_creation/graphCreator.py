@@ -16,16 +16,10 @@ from openbiolink.node import Node
 
 class GraphCreator:
     def __init__(self):
-        output_dir = os.path.join(
-            globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME
-        )
-        self.tn_path_no_mappings = os.path.join(
-            output_dir, gcConst.TN_ID_NO_MAPPING_FILE_NAME
-        )
+        output_dir = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
+        self.tn_path_no_mappings = os.path.join(output_dir, gcConst.TN_ID_NO_MAPPING_FILE_NAME)
         self.tn_path_stats = os.path.join(output_dir, gcConst.TN_STATS_FILE_NAME)
-        self.path_no_mappings = os.path.join(
-            output_dir, gcConst.ID_NO_MAPPING_FILE_NAME
-        )
+        self.path_no_mappings = os.path.join(output_dir, gcConst.ID_NO_MAPPING_FILE_NAME)
         self.path_stats = os.path.join(output_dir, gcConst.STATS_FILE_NAME)
         os.makedirs(output_dir, exist_ok=True)
         open(self.tn_path_no_mappings, "w").close()
@@ -139,14 +133,10 @@ class GraphCreator:
 
         # --- mapping ---
         mapping1 = utils.db_mapping_file_to_dic(
-            edge_metadata.mapping1_file,
-            edge_metadata.map1_sourceindex,
-            edge_metadata.map1_targetindex,
+            edge_metadata.mapping1_file, edge_metadata.map1_sourceindex, edge_metadata.map1_targetindex,
         )
         mapping2 = utils.db_mapping_file_to_dic(
-            edge_metadata.mapping2_file,
-            edge_metadata.map2_sourceindex,
-            edge_metadata.map2_targetindex,
+            edge_metadata.mapping2_file, edge_metadata.map2_sourceindex, edge_metadata.map2_targetindex,
         )
         altid_mapping1 = utils.db_mapping_file_to_dic(
             edge_metadata.altid_mapping1_file,
@@ -166,14 +156,12 @@ class GraphCreator:
             edge_metadata.altid_mapping2_file,
         ]:
             if mapping is not None:
-                infile_folder = os.path.join(
-                    globConst.WORKING_DIR, gcConst.IN_FILE_FOLDER_NAME
-                )
+                infile_folder = os.path.join(globConst.WORKING_DIR, gcConst.IN_FILE_FOLDER_NAME)
                 mapping_path = os.path.join(infile_folder, mapping)
                 if not os.path.isfile(mapping_path):
-                    message = (
-                        "File does not exist: %s ! Edgetype %s will not be created"
-                        % (edge_metadata.edges_file_path, str(edge_metadata.edgeType))
+                    message = "File does not exist: %s ! Edgetype %s will not be created" % (
+                        edge_metadata.edges_file_path,
+                        str(edge_metadata.edgeType),
                     )
                     if globalConfig.INTERACTIVE_MODE:
                         if globConst.GUI_MODE:
@@ -201,9 +189,7 @@ class GraphCreator:
         nr_edges_below_cutoff = 0
         nr_edges_no_mapping = 0
 
-        no_cutoff_defined = (
-            edge_metadata.cutoff_num is None and edge_metadata.cutoff_txt is None
-        )
+        no_cutoff_defined = edge_metadata.cutoff_num is None and edge_metadata.cutoff_txt is None
 
         with open(edge_metadata.edges_file_path, "r", encoding="utf8") as edge_content:
 
@@ -235,56 +221,26 @@ class GraphCreator:
                 if edge_id1 is not None and edge_id2 is not None:
                     for id1 in edge_id1:
                         # apply alt_id mapping 1
-                        if (
-                            edge_metadata.altid_mapping1_file is not None
-                            and id1 in altid_mapping1
-                        ):
+                        if edge_metadata.altid_mapping1_file is not None and id1 in altid_mapping1:
                             id1 = altid_mapping1[id1][0]  # there should only be one
                         for id2 in edge_id2:
                             # apply alt_id mapping 2
-                            if (
-                                edge_metadata.altid_mapping2_file is not None
-                                and id2 in altid_mapping2
-                            ):
+                            if edge_metadata.altid_mapping2_file is not None and id2 in altid_mapping2:
                                 id2 = altid_mapping2[id2][0]  # there should only be one
                             # check for quality cutoff
                             within_num_cutoff = (
-                                edge_metadata.cutoff_num is not None
-                                and float(qscore) > edge_metadata.cutoff_num
+                                edge_metadata.cutoff_num is not None and float(qscore) > edge_metadata.cutoff_num
                             )
                             within_text_cutoff = (
-                                edge_metadata.cutoff_txt is not None
-                                and qscore not in edge_metadata.cutoff_txt
+                                edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt
                             )
-                            if (
-                                no_cutoff_defined
-                                or within_num_cutoff
-                                or within_text_cutoff
-                            ):
+                            if no_cutoff_defined or within_num_cutoff or within_text_cutoff:
                                 bimeg_id1 = edge_metadata.node1_type.name + "_" + id1
                                 bimeg_id2 = edge_metadata.node2_type.name + "_" + id2
-                                edges.add(
-                                    Edge(
-                                        bimeg_id1,
-                                        edge_metadata.edgeType,
-                                        bimeg_id2,
-                                        None,
-                                        qscore,
-                                    )
-                                )
+                                edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore,))
                                 # add an edge in the other direction when edge is undirectional and graph is directional
-                                if (
-                                    not edge_metadata.is_directional
-                                ) and graphProp.DIRECTED:
-                                    edges.add(
-                                        Edge(
-                                            bimeg_id2,
-                                            edge_metadata.edgeType,
-                                            bimeg_id1,
-                                            None,
-                                            qscore,
-                                        )
-                                    )
+                                if (not edge_metadata.is_directional) and graphProp.DIRECTED:
+                                    edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore,))
                                     nr_edges_incl_dup += 1
                                     nr_edges_return_dir += 1
                                 nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
@@ -311,10 +267,7 @@ class GraphCreator:
                 % edge_metadata.edgeType.name
             )
         if nr_edges_after_mapping == 0:
-            logging.warning(
-                "No edges of type %s are left after mapping and cutoff!"
-                % edge_metadata.edgeType.name
-            )
+            logging.warning("No edges of type %s are left after mapping and cutoff!" % edge_metadata.edgeType.name)
 
         # print statistics
         stats_dic = {

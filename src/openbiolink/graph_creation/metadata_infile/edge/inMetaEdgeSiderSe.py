@@ -19,7 +19,5 @@ class InMetaEdgeSiderSe(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeSiderSe.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeSiderSe.INFILE_TYPE,
+            csv_name=InMetaEdgeSiderSe.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeSiderSe.INFILE_TYPE,
         )

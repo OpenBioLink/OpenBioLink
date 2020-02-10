@@ -18,64 +18,39 @@ from openbiolink.evaluation.models.model import Model
 
 class Evaluation:
     def __init__(
-        self,
-        model: Model,
-        training_set_path=None,
-        test_set_path=None,
-        nodes_path=None,
-        mappings_avail=False,
+        self, model: Model, training_set_path=None, test_set_path=None, nodes_path=None, mappings_avail=False,
     ):
         self.model = model
         if training_set_path:
-            self.training_examples = pandas.read_csv(
-                training_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES
-            )
+            self.training_examples = pandas.read_csv(training_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
         else:
-            self.training_examples = pandas.DataFrame(
-                columns=globConst.COL_NAMES_SAMPLES
-            )
+            self.training_examples = pandas.DataFrame(columns=globConst.COL_NAMES_SAMPLES)
         if test_set_path:
-            self.test_examples = pandas.read_csv(
-                test_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES
-            )
+            self.test_examples = pandas.read_csv(test_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
         else:
             self.test_examples = pandas.DataFrame(columns=globConst.COL_NAMES_SAMPLES)
         if nodes_path is not None:
-            self.nodes = pandas.read_csv(
-                nodes_path, sep="\t", names=globConst.COL_NAMES_NODES
-            )
+            self.nodes = pandas.read_csv(nodes_path, sep="\t", names=globConst.COL_NAMES_NODES)
         else:
             self.nodes = None
 
         if not mappings_avail:
             relation_labels = set()
-            relation_labels.update(
-                set(self.test_examples[globConst.EDGE_TYPE_COL_NAME])
-            )
-            relation_labels.update(
-                set(self.training_examples[globConst.EDGE_TYPE_COL_NAME])
-            )
+            relation_labels.update(set(self.test_examples[globConst.EDGE_TYPE_COL_NAME]))
+            relation_labels.update(set(self.training_examples[globConst.EDGE_TYPE_COL_NAME]))
 
             self.node_label_to_id = None
             self.node_types_to_id = None
             self.relation_label_to_id = utils.create_mappings(relation_labels)
             if self.nodes is not None:
-                self.node_label_to_id = utils.create_mappings(
-                    np.unique(self.nodes.values[:, 0])
-                )
-                self.node_types_to_id = utils.create_mappings(
-                    np.unique(self.nodes.values[:, 1])
-                )
+                self.node_label_to_id = utils.create_mappings(np.unique(self.nodes.values[:, 0]))
+                self.node_types_to_id = utils.create_mappings(np.unique(self.nodes.values[:, 1]))
             else:
                 node_labels = set()
                 node_labels.update(set(self.test_examples[globConst.NODE1_ID_COL_NAME]))
                 node_labels.update(set(self.test_examples[globConst.NODE2_ID_COL_NAME]))
-                node_labels.update(
-                    set(self.training_examples[globConst.NODE1_ID_COL_NAME])
-                )
-                node_labels.update(
-                    set(self.training_examples[globConst.NODE2_ID_COL_NAME])
-                )
+                node_labels.update(set(self.training_examples[globConst.NODE1_ID_COL_NAME]))
+                node_labels.update(set(self.training_examples[globConst.NODE2_ID_COL_NAME]))
                 self.node_label_to_id = utils.create_mappings(node_labels)
 
             # output mappings
@@ -88,46 +63,31 @@ class Evaluation:
         else:
             # testme
             output_directory = os.path.join(
-                os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME),
-                evalConst.MODEL_DIR,
+                os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME), evalConst.MODEL_DIR,
             )
             self.node_label_to_id = io.read_mapping(
                 os.path.join(output_directory, evalConst.MODEL_ENTITY_NAME_MAPPING_NAME)
             )
-            node_type_path = os.path.join(
-                output_directory, evalConst.MODEL_ENTITY_TYPE_MAPPING_NAME
-            )
+            node_type_path = os.path.join(output_directory, evalConst.MODEL_ENTITY_TYPE_MAPPING_NAME)
             if os.path.exists(node_type_path):
                 self.node_types_to_id = io.read_mapping(node_type_path)
             elif self.nodes is not None:
-                self.node_types_to_id = utils.create_mappings(
-                    np.unique(self.nodes.values[:, 1])
-                )
+                self.node_types_to_id = utils.create_mappings(np.unique(self.nodes.values[:, 1]))
                 io.write_mappings(node_types_to_id=self.node_types_to_id)
             else:
                 pass  # fixme error nodes must be provided when eval
             self.relation_label_to_id = io.read_mapping(
-                os.path.join(
-                    output_directory, evalConst.MODEL_RELATION_TYPE_MAPPING_NAME
-                )
+                os.path.join(output_directory, evalConst.MODEL_RELATION_TYPE_MAPPING_NAME)
             )
 
     def train(self):
         ### prepare input examples
-        pos_examples = self.training_examples[
-            self.training_examples[globConst.VALUE_COL_NAME] == 1
-        ]
-        neg_examples = self.training_examples[
-            self.training_examples[globConst.VALUE_COL_NAME] == 0
-        ]
+        pos_examples = self.training_examples[self.training_examples[globConst.VALUE_COL_NAME] == 1]
+        neg_examples = self.training_examples[self.training_examples[globConst.VALUE_COL_NAME] == 0]
         # pos and neg must be same length! but also, all entities must still be present!
         num_examples = min(len(neg_examples), len(pos_examples))
-        pos_examples = self.save_remove_n_edges(
-            pos_examples, len(pos_examples) - num_examples
-        )
-        neg_examples = self.save_remove_n_edges(
-            neg_examples, len(neg_examples) - num_examples
-        )
+        pos_examples = self.save_remove_n_edges(pos_examples, len(pos_examples) - num_examples)
+        neg_examples = self.save_remove_n_edges(neg_examples, len(neg_examples) - num_examples)
         pos_triples = pos_examples[globConst.COL_NAMES_TRIPLES].values
         neg_triples = neg_examples[globConst.COL_NAMES_TRIPLES].values
         mapped_pos_triples, _ = self.get_mapped_triples_and_nodes(triples=pos_triples)
@@ -135,8 +95,7 @@ class Evaluation:
 
         self.model.train(pos_triples=mapped_pos_triples, neg_triples=mapped_neg_triples)
         output_directory = os.path.join(
-            os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME),
-            evalConst.MODEL_DIR,
+            os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME), evalConst.MODEL_DIR,
         )
 
         os.makedirs(output_directory, exist_ok=True)
@@ -147,8 +106,7 @@ class Evaluation:
         if not ks:
             ks = evalConst.DEFAULT_HITS_AT_K
         os.makedirs(
-            os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME),
-            exist_ok=True,
+            os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME), exist_ok=True,
         )
 
         threshold_metrics = [m for m in ThresholdMetricType]
@@ -160,19 +118,14 @@ class Evaluation:
             RankMetricType.MRR_UNFILTERED,
             RankMetricType.HITS_AT_K_UNFILTERED,
         ]
-        num_ranked_unfiltered_metrics = len(
-            [x for x in unfiltered_metrics if x in metrics]
-        )
+        num_ranked_unfiltered_metrics = len([x for x in unfiltered_metrics if x in metrics])
         filtered_options = bool(num_ranked_metrics - num_ranked_unfiltered_metrics)
         unfiltered_options = bool(num_ranked_unfiltered_metrics)
         metrics_results = {}
 
         if num_ranked_metrics > 0:
             ranked_metrics_results = self.evaluate_ranked_metrics_2(
-                metrics=metrics,
-                ks=ks,
-                filtered_setting=filtered_options,
-                unfiltered_setting=unfiltered_options,
+                metrics=metrics, ks=ks, filtered_setting=filtered_options, unfiltered_setting=unfiltered_options,
             )
             metrics_results.update(ranked_metrics_results)
 
@@ -185,9 +138,7 @@ class Evaluation:
         return metrics_results
 
     # ---------------------------- START -----------------------------------------
-    def evaluate_ranked_metrics_3(
-        self, ks, metrics, unfiltered_setting=True, filtered_setting=False
-    ):
+    def evaluate_ranked_metrics_3(self, ks, metrics, unfiltered_setting=True, filtered_setting=False):
         metric_results = {}
         k_raw_corrupted_head = []
         for _ in ks:
@@ -197,9 +148,7 @@ class Evaluation:
             k_raw_corrupted_tail.append([])
 
         # get corrupted triples
-        pos_test_examples = self.test_examples[
-            self.test_examples[globConst.VALUE_COL_NAME] == 1
-        ]
+        pos_test_examples = self.test_examples[self.test_examples[globConst.VALUE_COL_NAME] == 1]
         pos_test_examples_array = pos_test_examples.values
         nodes_array = self.nodes.values
 
@@ -208,10 +157,7 @@ class Evaluation:
         )
         nodeTypes = np.unique(mapped_nodes[:, 1])
         nodes_dic = {
-            nodeType: np.unique(
-                mapped_nodes[np.where(mapped_nodes[:, 1] == nodeType)][:, 0]
-            )
-            for nodeType in nodeTypes
+            nodeType: np.unique(mapped_nodes[np.where(mapped_nodes[:, 1] == nodeType)][:, 0]) for nodeType in nodeTypes
         }
         head_tuples = mapped_pos_triples[:, 0:2]
         head_tuples = np.unique(head_tuples, axis=0)
@@ -221,10 +167,7 @@ class Evaluation:
         # corrupting tail
         for head, relation in tqdm(head_tuples):
             data = mapped_pos_triples[
-                np.where(
-                    (mapped_pos_triples[:, 0] == head)
-                    * (mapped_pos_triples[:, 1] == relation)
-                )
+                np.where((mapped_pos_triples[:, 0] == head) * (mapped_pos_triples[:, 1] == relation))
             ]
 
             ranked_pos_examples, _ = self.model.get_ranked_and_sorted_predictions(data)
@@ -236,19 +179,12 @@ class Evaluation:
                 pos_examples=mapped_pos_triples,
             )
             all_examples = np.unique(
-                np.row_stack(
-                    (corrupted_examples, np.column_stack((data, [0] * len(data))))
-                ),
-                axis=0,
+                np.row_stack((corrupted_examples, np.column_stack((data, [0] * len(data))))), axis=0,
             )  # todo VERY WRONG!
-            ranked_all_examples, _ = self.model.get_ranked_and_sorted_predictions(
-                all_examples
-            )
+            ranked_all_examples, _ = self.model.get_ranked_and_sorted_predictions(all_examples)
             increase_search_frame_by = [0] * len(ks)
             for example in ranked_pos_examples:
-                search_data = ranked_all_examples[
-                    0 : ks[-1] + 1, :
-                ]  # fixme this should be more?
+                search_data = ranked_all_examples[0 : ks[-1] + 1, :]  # fixme this should be more?
                 for i, k in enumerate(ks):
                     current_k = k + increase_search_frame_by[i]
                     current_k = min(current_k, len(search_data))
@@ -262,10 +198,7 @@ class Evaluation:
         # corrupting head
         for relation, tail in tqdm(tail_tuples):
             data = mapped_pos_triples[
-                np.where(
-                    (mapped_pos_triples[:, 1] == relation)
-                    * (mapped_pos_triples[:, 2] == tail)
-                )
+                np.where((mapped_pos_triples[:, 1] == relation) * (mapped_pos_triples[:, 2] == tail))
             ]
 
             ranked_pos_examples, _ = self.model.get_ranked_and_sorted_predictions(data)
@@ -277,14 +210,9 @@ class Evaluation:
                 pos_examples=mapped_pos_triples,
             )
             all_examples = np.unique(
-                np.row_stack(
-                    (corrupted_examples, np.column_stack((data, [0] * len(data))))
-                ),
-                axis=0,
+                np.row_stack((corrupted_examples, np.column_stack((data, [0] * len(data))))), axis=0,
             )  # todo VERY WRONG!
-            ranked_all_examples, _ = self.model.get_ranked_and_sorted_predictions(
-                all_examples
-            )
+            ranked_all_examples, _ = self.model.get_ranked_and_sorted_predictions(all_examples)
             increase_search_frame_by = [0] * len(ks)
             for example in ranked_pos_examples:
                 search_data = ranked_all_examples[0 : ks[-1] + 1, :]
@@ -299,14 +227,10 @@ class Evaluation:
                         k_raw_corrupted_head[i].append(0)
         k_results_corrupted_head = []
         for i, k in enumerate(ks):
-            k_results_corrupted_head.append(
-                sum(k_raw_corrupted_head[i]) / len(k_raw_corrupted_head[i])
-            )
+            k_results_corrupted_head.append(sum(k_raw_corrupted_head[i]) / len(k_raw_corrupted_head[i]))
         k_results_corrupted_tail = []
         for i, k in enumerate(ks):
-            k_results_corrupted_tail.append(
-                sum(k_raw_corrupted_tail[i]) / len(k_raw_corrupted_tail[i])
-            )
+            k_results_corrupted_tail.append(sum(k_raw_corrupted_tail[i]) / len(k_raw_corrupted_tail[i]))
 
         metric_results[RankMetricType.HITS_AT_K] = (
             k_results_corrupted_head,
@@ -314,15 +238,11 @@ class Evaluation:
         )
         return metric_results
 
-    def evaluate_ranked_metrics_2(
-        self, ks, metrics, unfiltered_setting=True, filtered_setting=False
-    ):
+    def evaluate_ranked_metrics_2(self, ks, metrics, unfiltered_setting=True, filtered_setting=False):
         metric_results = {}
 
         # get corrupted triples
-        pos_test_examples = self.test_examples[
-            self.test_examples[globConst.VALUE_COL_NAME] == 1
-        ]
+        pos_test_examples = self.test_examples[self.test_examples[globConst.VALUE_COL_NAME] == 1]
         pos_test_examples_array = pos_test_examples.values
         nodes_array = self.nodes.values
 
@@ -331,62 +251,28 @@ class Evaluation:
         )
 
         node_types = np.unique(mapped_nodes[:, 1])
-        nodes_dic = {
-            nodeType: mapped_nodes[np.where(mapped_nodes[:, 1] == nodeType)][:, 0]
-            for nodeType in node_types
-        }
+        nodes_dic = {nodeType: mapped_nodes[np.where(mapped_nodes[:, 1] == nodeType)][:, 0] for nodeType in node_types}
 
         print("calculating corrupted triples")
 
         p = Pool(processes=multiprocessing.cpu_count() - 1)
         params = [
-            (
-                pos_example,
-                mapped_nodes,
-                nodes_dic,
-                mapped_pos_triples,
-                filtered_setting,
-                unfiltered_setting,
-            )
+            (pos_example, mapped_nodes, nodes_dic, mapped_pos_triples, filtered_setting, unfiltered_setting,)
             for pos_example in mapped_pos_triples
         ]
         # print(params) #todo here
         rank_lists = p.map(self.get_rank_lists, params)
         filtered_ranks_corrupted_heads = [
-            filtered_head
-            for (
-                unfiltered_head,
-                unfiltered_tail,
-                filtered_head,
-                filtered_tail,
-            ) in rank_lists
+            filtered_head for (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail,) in rank_lists
         ]
         filtered_ranks_corrupted_tails = [
-            filtered_tail
-            for (
-                unfiltered_head,
-                unfiltered_tail,
-                filtered_head,
-                filtered_tail,
-            ) in rank_lists
+            filtered_tail for (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail,) in rank_lists
         ]
         unfiltered_ranks_corrupted_heads = [
-            unfiltered_head
-            for (
-                unfiltered_head,
-                unfiltered_tail,
-                filtered_head,
-                filtered_tail,
-            ) in rank_lists
+            unfiltered_head for (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail,) in rank_lists
         ]
         unfiltered_ranks_corrupted_tails = [
-            unfiltered_tail
-            for (
-                unfiltered_head,
-                unfiltered_tail,
-                filtered_head,
-                filtered_tail,
-            ) in rank_lists
+            unfiltered_tail for (unfiltered_head, unfiltered_tail, filtered_head, filtered_tail,) in rank_lists
         ]
 
         filtered_num_examples = len(filtered_ranks_corrupted_heads)
@@ -402,9 +288,7 @@ class Evaluation:
             )
         # HITS@K unfiltered
         if RankMetricType.HITS_AT_K_UNFILTERED in metrics:
-            metric_results[
-                RankMetricType.HITS_AT_K_UNFILTERED
-            ] = self.calculate_hits_at_k(
+            metric_results[RankMetricType.HITS_AT_K_UNFILTERED] = self.calculate_hits_at_k(
                 ks=ks,
                 ranks_corrupted_heads=unfiltered_ranks_corrupted_heads,
                 ranks_corrupted_tails=unfiltered_ranks_corrupted_tails,
@@ -426,15 +310,11 @@ class Evaluation:
             )
         return metric_results
 
-    def evaluate_ranked_metrics_1(
-        self, ks, metrics, unfiltered_setting=True, filtered_setting=False
-    ):
+    def evaluate_ranked_metrics_1(self, ks, metrics, unfiltered_setting=True, filtered_setting=False):
         metric_results = {}
 
         # get corrupted triples
-        pos_test_examples = self.test_examples[
-            self.test_examples[globConst.VALUE_COL_NAME] == 1
-        ]
+        pos_test_examples = self.test_examples[self.test_examples[globConst.VALUE_COL_NAME] == 1]
         pos_test_examples_array = pos_test_examples.values
         nodes_array = self.nodes.values
 
@@ -443,10 +323,7 @@ class Evaluation:
         )
 
         node_types = np.unique(mapped_nodes[:, 1])
-        nodes_dic = {
-            nodeType: mapped_nodes[np.where(mapped_nodes[:, 1] == nodeType)][:, 0]
-            for nodeType in node_types
-        }
+        nodes_dic = {nodeType: mapped_nodes[np.where(mapped_nodes[:, 1] == nodeType)][:, 0] for nodeType in node_types}
 
         filtered_ranks_corrupted_heads = []
         filtered_ranks_corrupted_tails = []
@@ -470,25 +347,17 @@ class Evaluation:
             )
             if unfiltered_setting:
                 unfiltered_ranks_corrupted_heads.append(
-                    self.get_rank_for_corrupted_examples(
-                        unfiltered_corrupted_head, pos_example
-                    )
+                    self.get_rank_for_corrupted_examples(unfiltered_corrupted_head, pos_example)
                 )
                 unfiltered_ranks_corrupted_tails.append(
-                    self.get_rank_for_corrupted_examples(
-                        unfiltered_corrupted_tail, pos_example
-                    )
+                    self.get_rank_for_corrupted_examples(unfiltered_corrupted_tail, pos_example)
                 )
             if filtered_setting:
                 filtered_ranks_corrupted_heads.append(
-                    self.get_rank_for_corrupted_examples(
-                        filtered_corrupted_head, pos_example
-                    )
+                    self.get_rank_for_corrupted_examples(filtered_corrupted_head, pos_example)
                 )
                 filtered_ranks_corrupted_tails.append(
-                    self.get_rank_for_corrupted_examples(
-                        filtered_corrupted_tail, pos_example
-                    )
+                    self.get_rank_for_corrupted_examples(filtered_corrupted_tail, pos_example)
                 )
 
         filtered_num_examples = len(filtered_ranks_corrupted_heads)
@@ -504,9 +373,7 @@ class Evaluation:
             )
         # HITS@K unfiltered
         if RankMetricType.HITS_AT_K_UNFILTERED in metrics:
-            metric_results[
-                RankMetricType.HITS_AT_K_UNFILTERED
-            ] = self.calculate_hits_at_k(
+            metric_results[RankMetricType.HITS_AT_K_UNFILTERED] = self.calculate_hits_at_k(
                 ks=ks,
                 ranks_corrupted_heads=unfiltered_ranks_corrupted_heads,
                 ranks_corrupted_tails=unfiltered_ranks_corrupted_tails,
@@ -533,14 +400,7 @@ class Evaluation:
         unfiltered_tail_ranks = None
         filtered_head_ranks = None
         filtered_tail_ranks = None
-        (
-            pos_example,
-            mapped_nodes,
-            nodes_dic,
-            mapped_pos_triples,
-            filtered_setting,
-            unfiltered_setting,
-        ) = params
+        (pos_example, mapped_nodes, nodes_dic, mapped_pos_triples, filtered_setting, unfiltered_setting,) = params
         (
             unfiltered_corrupted_head,
             unfiltered_corrupted_tail,
@@ -554,19 +414,11 @@ class Evaluation:
             pos_examples=mapped_pos_triples,
         )
         if unfiltered_setting:
-            unfiltered_head_ranks = self.get_rank_for_corrupted_examples(
-                unfiltered_corrupted_head, pos_example
-            )
-            unfiltered_tail_ranks = self.get_rank_for_corrupted_examples(
-                unfiltered_corrupted_tail, pos_example
-            )
+            unfiltered_head_ranks = self.get_rank_for_corrupted_examples(unfiltered_corrupted_head, pos_example)
+            unfiltered_tail_ranks = self.get_rank_for_corrupted_examples(unfiltered_corrupted_tail, pos_example)
         if filtered_setting:
-            filtered_head_ranks = self.get_rank_for_corrupted_examples(
-                filtered_corrupted_head, pos_example
-            )
-            filtered_tail_ranks = self.get_rank_for_corrupted_examples(
-                filtered_corrupted_tail, pos_example
-            )
+            filtered_head_ranks = self.get_rank_for_corrupted_examples(filtered_corrupted_head, pos_example)
+            filtered_tail_ranks = self.get_rank_for_corrupted_examples(filtered_corrupted_tail, pos_example)
         return (
             unfiltered_head_ranks,
             unfiltered_tail_ranks,
@@ -581,17 +433,12 @@ class Evaluation:
         )  # , nodes=nodes_array) #todo change here
         values = self.test_examples.values[:, 4].tolist()
         mapped_test_examples = np.column_stack((mapped_test_examples, values))
-        (
-            ranked_test_examples,
-            sorted_indices,
-        ) = self.model.get_ranked_and_sorted_predictions(mapped_test_examples)
+        (ranked_test_examples, sorted_indices,) = self.model.get_ranked_and_sorted_predictions(mapped_test_examples)
         ranked_scores = ranked_test_examples[:, 4].tolist()
         ranked_labels = ranked_test_examples[:, 3].tolist()  # todo change here!!
         # ROC Curve
         if ThresholdMetricType.ROC in metrics:
-            fpr, tpr = self.calculate_roc_curve(
-                labels=ranked_labels, scores=ranked_scores
-            )
+            fpr, tpr = self.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
             metric_results[ThresholdMetricType.ROC] = (fpr, tpr)
         # Precision Recall Curve
         if ThresholdMetricType.PR_REC_CURVE in metrics:
@@ -602,9 +449,7 @@ class Evaluation:
             if ThresholdMetricType.ROC in metric_results.keys():
                 fpr, tpr = metric_results[ThresholdMetricType.ROC]
             else:
-                fpr, tpr = self.calculate_roc_curve(
-                    labels=ranked_labels, scores=ranked_scores
-                )
+                fpr, tpr = self.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
                 # todo ? auch unique?
             roc_auc = self.calculate_auc(fpr, tpr)
             metric_results[ThresholdMetricType.ROC_AUC] = roc_auc
@@ -613,9 +458,7 @@ class Evaluation:
             if ThresholdMetricType.PR_AUC in metric_results.keys():
                 pr, rec = metric_results[ThresholdMetricType.PR_REC_CURVE]
             else:
-                pr, rec = self.calculate_pr_curve(
-                    labels=ranked_labels, scores=ranked_scores
-                )
+                pr, rec = self.calculate_pr_curve(labels=ranked_labels, scores=ranked_scores)
                 pr = np.asarray(pr)
                 rec = np.asarray(rec)
             _, indices = np.unique(pr, return_index=True)
@@ -626,12 +469,8 @@ class Evaluation:
         return metric_results
 
     def get_rank_for_corrupted_examples(self, corrupted_examples, true_triple):
-        corrupted_examples = np.row_stack(
-            (corrupted_examples, (list(true_triple) + [1]))
-        )
-        ranked_examples, sorted_indices = self.model.get_ranked_and_sorted_predictions(
-            corrupted_examples
-        )
+        corrupted_examples = np.row_stack((corrupted_examples, (list(true_triple) + [1])))
+        ranked_examples, sorted_indices = self.model.get_ranked_and_sorted_predictions(corrupted_examples)
         # testme
         # ranked_examples.reset_index(drop=True, inplace=True)
         # ranked_labels = corrupted_examples[globConst.VALUE_COL_NAME][sorted_indices]
@@ -678,13 +517,7 @@ class Evaluation:
         """
         if n < 1:
             return edges
-        all_edges = SortedList(
-            list(
-                edges[globConst.NODE1_ID_COL_NAME].append(
-                    edges[globConst.NODE2_ID_COL_NAME]
-                )
-            )
-        )
+        all_edges = SortedList(list(edges[globConst.NODE1_ID_COL_NAME].append(edges[globConst.NODE2_ID_COL_NAME])))
         edges_list = set(all_edges)
         edges_count_dict = {x: all_edges.count(x) for x in edges_list}
         i = 0
@@ -697,12 +530,8 @@ class Evaluation:
                     break
                 drop_edge_candidate = edges.loc[drop_index]
                 if (
-                    edges_count_dict[drop_edge_candidate[globConst.NODE1_ID_COL_NAME]]
-                    > 1
-                    and edges_count_dict[
-                        drop_edge_candidate[globConst.NODE2_ID_COL_NAME]
-                    ]
-                    > 1
+                    edges_count_dict[drop_edge_candidate[globConst.NODE1_ID_COL_NAME]] > 1
+                    and edges_count_dict[drop_edge_candidate[globConst.NODE2_ID_COL_NAME]] > 1
                 ):
                     drop_indices.append(drop_index)
                     i += 1
@@ -715,18 +544,12 @@ class Evaluation:
     ###### calculate metrics ######
 
     @staticmethod
-    def calculate_hits_at_k(
-        ks, ranks_corrupted_heads, ranks_corrupted_tails, num_examples
-    ):
+    def calculate_hits_at_k(ks, ranks_corrupted_heads, ranks_corrupted_tails, num_examples):
         corrupted_heads_hits_at_k = dict()
         corrupted_tails_hits_at_k = dict()
         for k in ks:
-            corrupted_heads_hits_at_k[k] = (
-                len([x for x in ranks_corrupted_heads if x <= k]) / num_examples
-            )
-            corrupted_tails_hits_at_k[k] = (
-                len([x for x in ranks_corrupted_tails if x <= k]) / num_examples
-            )
+            corrupted_heads_hits_at_k[k] = len([x for x in ranks_corrupted_heads if x <= k]) / num_examples
+            corrupted_tails_hits_at_k[k] = len([x for x in ranks_corrupted_tails if x <= k]) / num_examples
         return corrupted_heads_hits_at_k, corrupted_tails_hits_at_k
 
     @staticmethod

@@ -17,19 +17,13 @@ from openbiolink.graph_creation.graphCreator import GraphCreator
 from openbiolink.graph_creation.graphWriter import GraphWriter
 from openbiolink.graph_creation.metadata_db_file import *
 from openbiolink.graph_creation.metadata_edge.edgeOntoMetadata import EdgeOntoMetadata
-from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import (
-    EdgeRegularMetadata,
-)
-from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import (
-    TnEdgeRegularMetadata,
-)
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
+from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdgeRegularMetadata
 from openbiolink.graph_creation.metadata_infile import *
 
 
 class Graph_Creation:
-    def __init__(
-        self, folder_path, use_db_metadata_classes=None, use_edge_metadata_classes=None
-    ):
+    def __init__(self, folder_path, use_db_metadata_classes=None, use_edge_metadata_classes=None):
         globConst.WORKING_DIR = folder_path
         gcConst.O_FILE_PATH = os.path.join(folder_path, gcConst.O_FILE_FOLDER_NAME)
         gcConst.IN_FILE_PATH = os.path.join(folder_path, gcConst.IN_FILE_FOLDER_NAME)
@@ -41,18 +35,13 @@ class Graph_Creation:
         self.file_readers = [x() for x in utils.get_leaf_subclasses(FileReader)]
         self.file_processors = [x() for x in utils.get_leaf_subclasses(FileProcessor)]
         self.infile_metadata = [x() for x in utils.get_leaf_subclasses(InfileMetadata)]
-        self.edge_metadata = [
-            x(graphProp.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)
-        ] + [x(graphProp.QUALITY) for x in utils.get_leaf_subclasses(EdgeOntoMetadata)]
-        self.tn_edge_metadata = [
-            x(graphProp.QUALITY)
-            for x in utils.get_leaf_subclasses(TnEdgeRegularMetadata)
+        self.edge_metadata = [x(graphProp.QUALITY) for x in utils.get_leaf_subclasses(EdgeRegularMetadata)] + [
+            x(graphProp.QUALITY) for x in utils.get_leaf_subclasses(EdgeOntoMetadata)
         ]
+        self.tn_edge_metadata = [x(graphProp.QUALITY) for x in utils.get_leaf_subclasses(TnEdgeRegularMetadata)]
 
         self.dbType_reader_map = utils.cls_list_to_dic(self.file_readers, "dbType")
-        self.readerType_processor_map = utils.cls_list_to_dic(
-            self.file_processors, "readerType"
-        )
+        self.readerType_processor_map = utils.cls_list_to_dic(self.file_processors, "readerType")
         self.infileType_inMetadata_map = {x.infileType: x for x in self.infile_metadata}
 
         # if not glob.DIRECTED:
@@ -120,35 +109,21 @@ class Graph_Creation:
                 for processor in self.readerType_processor_map[reader.readerType]:
                     if not os.path.isfile(
                         os.path.join(
-                            gcConst.IN_FILE_PATH,
-                            (
-                                self.infileType_inMetadata_map[processor.infileType]
-                            ).csv_name,
+                            gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name,
                         )
                     ):
                         all_files_exist = False
-                if (
-                    all_files_exist
-                    and not for_all
-                    and self.readerType_processor_map[reader.readerType]
-                ):
-                    first_processor = self.readerType_processor_map[reader.readerType][
-                        0
-                    ]
+                if all_files_exist and not for_all and self.readerType_processor_map[reader.readerType]:
+                    first_processor = self.readerType_processor_map[reader.readerType][0]
                     first_processor_out_path = os.path.join(
-                        gcConst.IN_FILE_PATH,
-                        (
-                            self.infileType_inMetadata_map[first_processor.infileType]
-                        ).csv_name,
+                        gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name,
                     )
                     if globConst.GUI_MODE:
                         from openbiolink.gui.gui import skipExistingFiles
 
                         skip, for_all = skipExistingFiles(first_processor_out_path)
                     else:
-                        skip, for_all = Cli.skip_existing_files(
-                            first_processor_out_path
-                        )
+                        skip, for_all = Cli.skip_existing_files(first_processor_out_path)
                 if not (skip and all_files_exist):
 
                     # execute processors
@@ -156,10 +131,7 @@ class Graph_Creation:
                     # fixme  ResourceWarning: Enable tracemalloc to get the object allocation traceback
                     for processor in self.readerType_processor_map[reader.readerType]:
                         out_file_path = os.path.join(
-                            gcConst.IN_FILE_PATH,
-                            (
-                                self.infileType_inMetadata_map[processor.infileType]
-                            ).csv_name,
+                            gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name,
                         )
                         if not for_all:
                             if globConst.GUI_MODE:
@@ -172,9 +144,7 @@ class Graph_Creation:
                             out_data = processor.process(in_data)
                             FileWriter.wirte_to_file(out_data, out_file_path)
             else:
-                logging.warning(
-                    "There is no processor for the reader %s" % (str(reader.readerType))
-                )
+                logging.warning("There is no processor for the reader %s" % (str(reader.readerType)))
 
     # ----------- create graph ----------
 
@@ -184,16 +154,10 @@ class Graph_Creation:
         # create graph
         nodes_dic, edges_dic = gc.meta_edges_to_graph(self.edge_metadata)
         gw.output_graph(
-            nodes_dic,
-            edges_dic,
-            one_file_sep=one_file_sep,
-            multi_file_sep=multi_file_sep,
-            print_qscore=print_qscore,
+            nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, print_qscore=print_qscore,
         )
         # create TN edges
-        tn_nodes_dic, tn_edges_dic = gc.meta_edges_to_graph(
-            self.tn_edge_metadata, tn=True
-        )
+        tn_nodes_dic, tn_edges_dic = gc.meta_edges_to_graph(self.tn_edge_metadata, tn=True)
         gw.output_graph(
             tn_nodes_dic,
             tn_edges_dic,
@@ -241,14 +205,7 @@ class Graph_Creation:
         # remove readers
         keep_dbType = [x.dbType for x in self.db_file_metadata]
         logging.info(
-            "readers removed: "
-            + str(
-                [
-                    x.__class__.__name__
-                    for x in self.file_readers
-                    if x.dbType not in keep_dbType
-                ]
-            )
+            "readers removed: " + str([x.__class__.__name__ for x in self.file_readers if x.dbType not in keep_dbType])
         )
         self.file_readers = [x for x in self.file_readers if x.dbType in keep_dbType]
         self.dbType_reader_map = utils.cls_list_to_dic(self.file_readers, "dbType")
@@ -257,38 +214,18 @@ class Graph_Creation:
         keep_readerType = [x.readerType for x in self.file_readers]
         logging.info(
             "processors removed: %s"
-            % (
-                str(
-                    [
-                        x.__class__.__name__
-                        for x in self.file_processors
-                        if x.readerType not in keep_readerType
-                    ]
-                )
-            )
+            % (str([x.__class__.__name__ for x in self.file_processors if x.readerType not in keep_readerType]))
         )
-        self.file_processors = [
-            x for x in self.file_processors if x.readerType in keep_readerType
-        ]
-        self.readerType_processor_map = utils.cls_list_to_dic(
-            self.file_processors, "readerType"
-        )
+        self.file_processors = [x for x in self.file_processors if x.readerType in keep_readerType]
+        self.readerType_processor_map = utils.cls_list_to_dic(self.file_processors, "readerType")
 
         # remove infile metadata
         keep_infileType = [x.infileType for x in self.file_processors]
         logging.info(
             "processors removed: "
-            + str(
-                [
-                    x.__class__.__name__
-                    for x in self.infile_metadata
-                    if x.infileType not in keep_infileType
-                ]
-            )
+            + str([x.__class__.__name__ for x in self.infile_metadata if x.infileType not in keep_infileType])
         )
-        self.infile_metadata = [
-            x for x in self.infile_metadata if x.infileType in keep_infileType
-        ]
+        self.infile_metadata = [x for x in self.infile_metadata if x.infileType in keep_infileType]
         self.infileType_inMetadata_map = {x.infileType: x for x in self.infile_metadata}
 
         # remove edge metadata
@@ -302,16 +239,8 @@ class Graph_Creation:
                 ]
             )
         )
-        self.edge_metadata = [
-            x
-            for x in self.edge_metadata
-            if x.EDGE_INMETA_CLASS.INFILE_TYPE in keep_infileType
-        ]
-        self.tn_edge_metadata = [
-            x
-            for x in self.tn_edge_metadata
-            if x.EDGE_INMETA_CLASS.INFILE_TYPE in keep_infileType
-        ]
+        self.edge_metadata = [x for x in self.edge_metadata if x.EDGE_INMETA_CLASS.INFILE_TYPE in keep_infileType]
+        self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x.EDGE_INMETA_CLASS.INFILE_TYPE in keep_infileType]
 
         # check for deleted dependencies of mappings
         additional_remove_metaEdges = []
@@ -348,12 +277,8 @@ class Graph_Creation:
             else:
                 sys.exit()
 
-            self.edge_metadata = [
-                x for x in self.edge_metadata if x not in additional_remove_metaEdges
-            ]
-            self.tn_edge_metadata = [
-                x for x in self.tn_edge_metadata if x not in additional_remove_metaEdges
-            ]
+            self.edge_metadata = [x for x in self.edge_metadata if x not in additional_remove_metaEdges]
+            self.tn_edge_metadata = [x for x in self.tn_edge_metadata if x not in additional_remove_metaEdges]
 
     def init_custom_sources_top_down(self, use_edge_metdata_classes):
         """hepler __init__ function for custom edge_metadata_classes"""
@@ -365,8 +290,7 @@ class Graph_Creation:
                 [
                     x.__class__.__name__
                     for x in self.edge_metadata
-                    if x.EDGE_INMETA_CLASS
-                    not in [y.EDGE_INMETA_CLASS for y in use_edge_metdata_classes]
+                    if x.EDGE_INMETA_CLASS not in [y.EDGE_INMETA_CLASS for y in use_edge_metdata_classes]
                 ]
             )
         )
@@ -379,21 +303,15 @@ class Graph_Creation:
                 self.edge_metadata.append(x)
 
         # remove inMetadata
-        infileType_edgeMetadata_map = utils.cls_list_to_dic(
-            self.edge_metadata, "EDGE_INMETA_CLASS.INFILE_TYPE"
-        )
+        infileType_edgeMetadata_map = utils.cls_list_to_dic(self.edge_metadata, "EDGE_INMETA_CLASS.INFILE_TYPE")
         infileType_edgeMetadata_map.update(
             utils.cls_list_to_dic(
-                self.edge_metadata,
-                "MAP1_META_CLASS.INFILE_TYPE",
-                lambda a: a.MAP1_META_CLASS is not None,
+                self.edge_metadata, "MAP1_META_CLASS.INFILE_TYPE", lambda a: a.MAP1_META_CLASS is not None,
             )
         )
         infileType_edgeMetadata_map.update(
             utils.cls_list_to_dic(
-                self.edge_metadata,
-                "MAP2_META_CLASS.INFILE_TYPE",
-                lambda a: a.MAP2_META_CLASS is not None,
+                self.edge_metadata, "MAP2_META_CLASS.INFILE_TYPE", lambda a: a.MAP2_META_CLASS is not None,
             )
         )
         infileType_edgeMetadata_map.update(
@@ -412,22 +330,16 @@ class Graph_Creation:
         )
 
         infileType_edgeMetadata_map.update(
+            utils.cls_list_to_dic(self.tn_edge_metadata, "EDGE_INMETA_CLASS.INFILE_TYPE")
+        )
+        infileType_edgeMetadata_map.update(
             utils.cls_list_to_dic(
-                self.tn_edge_metadata, "EDGE_INMETA_CLASS.INFILE_TYPE"
+                self.tn_edge_metadata, "MAP1_META_CLASS.INFILE_TYPE", lambda a: a.MAP1_META_CLASS is not None,
             )
         )
         infileType_edgeMetadata_map.update(
             utils.cls_list_to_dic(
-                self.tn_edge_metadata,
-                "MAP1_META_CLASS.INFILE_TYPE",
-                lambda a: a.MAP1_META_CLASS is not None,
-            )
-        )
-        infileType_edgeMetadata_map.update(
-            utils.cls_list_to_dic(
-                self.tn_edge_metadata,
-                "MAP2_META_CLASS.INFILE_TYPE",
-                lambda a: a.MAP2_META_CLASS is not None,
+                self.tn_edge_metadata, "MAP2_META_CLASS.INFILE_TYPE", lambda a: a.MAP2_META_CLASS is not None,
             )
         )
         infileType_edgeMetadata_map.update(
@@ -448,67 +360,33 @@ class Graph_Creation:
         keep_infileTypes = list(infileType_edgeMetadata_map.keys())
         logging.info(
             "Infile Metadata removed: "
-            + str(
-                [
-                    x.__class__.__name__
-                    for x in self.infile_metadata
-                    if x.infileType not in keep_infileTypes
-                ]
-            )
+            + str([x.__class__.__name__ for x in self.infile_metadata if x.infileType not in keep_infileTypes])
         )
-        self.infile_metadata = [
-            x for x in self.infile_metadata if x.infileType in keep_infileTypes
-        ]
+        self.infile_metadata = [x for x in self.infile_metadata if x.infileType in keep_infileTypes]
         self.infileType_inMetadata_map = {x.infileType: x for x in self.infile_metadata}
 
         # remove processors
         logging.info(
             "Processors removed: "
-            + str(
-                [
-                    x.__class__.__name__
-                    for x in self.file_processors
-                    if x.infileType not in keep_infileTypes
-                ]
-            )
+            + str([x.__class__.__name__ for x in self.file_processors if x.infileType not in keep_infileTypes])
         )
-        self.file_processors = [
-            x for x in self.file_processors if x.infileType in keep_infileTypes
-        ]
-        self.readerType_processor_map = utils.cls_list_to_dic(
-            self.file_processors, "readerType"
-        )
+        self.file_processors = [x for x in self.file_processors if x.infileType in keep_infileTypes]
+        self.readerType_processor_map = utils.cls_list_to_dic(self.file_processors, "readerType")
 
         # remove readers
         keep_readerType = list(self.readerType_processor_map.keys())
         logging.info(
             "Readers removed: "
-            + str(
-                [
-                    x.__class__.__name__
-                    for x in self.file_readers
-                    if x.readerType not in keep_readerType
-                ]
-            )
+            + str([x.__class__.__name__ for x in self.file_readers if x.readerType not in keep_readerType])
         )
-        self.file_readers = [
-            x for x in self.file_readers if x.readerType in keep_readerType
-        ]
+        self.file_readers = [x for x in self.file_readers if x.readerType in keep_readerType]
         self.dbType_reader_map = utils.cls_list_to_dic(self.file_readers, "dbType")
 
         # remove db_metadata
         keep_dbType = list(self.dbType_reader_map.keys())
         logging.info(
             "DB_source removed: "
-            + str(
-                [
-                    x.__class__.__name__
-                    for x in self.db_file_metadata
-                    if x.dbType not in keep_dbType
-                ]
-            )
+            + str([x.__class__.__name__ for x in self.db_file_metadata if x.dbType not in keep_dbType])
         )
 
-        self.db_file_metadata = [
-            x for x in self.db_file_metadata if x.dbType in keep_dbType
-        ]
+        self.db_file_metadata = [x for x in self.db_file_metadata if x.dbType in keep_dbType]

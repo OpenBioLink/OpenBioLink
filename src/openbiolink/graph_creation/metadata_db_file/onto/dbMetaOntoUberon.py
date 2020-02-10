@@ -1,6 +1,4 @@
-from openbiolink.graph_creation.metadata_db_file.onto.dbMetadataOnto import (
-    DbMetadataOnto,
-)
+from openbiolink.graph_creation.metadata_db_file.onto.dbMetadataOnto import DbMetadataOnto
 from openbiolink.graph_creation.types.dbType import DbType
 
 

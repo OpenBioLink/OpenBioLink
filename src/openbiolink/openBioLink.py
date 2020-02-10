@@ -25,9 +25,7 @@ from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricTy
 from openbiolink.evaluation.models.modelTypes import ModelTypes
 from openbiolink.graph_creation.graphCreation import Graph_Creation
 from openbiolink.graph_creation.types.qualityType import QualityType
-from openbiolink.train_test_set_creation.trainTestSplitCreation import (
-    TrainTestSetCreation,
-)
+from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
 
 def create_graph(args):
@@ -43,15 +41,13 @@ def create_graph(args):
         db_module_names = [".".join(y) for y in [x.split(".")[0:-1] for x in args.dbs]]
         db_cls_names = [x.split(".")[-1] for x in args.dbs]
         use_db_metadata_classes = [
-            getattr(sys.modules[module_name], cls_name)
-            for module_name, cls_name in zip(db_module_names, db_cls_names)
+            getattr(sys.modules[module_name], cls_name) for module_name, cls_name in zip(db_module_names, db_cls_names)
         ]
     if args.mes:
         db_module_names = [".".join(y) for y in [x.split(".")[0:-1] for x in args.mes]]
         db_cls_names = [x.split(".")[-1] for x in args.mes]
         use_edge_metadata_classes = [
-            getattr(sys.modules[module_name], cls_name)
-            for module_name, cls_name in zip(db_module_names, db_cls_names)
+            getattr(sys.modules[module_name], cls_name) for module_name, cls_name in zip(db_module_names, db_cls_names)
         ]
 
     graph_creator = Graph_Creation(
@@ -67,9 +63,7 @@ def create_graph(args):
         graph_creator.download_db_files()
 
     if not args.no_in:
-        print(
-            "\n\n############### creating graph input files #################################"
-        )
+        print("\n\n############### creating graph input files #################################")
         logging.info("## Start creating input files ##")
         graph_creator.create_input_files()
 
@@ -90,9 +84,7 @@ def create_graph(args):
             multisep_sep = None
 
         graph_creator.create_graph(
-            one_file_sep=single_sep,
-            multi_file_sep=multisep_sep,
-            print_qscore=(not args.no_qscore),
+            one_file_sep=single_sep, multi_file_sep=multisep_sep, print_qscore=(not args.no_qscore),
         )
 
         # with open(os.path.join(globalConfig.WORKING_DIR, globalConfig.GRAPH_PROP_FILE_NAME), 'w') as f:
@@ -122,19 +114,13 @@ def create_train_test_splits(args):
         t_minus_one_nodes_path=args.tmo_nodes,
     )
     if args.mode == "time":
-        print(
-            "\n\n############### creating time slice split #################################"
-        )
+        print("\n\n############### creating time slice split #################################")
         logging.info("## Start creating time slice split ##")
         tts.time_slice_split()
     elif args.mode == "rand":
-        print(
-            "\n\n############### creating random slice split #################################"
-        )
+        print("\n\n############### creating random slice split #################################")
         logging.info("## Start creating random slice split ##")
-        tts.random_edge_split(
-            val=args.val, test_frac=args.test_frac, crossval=args.crossval
-        )
+        tts.random_edge_split(val=args.val, test_frac=args.test_frac, crossval=args.crossval)
     # tts.random_edge_split(crossval=False)
 
 
@@ -170,14 +156,8 @@ def train_and_evaluate(args):
         print("starting evaluation")
 
         metric_strings = args.metrics
-        metrics = [
-            x
-            for x in list(RankMetricType.__members__.values())
-            if x.name in metric_strings
-        ] + [
-            x
-            for x in list(ThresholdMetricType.__members__.values())
-            if x.name in metric_strings
+        metrics = [x for x in list(RankMetricType.__members__.values()) if x.name in metric_strings] + [
+            x for x in list(ThresholdMetricType.__members__.values()) if x.name in metric_strings
         ]
         int_ks = [int(k) for k in args.ks]
 
@@ -205,20 +185,12 @@ def check_args_validity(args, parser):
             )
         if args.crossval:
             n_folds = args.val
-            if (
-                n_folds == 0
-                or n_folds == 1
-                or (n_folds > 1 and not float(n_folds).is_integer())
-            ):
+            if n_folds == 0 or n_folds == 1 or (n_folds > 1 and not float(n_folds).is_integer()):
                 parser.error(
                     "fold entry must be either an int>1 (number of folds) or a float >0 and <1 (validation fraction)"
                 )
         if args.mode == "time":
-            if not (
-                bool(args.tmo_edges)
-                and bool(args.tmo_tn_edges)
-                and (bool(args.tmo_nodes))
-            ):
+            if not (bool(args.tmo_edges) and bool(args.tmo_tn_edges) and (bool(args.tmo_nodes))):
                 parser.error(
                     "for time slice mode, edge-, tn-edge- and node-file of the t-minus-one graph must be provided"
                 )
@@ -240,18 +212,13 @@ def main(args_list=None):
 
     # Global config
     parser.add_argument(
-        "-p",
-        type=str,
-        default=os.getcwd(),
-        help="specify a working directory (default = current working dictionary",
+        "-p", type=str, default=os.getcwd(), help="specify a working directory (default = current working dictionary",
     )
 
     # Graph Creation
     parser.add_argument("-g", action="store_true", help="Generate Graph")
     parser.add_argument(
-        "--undir",
-        action="store_true",
-        help="Output-Graph should be undirectional (default = directional)",
+        "--undir", action="store_true", help="Output-Graph should be undirectional (default = directional)",
     )
     parser.add_argument(
         "--qual",
@@ -269,19 +236,13 @@ def main(args_list=None):
         help="Existing files will be skipped - in combination with --no_interact (default = replace)",
     )
     parser.add_argument(
-        "--no_dl",
-        action="store_true",
-        help="No download is being performed (e.g. when local data is used)",
+        "--no_dl", action="store_true", help="No download is being performed (e.g. when local data is used)",
     )
     parser.add_argument(
-        "--no_in",
-        action="store_true",
-        help="No input_files are created (e.g. when local data is used)",
+        "--no_in", action="store_true", help="No input_files are created (e.g. when local data is used)",
     )
     parser.add_argument(
-        "--no_create",
-        action="store_true",
-        help="No graph is created (e.g. when only in-files should be created)",
+        "--no_create", action="store_true", help="No graph is created (e.g. when only in-files should be created)",
     )
     parser.add_argument(
         "--out_format",
@@ -291,36 +252,22 @@ def main(args_list=None):
         help="Format of graph output, takes 2 arguments: list of file formats [s= single file, m=multiple files] and list of separators (e.g. t=tab, n=newline, or any other character) (default= s t)",
     )
     parser.add_argument(
-        "--no_qscore",
-        action="store_true",
-        help="The output files will contain no scores",
+        "--no_qscore", action="store_true", help="The output files will contain no scores",
     )
     parser.add_argument(
-        "--dbs",
-        nargs="+",
-        help="custom source databases selection to be used, full class name, options --> see doc",
+        "--dbs", nargs="+", help="custom source databases selection to be used, full class name, options --> see doc",
     )
     parser.add_argument(
-        "--mes",
-        nargs="+",
-        help="custom meta edges selection to be used, full class name, options --> see doc",
+        "--mes", nargs="+", help="custom meta edges selection to be used, full class name, options --> see doc",
     )
 
     # Train- Test Split Generation
+    parser.add_argument("-s", action="store_true", help="Generate Train-,Validation-, Test-Split")
+    parser.add_argument("--edges", type=str, help="Path to edges.csv file (required with action -s")
     parser.add_argument(
-        "-s", action="store_true", help="Generate Train-,Validation-, Test-Split"
+        "--tn_edges", type=str, help="Path to true_negatives_edges.csv file (required with action -s)",
     )
-    parser.add_argument(
-        "--edges", type=str, help="Path to edges.csv file (required with action -s"
-    )
-    parser.add_argument(
-        "--tn_edges",
-        type=str,
-        help="Path to true_negatives_edges.csv file (required with action -s)",
-    )
-    parser.add_argument(
-        "--nodes", type=str, help="Path to nodes.csv file (required with action -s)"
-    )
+    parser.add_argument("--nodes", type=str, help="Path to nodes.csv file (required with action -s)")
     parser.add_argument(
         "--tts_sep",
         type=str,
@@ -328,21 +275,13 @@ def main(args_list=None):
         help="Separator of edge, tn-edge and nodes file (e.g. t=tab, n=newline, or any other character) (default=t)",
     )
     parser.add_argument(
-        "--mode",
-        type=str,
-        default="rand",
-        help="Mode of train-test-set split, options=[rand, time], (default=rand)",
+        "--mode", type=str, default="rand", help="Mode of train-test-set split, options=[rand, time], (default=rand)",
     )
     parser.add_argument(
-        "--test_frac",
-        type=float,
-        default="0.2",
-        help="Fraction of test set as float (default= 0.2)",
+        "--test_frac", type=float, default="0.2", help="Fraction of test set as float (default= 0.2)",
     )
     parser.add_argument(
-        "--crossval",
-        action="store_true",
-        help="Multiple train-validation-sets are generated",
+        "--crossval", action="store_true", help="Multiple train-validation-sets are generated",
     )
     parser.add_argument(
         "--val",
@@ -353,9 +292,7 @@ def main(args_list=None):
     # niceToHave (1)
     # parser.add_argument('--meta', type=str, help='Path to meta_edge triples (only required if meta-edges are not in OpenBioLink Benchmark Data)')
     parser.add_argument(
-        "--tmo_edges",
-        type=str,
-        help="Path to edges.csv file of t-minus-one graph (required for --mode time",
+        "--tmo_edges", type=str, help="Path to edges.csv file of t-minus-one graph (required for --mode time",
     )
     parser.add_argument(
         "--tmo_tn_edges",
@@ -363,40 +300,26 @@ def main(args_list=None):
         help="Path to true_negatives_edges.csv file of t-minus-one graph (required for --mode time",
     )
     parser.add_argument(
-        "--tmo_nodes",
-        type=str,
-        help="Path to nodes.csv file of t-minus-one graph (required for --mode time",
+        "--tmo_nodes", type=str, help="Path to nodes.csv file of t-minus-one graph (required for --mode time",
     )
 
     # Training and Evaluation
     parser.add_argument("-e", action="store_true", help="Apply Training and Evaluation")
     parser.add_argument(
-        "--model_cls",
-        type=str,
-        help="class of the model to be trained/evaluated (required with -e)",
+        "--model_cls", type=str, help="class of the model to be trained/evaluated (required with -e)",
     )
     parser.add_argument("--config", type=str, help="Path to the model' config file")
     parser.add_argument(
-        "--no_train",
-        action="store_true",
-        help="No training is being performed, trained model id provided via --model",
+        "--no_train", action="store_true", help="No training is being performed, trained model id provided via --model",
     )
     parser.add_argument(
-        "--trained_model",
-        type=str,
-        help="Path to trained model (required with --no_train)",
+        "--trained_model", type=str, help="Path to trained model (required with --no_train)",
     )
     parser.add_argument(
-        "--no_eval",
-        action="store_true",
-        help="No evaluation is being performed, only training",
+        "--no_eval", action="store_true", help="No evaluation is being performed, only training",
     )
-    parser.add_argument(
-        "--test", type=str, help="Path to test set file (required with -e)"
-    )
-    parser.add_argument(
-        "--train", type=str, help="Path to trainings set file"
-    )  # (alternative: --cv_folder)')
+    parser.add_argument("--test", type=str, help="Path to test set file (required with -e)")
+    parser.add_argument("--train", type=str, help="Path to trainings set file")  # (alternative: --cv_folder)')
     parser.add_argument(
         "--corrupted",
         type=str,

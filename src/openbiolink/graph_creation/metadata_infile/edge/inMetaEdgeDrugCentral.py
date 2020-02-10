@@ -22,7 +22,5 @@ class InMetaEdgeDrugCentral(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeDrugCentral.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeDrugCentral.INFILE_TYPE,
+            csv_name=InMetaEdgeDrugCentral.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeDrugCentral.INFILE_TYPE,
         )

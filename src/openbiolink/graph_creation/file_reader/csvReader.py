@@ -5,15 +5,7 @@ from openbiolink.graph_creation.file_reader.fileReader import FileReader
 
 class CsvReader(FileReader):
     def __init__(
-        self,
-        in_path,
-        readerType,
-        dbType,
-        sep=None,
-        cols=None,
-        use_cols=None,
-        nr_lines_header=0,
-        dtypes=None,
+        self, in_path, readerType, dbType, sep=None, cols=None, use_cols=None, nr_lines_header=0, dtypes=None,
     ):
         super().__init__(in_path, readerType, dbType)
         if sep is None:

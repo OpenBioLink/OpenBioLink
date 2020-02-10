@@ -1,6 +1,4 @@
-from openbiolink.graph_creation.metadata_db_file.edge.dbMetadataEdge import (
-    DbMetadataEdge,
-)
+from openbiolink.graph_creation.metadata_db_file.edge.dbMetadataEdge import DbMetadataEdge
 from openbiolink.graph_creation.types.dbType import DbType
 
 
@@ -16,7 +14,5 @@ class DbMetaEdgeCtdPath(DbMetadataEdge):
 
     def __init__(self):
         super().__init__(
-            url=DbMetaEdgeCtdPath.URL,
-            ofile_name=DbMetaEdgeCtdPath.OFILE_NAME,
-            dbType=DbMetaEdgeCtdPath.DB_TYPE,
+            url=DbMetaEdgeCtdPath.URL, ofile_name=DbMetaEdgeCtdPath.OFILE_NAME, dbType=DbMetaEdgeCtdPath.DB_TYPE,
         )

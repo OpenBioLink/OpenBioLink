@@ -12,32 +12,22 @@ class Sampler:
         self.meta_edges_dic = meta_edges_dic
         self.nodes = nodes
 
-    def generate_n_random_samples(
-        self, n, node_type_1, edge_type, node_type_2, exclude_df
-    ):
+    def generate_n_random_samples(self, n, node_type_1, edge_type, node_type_2, exclude_df):
         exclude_df = exclude_df[globConst.COL_NAMES_EDGES]
         samples = pandas.DataFrame(columns=globConst.COL_NAMES_EDGES)
-        nodes_nodeType1 = self.nodes.loc[
-            self.nodes[globConst.NODE_TYPE_COL_NAME] == node_type_1
-        ]
+        nodes_nodeType1 = self.nodes.loc[self.nodes[globConst.NODE_TYPE_COL_NAME] == node_type_1]
         num_nodes1, _ = nodes_nodeType1.shape
-        nodes_nodeType2 = self.nodes.loc[
-            self.nodes[globConst.NODE_TYPE_COL_NAME] == node_type_2
-        ]
+        nodes_nodeType2 = self.nodes.loc[self.nodes[globConst.NODE_TYPE_COL_NAME] == node_type_2]
         num_nodes2, _ = nodes_nodeType2.shape
         i = 0
         while len(samples) < n:
             if i > 100:
                 break
             num_examples = n - len(samples)
-            node1_list = nodes_nodeType1.sample(
-                n=num_examples, random_state=(globConst.RANDOM_STATE + i), replace=True
-            )
+            node1_list = nodes_nodeType1.sample(n=num_examples, random_state=(globConst.RANDOM_STATE + i), replace=True)
             node1_list = node1_list.id.tolist()
             node2_list = nodes_nodeType2.sample(
-                n=num_examples,
-                random_state=(globConst.RANDOM_STATE + (i + 100)),
-                replace=True,
+                n=num_examples, random_state=(globConst.RANDOM_STATE + (i + 100)), replace=True,
             )
             node2_list = node2_list.id.tolist()
             sample_candidates = pandas.DataFrame(
@@ -47,9 +37,7 @@ class Sampler:
                     globConst.NODE2_ID_COL_NAME: node2_list,
                 }
             )
-            _, sub_samples = utils.get_diff(
-                exclude_df[globConst.COL_NAMES_TRIPLES], sample_candidates
-            )
+            _, sub_samples = utils.get_diff(exclude_df[globConst.COL_NAMES_TRIPLES], sample_candidates)
             sub_samples.drop_duplicates(inplace=True)
             sub_samples[globConst.QSCORE_COL_NAME] = [None] * len(sub_samples)
             samples = samples.append(sub_samples, ignore_index=True)
@@ -89,9 +77,7 @@ class NegativeSampler(Sampler):
         neg_samples_count_meta_edges = {}
         if distrib == "uni":
             num_tp_examples, _ = pos_samples.shape
-            neg_samples_metaEdges = list(
-                numpy.random.choice(meta_edges, num_tp_examples)
-            )
+            neg_samples_metaEdges = list(numpy.random.choice(meta_edges, num_tp_examples))
             neg_samples_metaEdges.sort()
             neg_samples_count_meta_edges = {
                 e: neg_samples_metaEdges.count(e)
@@ -100,19 +86,13 @@ class NegativeSampler(Sampler):
             }
         elif distrib == "orig":
             for key in self.meta_edges_dic.keys():
-                num_entry = len(
-                    pos_samples.loc[(pos_samples[ttsConst.EDGE_TYPE_KEY_NAME] == key)]
-                )
+                num_entry = len(pos_samples.loc[(pos_samples[ttsConst.EDGE_TYPE_KEY_NAME] == key)])
                 if num_entry > 0:
                     neg_samples_count_meta_edges[key] = num_entry
 
         # generate a negative sub-sample for each negative meta_edge type
-        for meta_edge_triple_key, count in tqdm(
-            sorted(neg_samples_count_meta_edges.items())
-        ):
-            node_type_1, edge_type, node_type_2 = self.meta_edges_dic[
-                meta_edge_triple_key
-            ]
+        for meta_edge_triple_key, count in tqdm(sorted(neg_samples_count_meta_edges.items())):
+            node_type_1, edge_type, node_type_2 = self.meta_edges_dic[meta_edge_triple_key]
             pos_samples_of_meta_edge = pos_samples.loc[
                 (pos_samples[ttsConst.EDGE_TYPE_KEY_NAME] == meta_edge_triple_key)
             ]
@@ -144,21 +124,13 @@ class NegativeSampler(Sampler):
         return neg_samples[col_names + [globConst.VALUE_COL_NAME]]
 
     def subsample_with_tn(
-        self,
-        meta_edge_triple_key,
-        subsample_size,
-        exclude_df,
-        col_names=globConst.COL_NAMES_EDGES,
+        self, meta_edge_triple_key, subsample_size, exclude_df, col_names=globConst.COL_NAMES_EDGES,
     ):
         node_type_1, edge_type, node_type_2 = self.meta_edges_dic[meta_edge_triple_key]
-        tn_examples = self.all_tn.loc[
-            self.all_tn[ttsConst.EDGE_TYPE_KEY_NAME] == meta_edge_triple_key
-        ]  # testme
+        tn_examples = self.all_tn.loc[self.all_tn[ttsConst.EDGE_TYPE_KEY_NAME] == meta_edge_triple_key]  # testme
         count_existing_tn, _ = tn_examples.shape
         if subsample_size <= count_existing_tn:
-            neg_samples = tn_examples.sample(
-                n=subsample_size, random_state=globConst.RANDOM_STATE
-            )
+            neg_samples = tn_examples.sample(n=subsample_size, random_state=globConst.RANDOM_STATE)
         else:
             exclude_df = exclude_df.append(tn_examples)
             neg_samples = tn_examples

@@ -18,7 +18,5 @@ class InMetaEdgeDisGeNet(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeDisGeNet.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeDisGeNet.INFILE_TYPE,
+            csv_name=InMetaEdgeDisGeNet.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeDisGeNet.INFILE_TYPE,
         )

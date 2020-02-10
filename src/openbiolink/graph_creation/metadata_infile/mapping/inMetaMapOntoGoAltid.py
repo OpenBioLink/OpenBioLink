@@ -13,7 +13,5 @@ class InMetaMapOntoGoAltid(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaMapOntoGoAltid.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaMapOntoGoAltid.INFILE_TYPE,
+            csv_name=InMetaMapOntoGoAltid.CSV_NAME, cols=self.USE_COLS, infileType=InMetaMapOntoGoAltid.INFILE_TYPE,
         )

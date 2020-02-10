@@ -18,6 +18,4 @@ class InMetaEdgeStringPtmod(InfileMetadata):
     MAPPING_SEP = None
 
     def __init__(self):
-        super().__init__(
-            csv_name=self.CSV_NAME, cols=self.USE_COLS, infileType=self.INFILE_TYPE
-        )
+        super().__init__(csv_name=self.CSV_NAME, cols=self.USE_COLS, infileType=self.INFILE_TYPE)

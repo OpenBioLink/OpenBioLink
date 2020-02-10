@@ -124,15 +124,9 @@ class TestEvaluation(TestCase):
             corrupted_tails_dict,
         )
 
-        test_examples = pandas.concat([examples_head, examples_tail]).reset_index(
-            drop=True
-        )
-        ranked_test_examples = pandas.concat(
-            [ranked_examples_head, ranked_examples_tail]
-        ).reset_index(drop=True)
-        sorted_test_indices = sorted_indices_head + [
-            x + len(sorted_indices_head) for x in sorted_indices_tail
-        ]
+        test_examples = pandas.concat([examples_head, examples_tail]).reset_index(drop=True)
+        ranked_test_examples = pandas.concat([ranked_examples_head, ranked_examples_tail]).reset_index(drop=True)
+        sorted_test_indices = sorted_indices_head + [x + len(sorted_indices_head) for x in sorted_indices_tail]
 
         model = TransR_PyKeen()
         model.get_ranked_and_sorted_predictions = MagicMock(

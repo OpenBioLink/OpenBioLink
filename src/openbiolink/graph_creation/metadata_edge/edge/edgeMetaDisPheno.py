@@ -1,19 +1,13 @@
 import os
 
 from openbiolink.graph_creation import graphCreationConfig as glob
-from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import (
-    EdgeRegularMetadata,
-)
+from openbiolink.graph_creation.metadata_edge.edgeRegularMetadata import EdgeRegularMetadata
 from openbiolink.graph_creation.metadata_infile import (
     InMetaMapOntoDoAltid,
     InMetaMapOntoHpoAltid,
 )
-from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeHpoDis import (
-    InMetaEdgeHpoDis,
-)
-from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapOntoDoOmim import (
-    InMetaMapOntoDoOmim,
-)
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDis
+from openbiolink.graph_creation.metadata_infile.mapping.inMetaMapOntoDoOmim import InMetaMapOntoDoOmim
 from openbiolink.graph_creation.types.qualityType import QualityType
 
 
@@ -31,16 +25,10 @@ class EdgeMetaDisPheno(EdgeRegularMetadata):
 
     def __init__(self, quality: QualityType = None):
 
-        edges_file_path = os.path.join(
-            glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME
-        )
+        edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.MAP1_META_CLASS.CSV_NAME)
-        altid_mapping_file1 = os.path.join(
-            glob.IN_FILE_PATH, self.MAP1_ALT_ID_META_CLASS.CSV_NAME
-        )
-        altid_mapping_file2 = os.path.join(
-            glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME
-        )
+        altid_mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.MAP1_ALT_ID_META_CLASS.CSV_NAME)
+        altid_mapping_file2 = os.path.join(glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME)
 
         super().__init__(
             is_directional=True,

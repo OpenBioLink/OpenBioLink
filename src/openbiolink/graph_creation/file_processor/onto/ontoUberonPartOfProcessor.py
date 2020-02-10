@@ -18,11 +18,6 @@ class OntoUberonPartOfProcessor(FileProcessor):
 
     def individual_postprocessing(self, data):
         # bgee is only mapping on CL and UBERON terms
-        data = data[
-            data["ID"].str.startswith("UBERON:") | data["ID"].str.startswith("CL:")
-        ]
-        data = data[
-            data["PART_OF"].str.startswith("UBERON:")
-            | data["PART_OF"].str.startswith("CL:")
-        ]
+        data = data[data["ID"].str.startswith("UBERON:") | data["ID"].str.startswith("CL:")]
+        data = data[data["PART_OF"].str.startswith("UBERON:") | data["PART_OF"].str.startswith("CL:")]
         return data

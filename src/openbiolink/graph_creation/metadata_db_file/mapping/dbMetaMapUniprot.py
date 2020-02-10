@@ -1,6 +1,4 @@
-from openbiolink.graph_creation.metadata_db_file.mapping.dbMetadataMapping import (
-    DbMetadataMapping,
-)
+from openbiolink.graph_creation.metadata_db_file.mapping.dbMetadataMapping import DbMetadataMapping
 from openbiolink.graph_creation.types.dbType import DbType
 
 
@@ -39,7 +37,5 @@ class DbMetaMapUniprot(DbMetadataMapping):
 
     def __init__(self):
         super().__init__(
-            url=DbMetaMapUniprot.URL,
-            ofile_name=DbMetaMapUniprot.OFILE_NAME,
-            dbType=DbMetaMapUniprot.DB_TYPE,
+            url=DbMetaMapUniprot.URL, ofile_name=DbMetaMapUniprot.OFILE_NAME, dbType=DbMetaMapUniprot.DB_TYPE,
         )

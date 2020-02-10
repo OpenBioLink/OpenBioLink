@@ -18,7 +18,5 @@ class InMetaEdgeBgeeNoExpr(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeBgeeNoExpr.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeBgeeNoExpr.INFILE_TYPE,
+            csv_name=InMetaEdgeBgeeNoExpr.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeBgeeNoExpr.INFILE_TYPE,
         )

@@ -18,7 +18,5 @@ class InMetaEdgeGo(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeGo.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeGo.INFILE_TYPE,
+            csv_name=InMetaEdgeGo.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeGo.INFILE_TYPE,
         )

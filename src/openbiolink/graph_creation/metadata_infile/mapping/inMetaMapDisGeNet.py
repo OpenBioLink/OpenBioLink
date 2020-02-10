@@ -13,7 +13,5 @@ class InMetaMapDisGeNet(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaMapDisGeNet.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaMapDisGeNet.INFILE_TYPE,
+            csv_name=InMetaMapDisGeNet.CSV_NAME, cols=self.USE_COLS, infileType=InMetaMapDisGeNet.INFILE_TYPE,
         )

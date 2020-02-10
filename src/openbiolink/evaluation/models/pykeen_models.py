@@ -57,18 +57,14 @@ class PyKeen_BasicModel(Model):
         all_triples = np.concatenate((pos_triples, neg_triples))
 
         # testme
-        self.config[keenConst.NUM_ENTITIES] = len(
-            np.unique(np.concatenate((all_triples[:, 0], all_triples[:, 2])))
-        )
+        self.config[keenConst.NUM_ENTITIES] = len(np.unique(np.concatenate((all_triples[:, 0], all_triples[:, 2]))))
         self.config[keenConst.NUM_RELATIONS] = len(np.unique(all_triples[:, 1]))
 
         ## prepare model
         self.kge_model = pipeline.get_kge_model(config=self.config)
         self.kge_model = self.kge_model.to(self.device)
 
-        optimizer = optim.SGD(
-            self.kge_model.parameters(), lr=self.config[keenConst.LEARNING_RATE]
-        )
+        optimizer = optim.SGD(self.kge_model.parameters(), lr=self.config[keenConst.LEARNING_RATE])
         loss_per_epoch = []
         num_pos_examples = pos_triples.shape[0]
         num_neg_examples = neg_triples.shape[0]
@@ -79,31 +75,21 @@ class PyKeen_BasicModel(Model):
             indices_pos = np.arange(num_pos_examples)
             np.random.shuffle(indices_pos)
             pos_triples = pos_triples[indices_pos]
-            pos_batches = self._split_list_in_batches(
-                input_list=pos_triples, batch_size=self.config["batch_size"]
-            )
+            pos_batches = self._split_list_in_batches(input_list=pos_triples, batch_size=self.config["batch_size"])
             indices_neg = np.arange(num_neg_examples)
             np.random.shuffle(indices_neg)
             neg_triples = neg_triples[indices_neg]
-            neg_batches = self._split_list_in_batches(
-                input_list=neg_triples, batch_size=self.config["batch_size"]
-            )
+            neg_batches = self._split_list_in_batches(input_list=neg_triples, batch_size=self.config["batch_size"])
             current_epoch_loss = 0.0
 
-            for pos_batch, neg_batch in tqdm(
-                zip(pos_batches, neg_batches), total=len(neg_batches)
-            ):
+            for pos_batch, neg_batch in tqdm(zip(pos_batches, neg_batches), total=len(neg_batches)):
                 current_batch_size = len(pos_batch)
 
                 # if not len(pos_batch) == len(neg_batch):
                 #    raise RuntimeError('Pos and neg batches are not the same length')
 
-                pos_batch_tensor = torch.tensor(
-                    pos_batch, dtype=torch.long, device=self.device
-                )
-                neg_batch_tensor = torch.tensor(
-                    neg_batch, dtype=torch.long, device=self.device
-                )
+                pos_batch_tensor = torch.tensor(pos_batch, dtype=torch.long, device=self.device)
+                neg_batch_tensor = torch.tensor(neg_batch, dtype=torch.long, device=self.device)
                 # Recall that torch *accumulates* gradients. Before passing in a
                 # new instance, you need to zero out the gradients from the old instance
                 optimizer.zero_grad()
@@ -117,8 +103,7 @@ class PyKeen_BasicModel(Model):
 
         ### prepare results for output
         entity_to_embedding = {
-            id: embedding.detach().cpu().numpy()
-            for id, embedding in enumerate(self.kge_model.entity_embeddings.weight)
+            id: embedding.detach().cpu().numpy() for id, embedding in enumerate(self.kge_model.entity_embeddings.weight)
         }
         relation_to_embedding = {
             id: embedding.detach().cpu().numpy()
@@ -139,9 +124,7 @@ class PyKeen_BasicModel(Model):
     def get_ranked_and_sorted_predictions(self, mapped_test_triples):
         # ** original code can be found in utilities/prediction_utils.py
 
-        mapped_test_triples = torch.tensor(
-            mapped_test_triples, dtype=torch.long, device=self.device
-        )
+        mapped_test_triples = torch.tensor(mapped_test_triples, dtype=torch.long, device=self.device)
         borders = []
         i = 0
         while True:  # todo #fixme explore further size limitations
@@ -151,16 +134,12 @@ class PyKeen_BasicModel(Model):
             i += 1
         predicted_scores = []
         [
-            predicted_scores.extend(
-                self.kge_model.predict(mapped_test_triples[borders[i - 1] : borders[i]])
-            )
+            predicted_scores.extend(self.kge_model.predict(mapped_test_triples[borders[i - 1] : borders[i]]))
             for i, _ in enumerate(borders)
             if i > 0
         ]  # todo maybe here a loop and batches?
         predicted_scores = np.array(predicted_scores)
-        _, sorted_indices = torch.sort(
-            torch.tensor(predicted_scores, dtype=torch.float), descending=False
-        )
+        _, sorted_indices = torch.sort(torch.tensor(predicted_scores, dtype=torch.float), descending=False)
 
         sorted_indices = sorted_indices.cpu().numpy()
         ranked_test_triples = mapped_test_triples[sorted_indices, :]
@@ -177,51 +156,32 @@ class PyKeen_BasicModel(Model):
 
     def output_results(self, results):
         output_directory = os.path.join(
-            os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME),
-            evalConst.MODEL_DIR,
+            os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME), evalConst.MODEL_DIR,
         )
 
         with open(os.path.join(output_directory, "configuration.json"), "w") as file:
             json.dump(results["config"], file, indent=2)
 
-        with open(
-            os.path.join(output_directory, "entities_to_embeddings.pkl"), "wb"
-        ) as file:
-            pickle.dump(
-                results["entity_to_embedding"], file, protocol=pickle.HIGHEST_PROTOCOL
-            )
+        with open(os.path.join(output_directory, "entities_to_embeddings.pkl"), "wb") as file:
+            pickle.dump(results["entity_to_embedding"], file, protocol=pickle.HIGHEST_PROTOCOL)
 
-        with open(
-            os.path.join(output_directory, "entities_to_embeddings.json"), "w"
-        ) as file:
+        with open(os.path.join(output_directory, "entities_to_embeddings.json"), "w") as file:
             json.dump(
-                {
-                    key: list(map(float, array))
-                    for key, array in results["entity_to_embedding"].items()
-                },
+                {key: list(map(float, array)) for key, array in results["entity_to_embedding"].items()},
                 file,
                 indent=2,
                 sort_keys=True,
             )
 
         if results[keenConst.RELATION_TO_EMBEDDING] is not None:
-            with open(
-                os.path.join(output_directory, "relations_to_embeddings.pkl"), "wb"
-            ) as file:
+            with open(os.path.join(output_directory, "relations_to_embeddings.pkl"), "wb") as file:
                 pickle.dump(
-                    results["relation_to_embedding"],
-                    file,
-                    protocol=pickle.HIGHEST_PROTOCOL,
+                    results["relation_to_embedding"], file, protocol=pickle.HIGHEST_PROTOCOL,
                 )
 
-            with open(
-                os.path.join(output_directory, "relations_to_embeddings.json"), "w"
-            ) as file:
+            with open(os.path.join(output_directory, "relations_to_embeddings.json"), "w") as file:
                 json.dump(
-                    {
-                        key: list(map(float, array))
-                        for key, array in results["relation_to_embedding"].items()
-                    },
+                    {key: list(map(float, array)) for key, array in results["relation_to_embedding"].items()},
                     file,
                     indent=2,
                     sort_keys=True,
@@ -241,12 +201,10 @@ class TransE_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TRAIN_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TRAIN_FILE_NAME,
                 ),
                 test_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TEST_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TEST_FILE_NAME,
                 ),
                 execution_mode="Training_mode",
                 random_seed=42,
@@ -271,12 +229,10 @@ class TransR_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TRAIN_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TRAIN_FILE_NAME,
                 ),
                 test_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TEST_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TEST_FILE_NAME,
                 ),
                 execution_mode="Training_mode",
                 random_seed=42,
@@ -302,12 +258,10 @@ class TransD_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TRAIN_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TRAIN_FILE_NAME,
                 ),
                 test_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TEST_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TEST_FILE_NAME,
                 ),
                 execution_mode="Training_mode",
                 random_seed=42,
@@ -333,12 +287,10 @@ class TransH_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TRAIN_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TRAIN_FILE_NAME,
                 ),
                 test_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TEST_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TEST_FILE_NAME,
                 ),
                 execution_mode="Training_mode",
                 random_seed=42,
@@ -364,12 +316,10 @@ class DistMult_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TRAIN_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TRAIN_FILE_NAME,
                 ),
                 test_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TEST_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TEST_FILE_NAME,
                 ),
                 execution_mode="Training_mode",
                 random_seed=42,
@@ -393,12 +343,10 @@ class Unstructured_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TRAIN_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TRAIN_FILE_NAME,
                 ),
                 test_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TEST_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TEST_FILE_NAME,
                 ),
                 execution_mode="Training_mode",
                 random_seed=42,
@@ -423,12 +371,10 @@ class SE_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TRAIN_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TRAIN_FILE_NAME,
                 ),
                 test_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TEST_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TEST_FILE_NAME,
                 ),
                 execution_mode="Training_mode",
                 random_seed=42,
@@ -453,12 +399,10 @@ class Rescal_PyKeen(PyKeen_BasicModel):
         if not config:
             self.config = dict(
                 training_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TRAIN_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TRAIN_FILE_NAME,
                 ),
                 test_set_path=os.path.join(
-                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME),
-                    ttsConst.TEST_FILE_NAME,
+                    os.path.join(globConst.WORKING_DIR, ttsConst.TTS_FOLDER_NAME), ttsConst.TEST_FILE_NAME,
                 ),
                 execution_mode="Training_mode",
                 random_seed=42,

@@ -13,7 +13,5 @@ class InMetaMapOntoHpoUmls(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaMapOntoHpoUmls.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaMapOntoHpoUmls.INFILE_TYPE,
+            csv_name=InMetaMapOntoHpoUmls.CSV_NAME, cols=self.USE_COLS, infileType=InMetaMapOntoHpoUmls.INFILE_TYPE,
         )

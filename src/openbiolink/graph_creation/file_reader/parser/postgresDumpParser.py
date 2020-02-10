@@ -21,9 +21,7 @@ class PostgresDumpParser:
                     df = pd.DataFrame([row], columns=cols)
                 else:
                     if len(row) == len(cols):
-                        df = df.append(
-                            pd.DataFrame([row], columns=cols), ignore_index=True
-                        )
+                        df = df.append(pd.DataFrame([row], columns=cols), ignore_index=True)
                     else:
                         logging.info("postgresParser -> row ignored: ", row)
             if line.startswith("COPY " + table_name):

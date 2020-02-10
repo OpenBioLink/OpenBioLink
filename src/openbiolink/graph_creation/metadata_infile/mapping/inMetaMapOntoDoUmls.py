@@ -13,7 +13,5 @@ class InMetaMapOntoDoUmls(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaMapOntoDoUmls.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaMapOntoDoUmls.INFILE_TYPE,
+            csv_name=InMetaMapOntoDoUmls.CSV_NAME, cols=self.USE_COLS, infileType=InMetaMapOntoDoUmls.INFILE_TYPE,
         )

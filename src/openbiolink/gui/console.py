@@ -79,21 +79,13 @@ class ConsoleFrame(tk.Frame):
         # Create the panes and frames
         console_frame = ttk.Labelframe(self, text="Console")
         buttons_panel = tk.Frame(self)
-        next_button = tk.Button(
-            buttons_panel,
-            text="Cancel",
-            command=lambda: on_closing(),
-            height=1,
-            width=15,
-        )
+        next_button = tk.Button(buttons_panel, text="Cancel", command=lambda: on_closing(), height=1, width=15,)
 
         # Initialize all frames
         self.console = ConsoleUi(console_frame)
         console_frame.pack(side="top", fill="both", expand=True)
 
-        ttk.Separator(self, orient="horizontal").pack(
-            side="top", fill="x", pady=(15, 0), padx=10, anchor="s"
-        )
+        ttk.Separator(self, orient="horizontal").pack(side="top", fill="x", pady=(15, 0), padx=10, anchor="s")
         buttons_panel.pack(side="bottom", padx=15, fill="x")
         next_button.pack(side="left", anchor="w", pady=(5, 10))
 

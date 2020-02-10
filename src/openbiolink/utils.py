@@ -35,11 +35,7 @@ def get_leaf_subclasses(cls, class_set=None):
         if len(cls.__subclasses__()) == 0:
             class_set.add(cls)
         else:
-            class_set.union(
-                x
-                for c in cls.__subclasses__()
-                for x in get_leaf_subclasses(c, class_set)
-            )
+            class_set.union(x for c in cls.__subclasses__() for x in get_leaf_subclasses(c, class_set))
         return class_set
     return None
 
@@ -85,11 +81,7 @@ def make_undir(data: pandas.DataFrame):
             other_row = row[2] + row[1]
         else:
             logging.warning(
-                (
-                    "removing bidirectional edges requires 2 or 3 (incl score) columns but cols are ".join(
-                        cols
-                    )
-                )
+                ("removing bidirectional edges requires 2 or 3 (incl score) columns but cols are ".join(cols))
                 + "edges are not removed"
             )
             return data
@@ -102,9 +94,7 @@ def make_undir(data: pandas.DataFrame):
                 this_row = row[1] + row[2]
                 temp_dic[this_row] = [row[1], row[2]]
 
-    new_data = pandas.DataFrame.from_dict(
-        temp_dic, columns=list(data), orient="index"
-    ).reset_index(drop=True)
+    new_data = pandas.DataFrame.from_dict(temp_dic, columns=list(data), orient="index").reset_index(drop=True)
     return new_data
 
 
@@ -269,42 +259,28 @@ def get_diff(df1, df2, ignore_qscore=False, path=None):
     if ignore_qscore:
         all_cols = globConst.COL_NAMES_SAMPLES
         cols = globConst.COL_NAMES_TRIPLES + [globConst.VALUE_COL_NAME]
-        diff = pandas.merge(
-            df1, df2, how="outer", left_on=cols, right_on=cols, indicator=True
-        ).loc[lambda x: x["_merge"] != "both"]
-        left_only = diff.loc[lambda x: x._merge == "left_only"]
-        left_only[globConst.QSCORE_COL_NAME] = left_only[
-            globConst.QSCORE_COL_NAME + "_x"
+        diff = pandas.merge(df1, df2, how="outer", left_on=cols, right_on=cols, indicator=True).loc[
+            lambda x: x["_merge"] != "both"
         ]
+        left_only = diff.loc[lambda x: x._merge == "left_only"]
+        left_only[globConst.QSCORE_COL_NAME] = left_only[globConst.QSCORE_COL_NAME + "_x"]
         left_only = left_only[all_cols]
         left_only.drop_duplicates(inplace=True, keep=False)
         right_only = diff.loc[lambda x: x._merge == "right_only"]
-        right_only[globConst.QSCORE_COL_NAME] = right_only[
-            globConst.QSCORE_COL_NAME + "_y"
-        ]
+        right_only[globConst.QSCORE_COL_NAME] = right_only[globConst.QSCORE_COL_NAME + "_y"]
         right_only = right_only[all_cols]
         right_only.drop_duplicates(inplace=True, keep=False)
 
     else:
-        diff = pandas.merge(df1, df2, how="outer", indicator=True).loc[
-            lambda x: x["_merge"] != "both"
-        ]
+        diff = pandas.merge(df1, df2, how="outer", indicator=True).loc[lambda x: x["_merge"] != "both"]
         left_only = diff.loc[lambda x: x._merge == "left_only"].drop(["_merge"], axis=1)
-        right_only = diff.loc[lambda x: x._merge == "right_only"].drop(
-            ["_merge"], axis=1
-        )
+        right_only = diff.loc[lambda x: x._merge == "right_only"].drop(["_merge"], axis=1)
     if path:
         left_only.to_csv(
-            os.path.join(path, "diff_left_only.csv"),
-            sep="\t",
-            index=False,
-            header=False,
+            os.path.join(path, "diff_left_only.csv"), sep="\t", index=False, header=False,
         )
         right_only.to_csv(
-            os.path.join(path, "diff_right_only.csv"),
-            sep="\t",
-            index=False,
-            header=False,
+            os.path.join(path, "diff_right_only.csv"), sep="\t", index=False, header=False,
         )
     return left_only, right_only
 
@@ -312,39 +288,24 @@ def get_diff(df1, df2, ignore_qscore=False, path=None):
 def remove_inconsistent_edges(df: pandas.DataFrame):
     """ removes edges that contain inconsistent information i.e. when an edge is present both as positive and negative example"""
     return df.drop_duplicates(
-        subset=[
-            globConst.NODE1_ID_COL_NAME,
-            globConst.NODE2_ID_COL_NAME,
-            globConst.EDGE_TYPE_COL_NAME,
-        ],
-        keep=False,
+        subset=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME,], keep=False,
     )
 
 
 def remove_parent_duplicates_and_reverses(remain_set, remove_set):
     if not remain_set.empty and not remove_set.empty:
         remove_set_copy = remove_set.copy()
-        remove_set_copy[globConst.EDGE_TYPE_COL_NAME] = remove_set_copy[
-            globConst.EDGE_TYPE_COL_NAME
-        ].apply(
+        remove_set_copy[globConst.EDGE_TYPE_COL_NAME] = remove_set_copy[globConst.EDGE_TYPE_COL_NAME].apply(
             lambda x: EdgeType[x].get_parent() if type(x) == str else x.get_parent()
         )
         remove_set_copy.drop_duplicates(
             inplace=True,
-            subset=[
-                globConst.NODE1_ID_COL_NAME,
-                globConst.NODE2_ID_COL_NAME,
-                globConst.EDGE_TYPE_COL_NAME,
-            ],
+            subset=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME,],
         )
         remain_set, _ = get_diff(remain_set, remove_set_copy, ignore_qscore=True)
         remain_set.drop_duplicates(
             inplace=True,
-            subset=[
-                globConst.NODE1_ID_COL_NAME,
-                globConst.NODE2_ID_COL_NAME,
-                globConst.EDGE_TYPE_COL_NAME,
-            ],
+            subset=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME,],
         )
         remain_set = remove_reverse_edges(remain_set, remove_set_copy)
     return remain_set
@@ -382,16 +343,8 @@ def remove_reverse_edges(remain_set, remove_set):
             remain_set,
             remove_set_copy,
             how="left",
-            left_on=[
-                globConst.NODE1_ID_COL_NAME,
-                globConst.NODE2_ID_COL_NAME,
-                globConst.EDGE_TYPE_COL_NAME,
-            ],
-            right_on=[
-                globConst.NODE1_ID_COL_NAME,
-                globConst.NODE2_ID_COL_NAME,
-                globConst.EDGE_TYPE_COL_NAME,
-            ],
+            left_on=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME,],
+            right_on=[globConst.NODE1_ID_COL_NAME, globConst.NODE2_ID_COL_NAME, globConst.EDGE_TYPE_COL_NAME,],
         )
         temp.set_index(remain_set.index)
         temp.drop_duplicates(inplace=True)
@@ -431,9 +384,7 @@ def remove_reverse_edges(remain_set, remove_set):
 #        pass
 
 
-def calc_corrupted_triples(
-    pos_example, nodes, nodes_dic, filtered=False, path=None, pos_examples=None
-):
+def calc_corrupted_triples(pos_example, nodes, nodes_dic, filtered=False, path=None, pos_examples=None):
     """"
     calculates the corrupted triples (both corrupted heads as well as corrupted tails) for given true positive example
         Parameters
@@ -468,25 +419,17 @@ def calc_corrupted_triples(
     tail_array = np.full(len(corrupted_head_nodes), tail)
     relation_array = np.full(len(corrupted_head_nodes), relation)
     value_array = np.zeros(len(corrupted_head_nodes))
-    unfiltered_corrupted_heads = np.column_stack(
-        (corrupted_head_nodes, relation_array, tail_array, value_array)
-    )
+    unfiltered_corrupted_heads = np.column_stack((corrupted_head_nodes, relation_array, tail_array, value_array))
 
     # corrupting tails
     head_array = np.full(len(corrupted_tail_nodes), head)
     relation_array = np.full(len(corrupted_tail_nodes), relation)
     value_array = np.zeros(len(corrupted_tail_nodes))
-    unfiltered_corrupted_tails = np.column_stack(
-        (head_array, relation_array, corrupted_tail_nodes, value_array)
-    )
+    unfiltered_corrupted_tails = np.column_stack((head_array, relation_array, corrupted_tail_nodes, value_array))
 
     if filtered:
-        filtered_corrupted_heads = _get_corrupted_examples(
-            unfiltered_corrupted_heads[:, 0:3], pos_examples, True
-        )
-        filtered_corrupted_tails = _get_corrupted_examples(
-            unfiltered_corrupted_tails[:, 0:3], pos_examples, True
-        )
+        filtered_corrupted_heads = _get_corrupted_examples(unfiltered_corrupted_heads[:, 0:3], pos_examples, True)
+        filtered_corrupted_tails = _get_corrupted_examples(unfiltered_corrupted_tails[:, 0:3], pos_examples, True)
 
     # if path: #todo change to numpy #fixme what to do?
     #    all_corrupted_head = _group_corrupted_examples(unfiltered_corrupted_head_dict,
@@ -523,12 +466,8 @@ def _get_corrupted_examples(corrupted_triples, pos_examples, filtered):
                 DataFrame contains all valid corrupted triples, incl value (1 for positive example, 0 for negative example)
                 columns = [node1_id, edgeType, node2_id, value]
     """
-    corrupted_triples_df = pandas.DataFrame(
-        corrupted_triples, columns=globConst.COL_NAMES_TRIPLES
-    )
-    pos_examples_df = pandas.DataFrame(
-        pos_examples, columns=globConst.COL_NAMES_TRIPLES
-    )
+    corrupted_triples_df = pandas.DataFrame(corrupted_triples, columns=globConst.COL_NAMES_TRIPLES)
+    pos_examples_df = pandas.DataFrame(pos_examples, columns=globConst.COL_NAMES_TRIPLES)
     if filtered:
         corrupted_triples_df.reset_index(drop=True, inplace=True)
         true_neg_triples, _ = get_diff(corrupted_triples_df, pos_examples_df)
@@ -576,9 +515,7 @@ def _group_corrupted_examples(corrupted_dict, col_names):
 
 
 def create_mappings(elements):
-    element_label_to_id = {
-        element_label: id for id, element_label in enumerate(elements)
-    }
+    element_label_to_id = {element_label: id for id, element_label in enumerate(elements)}
     return element_label_to_id
 
 

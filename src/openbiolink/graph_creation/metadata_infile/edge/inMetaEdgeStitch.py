@@ -19,7 +19,5 @@ class InMetaEdgeStitch(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeStitch.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeStitch.INFILE_TYPE,
+            csv_name=InMetaEdgeStitch.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeStitch.INFILE_TYPE,
         )

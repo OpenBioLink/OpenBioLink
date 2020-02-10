@@ -20,10 +20,7 @@ class Model(ABC):
         ...
 
     def _split_list_in_batches(self, input_list, batch_size):
-        return [
-            input_list[i : i + batch_size]
-            for i in range(0, len(input_list), batch_size)
-        ]
+        return [input_list[i : i + batch_size] for i in range(0, len(input_list), batch_size)]
 
 
 # todo check if num embedding == #nodes

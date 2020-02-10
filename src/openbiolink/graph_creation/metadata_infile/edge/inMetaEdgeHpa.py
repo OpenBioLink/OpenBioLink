@@ -19,7 +19,5 @@ class InMetaEdgeHpa(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeHpa.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeHpa.INFILE_TYPE,
+            csv_name=InMetaEdgeHpa.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeHpa.INFILE_TYPE,
         )

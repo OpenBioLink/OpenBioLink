@@ -5,9 +5,7 @@ import sys
 class Cli:
     @staticmethod
     def ask_for_exit(message):
-        user_input = input(
-            message + "\nDo you want to \n" " [c] continue \n" " [x] exit \n"
-        )
+        user_input = input(message + "\nDo you want to \n" " [c] continue \n" " [x] exit \n")
         if user_input == "x":
             sys.exit()
 

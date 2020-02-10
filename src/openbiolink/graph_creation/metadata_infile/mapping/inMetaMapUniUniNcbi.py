@@ -13,7 +13,5 @@ class InMetaMapUniUniNcbi(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaMapUniUniNcbi.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaMapUniUniNcbi.INFILE_TYPE,
+            csv_name=InMetaMapUniUniNcbi.CSV_NAME, cols=self.USE_COLS, infileType=InMetaMapUniUniNcbi.INFILE_TYPE,
         )

@@ -13,7 +13,5 @@ class InMetaMapOntoHpoAltid(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaMapOntoHpoAltid.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaMapOntoHpoAltid.INFILE_TYPE,
+            csv_name=InMetaMapOntoHpoAltid.CSV_NAME, cols=self.USE_COLS, infileType=InMetaMapOntoHpoAltid.INFILE_TYPE,
         )

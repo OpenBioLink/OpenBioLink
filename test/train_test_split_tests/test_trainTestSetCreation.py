@@ -1,8 +1,6 @@
 from unittest import TestCase
 import src.openbiolink.globalConfig as globalConst
-from src.openbiolink.train_test_set_creation.trainTestSplitCreation import (
-    TrainTestSetCreation,
-)
+from src.openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 import numpy as np
 import pandas as pd
 import random
@@ -23,9 +21,7 @@ class TestTrainTestSetCreation(TestCase):
         )
         nodes = {5, 6, 7}
         # when
-        result = TrainTestSetCreation.remove_edges_with_nodes(
-            samples=edges, nodes=nodes
-        )
+        result = TrainTestSetCreation.remove_edges_with_nodes(samples=edges, nodes=nodes)
         # then
         true_result = pd.DataFrame(
             {
@@ -47,9 +43,7 @@ class TestTrainTestSetCreation(TestCase):
         )
         nodes = {"foo"}
         # when
-        result = TrainTestSetCreation.remove_edges_with_nodes(
-            samples=edges, nodes=nodes
-        )
+        result = TrainTestSetCreation.remove_edges_with_nodes(samples=edges, nodes=nodes)
         # then
         true_result = pd.DataFrame(
             {
@@ -71,9 +65,7 @@ class TestTrainTestSetCreation(TestCase):
         )
         nodes = set()
         # when
-        result = TrainTestSetCreation.remove_edges_with_nodes(
-            samples=edges, nodes=nodes
-        )
+        result = TrainTestSetCreation.remove_edges_with_nodes(samples=edges, nodes=nodes)
         # then
         true_result = pd.DataFrame(
             {
@@ -95,16 +87,10 @@ class TestTrainTestSetCreation(TestCase):
         )
         nodes = {"foo", "bar"}
         # when
-        result = TrainTestSetCreation.remove_edges_with_nodes(
-            samples=edges, nodes=nodes
-        )
+        result = TrainTestSetCreation.remove_edges_with_nodes(samples=edges, nodes=nodes)
         # then
         true_result = pd.DataFrame(
-            columns=[
-                globalConst.NODE1_ID_COL_NAME,
-                globalConst.EDGE_TYPE_COL_NAME,
-                globalConst.NODE2_ID_COL_NAME,
-            ]
+            columns=[globalConst.NODE1_ID_COL_NAME, globalConst.EDGE_TYPE_COL_NAME, globalConst.NODE2_ID_COL_NAME,]
         )
         np.array_equal(true_result.values, result.values)
 
@@ -114,9 +100,7 @@ class TestTrainTestSetCreation(TestCase):
         old_nodes_list = list("abc")
         new_nodes_list = list("abc")
         # when
-        result = TrainTestSetCreation.get_additional_nodes(
-            old_nodes_list=old_nodes_list, new_nodes_list=new_nodes_list
-        )
+        result = TrainTestSetCreation.get_additional_nodes(old_nodes_list=old_nodes_list, new_nodes_list=new_nodes_list)
         # then
         true_result = set()
         self.assertEqual(true_result, result)
@@ -126,9 +110,7 @@ class TestTrainTestSetCreation(TestCase):
         old_nodes_list = list("abc")
         new_nodes_list = []
         # when
-        result = TrainTestSetCreation.get_additional_nodes(
-            old_nodes_list=old_nodes_list, new_nodes_list=new_nodes_list
-        )
+        result = TrainTestSetCreation.get_additional_nodes(old_nodes_list=old_nodes_list, new_nodes_list=new_nodes_list)
         # then
         true_result = set()
         self.assertEqual(true_result, result)
@@ -138,9 +120,7 @@ class TestTrainTestSetCreation(TestCase):
         old_nodes_list = []
         new_nodes_list = list("abc")
         # when
-        result = TrainTestSetCreation.get_additional_nodes(
-            old_nodes_list=old_nodes_list, new_nodes_list=new_nodes_list
-        )
+        result = TrainTestSetCreation.get_additional_nodes(old_nodes_list=old_nodes_list, new_nodes_list=new_nodes_list)
         # then
         true_result = {"a", "b", "c"}
         self.assertEqual(true_result, result)
@@ -150,9 +130,7 @@ class TestTrainTestSetCreation(TestCase):
         old_nodes_list = list("ac")
         new_nodes_list = list("abcd")
         # when
-        result = TrainTestSetCreation.get_additional_nodes(
-            old_nodes_list=old_nodes_list, new_nodes_list=new_nodes_list
-        )
+        result = TrainTestSetCreation.get_additional_nodes(old_nodes_list=old_nodes_list, new_nodes_list=new_nodes_list)
         # then
         true_result = {"b", "d"}
         self.assertEqual(true_result, result)
@@ -261,8 +239,7 @@ class TestTrainTestSetCreation(TestCase):
 
         # expect when
         self.assertRaises(
-            Exception,
-            lambda: TrainTestSetCreation.create_cross_val(df=edges, n_folds=n),
+            Exception, lambda: TrainTestSetCreation.create_cross_val(df=edges, n_folds=n),
         )
 
     def test_create_cross_val_0_fold(self):
@@ -280,8 +257,7 @@ class TestTrainTestSetCreation(TestCase):
 
         # expect when
         self.assertRaises(
-            Exception,
-            lambda: TrainTestSetCreation.create_cross_val(df=edges, n_folds=n),
+            Exception, lambda: TrainTestSetCreation.create_cross_val(df=edges, n_folds=n),
         )
 
     def test_create_cross_val_float_greater_1(self):
@@ -299,8 +275,7 @@ class TestTrainTestSetCreation(TestCase):
 
         # expect when
         self.assertRaises(
-            Exception,
-            lambda: TrainTestSetCreation.create_cross_val(df=edges, n_folds=n),
+            Exception, lambda: TrainTestSetCreation.create_cross_val(df=edges, n_folds=n),
         )
 
     # ------- time_slice_split --------------------

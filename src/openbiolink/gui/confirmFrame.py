@@ -19,25 +19,15 @@ class ConfirmFrame(tk.Frame):
         tts_variable_panel = tk.LabelFrame(self, text="Train Test Split Options")
         self.tts_message = ScrolledText(tts_variable_panel, height=3)
 
-        eval_variable_panel = tk.LabelFrame(
-            self, text="Training and Evaluation Options"
-        )
+        eval_variable_panel = tk.LabelFrame(self, text="Training and Evaluation Options")
         self.eval_message = ScrolledText(eval_variable_panel, height=3)
 
         buttons_panel = tk.Frame(self)
         next_button = tk.Button(
-            buttons_panel,
-            text="Start",
-            command=lambda: self.controller.start(),
-            height=1,
-            width=15,
+            buttons_panel, text="Start", command=lambda: self.controller.start(), height=1, width=15,
         )
         prev_button = tk.Button(
-            buttons_panel,
-            text="Back",
-            command=lambda: self.controller.show_previous_frame(),
-            height=1,
-            width=15,
+            buttons_panel, text="Back", command=lambda: self.controller.show_previous_frame(), height=1, width=15,
         )
 
         title.pack(side="top", fill="x", pady=10)
@@ -50,9 +40,7 @@ class ConfirmFrame(tk.Frame):
         eval_variable_panel.pack(side="top", fill="both", expand=True, padx=15)
         self.eval_message.pack(side="left", fill="both", expand=True, anchor="w")
 
-        ttk.Separator(self, orient="horizontal").pack(
-            side="top", fill="x", pady=(15, 0), padx=10, anchor="s"
-        )
+        ttk.Separator(self, orient="horizontal").pack(side="top", fill="x", pady=(15, 0), padx=10, anchor="s")
         buttons_panel.pack(side="bottom", padx=15, fill="x")
         prev_button.pack(side="left", anchor="w", pady=(5, 10))
         next_button.pack(side="right", anchor="e", pady=(5, 10))
@@ -62,18 +50,10 @@ class ConfirmFrame(tk.Frame):
         self.gc_message.delete(1.0, "end")
         self.tts_message.delete(1.0, "end")
         self.eval_message.delete(1.0, "end")
-        self.gc_message.insert(
-            "end", self.args_list_to_string(self.controller.ARGS_LIST_GRAPH_CREATION)
-        )
-        self.global_message.insert(
-            "end", self.args_list_to_string(self.controller.ARGS_LIST_GLOBAL)
-        )
-        self.tts_message.insert(
-            "end", self.args_list_to_string(self.controller.ARGS_LIST_TRAIN_TEST_SPLIT)
-        )
-        self.eval_message.insert(
-            "end", self.args_list_to_string(self.controller.ARGS_LIST_EVAL)
-        )
+        self.gc_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_GRAPH_CREATION))
+        self.global_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_GLOBAL))
+        self.tts_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_TRAIN_TEST_SPLIT))
+        self.eval_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_EVAL))
 
     def args_list_to_string(self, arg_list):
         params_gc_string = ""

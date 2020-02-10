@@ -19,7 +19,5 @@ class InMetaEdgeHpoDis(InfileMetadata):
 
     def __init__(self):
         super().__init__(
-            csv_name=InMetaEdgeHpoDis.CSV_NAME,
-            cols=self.USE_COLS,
-            infileType=InMetaEdgeHpoDis.INFILE_TYPE,
+            csv_name=InMetaEdgeHpoDis.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeHpoDis.INFILE_TYPE,
         )
