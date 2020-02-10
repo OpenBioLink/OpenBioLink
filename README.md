@@ -224,7 +224,8 @@ The reason for this is that if the original edge a-b was undirected, both direct
 | id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |   	        |         |
 
 *(True neg.: whether the data contains true negative relations; Score: whether the data contains evidence quality scores for filtering relations)*
- <sub>* String IDs are a combination of NCBI taxonomy Id and ENSEMBL joined by a dot. In the resulting graph the NCBI taxonomy Id is stripped (is always 9606 for Homo Sapiens).</sub>
+
+<sub>* String IDs are a combination of NCBI taxonomy Id and ENSEMBL joined by a dot. In the resulting graph the NCBI taxonomy Id is stripped (is always 9606 for Homo Sapiens).</sub>
 
 The OpenBioLink benchmark files integrate data or identifiers from these sources. The provenance of data items is captured in the benchmark files, and licensing terms of source databases apply to these data items. Please mind these licensing terms when utilizing or redistributing the benchmark files or derivatives thereof.
 
