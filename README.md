@@ -1,10 +1,25 @@
 # OpenBioLink
 
-OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as the underlying scrips to create them and to evaluate a costume model on them.
+OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as tools for creating custom benchmarks and training and evaluating models.
 
 [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)
 
 [Supplementary data](https://github.com/OpenBioLink/OpenBioLink/raw/master/paper/supplementary%20data.pdf)
+
+The OpenBioLink benchmark aims to meet the following criteria:
+* Openly available
+* Large-scale
+* Wide coverage of current biomedical knowledge and entity types
+* Standardized, balanced train-test split
+* Open-source code for benchmark dataset generation 
+* Open-source code for evaluation (independent of model) 
+* Integrating and differentiating multiple types of biological entities and relations (i.e., formalized as a heterogeneous graph)
+* Minimized information leakage between train and test sets (e.g., avoid inclusion of trivially inferable 
+    relations in the test set)
+* Coverage of true negative relations, where available
+* Differentiating high-quality data from noisy, low-quality data
+* Differentiating benchmarks for directed and undirected graphs in order to be applicable to a wide variety of link prediction methods
+* Clearly defined release cycle with versions of the benchmark and public leaderboard
 
 ## Installation
 
@@ -37,9 +52,11 @@ e.g.:
 |   TransE (Baseline)   |    0.0749     |   0.0125     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 |   TransR (Baseline)   |    0.0639     |   0.0096     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 
+Please contact us if you want to see your results added to the Leaderboard.
 
-To also be able to analyze the effect of the data quality as well as the directionality of the 
-evaluation graph other settings of OpenBioLink2020 are provided, in directed and undirected setting,
+
+To allow anayzing the effect of data quality as well as the directionality of the 
+evaluation graph, other variants of OpenBioLink2020 are provided, in directed and undirected setting,
 with and without quality cutoff.
 
 * [OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020/HQ_DIR.zip) (default dataset)
@@ -47,25 +64,29 @@ with and without quality cutoff.
 * [OpenBioLink2020: directed, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_DIR.zip)
 * [OpenBioLink2020: undirected, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_UNDIR.zip)
 
+Please note that the OpenBioLink benchmark files contain data derived from external ressources. Licensing terms of these external resources are detailed [below](#Source-databases-and-their-licenses). 
+
  
 ## Manual
 
-The OpenBioLink framework consists of three parts, called actions
+The OpenBioLink framework consists of three parts, called 'actions':
  1) graph creation
  2) train-test split creation
  3) training and evaluation
 
-With the graph creation and the train-test set action, costumed data sets can be created to suit individual needs.
-The last action serves as interface to train and evaluate link prediction models.
+With the graph creation and the train-test set action, customized datasets can be created to suit individual needs.
+The third action serves as an interface for training and evaluating link prediction models.
 
 #### Calling via GUI
-By calling the program without any parameters, the gui is started, 
-providing a handy interface to define parameters needed. In the last step, 
+By calling the program without any parameters, the GUI is started, 
+providing an interface to define required parameters. In the last step, 
 the corresponding command line options are displayed.
 
 #### Calling via command line
 From folder src
-```python -m openbiolink.openBioLink -p WORKING_DIR_PATH [-action] [--options] ...```
+```bash
+openbiolink -p WORKING_DIR_PATH [-action] [--options] ...
+```
 
 **Action: Graph Creation**
 ````
@@ -86,7 +107,7 @@ From folder src
     --dbs [Cls]     custom source databases selection to be used, full class name, options --> see doc
     --mes [Cls]     custom meta edges selection to be used, full class name, options --> see doc
 ````
-**Action: Train- Test Split Generation**
+**Action: Train-Test Split Generation**
  ````
 -s
     --edges Path        Path to edges.csv file (required with action -s
@@ -136,7 +157,7 @@ From folder src
  knowledge of the data. One of the most difficult factors is the change of the source databases over time. For example, 
  a database might change its quality score, or even its ID-format. Also, the number of relationships stored might increase 
  sharply due to new mapping files being used. This might also result in ‘vanishing edges’, where edges that were present
- in the t-1 graph are no longer existent in the current graph. Although the OpenBioLink toolbox tries to aid the user with 
+ in the t-1 graph are no longer existent in the current graph. Although the OpenBioLink toolbox tries to assist the user with 
  different kinds of warnings to identify such difficulties in the data, it is unfortunately not possible to automatically detect nor solve all these problems, making some manual pre- and post-processing of the data inevitable.
  
 
@@ -172,42 +193,46 @@ The reason for this is that if the original edge a-b was undirected, both direct
  from the test set.
 
 
-# Source Databases
+# Source databases and their licenses
 
+| Source type                    | Source name                                  | License                                             | True neg.   | Score	  | Namespace Node 1                                                               | Namespace node 2                                                               |
+|--------------------------------|----------------------------------------------|-----------------------------------------------------|-------------|---------|--------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| edge (gene-gene)               | [STRING](https://string-db.org/)             | CC BY                                               | No	        | Yes     | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
+| edge (gene-go)                 | [GO](http://geneontology.org/)               | CC BY                                               | No	        | Yes     | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
+| edge (gene-disease)            | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                         | No	        | Yes     | [UNIPROT](https://registry.identifiers.org/registry/uniprot)                   | [GO](https://registry.identifiers.org/registry/go)                             |
+| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      | No	        | No      | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [UMLS](https://registry.identifiers.org/registry/umls)                         |
+| edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                                | Yes	        | Yes     | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [HP](https://registry.identifiers.org/registry/hp)                             |
+| edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                               | No	        | Yes     | [ENSEMBL](https://registry.identifiers.org/registry/ensembl)                   | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)                                      |
+| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | Custom: [CTD](http://ctdbase.org/about/legal.jsp)   | No	        | No      | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) |
+| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      | No	        | No      | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
+| edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                            | Yes	        | No      | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [KEGG](https://registry.identifiers.org/registry/kegg), [REACTOME](https://registry.identifiers.org/registry/reactome)                              |
+| edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                         | No	        | No      | [PUBMED](https://registry.identifiers.org/registry/pubmed), [MIM](https://registry.identifiers.org/registry/mim), DECIPHER  | [HP](https://registry.identifiers.org/registry/hp)                                                     |
+| ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                               | 	          |         | [UMLS](https://registry.identifiers.org/registry/umls)                         | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) |
+| ontology (diseases)            | [DO](http://disease-ontology.org/)           | CC 0                                                | 	          |         | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) | [UMLS](https://registry.identifiers.org/registry/umls)                         |
+| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      | 	          |         | [GO](https://registry.identifiers.org/registry/go)                             | [GO](https://registry.identifiers.org/registry/go)                             |
+| ontology (anatomy)             | [UBERON](http://uberon.github.io/about.html) | CC BY                                               |   	        |         | [DOID](https://registry.identifiers.org/registry/doid), [UMLS](https://registry.identifiers.org/registry/umls), [PUBMED](https://registry.identifiers.org/registry/pubmed) | [DOID](https://registry.identifiers.org/registry/doid) |
+| mapping (UMLS-DO)              | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                         |   	        |         | [HP](https://registry.identifiers.org/registry/hp)                             | [HP](https://registry.identifiers.org/registry/hp), [UMLS](https://registry.identifiers.org/registry/umls)                                         |
+| mapping (STRING-NCBI)          | [STRING](https://string-db.org/)             | CC BY                                               |   	        |         | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)  | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)    |
+| mapping (ENSEMBL/UNIPROT-NCBI) | [UniProt](https://www.uniprot.org/)          | CC BY                                               |   	        |         | [UMLS](https://registry.identifiers.org/registry/umls)                         | [DOID](https://registry.identifiers.org/registry/doid)                         |
+| id (genes)                     | [NCBI](https://www.ncbi.nlm.nih.gov/gene)    | Public Domain                                       |   	        |         | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 |
+| id (go)                        | [GO](http://geneontology.org/)               | CC BY                                               |   	        |         | [ENSEMBL](https://registry.identifiers.org/registry/ensembl), [UNIPROT](https://registry.identifiers.org/registry/uniprot) | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                                         |
+| id (anatomy)                   | [UBERON](http://uberon.github.io/about.html) | CC BY                                               |   	        |         |
+| id (disease)                   | [DO](http://disease-ontology.org/)           | CC 0                                                |   	        |         |
+| id (drug)                      | [PubChem](https://pubchem.ncbi.nlm.nih.gov/) | Public Domain                                       |   	        |         |
+| id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |   	        |         |
+| id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                               |   	        |         |
+| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |   	        |         |
 
-| source type                    | source name                                  | license                                     | namespace node 1                                                               | namespace node 2                                                               |
-|--------------------------------|----------------------------------------------|---------------------------------------------|--------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| edge (gene-gene)               | [STRING](https://string-db.org/)             | CC BY                                       | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
-| edge (gene-gene) - Action      | [STRING](https://string-db.org/)             | CC BY                                       | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
-| edge (gene-go)                 | [GO](http://geneontology.org/)               | CC BY                                       | [UNIPROT](https://registry.identifiers.org/registry/uniprot)                   | [GO](https://registry.identifiers.org/registry/go)                             |
-| edge (gene-disease)            | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [UMLS](https://registry.identifiers.org/registry/umls)                         |
-| edge (gene-phenotype)          | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [HP](https://registry.identifiers.org/registry/hp)                             |
-| edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                        | [ENSEMBL](https://registry.identifiers.org/registry/ensembl)                   | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)                                      |
-| edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                       | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) |
-| edge (gene-drug) - Action      | [STITCH](http://stitch.embl.de/)             | CC BY                                       | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  |
-| edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | [CTD](http://ctdbase.org/about/legal.jsp)   | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 | [KEGG](https://registry.identifiers.org/registry/kegg), [REACTOME](https://registry.identifiers.org/registry/reactome)                              |
-| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      | [PUBMED](https://registry.identifiers.org/registry/pubmed), [MIM](https://registry.identifiers.org/registry/mim), DECIPHER  | [HP](https://registry.identifiers.org/registry/hp)                                                     |
-| edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                    | [UMLS](https://registry.identifiers.org/registry/umls)                         | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) |
-| edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                 | [PUBCHEM.COMPOUND](https://registry.identifiers.org/registry/pubchem.compound) | [UMLS](https://registry.identifiers.org/registry/umls)                         |
-| ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                       | [GO](https://registry.identifiers.org/registry/go)                             | [GO](https://registry.identifiers.org/registry/go)                             |
-| ontology (diseases)            | [DO](http://disease-ontology.org/)           | CC 0                                        | [DOID](https://registry.identifiers.org/registry/doid), [UMLS](https://registry.identifiers.org/registry/umls), [PUBMED](https://registry.identifiers.org/registry/pubmed) | [DOID](https://registry.identifiers.org/registry/doid) |
-| ontology (phenotype)           | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      | [HP](https://registry.identifiers.org/registry/hp)                             | [HP](https://registry.identifiers.org/registry/hp), [UMLS](https://registry.identifiers.org/registry/umls)                                         |
-| ontology (anatomy)             | [UBERON](http://uberon.github.io/about.html) | CC BY                                       | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)  | [UBERON](https://registry.identifiers.org/registry/uberon), [CL](https://registry.identifiers.org/registry/cl)    |
-| mapping (UMLS-DO)              | [DisGeNet](https://www.disgenet.org/)        | CC BY-NC-CA                                 | [UMLS](https://registry.identifiers.org/registry/umls)                         | [DOID](https://registry.identifiers.org/registry/doid)                         |
-| mapping (STRING-NCBI)          | [STRING](https://string-db.org/)             | CC BY                                       | [ENSEMBL*](https://registry.identifiers.org/registry/ensembl)                  | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                 |
-| mapping (ENSEMBL/UNIPROT-NCBI) | [UniProt](https://www.uniprot.org/)          | CC BY                                       | [ENSEMBL](https://registry.identifiers.org/registry/ensembl), [UNIPROT](https://registry.identifiers.org/registry/uniprot) | [NCBIGENE](https://registry.identifiers.org/registry/ncbigene)                                         |
-| id (genes)                     | [NCBI](https://www.ncbi.nlm.nih.gov/gene)    | Public Domain                               |
-| id (go)                        | [GO](http://geneontology.org/)               | CC BY                                       |
-| id (anatomy)                   | [UBERON](http://uberon.github.io/about.html) | CC BY                                       |
-| id (disease)                   | [DO](http://disease-ontology.org/)           | CC 0                                        |
-| id (drug)                      | [PubChem](https://pubchem.ncbi.nlm.nih.gov/) | Public Domain                               |
-| id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | [HPO](https://hpo.jax.org/app/license)      |
-| id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                       |
-| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | [KEGG](https://www.kegg.jp/kegg/legal.html) |
-
+*(True neg.: whether the data contains true negative relations; Score: whether the data contains evidence quality scores for filtering relations)*
  <sub>* String IDs are a combination of NCBI taxonomy Id and ENSEMBL joined by a dot. In the resulting graph the NCBI taxonomy Id is stripped (is always 9606 for Homo Sapiens).</sub>
- 
- All nodes in the graph are CURIES, meaning you can easily look up the entity online by concatenating https://identifiers.org/ with the ID of the entity, f.e.:
+
+The OpenBioLink benchmark files integrate data or identifiers from these sources. The provenance of data items is captured in the benchmark files, and licensing terms of source databases apply to these data items. Please mind these licensing terms when utilizing or redistributing the benchmark files or derivatives thereof.
+
+All original data in the benchmark files created by the OpenBioLink project (not covered by the licenses of external data sources)  are released as [CC 0](https://creativecommons.org/publicdomain/zero/1.0/). 
+
+We offer the benchmark files as-is and make no representations or warranties of any kind concerning the benchmark files, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
+
+ All nodes in the graph are CURIES, meaning entities can be easily looked up online by concatenating https://identifiers.org/ with the ID of the entity, f.e.:
 
 |CURIE|Identifiers.org|
 |--|--|
@@ -215,6 +240,4 @@ The reason for this is that if the original edge a-b was undirected, both direct
 |REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
 
 Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
-
-We are aware of an issue with entities of the Human Phenotype Ontology not resolving correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
-
+We are aware of an issue where entities of the Human Phenotype Ontology are not resolved correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
