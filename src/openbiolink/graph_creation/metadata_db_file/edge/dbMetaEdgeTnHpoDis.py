@@ -10,7 +10,7 @@ class DbMetaEdgeTnHpoDis(DbMetadataEdge):
     COLS = ['DB', 'DOI', 'DBname', 'qulifier', 'HPO_ID', 'DB_ref',
             'evidence_code', 'onsetMod', 'freq', 'sex',
             'mod', 'aspect', 'date', 'assigned_by']
-    FILTER_COLS = ['DB_ref', 'HPO_ID', 'evidence_code']
+    FILTER_COLS = ['DB', 'DOI', 'HPO_ID', 'evidence_code']
     HEADER = 0
     DB_TYPE = DbType.DB_EDGE_TN_HPO_DIS
 

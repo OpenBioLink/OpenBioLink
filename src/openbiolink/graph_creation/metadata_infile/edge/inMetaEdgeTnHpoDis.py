@@ -6,7 +6,7 @@ from openbiolink.namespace import *
 
 class InMetaEdgeTnHpoDis(InfileMetadata):
     CSV_NAME = "DB_Tn_HPO_disease_phenotype.csv"
-    USE_COLS = ['DB_ref', 'HPO_ID', 'evidence_code']
+    USE_COLS = ['DOI', 'HPO_ID', 'evidence_code']
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2

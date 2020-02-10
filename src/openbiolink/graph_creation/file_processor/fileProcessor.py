@@ -21,7 +21,12 @@ class FileProcessor():
             temp = data[data[self.use_cols[0]].str.contains(self.mapping_sep,regex=False)]
             for row in temp.itertuples():
                 for alt in row[1].split(self.mapping_sep):
-                    data = data.append(pandas.DataFrame([[alt.lstrip(), row[2]]], columns=self.use_cols))
+                    if len(self.use_cols)==2:
+                        data = data.append(pandas.DataFrame([[alt.lstrip(), row[2]]], columns=self.use_cols))
+                    elif len(self.use_cols)==3:
+                        data = data.append(pandas.DataFrame([[alt.lstrip(), row[2], row[3]]], columns=self.use_cols))
+                    else:
+                        raise RuntimeError("Unknown format, either 2 or three columns should be used")
             data = data[~data[self.use_cols[0]].str.contains(self.mapping_sep, regex=False)]
             temp = data[data[self.use_cols[1]].str.contains(self.mapping_sep, regex=False)]
             for row in temp.itertuples():
