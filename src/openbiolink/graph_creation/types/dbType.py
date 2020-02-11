@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class DbType(Enum):
     DB_ONTO_GO = 0
     DB_ONTO_DO = 1
@@ -13,7 +14,7 @@ class DbType(Enum):
     DB_EDGE_HPO_DIS = 104
     DB_EDGE_HPO_GENE = 105
     DB_EDGE_SIDER_IND = 106
-    DB_EDGE_SIDER_SE =107
+    DB_EDGE_SIDER_SE = 107
     DB_EDGE_STITCH = 108
     DB_EDGE_STRING = 109
     DB_EDGE_DRUGCENTRAL = 110
@@ -25,4 +26,4 @@ class DbType(Enum):
 
     DB_MAP_DISGENET = 10
     DB_MAP_STRING = 11
-    DB_MAP_UNIPROT= 12
+    DB_MAP_UNIPROT = 12

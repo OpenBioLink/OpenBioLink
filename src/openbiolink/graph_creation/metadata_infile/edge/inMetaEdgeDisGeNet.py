@@ -1,12 +1,13 @@
 from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
-from openbiolink.nodeType import NodeType
 from openbiolink.namespace import *
+from openbiolink.nodeType import NodeType
+
 
 class InMetaEdgeDisGeNet(InfileMetadata):
     CSV_NAME = "DB_DisGeNet_gene_disease.csv"
-    USE_COLS = ['geneID', 'umlsID', 'score']
+    USE_COLS = ["geneID", "umlsID", "score"]
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
@@ -20,6 +21,6 @@ class InMetaEdgeDisGeNet(InfileMetadata):
     MAPPING_SEP = None
 
     def __init__(self):
-        super().__init__(csv_name=InMetaEdgeDisGeNet.CSV_NAME,
-                         cols=self.USE_COLS,
-                         infileType=InMetaEdgeDisGeNet.INFILE_TYPE)
+        super().__init__(
+            csv_name=InMetaEdgeDisGeNet.CSV_NAME, cols=self.USE_COLS, infileType=InMetaEdgeDisGeNet.INFILE_TYPE
+        )

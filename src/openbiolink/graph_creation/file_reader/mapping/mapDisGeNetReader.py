@@ -8,18 +8,16 @@ from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class MapDisGeNetReader(CsvReader):
-
     DB_META_CLASS = DbMetaMapDisGeNet
 
     def __init__(self):
         super().__init__(
-        in_path = os.path.join(gcConst.O_FILE_PATH, self.DB_META_CLASS.OFILE_NAME),
-        sep = '|',
+            in_path=os.path.join(gcConst.O_FILE_PATH, self.DB_META_CLASS.OFILE_NAME),
+            sep="|",
             cols=self.DB_META_CLASS.COLS,
             use_cols=self.DB_META_CLASS.FILTER_COLS,
             nr_lines_header=self.DB_META_CLASS.HEADER,
-        dtypes = None,
-            readerType= ReaderType.READER_MAP_DISGENET,
-        dbType = DbType.DB_MAP_DISGENET
+            dtypes=None,
+            readerType=ReaderType.READER_MAP_DISGENET,
+            dbType=DbType.DB_MAP_DISGENET,
         )
-

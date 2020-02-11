@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class InfileType(Enum):
     IN_ONTO_GO_IS_A = 0
     IN_ONTO_DO_IS_A = 1
@@ -56,7 +57,7 @@ class InfileType(Enum):
     IN_MAP_ONTO_DO_OMIM = 302
     IN_MAP_ONTO_HPO_UMLS = 303
 
-    IN_MAP_ONTO_DO_ALT_ID =400
-    IN_MAP_ONTO_GO_ALT_ID =401
-    IN_MAP_ONTO_HPO_ALT_ID =402
+    IN_MAP_ONTO_DO_ALT_ID = 400
+    IN_MAP_ONTO_GO_ALT_ID = 401
+    IN_MAP_ONTO_HPO_ALT_ID = 402
     IN_MAP_ONTO_UBERON_ALT_ID = 403

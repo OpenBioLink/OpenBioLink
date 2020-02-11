@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class EdgeType (Enum):
+class EdgeType(Enum):
     IS_A = 0
     PART_OF = 1
 
@@ -39,31 +39,34 @@ class EdgeType (Enum):
     GENE_BINDINH_GENE = 39
 
     def __str__(self):
-        return (self.name)
+        return self.name
 
     def get_parent(self):
-        if self in [EdgeType.DRUG_ACTIVATION_GENE,
-                     EdgeType.DRUG_BINDING_GENE,
-                     EdgeType.DRUG_CATALYSIS_GENE,
-                     EdgeType.DRUG_EXPRESSION_GENE,
-                     EdgeType.DRUG_INHIBITION_GENE,
-                     EdgeType.DRUG_PREDBIND_GENE,
-                     EdgeType.DRUG_REACTION_GENE,
-                     EdgeType.DRUG_BINDACT_GENE,
-                     EdgeType.DRUG_BINDINH_GENE]:
+        if self in [
+            EdgeType.DRUG_ACTIVATION_GENE,
+            EdgeType.DRUG_BINDING_GENE,
+            EdgeType.DRUG_CATALYSIS_GENE,
+            EdgeType.DRUG_EXPRESSION_GENE,
+            EdgeType.DRUG_INHIBITION_GENE,
+            EdgeType.DRUG_PREDBIND_GENE,
+            EdgeType.DRUG_REACTION_GENE,
+            EdgeType.DRUG_BINDACT_GENE,
+            EdgeType.DRUG_BINDINH_GENE,
+        ]:
             return EdgeType.GENE_DRUG
-        elif self in [EdgeType.GENE_ACTIVATION_GENE,
-                      EdgeType.GENE_BINDING_GENE,
-                      EdgeType.GENE_CATALYSIS_GENE,
-                      EdgeType.GENE_EXPRESSION_GENE,
-                      EdgeType.GENE_INHIBITION_GENE,
-                      EdgeType.GENE_PTMOD_GENE,
-                      EdgeType.GENE_REACTION_GENE,
-                      EdgeType.GENE_BINDACT_GENE,
-                      EdgeType.GENE_BINDINH_GENE]:
+        elif self in [
+            EdgeType.GENE_ACTIVATION_GENE,
+            EdgeType.GENE_BINDING_GENE,
+            EdgeType.GENE_CATALYSIS_GENE,
+            EdgeType.GENE_EXPRESSION_GENE,
+            EdgeType.GENE_INHIBITION_GENE,
+            EdgeType.GENE_PTMOD_GENE,
+            EdgeType.GENE_REACTION_GENE,
+            EdgeType.GENE_BINDACT_GENE,
+            EdgeType.GENE_BINDINH_GENE,
+        ]:
             return EdgeType.GENE_GENE
-        elif self in [EdgeType.GENE_OVEREXPRESSED_ANATOMY,
-                      EdgeType.GENE_UNDEREXPRESSED_ANATOMY]:
+        elif self in [EdgeType.GENE_OVEREXPRESSED_ANATOMY, EdgeType.GENE_UNDEREXPRESSED_ANATOMY]:
             return EdgeType.GENE_EXPRESSED_ANATOMY
         else:
             return self

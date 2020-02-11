@@ -16,8 +16,9 @@ class InMetaMapDrugCentralPubchem(InfileMetadata):
     MAPPING_SEP = None
     INFILE_TYPE = InfileType.IN_MAP_DRUGCENTRAL_PUBCHEM
 
-
     def __init__(self):
-        super().__init__(csv_name=InMetaMapDrugCentralPubchem.CSV_NAME,
-                         cols=self.USE_COLS,
-                         infileType=InMetaMapDrugCentralPubchem.INFILE_TYPE)
+        super().__init__(
+            csv_name=InMetaMapDrugCentralPubchem.CSV_NAME,
+            cols=self.USE_COLS,
+            infileType=InMetaMapDrugCentralPubchem.INFILE_TYPE,
+        )
