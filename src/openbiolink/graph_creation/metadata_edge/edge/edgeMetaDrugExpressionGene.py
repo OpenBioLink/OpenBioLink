@@ -23,8 +23,17 @@ class EdgeMetaDrugExpressionGene(EdgeRegularMetadata):
         mapping_file2 = os.path.join(glob.IN_FILE_PATH, self.MAP2_META_CLASS.CSV_NAME)
         super().__init__(is_directional=True,
                          edges_file_path=edges_file_path,
-                         colindex1=self.EDGE_INMETA_CLASS.NODE1_COL, colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
+                         source=self.EDGE_INMETA_CLASS.SOURCE,
+                         colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
+                         colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
                          edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
-                         node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE, node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
-                         colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL, quality=quality,
-                         mapping2_file=mapping_file2, map2_sourceindex=self.MAP2_META_CLASS.SOURCE_COL, map2_targetindex=self.MAP2_META_CLASS.TARGET_COL)
+                         node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
+                         node1_namespace=self.EDGE_INMETA_CLASS.NODE1_NAMESPACE,
+                         node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
+                         node2_namespace=self.EDGE_INMETA_CLASS.NODE2_NAMESPACE,
+                         colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL,
+                         quality=quality,
+                         mapping2_file=mapping_file2,
+                         mapping2_targetnamespace=self.MAP2_META_CLASS.TARGET_NAMESPACE,
+                         map2_sourceindex=self.MAP2_META_CLASS.SOURCE_COL,
+                         map2_targetindex=self.MAP2_META_CLASS.TARGET_COL)

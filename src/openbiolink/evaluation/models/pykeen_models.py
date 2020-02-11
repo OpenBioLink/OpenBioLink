@@ -16,6 +16,7 @@ from openbiolink.evaluation.models.model import Model
 
 
 ## ** code adapted from pykeen: https://github.com/SmartDataAnalytics/PyKEEN **
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class PyKeen_BasicModel (Model):
@@ -71,7 +72,8 @@ class PyKeen_BasicModel (Model):
         num_neg_examples = neg_triples.shape[0]
 
         ### train model
-        for _ in tqdm(range(self.config[keenConst.NUM_EPOCHS])):
+        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        for _ in tqdm(range(self.config[keenConst.NUM_EPOCHS]),file=tqdmbuffer):
             # create batches
             indices_pos = np.arange(num_pos_examples)
             np.random.shuffle(indices_pos)
@@ -85,7 +87,8 @@ class PyKeen_BasicModel (Model):
                                                       batch_size=self.config["batch_size"])
             current_epoch_loss = 0.
 
-            for pos_batch, neg_batch in tqdm(zip(pos_batches, neg_batches),total=len(neg_batches)):
+            tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+            for pos_batch, neg_batch in tqdm(zip(pos_batches, neg_batches),total=len(neg_batches),file=tqdmbuffer):
                 current_batch_size = len(pos_batch)
 
                 #if not len(pos_batch) == len(neg_batch):

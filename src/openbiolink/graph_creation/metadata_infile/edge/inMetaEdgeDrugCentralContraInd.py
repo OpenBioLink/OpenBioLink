@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
-
+from openbiolink.namespace import *
 
 class InMetaEdgeDrugCentralContraInd(InfileMetadata):
     CSV_NAME = "DB_DrugCentral_drug_contra_indication_dis.csv"
@@ -14,8 +14,11 @@ class InMetaEdgeDrugCentralContraInd(InfileMetadata):
     NODE1_COL = 1
     NODE2_COL = 0
     QSCORE_COL = None
+    SOURCE = "DrugCentral"
     NODE1_TYPE = NodeType.DIS
+    NODE1_NAMESPACE = Namespace(Namespaces.UMLS, False)
     NODE2_TYPE = NodeType.DRUG
+    NODE2_NAMESPACE = Namespace(Namespaces.PUBCHEM, False)
     EDGE_TYPE = EdgeType.DIS_DRUG
     INFILE_TYPE = InfileType.IN_EDGE_DRUGCENTRAL_CONTRA_IND
     MAPPING_SEP = None

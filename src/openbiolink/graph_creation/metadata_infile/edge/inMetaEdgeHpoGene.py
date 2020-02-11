@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
-
+from openbiolink.namespace import *
 
 class InMetaEdgeHpoGene(InfileMetadata):
     CSV_NAME = "DB_HPO_gene_phenotype.csv"
@@ -10,8 +10,11 @@ class InMetaEdgeHpoGene(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
+    SOURCE = "HPO"
     NODE1_TYPE = NodeType.GENE
+    NODE1_NAMESPACE = Namespace(Namespaces.NCBI, False)
     NODE2_TYPE = NodeType.PHENOTYPE
+    NODE2_NAMESPACE = Namespace(Namespaces.HPO)
     EDGE_TYPE = EdgeType.GENE_PHENOTYPE
     INFILE_TYPE = InfileType.IN_EDGE_HPO_GENE
 

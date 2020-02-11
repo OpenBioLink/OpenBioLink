@@ -12,6 +12,7 @@ from openbiolink.cli import Cli
 from openbiolink.edge import Edge
 from openbiolink.graph_creation import graphCreationConfig as gcConst
 from openbiolink.node import Node
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class GraphCreator():
@@ -67,7 +68,9 @@ class GraphCreator():
     def meta_edges_to_graph(self, edge_metadata_list, tn = None):
         edges_dic = {}
         nodes_dic = {}
-        for d in tqdm(edge_metadata_list):
+        namespaces_set = set()
+        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        for d in tqdm(edge_metadata_list,file=tqdmbuffer):
             nodes1, nodes2, edges = self.create_nodes_and_edges(d, tn)
             if str(d.edgeType) in edges_dic:
                 edges_dic[str(d.edgeType)].update(edges)
@@ -81,7 +84,9 @@ class GraphCreator():
                 nodes_dic[str(d.node2_type)].update(nodes2)
             else:
                 nodes_dic[str(d.node2_type)] = nodes2
-        return nodes_dic, edges_dic
+            namespaces_set.update([str(node.namespace) for node in nodes1])
+            namespaces_set.update([str(node.namespace) for node in nodes2])
+        return nodes_dic, edges_dic, namespaces_set
 
 
 
@@ -151,18 +156,25 @@ class GraphCreator():
                     qscore = None
                 edge_id1 = None
                 edge_id2 = None
+                namespace1 = None
+                namespace2 = None
                 ids1.add(raw_id1)
                 ids2.add(raw_id2)
 
                 #apply mapping
                 if (edge_metadata.mapping1_file is not None and raw_id1 in mapping1):
                     edge_id1 = mapping1.get(raw_id1)
+                    namespace1 = edge_metadata.mapping1_targetnamespace
                 elif(edge_metadata.mapping1_file is None):
                     edge_id1 = [raw_id1]
+                    namespace1 = edge_metadata.node1_namespace
+
                 if (edge_metadata.mapping2_file is not None and raw_id2 in mapping2):
                     edge_id2 = mapping2.get(raw_id2)
+                    namespace2 = edge_metadata.mapping2_targetnamespace
                 elif (edge_metadata.mapping2_file is None):
                     edge_id2 = [raw_id2]
+                    namespace2 = edge_metadata.node2_namespace
 
                 #if mapped successfully
                 if edge_id1 is not None and edge_id2 is not None:
@@ -170,24 +182,26 @@ class GraphCreator():
                         #apply alt_id mapping 1
                         if (edge_metadata.altid_mapping1_file is not None and id1 in altid_mapping1):
                             id1 = altid_mapping1[id1][0] #there should only be one
+                            namespace1 = edge_metadata.altid_mapping1_targetnamespace
                         for id2 in edge_id2:
                             # apply alt_id mapping 2
                             if (edge_metadata.altid_mapping2_file is not None and id2 in altid_mapping2):
                                 id2 = altid_mapping2[id2][0] #there should only be one
+                                namespace2 = edge_metadata.altid_mapping2_targetnamespace
                             #check for quality cutoff
                             within_num_cutoff= edge_metadata.cutoff_num is not None and float(qscore) > edge_metadata.cutoff_num
                             within_text_cutoff = edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt
                             if no_cutoff_defined or within_num_cutoff or within_text_cutoff:
-                                bimeg_id1 = edge_metadata.node1_type.name + '_' + id1
-                                bimeg_id2 = edge_metadata.node2_type.name + '_' + id2
-                                edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore))
+                                bimeg_id1 = namespace1.resolve(id1)
+                                bimeg_id2 = namespace2.resolve(id2)
+                                edges.add(Edge(bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore, edge_metadata.source))
                                 # add an edge in the other direction when edge is undirectional and graph is directional
                                 if (not edge_metadata.is_directional) and graphProp.DIRECTED:
-                                    edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore))
+                                    edges.add(Edge(bimeg_id2, edge_metadata.edgeType, bimeg_id1, None, qscore, edge_metadata.source))
                                     nr_edges_incl_dup += 1
                                     nr_edges_return_dir+=1
-                                nodes1.add(Node(bimeg_id1, edge_metadata.node1_type))
-                                nodes2.add(Node(bimeg_id2, edge_metadata.node2_type))
+                                nodes1.add(Node(bimeg_id1, edge_metadata.node1_type, namespace1))
+                                nodes2.add(Node(bimeg_id2, edge_metadata.node2_type, namespace2))
 
                                 nr_edges_incl_dup += 1
                             else:
@@ -197,9 +211,9 @@ class GraphCreator():
                 else:
                     nr_edges_no_mapping += 1
                     if (edge_id1 is None and edge_metadata.mapping1_file is not None):
-                        ids1_no_mapping.add(raw_id1)
+                        ids1_no_mapping.add(edge_metadata.node1_namespace.resolve(raw_id1))
                     if (edge_id2 is None and edge_metadata.mapping2_file is not None):
-                        ids2_no_mapping.add(raw_id2)
+                        ids2_no_mapping.add(edge_metadata.node2_namespace.resolve(raw_id2))
                 nr_edges += 1
 
         nr_edges_after_mapping = len(edges)

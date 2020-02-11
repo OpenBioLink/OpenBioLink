@@ -98,9 +98,11 @@ openbiolink -p WORKING_DIR_PATH [-action] [--options] ...
     --no_dl         No download is being performed (e.g. when local data is used)
     --no_in         No input_files are created (e.g. when local data is used)
     --no_create     No graph is created (e.g. when only in-files should be created)
-    --out_format [Format] [Sep]       Format of graph output, takes 2 arguments: list of file formats 
-                                      [s= single file, m=multiple files] and list of separators 
-                                      (e.g. t=tab, n=newline, or any other character) (default= s t)
+    --out_format [TSV|RDF-N3] [Format] [Sep]       Format of graph output, takes 3 arguments: 
+                                                   - The format of the graph files (Currently TSV or RDF-N3 are supported)
+                                                   - A list of file formats [s= single file, m=multiple files] 
+                                                   - A list of separators (only needed if TSV, e.g. t=tab, n=newline, or any other character)
+                                                   (default= TSV s t)
     --no_qscore     The output files will contain no scores
     --dbs [Cls]     custom source databases selection to be used, full class name, options --> see doc
     --mes [Cls]     custom meta edges selection to be used, full class name, options --> see doc
@@ -219,13 +221,23 @@ The reason for this is that if the original edge a-b was undirected, both direct
 | id (drug)                      | [PubChem](https://pubchem.ncbi.nlm.nih.gov/) | Public Domain                               |   	        |         |
 | id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |   	        |         |
 | id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                       |   	        |         |
-| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |   	        |         |
+| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |   
 
 *(True neg.: whether the data contains true negative relations; Score: whether the data contains evidence quality scores for filtering relations)*
-
 
 The OpenBioLink benchmark files integrate data or identifiers from these sources. The provenance of data items is captured in the benchmark files, and licensing terms of source databases apply to these data items. Please mind these licensing terms when utilizing or redistributing the benchmark files or derivatives thereof.
 
 All original data in the benchmark files created by the OpenBioLink project (not covered by the licenses of external data sources)  are released as [CC 0](https://creativecommons.org/publicdomain/zero/1.0/). 
 
 We offer the benchmark files as-is and make no representations or warranties of any kind concerning the benchmark files, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
+
+All nodes in the graph are CURIES, meaning entities can be easily looked up online by concatenating https://identifiers.org/ with the ID of the entity, f.e.:
+
+|CURIE|Identifiers.org|
+|--|--|
+|GO:0006915|https://identifiers.org/GO:0006915|
+|REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
+
+Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
+We are aware of an issue where entities of the Human Phenotype Ontology are not resolved correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
+

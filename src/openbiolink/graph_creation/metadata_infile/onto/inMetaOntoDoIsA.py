@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
-
+from openbiolink.namespace import *
 
 class InMetaOntoDoIsA(InfileMetadata):
 
@@ -11,8 +11,11 @@ class InMetaOntoDoIsA(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = None
+    SOURCE = "DO"
     NODE1_TYPE = NodeType.DIS
+    NODE1_NAMESPACE = Namespace(Namespaces.DIS)
     NODE2_TYPE = NodeType.DIS
+    NODE2_NAMESPACE = Namespace(Namespaces.DIS)
     EDGE_TYPE = EdgeType.IS_A
     MAPPING_SEP = ';'
     INFILE_TYPE = InfileType.IN_ONTO_DO_IS_A

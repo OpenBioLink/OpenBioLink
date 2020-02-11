@@ -5,6 +5,7 @@ from tkinter import ttk, N, S, E, W
 from tkinter.scrolledtext import ScrolledText
 
 from openbiolink.gui.gui import *
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 logger = logging.getLogger()
 
@@ -83,9 +84,22 @@ class ConsoleFrame(tk.Frame):
         self.console = ConsoleUi(console_frame)
         console_frame.pack(side='top', fill='both', expand=True)
 
+        progress_frame = tk.LabelFrame(self, text="Progress of current action")
+        self.progress = tk.Label(progress_frame)
+        self.progress.pack(side='top', fill='x', padx = 5, pady = 5)
+        progress_frame.pack(side='top', fill='x', padx = 5, pady = 5)
+
         ttk.Separator(self, orient='horizontal').pack(side='top', fill='x', pady=(15, 0), padx=10, anchor='s')
         buttons_panel.pack(side='bottom', padx=15, fill='x')
         next_button.pack(side='left', anchor='w', pady=(5, 10))
 
+        self.progress.after(100, self.poll_progress)
+
+    def poll_progress(self):
+        self.progress['text']=TqdmBuffer.buf
+        self.progress.after(100, self.poll_progress)
+
+
     #def quit(self, *args):
     #    self.root.destroy()
+

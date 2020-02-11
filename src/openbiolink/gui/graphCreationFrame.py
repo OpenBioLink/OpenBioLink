@@ -199,8 +199,70 @@ class GraphCreationFrame(tk.Frame):
         undirected_box.pack(side='top', pady=2, padx=5, anchor='w')
         return el
 
+
+
     def _create_output_format_el(self, parent):
         el = tk.LabelFrame(parent, text="Output Format")
+
+        # output format selection
+        format_selection = tk.Frame(el)
+        choices = {'TSV', 'RDF-N3'}
+        self.format = tk.StringVar(format_selection)
+        self.format.set('TSV')
+        def change_dropdown(*args):
+            if(self.format.get()=="TSV"):
+                forget_packing()
+                self.single_sep = tk.StringVar(value='t')
+                self.multi_sep = tk.StringVar(value=None)
+                #packing
+                separator1.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
+                single_out_file_box.pack(side='top', padx=5, anchor='w')
+                single_sep_frame.pack(side='top', padx=5, anchor='w')
+                single_sep_label.pack(side='left', padx=5, anchor='w')
+                single_sep_value.pack(side='left', anchor='w')
+                single_sep_info.pack(side='left', anchor='w')
+                separator2.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
+                multi_out_file_box.pack(side='top', padx=5, anchor='w')
+                multi_sep_frame.pack(side='top', padx=5, anchor='w')
+                multi_sep_label.pack(side='left', padx=5, anchor='w')
+                multi_sep_value.pack(side='left', anchor='w')
+                multi_sep_info.pack(side='left', anchor='w')
+                separator3.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
+                no_qscore_box.pack(side='top', padx=5, anchor='w')
+            elif(self.format.get()=="RDF-N3"):
+                forget_packing()
+                self.single_sep = tk.StringVar(value=None)
+                self.multi_sep = tk.StringVar(value=None)
+                # packing
+                warning.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
+                separator1.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
+                single_out_file_box.pack(side='top', padx=5, anchor='w')
+                separator2.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
+                multi_out_file_box.pack(side='top', padx=5, anchor='w')
+                separator3.pack(side='top', fill='x', pady=5, padx=5, anchor='w')
+                no_qscore_box.pack(side='top', padx=5, anchor='w')
+
+        self.format.trace('w', change_dropdown)
+        format_selector_label = tk.Label(format_selection, text='Format:')
+        format_selector = tk.OptionMenu(format_selection, self.format, *choices)
+        def forget_packing():
+            warning.pack_forget()
+            separator1.pack_forget()
+            single_out_file_box.pack_forget()
+            single_sep_frame.pack_forget()
+            single_sep_label.pack_forget()
+            single_sep_value.pack_forget()
+            single_sep_info.pack_forget()
+            separator2.pack_forget()
+            multi_out_file_box.pack_forget()
+            multi_sep_frame.pack_forget()
+            multi_sep_label.pack_forget()
+            multi_sep_value.pack_forget()
+            multi_sep_info.pack_forget()
+            separator3.pack_forget()
+            no_qscore_box.pack_forget()
+
+
         # single outputfile
         self.one_output_file = tk.BooleanVar(value=True)
         single_out_file_box = tk.Checkbutton(el, text='single file', variable=self.one_output_file)
@@ -220,20 +282,18 @@ class GraphCreationFrame(tk.Frame):
         # qscore
         self.no_qscore = tk.BooleanVar(value=False)
         no_qscore_box = tk.Checkbutton(el, text='without quality score', variable=self.no_qscore)
+
+        separator1 = ttk.Separator(el, orient='horizontal')
+        separator2 = ttk.Separator(el, orient='horizontal')
+        separator3 = ttk.Separator(el, orient='horizontal')
+
+        warning = tk.Label(el, text='Warning, currrently only N3 graph creation is supported.\n You can not perform a split or evaluation.')
+
         # packing
-        single_out_file_box.pack(side='top',  padx=5, anchor='w')
-        single_sep_frame.pack(side='top',  padx=5, anchor='w')
-        single_sep_label.pack(side='left',  padx=5, anchor='w')
-        single_sep_value.pack(side='left',   anchor='w')
-        single_sep_info.pack(side='left',   anchor='w')
-        ttk.Separator(el, orient='horizontal').pack(side='top', fill='x', pady=5, padx=5, anchor='w')
-        multi_out_file_box.pack(side='top',  padx=5, anchor='w')
-        multi_sep_frame.pack(side='top',  padx=5, anchor='w')
-        multi_sep_label.pack(side='left',  padx=5, anchor='w')
-        multi_sep_value.pack(side='left',   anchor='w')
-        multi_sep_info.pack(side='left', anchor='w')
-        ttk.Separator(el, orient='horizontal').pack(side='top', fill='x', pady=5, padx=5, anchor='w')
-        no_qscore_box.pack(side='top',  padx=5, anchor='w')
+        format_selection.pack(side='top', padx=5, anchor='w')
+        format_selector_label.pack(side='left', padx=5, anchor='w')
+        format_selector.pack(side='left', padx=5, anchor='w')
+        change_dropdown(None)
         return el
 
     def toggl_cg_elements(self):
@@ -249,9 +309,10 @@ class GraphCreationFrame(tk.Frame):
 
     def next_page(self):
         self.controller.ARGS_LIST_GRAPH_CREATION=[]
-        if (self.one_output_file.get() and self.single_sep.get()=='') or (self.multi_output_file.get() and self.multi_sep.get()==''):
-            messagebox.showerror('ERROR', 'Please provide a separator for desired output file')
-            return
+        if self.format == 'TSV':
+            if (self.one_output_file.get() and self.single_sep.get()=='') or (self.multi_output_file.get() and self.multi_sep.get()==''):
+                messagebox.showerror('ERROR', 'Please provide a separator for desired output file')
+                return
         self.controller.ARGS_LIST_GRAPH_CREATION.append('-g')
         if self.undir.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append('--undir')
@@ -265,11 +326,11 @@ class GraphCreationFrame(tk.Frame):
             self.controller.ARGS_LIST_GRAPH_CREATION.append('--no_create')
         if self.one_output_file.get():
             if self.multi_output_file.get():
-                self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', 'sm', self.single_sep.get()+self.multi_sep.get()])
+                self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', self.format.get(), 'sm', self.single_sep.get()+self.multi_sep.get()])
             else:
-                self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', 's', self.single_sep.get()])
+                self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', self.format.get(), 's', self.single_sep.get()])
         elif self.multi_output_file.get():
-            self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', 'm' , self.multi_sep.get()])
+            self.controller.ARGS_LIST_GRAPH_CREATION.extend(['--out_format', self.format.get(), 'm' , self.multi_sep.get()])
         if self.no_qscore.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append('--no_qscore')
         if self.selected_dbs:

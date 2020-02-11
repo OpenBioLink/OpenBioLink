@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
-
+from openbiolink.namespace import *
 
 class InMetaEdgeStringCatalysis(InfileMetadata):
     CSV_NAME = "DB_STRING_gene_catalysis_gene.csv"
@@ -10,8 +10,11 @@ class InMetaEdgeStringCatalysis(InfileMetadata):
     NODE1_COL = 0
     NODE2_COL = 1
     QSCORE_COL = 2
+    SOURCE = "STRING"
     NODE1_TYPE = NodeType.GENE
+    NODE1_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.":""})
     NODE2_TYPE = NodeType.GENE
+    NODE2_NAMESPACE = Namespace(Namespaces.ENSEMBL, False, mapping={"9606.":""})
     EDGE_TYPE = EdgeType.GENE_CATALYSIS_GENE
     INFILE_TYPE = InfileType.IN_EDGE_STRING_CATALYSIS
 

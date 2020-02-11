@@ -12,6 +12,9 @@ from openbiolink import globalConfig as globConst
 from openbiolink.edgeType import EdgeType
 
 
+pandas.set_option('mode.chained_assignment', None) # Suppression of SettingWithCopy Warning see https://www.dataquest.io/blog/settingwithcopywarning/
+
+
 def get_leaf_subclasses(cls, class_set=None):
     """"
     Returns a set of all leaf subclasses (i.e. child classes that do not have child-classes on their own) of a specific class.

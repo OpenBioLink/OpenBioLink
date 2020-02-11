@@ -64,20 +64,25 @@ def create_graph(args):
     if not args.no_create:
         print("\n\n############### creating graph #################################")
         logging.info('## Start creating graph ##')
-        if 's' in args.out_format[0]:
-            single_sep = args.out_format[1][args.out_format[0].index('s')]
-            if single_sep == 'n' or single_sep == 't':
-                single_sep= single_sep.replace('n', '\n').replace('t','\t')
+        format = "".join(args.out_format[0])
+        single_sep = ""
+        multisep_sep = ""
+        if 's' in args.out_format[1]:
+            if format == 'TSV':
+                single_sep = args.out_format[2][args.out_format[1].index('s')]
+                if single_sep == 'n' or single_sep == 't':
+                    single_sep= single_sep.replace('n', '\n').replace('t','\t')
         else:
             single_sep = None
-        if 'm' in args.out_format[0]:
-            multisep_sep = args.out_format[1][args.out_format[0].index('m')]
-            if multisep_sep == 'n' or multisep_sep == 't':
-                multisep_sep= multisep_sep.replace('n', '\n').replace('t','\t')
+        if 'm' in args.out_format[1]:
+            if format == 'TSV':
+                multisep_sep = args.out_format[2][args.out_format[1].index('m')]
+                if multisep_sep == 'n' or multisep_sep == 't':
+                    multisep_sep= multisep_sep.replace('n', '\n').replace('t','\t')
         else:
             multisep_sep = None
 
-        graph_creator.create_graph(one_file_sep=single_sep, multi_file_sep=multisep_sep, print_qscore=(not args.no_qscore))
+        graph_creator.create_graph(format=format,one_file_sep=single_sep, multi_file_sep=multisep_sep, print_qscore=(not args.no_qscore))
 
         #with open(os.path.join(globalConfig.WORKING_DIR, globalConfig.GRAPH_PROP_FILE_NAME), 'w') as f:
         #    graph_prop_dict  = {x: y for x, y in graphProp.__dict__.items() if not x.startswith('__')}
@@ -196,7 +201,7 @@ def main(args_list=None):
     parser.add_argument('--no_dl', action='store_true', help='No download is being performed (e.g. when local data is used)')
     parser.add_argument('--no_in', action='store_true', help='No input_files are created (e.g. when local data is used)')
     parser.add_argument('--no_create', action='store_true', help='No graph is created (e.g. when only in-files should be created)')
-    parser.add_argument('--out_format', nargs=2,type=list, default='s t', help='Format of graph output, takes 2 arguments: list of file formats [s= single file, m=multiple files] and list of separators (e.g. t=tab, n=newline, or any other character) (default= s t)')
+    parser.add_argument('--out_format', nargs=3, type=list, default='TSV s t', help='Format of graph output, takes 2 arguments: list of file formats [s= single file, m=multiple files] and list of separators (e.g. t=tab, n=newline, or any other character) (default= s t)')
     parser.add_argument('--no_qscore', action='store_true', help='The output files will contain no scores')
     parser.add_argument('--dbs', nargs='+', help='custom source databases selection to be used, full class name, options --> see doc')
     parser.add_argument('--mes', nargs='+', help='custom meta edges selection to be used, full class name, options --> see doc')

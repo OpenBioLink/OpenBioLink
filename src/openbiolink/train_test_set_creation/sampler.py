@@ -5,6 +5,7 @@ from tqdm import tqdm
 import openbiolink.train_test_set_creation.ttsConfig as ttsConst
 from openbiolink import globalConfig as globConst
 from openbiolink import utils
+from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class Sampler():
@@ -81,7 +82,8 @@ class NegativeSampler(Sampler):
                     neg_samples_count_meta_edges[key] = num_entry
 
         # generate a negative sub-sample for each negative meta_edge type
-        for meta_edge_triple_key, count in tqdm(sorted(neg_samples_count_meta_edges.items())):
+        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        for meta_edge_triple_key, count in tqdm(sorted(neg_samples_count_meta_edges.items()),file=tqdmbuffer):
             node_type_1, edge_type, node_type_2 = self.meta_edges_dic[meta_edge_triple_key]
             pos_samples_of_meta_edge = pos_samples.loc[(pos_samples[ttsConst.EDGE_TYPE_KEY_NAME]== meta_edge_triple_key )]
 

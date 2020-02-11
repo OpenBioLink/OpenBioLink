@@ -2,7 +2,7 @@ import logging
 import math
 import random
 import sys
-
+import os
 import numpy
 import pandas
 
@@ -62,6 +62,25 @@ class TrainTestSetCreation():
                  t_minus_one_graph_path=None,
                  t_minus_one_tn_graph_path=None,
                  t_minus_one_nodes_path=None):
+
+        if os.path.splitext(graph_path)[1] != '.csv':
+            logging.error("graph path must be a csv file")
+            sys.exit()
+        if os.path.splitext(tn_graph_path)[1] != '.csv':
+            logging.error("tn_graph path must be a csv file")
+            sys.exit()
+        if os.path.splitext(all_nodes_path)[1] != '.csv':
+            logging.error("all_nodes path must be a csv file")
+            sys.exit()
+        if t_minus_one_graph_path is not None and os.path.splitext(t_minus_one_graph_path)[1] != '.csv':
+            logging.error("t_minus_one_graph path must be a csv file")
+            sys.exit()
+        if t_minus_one_tn_graph_path is not None and os.path.splitext(t_minus_one_tn_graph_path)[1] != '.csv':
+            logging.error("t_minus_one_tn_graph path must be a csv file")
+            sys.exit()
+        if t_minus_one_nodes_path is not None and os.path.splitext(t_minus_one_nodes_path)[1] != '.csv':
+            logging.error("t_minus_one_nodes path must be a csv file")
+            sys.exit()
 
         self.writer = TrainTestSetWriter()
         with open(all_nodes_path) as file:

@@ -1,6 +1,6 @@
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
-
+from openbiolink.namespace import *
 
 class InMetaMapUniEnsNcbi(InfileMetadata):
 
@@ -8,6 +8,7 @@ class InMetaMapUniEnsNcbi(InfileMetadata):
     USE_COLS = ['Ensembl', 'GeneID']
     SOURCE_COL = 0
     TARGET_COL = 1
+    TARGET_NAMESPACE = Namespace(Namespaces.NCBI, False)
     MAPPING_SEP = ";"
     INFILE_TYPE = InfileType.IN_MAP_UNI_ENS_NCBI
 
