@@ -5,9 +5,13 @@ from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeBgeeUnderExpr imp
 from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeCdtPath import InMetaEdgeCdtPath
 from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeDisGeNet import InMetaEdgeDisGeNet
 from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeDrugCentral import InMetaEdgeDrugCentral
-from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeDrugCentralContraInd import InMetaEdgeDrugCentralContraInd
+from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeDrugCentralContraInd import (
+    InMetaEdgeDrugCentralContraInd,
+)
+
 # from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeHpa       import InMetaEdgeHpa
 from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeGo import InMetaEdgeGo
+
 # from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeSiderInd  import InMetaEdgeSiderInd
 from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeHpoDis import InMetaEdgeHpoDis
 from openbiolink.graph_creation.metadata_infile.edge.inMetaEdgeHpoGene import InMetaEdgeHpoGene

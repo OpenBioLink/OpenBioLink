@@ -9,5 +9,9 @@ class EdgeHpoGeneProcessor(FileProcessor):
 
     def __init__(self):
         self.use_cols = self.IN_META_CLASS.USE_COLS
-        super().__init__(self.use_cols, readerType=ReaderType.READER_EDGE_HPO_GENE,
-                         infileType=InfileType.IN_EDGE_HPO_GENE, mapping_sep=self.IN_META_CLASS.MAPPING_SEP)
+        super().__init__(
+            self.use_cols,
+            readerType=ReaderType.READER_EDGE_HPO_GENE,
+            infileType=InfileType.IN_EDGE_HPO_GENE,
+            mapping_sep=self.IN_META_CLASS.MAPPING_SEP,
+        )

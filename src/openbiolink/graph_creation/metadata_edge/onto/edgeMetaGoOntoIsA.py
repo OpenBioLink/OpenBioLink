@@ -6,18 +6,21 @@ from openbiolink.graph_creation.metadata_infile.onto.inMetaOntoGoIsA import InMe
 
 
 class EdgeMetaGoOntoIsA(EdgeOntoMetadata):
-    NAME = 'Onto - GO_isA_GO'
+    NAME = "Onto - GO_isA_GO"
 
     EDGE_INMETA_CLASS = InMetaOntoGoIsA
-    def __init__(self, quality = None):
 
-        super().__init__(is_directional=True,
-                         edges_file_path=os.path.join (glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME),
-                         source = self.EDGE_INMETA_CLASS.SOURCE,
-                         colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
-                         colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
-                         edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
-                         node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
-                         node1_namespace=self.EDGE_INMETA_CLASS.NODE1_NAMESPACE,
-                         node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
-                         node2_namespace=self.EDGE_INMETA_CLASS.NODE2_NAMESPACE)
+    def __init__(self, quality=None):
+
+        super().__init__(
+            is_directional=True,
+            edges_file_path=os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME),
+            source=self.EDGE_INMETA_CLASS.SOURCE,
+            colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
+            colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
+            edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
+            node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
+            node1_namespace=self.EDGE_INMETA_CLASS.NODE1_NAMESPACE,
+            node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
+            node2_namespace=self.EDGE_INMETA_CLASS.NODE2_NAMESPACE,
+        )

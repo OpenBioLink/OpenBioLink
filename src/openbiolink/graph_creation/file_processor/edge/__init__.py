@@ -7,9 +7,11 @@ from openbiolink.graph_creation.file_processor.edge.edgeDisGeNetProcessor import
 from openbiolink.graph_creation.file_processor.edge.edgeDrugCentralContraIndProcessor import EdgeDrugCentralIndProcessor
 from openbiolink.graph_creation.file_processor.edge.edgeDrugCentralIndProcessor import EdgeDrugCentralIndProcessor
 from openbiolink.graph_creation.file_processor.edge.edgeGoProcessor import EdgeGoProcessor
-#from openbiolink.graph_creation.file_processor.edge.edgeHpaProcessor import EdgeHpaProcessor --> replaced by bgee
+
+# from openbiolink.graph_creation.file_processor.edge.edgeHpaProcessor import EdgeHpaProcessor --> replaced by bgee
 from openbiolink.graph_creation.file_processor.edge.edgeHpoDisProcessor import EdgeHpoDisProcessor
 from openbiolink.graph_creation.file_processor.edge.edgeHpoGeneProcessor import EdgeHpoGeneProcessor
+
 # from openbiolink.graph_creation.file_processor.edge.edgeSiderIndProcessor import EdgeSiderIndProcessor --> replaced by drugcentral
 from openbiolink.graph_creation.file_processor.edge.edgeSiderSeProcessor import EdgeSiderSeProcessor
 from openbiolink.graph_creation.file_processor.edge.edgeStitchActivationProcessor import EdgeStitchActivationProcessor

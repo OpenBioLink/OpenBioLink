@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class NodeType (Enum):
+class NodeType(Enum):
     GENE = 0
     GO = 1
     DIS = 2
@@ -11,4 +11,4 @@ class NodeType (Enum):
     ANATOMY = 6
 
     def __str__(self):
-        return (self.name)
+        return self.name

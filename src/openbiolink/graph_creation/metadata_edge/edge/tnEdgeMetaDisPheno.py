@@ -10,11 +10,11 @@ from openbiolink.graph_creation.types.qualityType import QualityType
 
 
 class TnEdgeMetaDisPheno(TnEdgeRegularMetadata):
-    NAME = 'Negative Edge - Disease_observable_Phenotype' #todo ms better wording
+    NAME = "Negative Edge - Disease_observable_Phenotype"  # todo ms better wording
 
     LQ_CUTOFF_TEXT = []
     MQ_CUTOFF_TEXT = []
-    HQ_CUTOFF_TEXT = ['IEA']
+    HQ_CUTOFF_TEXT = ["IEA"]
 
     EDGE_INMETA_CLASS = InMetaEdgeTnHpoDis
     TP_EDGE_CLASS = InMetaEdgeHpoDis
@@ -22,35 +22,36 @@ class TnEdgeMetaDisPheno(TnEdgeRegularMetadata):
     MAP1_ALT_ID_META_CLASS = InMetaMapOntoDoAltid
     MAP2_ALT_ID_META_CLASS = InMetaMapOntoHpoAltid
 
-
-    def __init__(self, quality : QualityType = None):
+    def __init__(self, quality: QualityType = None):
 
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.MAP1_META_CLASS.CSV_NAME)
         altid_mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.MAP1_ALT_ID_META_CLASS.CSV_NAME)
         altid_mapping_file2 = os.path.join(glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME)
 
-        super().__init__(is_directional=True,
-                         edges_file_path=edges_file_path,
-                         source=self.EDGE_INMETA_CLASS.SOURCE,
-                         colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
-                         colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
-                         edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
-                         node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
-                         node1_namespace=self.EDGE_INMETA_CLASS.NODE1_NAMESPACE,
-                         node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
-                         node2_namespace=self.EDGE_INMETA_CLASS.NODE2_NAMESPACE,
-                         colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL, quality=quality,
-                         mapping1_file=mapping_file1,
-                         mapping1_targetnamespace = self.MAP1_META_CLASS.TARGET_NAMESPACE,
-                         map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL,
-                         map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
-                         altid_mapping1_file=altid_mapping_file1,
-                         altid_mapping1_targetnamespace=self.MAP1_ALT_ID_META_CLASS.TARGET_NAMESPACE,
-                         altid_map1_sourceindex=self.MAP1_ALT_ID_META_CLASS.SOURCE_COL,
-                         altid_map1_targetindex=self.MAP1_ALT_ID_META_CLASS.TARGET_COL,
-                         altid_mapping2_file=altid_mapping_file2,
-                         altid_mapping2_targetnamespace=self.MAP2_ALT_ID_META_CLASS.TARGET_NAMESPACE,
-                         altid_map2_sourceindex=self.MAP2_ALT_ID_META_CLASS.SOURCE_COL,
-                         altid_map2_targetindex=self.MAP2_ALT_ID_META_CLASS.TARGET_COL
-                         )
+        super().__init__(
+            is_directional=True,
+            edges_file_path=edges_file_path,
+            source=self.EDGE_INMETA_CLASS.SOURCE,
+            colindex1=self.EDGE_INMETA_CLASS.NODE1_COL,
+            colindex2=self.EDGE_INMETA_CLASS.NODE2_COL,
+            edgeType=self.EDGE_INMETA_CLASS.EDGE_TYPE,
+            node1_type=self.EDGE_INMETA_CLASS.NODE1_TYPE,
+            node1_namespace=self.EDGE_INMETA_CLASS.NODE1_NAMESPACE,
+            node2_type=self.EDGE_INMETA_CLASS.NODE2_TYPE,
+            node2_namespace=self.EDGE_INMETA_CLASS.NODE2_NAMESPACE,
+            colindex_qscore=self.EDGE_INMETA_CLASS.QSCORE_COL,
+            quality=quality,
+            mapping1_file=mapping_file1,
+            mapping1_targetnamespace=self.MAP1_META_CLASS.TARGET_NAMESPACE,
+            map1_sourceindex=self.MAP1_META_CLASS.SOURCE_COL,
+            map1_targetindex=self.MAP1_META_CLASS.TARGET_COL,
+            altid_mapping1_file=altid_mapping_file1,
+            altid_mapping1_targetnamespace=self.MAP1_ALT_ID_META_CLASS.TARGET_NAMESPACE,
+            altid_map1_sourceindex=self.MAP1_ALT_ID_META_CLASS.SOURCE_COL,
+            altid_map1_targetindex=self.MAP1_ALT_ID_META_CLASS.TARGET_COL,
+            altid_mapping2_file=altid_mapping_file2,
+            altid_mapping2_targetnamespace=self.MAP2_ALT_ID_META_CLASS.TARGET_NAMESPACE,
+            altid_map2_sourceindex=self.MAP2_ALT_ID_META_CLASS.SOURCE_COL,
+            altid_map2_targetindex=self.MAP2_ALT_ID_META_CLASS.TARGET_COL,
+        )

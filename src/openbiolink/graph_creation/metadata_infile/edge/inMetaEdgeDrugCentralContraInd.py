@@ -4,6 +4,7 @@ from openbiolink.graph_creation.types.infileType import InfileType
 from openbiolink.nodeType import NodeType
 from openbiolink.namespace import *
 
+
 class InMetaEdgeDrugCentralContraInd(InfileMetadata):
     CSV_NAME = "DB_DrugCentral_drug_contra_indication_dis.csv"
 
@@ -24,6 +25,8 @@ class InMetaEdgeDrugCentralContraInd(InfileMetadata):
     MAPPING_SEP = None
 
     def __init__(self):
-        super().__init__(csv_name=InMetaEdgeDrugCentralContraInd.CSV_NAME,
-                         cols=self.USE_COLS,
-                         infileType=InMetaEdgeDrugCentralContraInd.INFILE_TYPE)
+        super().__init__(
+            csv_name=InMetaEdgeDrugCentralContraInd.CSV_NAME,
+            cols=self.USE_COLS,
+            infileType=InMetaEdgeDrugCentralContraInd.INFILE_TYPE,
+        )

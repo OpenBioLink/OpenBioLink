@@ -1,7 +1,8 @@
 import pandas
-class OboParser(object):
 
-    def obo_to_df(self,content, quadruple_list):
+
+class OboParser(object):
+    def obo_to_df(self, content, quadruple_list):
         """each quadruple consists of (1) beginning of the line, (2) split character,
         (3) index of split element being the id, (4) the name of dict entry (col_name)"""
 
@@ -9,9 +10,9 @@ class OboParser(object):
         lines = content.readlines()
         term = {}
         for line in lines:
-            if line.startswith('[Typedef]'):
+            if line.startswith("[Typedef]"):
                 break
-            if line.startswith('[Term]'):
+            if line.startswith("[Term]"):
                 if term:
                     term = self.dic_list_to_dic_string(term)
                     terms.append(term)
@@ -37,15 +38,10 @@ class OboParser(object):
         return dic
 
     def to_string(self, list):
-        string = ''
+        string = ""
         for e in list:
-            if string =='':
+            if string == "":
                 string = e
             else:
-                string = string + ';' + e
+                string = string + ";" + e
         return string
-
-
-
-
-

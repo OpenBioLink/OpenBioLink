@@ -2,7 +2,7 @@ from openbiolink.edgeType import EdgeType
 
 
 class Edge:
-    def __init__(self, id1: str, type : EdgeType, id2: str, source: "", qScore = None, sourcedb =None):
+    def __init__(self, id1: str, type: EdgeType, id2: str, source: "", qScore=None, sourcedb=None):
         self.id1 = id1
         self.type = type
         self.id2 = id2
@@ -12,7 +12,9 @@ class Edge:
 
     def __eq__(self, other):
         if isinstance(other, Edge):
-            return self.type == other.type and self.id1 == other.id1 and self.id2 == other.id2 #todo only if directional
+            return (
+                self.type == other.type and self.id1 == other.id1 and self.id2 == other.id2
+            )  # todo only if directional
         return False
 
     def __hash__(self):
@@ -23,4 +25,3 @@ class Edge:
 
     def to_sub_rel_obj_list(self):
         return iter([self.id1, self.type, self.id2, self.sourcedb])
-

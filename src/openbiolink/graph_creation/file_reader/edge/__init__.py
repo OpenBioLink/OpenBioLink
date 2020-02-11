@@ -4,8 +4,10 @@ from openbiolink.graph_creation.file_reader.edge.edgeCdtPathReader import EdgeCd
 from openbiolink.graph_creation.file_reader.edge.edgeDisGeNetReader import EdgeDisGeNetReader
 from openbiolink.graph_creation.file_reader.edge.edgeDrugCentralReader import EdgeDrugCentralReader
 from openbiolink.graph_creation.file_reader.edge.edgeGoReader import EdgeGoReader
+
 # from openbiolink.graph_creation.file_reader.edge.edgeHpaReader import       EdgeHpaReader --> replaced by bgee
 from openbiolink.graph_creation.file_reader.edge.edgeHpoDisReader import EdgeHpoDisReader
+
 # from openbiolink.graph_creation.file_reader.edge.edgeSiderIndReader import  EdgeSiderIndReader --> replaced by drugcentral
 from openbiolink.graph_creation.file_reader.edge.edgeHpoGeneReader import EdgeHpoGeneReader
 from openbiolink.graph_creation.file_reader.edge.edgeSiderSeReader import EdgeSiderSeReader

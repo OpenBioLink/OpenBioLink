@@ -4,4 +4,6 @@ from openbiolink.graph_creation.file_processor.onto_mapping.ontoMapDoUmlsProcess
 from openbiolink.graph_creation.file_processor.onto_mapping.ontoMapGoAltidProcessor import OntoMapGoAltidProcessor
 from openbiolink.graph_creation.file_processor.onto_mapping.ontoMapHpoAltidProcessor import OntoMapHpoAltidProcessor
 from openbiolink.graph_creation.file_processor.onto_mapping.ontoMapHpoUmlsProcessor import OntoMapHpoUmlsProcessor
-from openbiolink.graph_creation.file_processor.onto_mapping.ontoMapUberonAltidProcessor import OntoMapUberonAltidProcessor
+from openbiolink.graph_creation.file_processor.onto_mapping.ontoMapUberonAltidProcessor import (
+    OntoMapUberonAltidProcessor,
+)

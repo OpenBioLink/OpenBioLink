@@ -2,14 +2,13 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 
-class Model (ABC):
-
+class Model(ABC):
     @abstractmethod
     def __init__(self):
         ...
 
     @abstractmethod
-    def train(self, pos_triples:np.array, neg_triples:np.array):
+    def train(self, pos_triples: np.array, neg_triples: np.array):
         ...
 
     @abstractmethod
@@ -21,6 +20,7 @@ class Model (ABC):
         ...
 
     def _split_list_in_batches(self, input_list, batch_size):
-        return [input_list[i:i + batch_size] for i in range(0, len(input_list), batch_size)]
+        return [input_list[i : i + batch_size] for i in range(0, len(input_list), batch_size)]
 
-#todo check if num embedding == #nodes
+
+# todo check if num embedding == #nodes

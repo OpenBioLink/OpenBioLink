@@ -3,4 +3,3 @@ DIRECTED = True
 EDGE_TYPES = []
 NODE_TYPES = []
 NODE_NAMESPACES = []
-

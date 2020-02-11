@@ -4,8 +4,10 @@ from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeCtdPath import D
 from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeDisGeNet import DbMetaEdgeDisGeNet
 from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeDrugCentral import DbMetaEdgeDrugCentral
 from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeGo import DbMetaEdgeGo
+
 # from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeHpa import        DbMetaEdgeHpa
 from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeHpoDis import DbMetaEdgeHpoDis
+
 # from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeSiderInd import   DbMetaEdgeSiderInd
 from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeHpoGene import DbMetaEdgeHpoGene
 from openbiolink.graph_creation.metadata_db_file.edge.dbMetaEdgeSiderSe import DbMetaEdgeSiderSe
