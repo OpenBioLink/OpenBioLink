@@ -4,7 +4,6 @@ from openbiolink.namespace import *
 
 
 class InMetaMapOntoHpoAltid(InfileMetadata):
-
     CSV_NAME = "DB_ONTO_mapping_HPO_alt_id.csv"
     USE_COLS = ["ID", "ALT_ID"]
     SOURCE_COL = 1

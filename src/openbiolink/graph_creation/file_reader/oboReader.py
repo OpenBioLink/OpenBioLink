@@ -3,8 +3,7 @@ import sys
 
 import numpy as np
 
-from openbiolink import globalConfig
-from openbiolink import globalConfig as globConst
+from openbiolink import globalConfig, globalConfig as globConst
 from openbiolink.cli import Cli
 from openbiolink.graph_creation.file_reader.fileReader import FileReader
 from openbiolink.graph_creation.file_reader.parser.oboParser import OboParser

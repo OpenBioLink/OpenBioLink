@@ -211,7 +211,6 @@ def show_info_box(msg):
 
 
 def start_gui():
-
     global app
     app = BimegGui()
     app.style = Style()

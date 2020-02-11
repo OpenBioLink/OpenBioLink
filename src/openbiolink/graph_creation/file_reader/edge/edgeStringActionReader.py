@@ -8,7 +8,6 @@ from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class EdgeStringActionReader(CsvReader):
-
     DB_META_CLASS = DbMetaEdgeStringAction
 
     def __init__(self):

@@ -5,14 +5,12 @@ import os
 from tqdm import tqdm
 
 import openbiolink.graphProperties as graphProp
-from openbiolink import globalConfig
-from openbiolink import globalConfig as globConst
-from openbiolink import utils
+from openbiolink import globalConfig, globalConfig as globConst, utils
 from openbiolink.cli import Cli
 from openbiolink.edge import Edge
 from openbiolink.graph_creation import graphCreationConfig as gcConst
-from openbiolink.node import Node
 from openbiolink.gui.tqdmbuf import TqdmBuffer
+from openbiolink.node import Node
 
 
 class GraphCreator:

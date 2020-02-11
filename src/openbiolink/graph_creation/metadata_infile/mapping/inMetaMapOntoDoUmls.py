@@ -4,7 +4,6 @@ from openbiolink.namespace import *
 
 
 class InMetaMapOntoDoUmls(InfileMetadata):
-
     CSV_NAME = "DB_ONTO_mapping_DO_UMLS.csv"
     USE_COLS = ["ID", "UMLS"]
     SOURCE_COL = 1

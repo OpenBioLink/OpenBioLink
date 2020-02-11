@@ -1,6 +1,6 @@
 import os
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 
 import openbiolink.evaluation.evalConfig as evalConst
 import openbiolink.train_test_set_creation.ttsConfig as ttsConst

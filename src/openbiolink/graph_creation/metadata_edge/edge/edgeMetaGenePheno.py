@@ -14,7 +14,6 @@ class EdgeMetaGenePheno(EdgeRegularMetadata):
     MAP2_ALT_ID_META_CLASS = InMetaMapOntoHpoAltid
 
     def __init__(self, quality: QualityType = None):
-
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         altid_mapping_file2 = os.path.join(glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME)
 

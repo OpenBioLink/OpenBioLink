@@ -8,7 +8,6 @@ from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class MapStringReader(CsvReader):
-
     DB_META_CLASS = DbMetaMapString
 
     def __init__(self):

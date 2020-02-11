@@ -1,12 +1,11 @@
 from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
-from openbiolink.nodeType import NodeType
 from openbiolink.namespace import *
+from openbiolink.nodeType import NodeType
 
 
 class InMetaOntoGoPartOf(InfileMetadata):
-
     CSV_NAME = "DB_ONTO_GO_PART_OF_ontology.csv"
     USE_COLS = ["ID", "PART_OF"]
     NODE1_COL = 0

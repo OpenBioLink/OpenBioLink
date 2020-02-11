@@ -12,7 +12,6 @@ class DbMetaEdgeSiderSe(DbMetadataEdge):
     DB_TYPE = DbType.DB_EDGE_SIDER_SE
 
     def __init__(self):
-
         super().__init__(
             url=DbMetaEdgeSiderSe.URL, ofile_name=DbMetaEdgeSiderSe.OFILE_NAME, dbType=DbMetaEdgeSiderSe.DB_TYPE
         )

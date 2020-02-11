@@ -5,7 +5,6 @@ from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class EdgeStringReactionProcessor(FileProcessor):
-
     IN_META_CLASS = InMetaEdgeStringReaction
 
     def __init__(self):

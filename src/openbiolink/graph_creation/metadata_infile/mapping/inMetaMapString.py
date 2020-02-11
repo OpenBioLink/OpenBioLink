@@ -4,7 +4,6 @@ from openbiolink.namespace import *
 
 
 class InMetaMapString(InfileMetadata):
-
     CSV_NAME = "DB_String_mapping_gene_ncbi_string.csv"
     USE_COLS = ["ncbiID", "stringID"]
     SOURCE_COL = 1

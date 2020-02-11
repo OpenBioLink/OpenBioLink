@@ -10,8 +10,7 @@ from tqdm import tqdm
 
 import openbiolink.evaluation.evalConfig as evalConst
 import openbiolink.evaluation.evaluationIO as io
-from openbiolink import globalConfig as globConst
-from openbiolink import utils
+from openbiolink import globalConfig as globConst, utils
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from openbiolink.evaluation.models.model import Model
 from openbiolink.gui.tqdmbuf import TqdmBuffer

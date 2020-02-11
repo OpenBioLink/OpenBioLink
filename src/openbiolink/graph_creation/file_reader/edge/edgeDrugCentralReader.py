@@ -8,7 +8,6 @@ from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class EdgeDrugCentralReader(PostgresDumpReader):
-
     DB_META_CLASS = DbMetaEdgeDrugCentral
 
     def __init__(self):

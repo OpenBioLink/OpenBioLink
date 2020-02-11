@@ -6,7 +6,6 @@ from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class EdgeStringPtmodeProcessor(FileProcessor):
-
     IN_META_CLASS = InMetaEdgeStringPtmod
 
     def __init__(self):

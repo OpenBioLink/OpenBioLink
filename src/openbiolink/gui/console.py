@@ -1,7 +1,7 @@
 # """ source: #https://github.com/beenje/tkinter-logging-text-widget/blob/master/main.py """
 import logging
 import queue
-from tkinter import ttk, N, S, E, W
+from tkinter import E, N, S, W, ttk
 from tkinter.scrolledtext import ScrolledText
 
 from openbiolink.gui.gui import *

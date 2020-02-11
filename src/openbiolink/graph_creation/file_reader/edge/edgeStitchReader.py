@@ -8,7 +8,6 @@ from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class EdgeStitchReader(CsvReader):
-
     DB_META_CLASS = DbMetaEdgeStitch
 
     def __init__(self):

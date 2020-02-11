@@ -1,5 +1,5 @@
-from openbiolink.nodeType import NodeType
 from openbiolink.namespace import Namespace
+from openbiolink.nodeType import NodeType
 
 
 class Node:

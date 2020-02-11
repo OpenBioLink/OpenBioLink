@@ -5,7 +5,6 @@ from openbiolink.graph_creation.types.readerType import ReaderType
 
 
 class EdgeStitchActivationProcessor(FileProcessor):
-
     IN_META_CLASS = InMetaEdgeStitchActivation
 
     def __init__(self):

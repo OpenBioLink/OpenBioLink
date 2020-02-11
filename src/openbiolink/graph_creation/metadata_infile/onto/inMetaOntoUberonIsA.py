@@ -1,12 +1,11 @@
 from openbiolink.edgeType import EdgeType
 from openbiolink.graph_creation.metadata_infile.infileMetadata import InfileMetadata
 from openbiolink.graph_creation.types.infileType import InfileType
-from openbiolink.nodeType import NodeType
 from openbiolink.namespace import *
+from openbiolink.nodeType import NodeType
 
 
 class InMetaOntoUberonIsA(InfileMetadata):
-
     CSV_NAME = "DB_ONTO_UBERON_IS_A_ontology.csv"
     USE_COLS = ["ID", "IS_A"]
     NODE1_COL = 0

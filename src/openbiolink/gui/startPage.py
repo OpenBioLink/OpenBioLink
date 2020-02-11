@@ -1,6 +1,6 @@
 import os
 import tkinter as tk
-from tkinter import messagebox, filedialog, ttk
+from tkinter import filedialog, messagebox, ttk
 
 from openbiolink.gui import gui as gui
 

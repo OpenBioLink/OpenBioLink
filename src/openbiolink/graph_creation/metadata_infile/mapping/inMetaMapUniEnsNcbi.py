@@ -4,7 +4,6 @@ from openbiolink.namespace import *
 
 
 class InMetaMapUniEnsNcbi(InfileMetadata):
-
     CSV_NAME = "DB_Uniprot_mapping_gene_ensembl_ncbi.csv"
     USE_COLS = ["Ensembl", "GeneID"]
     SOURCE_COL = 0

@@ -14,7 +14,6 @@ import openbiolink.train_test_set_creation.ttsConfig as ttsConst
 from openbiolink import globalConfig as globConst
 from openbiolink.evaluation.models.model import Model
 
-
 ## ** code adapted from pykeen: https://github.com/SmartDataAnalytics/PyKEEN **
 from openbiolink.gui.tqdmbuf import TqdmBuffer
 

@@ -11,7 +11,6 @@ class EdgeMetaAnatomyOntoIsA(EdgeOntoMetadata):
     EDGE_INMETA_CLASS = InMetaOntoUberonIsA
 
     def __init__(self, quality=None):
-
         super().__init__(
             is_directional=True,
             edges_file_path=os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME),

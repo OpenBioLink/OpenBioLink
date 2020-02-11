@@ -4,7 +4,6 @@ from openbiolink.namespace import *
 
 
 class InMetaMapDisGeNet(InfileMetadata):
-
     CSV_NAME = "DB_DisGeNet_mapping_disease_umls_do.csv"
     USE_COLS = ["umlsID", "code"]  # voc gets deleted while individual preprocessing
     SOURCE_COL = 0

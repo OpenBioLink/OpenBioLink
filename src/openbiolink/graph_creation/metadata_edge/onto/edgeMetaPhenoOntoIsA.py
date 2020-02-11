@@ -11,7 +11,6 @@ class EdgeMetaPhenoOntoIsA(EdgeOntoMetadata):
     EDGE_INMETA_CLASS = InMetaOntoHpoIsA
 
     def __init__(self, quality=None):
-
         super().__init__(
             is_directional=True,
             edges_file_path=os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME),

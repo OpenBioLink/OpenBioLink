@@ -18,8 +18,7 @@ import os
 import sys
 
 import openbiolink.graphProperties as graphProp
-from openbiolink import globalConfig
-from openbiolink import globalConfig as glob
+from openbiolink import globalConfig, globalConfig as glob
 from openbiolink.evaluation.evaluation import Evaluation
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from openbiolink.evaluation.models.modelTypes import ModelTypes
@@ -101,7 +100,6 @@ def create_graph(args):
 
 
 def create_train_test_splits(args):
-
     if args.tts_sep == "t":
         sep = "\t"
     elif args.tts_sep == "n":
@@ -130,7 +128,6 @@ def create_train_test_splits(args):
 
 
 def train_and_evaluate(args):
-
     model_cls = ModelTypes[args.model_cls].value
     if args.trained_model:  # fixme when model provided, config also has to be
         if args.config:

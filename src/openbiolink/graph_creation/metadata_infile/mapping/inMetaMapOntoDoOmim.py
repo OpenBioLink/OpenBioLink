@@ -4,7 +4,6 @@ from openbiolink.namespace import *
 
 
 class InMetaMapOntoDoOmim(InfileMetadata):
-
     CSV_NAME = "DB_ONTO_mapping_DO_OMIM.csv"
     USE_COLS = ["ID", "OMIM"]
     SOURCE_COL = 1

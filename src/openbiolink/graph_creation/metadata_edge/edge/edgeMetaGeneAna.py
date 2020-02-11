@@ -20,7 +20,6 @@ class EdgeMetaGeneAna(EdgeRegularMetadata):
     MAP2_ALT_ID_META_CLASS = InMetaMapOntoUberonAltid
 
     def __init__(self, quality: QualityType = None):
-
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         mapping_file1 = os.path.join(glob.IN_FILE_PATH, self.MAP1_META_CLASS.CSV_NAME)
         altid_mapping2_file = os.path.join(glob.IN_FILE_PATH, self.MAP2_ALT_ID_META_CLASS.CSV_NAME)

@@ -12,7 +12,6 @@ class EdgeMetaGenePath(EdgeRegularMetadata):
     EDGE_INMETA_CLASS = InMetaEdgeCdtPath
 
     def __init__(self, quality: QualityType):
-
         edges_file_path = os.path.join(glob.IN_FILE_PATH, self.EDGE_INMETA_CLASS.CSV_NAME)
         super().__init__(
             is_directional=True,

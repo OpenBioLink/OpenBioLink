@@ -11,7 +11,6 @@ import pandas
 from openbiolink import globalConfig as globConst
 from openbiolink.edgeType import EdgeType
 
-
 pandas.set_option(
     "mode.chained_assignment", None
 )  # Suppression of SettingWithCopy Warning see https://www.dataquest.io/blog/settingwithcopywarning/
