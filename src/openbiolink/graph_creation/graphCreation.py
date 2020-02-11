@@ -21,7 +21,7 @@ from openbiolink.graph_creation.metadata_infile import *
 from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
-class Graph_Creation:
+class GraphCreator:
     def __init__(self, folder_path, use_db_metadata_classes=None, use_edge_metadata_classes=None):
         globConst.WORKING_DIR = folder_path
         gcConst.O_FILE_PATH = os.path.join(folder_path, gcConst.O_FILE_FOLDER_NAME)
@@ -31,7 +31,6 @@ class Graph_Creation:
             os.makedirs(globConst.WORKING_DIR)
 
         self.db_file_metadata = [x() for x in utils.get_leaf_subclasses(DbMetadata)]
-        print(utils.get_leaf_subclasses(DbMetadata))
         self.file_readers = [x() for x in utils.get_leaf_subclasses(FileReader)]
         self.file_processors = [x() for x in utils.get_leaf_subclasses(FileProcessor)]
         self.infile_metadata = [x() for x in utils.get_leaf_subclasses(InfileMetadata)]
@@ -80,7 +79,9 @@ class Graph_Creation:
         if not os.path.exists(gcConst.O_FILE_PATH):
             os.makedirs(gcConst.O_FILE_PATH)
         tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
-        for db_file in tqdm(self.db_file_metadata, file=tqdmbuffer):
+        it = tqdm(self.db_file_metadata, file=tqdmbuffer)
+        for db_file in it:
+            it.write(f'Downloading: {db_file.__class__.__name__}')
             o_file_path = os.path.join(gcConst.O_FILE_PATH, db_file.ofile_name)
             if not for_all:
                 if globConst.GUI_MODE:
@@ -103,60 +104,63 @@ class Graph_Creation:
         if not os.path.exists(gcConst.IN_FILE_PATH):
             os.makedirs(gcConst.IN_FILE_PATH)
         tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
-        for reader in tqdm(self.file_readers, file=tqdmbuffer):
-            if reader.readerType in self.readerType_processor_map:
+        it = tqdm(self.file_readers, file=tqdmbuffer)
+        for reader in it:
+            if reader.readerType not in self.readerType_processor_map:
+                it.write(f"There is no processor for the reader {reader.readerType}")
+                continue
+            it.write(f'Reading: {reader}')
+            # check beforehand if read in content is processed as parsing can be time consuming
+            all_files_exist = all(
+                os.path.isfile(os.path.join(
+                    gcConst.IN_FILE_PATH, self.infileType_inMetadata_map[processor.infileType].csv_name
+                ))
+                for processor in self.readerType_processor_map[reader.readerType]
+            )
+            if all_files_exist and not for_all and self.readerType_processor_map[reader.readerType]:
+                first_processor = self.readerType_processor_map[reader.readerType][0]
+                first_processor_out_path = os.path.join(
+                    gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name
+                )
+                if globConst.GUI_MODE:
+                    from openbiolink.gui.gui import skipExistingFiles
+                    skip, for_all = skipExistingFiles(first_processor_out_path)
+                else:
+                    skip, for_all = Cli.skip_existing_files(first_processor_out_path)
 
-                # check beforehand if read in content is processed as parsing can be time consuming
-                all_files_exist = True
+            if not skip or not all_files_exist:
+                # execute processors
+                in_data = reader.read_file()
+                # fixme  ResourceWarning: Enable tracemalloc to get the object allocation traceback
                 for processor in self.readerType_processor_map[reader.readerType]:
-                    if not os.path.isfile(
-                        os.path.join(
-                            gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name
-                        )
-                    ):
-                        all_files_exist = False
-                if all_files_exist and not for_all and self.readerType_processor_map[reader.readerType]:
-                    first_processor = self.readerType_processor_map[reader.readerType][0]
-                    first_processor_out_path = os.path.join(
-                        gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[first_processor.infileType]).csv_name
+                    out_file_path = os.path.join(
+                        gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name
                     )
-                    if globConst.GUI_MODE:
-                        from openbiolink.gui.gui import skipExistingFiles
+                    if not for_all:
+                        if globConst.GUI_MODE:
+                            from openbiolink.gui.gui import skipExistingFiles
 
-                        skip, for_all = skipExistingFiles(first_processor_out_path)
-                    else:
-                        skip, for_all = Cli.skip_existing_files(first_processor_out_path)
-                if not (skip and all_files_exist):
-
-                    # execute processors
-                    in_data = reader.read_file()
-                    # fixme  ResourceWarning: Enable tracemalloc to get the object allocation traceback
-                    for processor in self.readerType_processor_map[reader.readerType]:
-                        out_file_path = os.path.join(
-                            gcConst.IN_FILE_PATH, (self.infileType_inMetadata_map[processor.infileType]).csv_name
-                        )
-                        if not for_all:
-                            if globConst.GUI_MODE:
-                                from openbiolink.gui.gui import skipExistingFiles
-
-                                skip, for_all = skipExistingFiles(out_file_path)
-                            else:
-                                skip, for_all = Cli.skip_existing_files(out_file_path)
-                        if not (skip and os.path.isfile(out_file_path)):
-                            out_data = processor.process(in_data)
-                            FileWriter.wirte_to_file(out_data, out_file_path)
-            else:
-                logging.warning("There is no processor for the reader %s" % (str(reader.readerType)))
+                            skip, for_all = skipExistingFiles(out_file_path)
+                        else:
+                            skip, for_all = Cli.skip_existing_files(out_file_path)
+                    if not (skip and os.path.isfile(out_file_path)):
+                        out_data = processor.process(in_data)
+                        FileWriter.wirte_to_file(out_data, out_file_path)
 
     # ----------- create graph ----------
 
-    def create_graph(self, format="TSV", one_file_sep="\t", multi_file_sep=None, print_qscore=True):
+    def create_graph(self, format=None, one_file_sep=None, multi_file_sep=None, print_qscore=True):
         gc = GraphCreator()
-        gw = None
-        if format == "TSV":
+        if format is None or format.upper() == "TSV":
             gw = GraphTSVWriter()
-        elif format == "RDF-N3":
+        elif format.upper() == "RDF-N3":
             gw = GraphRDFWriter()
+        else:
+            raise ValueError(f'Invalid format: {format}')
+
+        if one_file_sep is None:
+            one_file_sep = '\t'
+
         # create graph
         nodes_dic, edges_dic, namespaces_set = gc.meta_edges_to_graph(self.edge_metadata)
         gw.output_graph(

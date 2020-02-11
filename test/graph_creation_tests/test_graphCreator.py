@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath("src/openbiolink"))
 
 import globalConfig
 import graphProperties as graphProp
-from src.openbiolink.graph_creation.graphCreation import Graph_Creation
+from src.openbiolink.graph_creation.graphCreation import GraphCreator
 from src.openbiolink.graph_creation.metadata_db_file import *
 
 
@@ -131,7 +131,7 @@ class TestGraphCreation(unittest.TestCase):
             with self.subTest(graph_is_directed=graph_is_directed):
                 graphProp.DIRECTED = graph_is_directed
 
-                graph_creator = Graph_Creation(test_data_folder, manual_db_file_metadata)
+                graph_creator = GraphCreator(test_data_folder, manual_db_file_metadata)
                 graph_creator.create_input_files()
                 graph_creator.create_graph(one_file_sep="\t", multi_file_sep="\t")
 
