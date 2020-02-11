@@ -21,3 +21,4 @@ playground*
 /src/openbiolink.egg-info
 /in_files
 /graph_files
+/evaluation
