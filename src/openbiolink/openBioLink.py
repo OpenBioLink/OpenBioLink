@@ -19,6 +19,7 @@ import click
 
 from openbiolink import globalConfig as glob
 from openbiolink.cli_helper import create_graph, train_and_evaluate
+from openbiolink.evaluation.models.modelTypes import ModelTypes
 from openbiolink.graph_creation.types.qualityType import QualityType
 from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
@@ -172,16 +173,19 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
 
 
 @main.command()
-@click.option("--model-cls", help="class of the model to be trained/evaluated (required with -e)")
+@click.option(
+    "-m",
+    "--model-cls",
+    required=True,
+    type=click.Choice(list(ModelTypes.__members__)),
+    help="class of the model to be trained/evaluated",
+)
 @click.option("--config", help="Path to the model' config file")
 @click.option("--no-train", is_flag=True, help="No training is being performed, trained model id provided via --model")
 @click.option("--trained-model", help="Path to trained model (required with --no-train)")
 @click.option("--no-eval", is_flag=True, help="No evaluation is being performed, only training")
-@click.option("--test", help="Path to test set file (required with -e)")
-@click.option("--train", help="Path to trainings set file")  # (alternative: --cv_folder)')
-@click.option(
-    "--corrupted", help="path to the corrupted triples (required for ranked triples if no nodes file is provided",
-)  # fixme no longer an option
+@click.option("-t", "--testing-path", required=True, help="Path to test set file")
+@click.option("-s", "--training-path", help="Path to trainings set file")  # (alternative: --cv_folder)')
 @click.option(
     "--eval-nodes",
     help="path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation",
@@ -189,14 +193,14 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
 @click.option("--metrics", multiple=True, help="evaluation metrics")
 @click.option("--ks", multiple=True, help="k's for hits@k metric")
 def train(
-    model_cls, trained_model, train, test, eval_nodes, no_train, no_eval, metrics, ks, config,
+    model_cls, trained_model, training_path, testing_path, eval_nodes, no_train, no_eval, metrics, ks, config,
 ):
     """Train and evaluate on a graph."""
     train_and_evaluate(
         model_cls=model_cls,
         trained_model=trained_model,
-        training_set_path=train,
-        test_set_path=test,
+        training_set_path=training_path,
+        test_set_path=testing_path,
         nodes_path=eval_nodes,
         do_training=not no_train,
         do_evaluation=not no_eval,
