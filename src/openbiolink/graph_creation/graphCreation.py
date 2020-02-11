@@ -21,14 +21,10 @@ from openbiolink.graph_creation.metadata_infile import *
 from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
-class GraphCreator:
+class GraphCreation:
     def __init__(self, folder_path, use_db_metadata_classes=None, use_edge_metadata_classes=None):
-        globConst.WORKING_DIR = folder_path
         gcConst.O_FILE_PATH = os.path.join(folder_path, gcConst.O_FILE_FOLDER_NAME)
         gcConst.IN_FILE_PATH = os.path.join(folder_path, gcConst.IN_FILE_FOLDER_NAME)
-
-        if not os.path.exists(globConst.WORKING_DIR):
-            os.makedirs(globConst.WORKING_DIR)
 
         self.db_file_metadata = [x() for x in utils.get_leaf_subclasses(DbMetadata)]
         self.file_readers = [x() for x in utils.get_leaf_subclasses(FileReader)]
@@ -70,32 +66,27 @@ class GraphCreator:
 
     # ----------- download ----------
 
-    def download_db_files(self):
-        skip = None
-        for_all = False
-        if not globalConfig.INTERACTIVE_MODE:
-            skip = globalConfig.SKIP_EXISTING_FILES
-            for_all = True
-        if not os.path.exists(gcConst.O_FILE_PATH):
-            os.makedirs(gcConst.O_FILE_PATH)
+    def download_db_files(
+        self, skip_existing: bool = True,
+    ):
+        logging.info("## Start downloading files ##")
+        directory = gcConst.O_FILE_PATH
+        os.makedirs(directory, exist_ok=True)
         tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
-        it = tqdm(self.db_file_metadata, file=tqdmbuffer)
+        it = tqdm(self.db_file_metadata, file=tqdmbuffer, desc="Downloading files")
         for db_file in it:
-            it.write(f'Downloading: {db_file.__class__.__name__}')
-            o_file_path = os.path.join(gcConst.O_FILE_PATH, db_file.ofile_name)
-            if not for_all:
-                if globConst.GUI_MODE:
-                    from openbiolink.gui.gui import skipExistingFiles
-
-                    skip, for_all = skipExistingFiles(o_file_path)
-                else:
-                    skip, for_all = Cli.skip_existing_files(o_file_path)
-            if not (skip and os.path.isfile(o_file_path)):
-                FileDownloader.download(db_file.url, o_file_path)
+            path = os.path.join(directory, db_file.ofile_name)
+            if skip_existing and os.path.exists(path):
+                it.write(f"Skipping: {db_file.NAME}")
+                continue
+            if not globConst.GUI_MODE:
+                it.write(f"Downloading: {db_file.NAME}")
+            FileDownloader.download(db_file.url, path)
 
     # ----------- create input files ----------
 
     def create_input_files(self):
+        logging.info("## Start creating input files ##")
         skip = None
         for_all = False
         if not globalConfig.INTERACTIVE_MODE:
@@ -109,12 +100,12 @@ class GraphCreator:
             if reader.readerType not in self.readerType_processor_map:
                 it.write(f"There is no processor for the reader {reader.readerType}")
                 continue
-            it.write(f'Reading: {reader}')
+            it.write(f"Reading: {reader.__class__.__name__}")
             # check beforehand if read in content is processed as parsing can be time consuming
             all_files_exist = all(
-                os.path.isfile(os.path.join(
-                    gcConst.IN_FILE_PATH, self.infileType_inMetadata_map[processor.infileType].csv_name
-                ))
+                os.path.isfile(
+                    os.path.join(gcConst.IN_FILE_PATH, self.infileType_inMetadata_map[processor.infileType].csv_name)
+                )
                 for processor in self.readerType_processor_map[reader.readerType]
             )
             if all_files_exist and not for_all and self.readerType_processor_map[reader.readerType]:
@@ -124,6 +115,7 @@ class GraphCreator:
                 )
                 if globConst.GUI_MODE:
                     from openbiolink.gui.gui import skipExistingFiles
+
                     skip, for_all = skipExistingFiles(first_processor_out_path)
                 else:
                     skip, for_all = Cli.skip_existing_files(first_processor_out_path)
@@ -145,30 +137,31 @@ class GraphCreator:
                             skip, for_all = Cli.skip_existing_files(out_file_path)
                     if not (skip and os.path.isfile(out_file_path)):
                         out_data = processor.process(in_data)
-                        FileWriter.wirte_to_file(out_data, out_file_path)
+                        FileWriter.write_to_file(out_data, out_file_path)
 
     # ----------- create graph ----------
 
     def create_graph(self, format=None, one_file_sep=None, multi_file_sep=None, print_qscore=True):
-        gc = GraphCreator()
+        logging.info("## Start creating graph ##")
+        graph_creator = GraphCreator()
         if format is None or format.upper() == "TSV":
-            gw = GraphTSVWriter()
+            graph_writer = GraphTSVWriter()
         elif format.upper() == "RDF-N3":
-            gw = GraphRDFWriter()
+            graph_writer = GraphRDFWriter()
         else:
-            raise ValueError(f'Invalid format: {format}')
+            raise ValueError(f"Invalid format: {format}")
 
         if one_file_sep is None:
-            one_file_sep = '\t'
+            one_file_sep = "\t"
 
         # create graph
-        nodes_dic, edges_dic, namespaces_set = gc.meta_edges_to_graph(self.edge_metadata)
-        gw.output_graph(
+        nodes_dic, edges_dic, namespaces_set = graph_creator.meta_edges_to_graph(self.edge_metadata)
+        graph_writer.output_graph(
             nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, print_qscore=print_qscore
         )
         # create TN edges
-        tn_nodes_dic, tn_edges_dic, tn_namespaces_set = gc.meta_edges_to_graph(self.tn_edge_metadata, tn=True)
-        gw.output_graph(
+        tn_nodes_dic, tn_edges_dic, tn_namespaces_set = graph_creator.meta_edges_to_graph(self.tn_edge_metadata, tn=True)
+        graph_writer.output_graph(
             tn_nodes_dic,
             tn_edges_dic,
             one_file_sep=one_file_sep,
@@ -183,7 +176,7 @@ class GraphCreator:
                 temp.update(set(values))
                 values = temp
             all_nodes_dic[key] = values
-        gw.output_graph(
+        graph_writer.output_graph(
             all_nodes_dic,
             None,
             one_file_sep=one_file_sep,
@@ -196,7 +189,7 @@ class GraphCreator:
         graphProp.NODE_TYPES = list(nodes_dic.keys())
         graphProp.NODE_NAMESPACES = list(namespaces_set)
 
-        gw.output_graph_props()
+        graph_writer.output_graph_props()
 
     # ----------- helper init functions ----------
 

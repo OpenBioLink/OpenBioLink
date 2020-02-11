@@ -84,29 +84,24 @@ the corresponding command line options are displayed.
 
 #### Calling via command line
 From folder src
-```bash
+```sh
 openbiolink -p WORKING_DIR_PATH [-action] [--options] ...
 ```
 
 **Action: Graph Creation**
-````
--g:    
-    --undir         Output-Graph should be undirectional (default = directional)
-    --qual          quality cutoff of the output-graph, options = [hq, mq, lq], (default = None -> all entries are used)
-    --no_interact   Disables interactive mode - existing files will be replaced (default = interactive)
-    --skip          Existing files will be skipped - in combination with --no_interact (default = replace)
-    --no_dl         No download is being performed (e.g. when local data is used)
-    --no_in         No input_files are created (e.g. when local data is used)
-    --no_create     No graph is created (e.g. when only in-files should be created)
-    --out_format [TSV|RDF-N3] [Format] [Sep]       Format of graph output, takes 3 arguments: 
-                                                   - The format of the graph files (Currently TSV or RDF-N3 are supported)
-                                                   - A list of file formats [s= single file, m=multiple files] 
-                                                   - A list of separators (only needed if TSV, e.g. t=tab, n=newline, or any other character)
-                                                   (default= TSV s t)
-    --no_qscore     The output files will contain no scores
-    --dbs [Cls]     custom source databases selection to be used, full class name, options --> see doc
-    --mes [Cls]     custom meta edges selection to be used, full class name, options --> see doc
-````
+
+To generate the default graph (with all edges of all qualifies) in the current directory, use:
+
+```sh
+openbiolink generate
+```
+
+For a list of arguments, use:
+
+```sh
+openbiolink generate --help
+```
+
 **Action: Train-Test Split Generation**
  ````
 -s

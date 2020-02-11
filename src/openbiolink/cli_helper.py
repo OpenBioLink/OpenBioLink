@@ -7,7 +7,7 @@ from openbiolink import globalConfig, globalConfig as glob, graphProperties as g
 from openbiolink.evaluation.evaluation import Evaluation
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from openbiolink.evaluation.models.modelTypes import ModelTypes
-from openbiolink.graph_creation.graphCreation import GraphCreator
+from openbiolink.graph_creation.graphCreation import GraphCreation
 from openbiolink.graph_creation.types.qualityType import QualityType
 
 
@@ -48,7 +48,7 @@ def create_graph(
             getattr(sys.modules[module_name], cls_name) for module_name, cls_name in zip(db_module_names, db_cls_names)
         ]
 
-    graph_creator = GraphCreator(
+    graph_creator = GraphCreation(
         folder_path=glob.WORKING_DIR,
         use_db_metadata_classes=use_db_metadata_classes,
         use_edge_metadata_classes=use_edge_metadata_classes,
@@ -56,31 +56,18 @@ def create_graph(
 
     logging.info("###### (1) GRAPH CREATION ######")
     if do_download:
-        print("\n\n############### downloading files #################################")
-        logging.info("## Start downloading files ##")
         graph_creator.download_db_files()
 
     if do_create_input_files:
-        print("\n\n############### creating graph input files #################################")
-        logging.info("## Start creating input files ##")
         graph_creator.create_input_files()
 
     if do_create_graph:
-        print("\n\n############### creating graph #################################")
-        logging.info("## Start creating graph ##")
         graph_creator.create_graph(
             format=output_format,
             one_file_sep=output_single_sep,
             multi_file_sep=output_multisep_sep,
             print_qscore=qscore,
         )
-
-        # with open(os.path.join(globalConfig.WORKING_DIR, globalConfig.GRAPH_PROP_FILE_NAME), 'w') as f:
-        #    graph_prop_dict  = {x: y for x, y in graphProp.__dict__.items() if not x.startswith('__')}
-        #    for k,v in  graph_prop_dict.items():
-        #        if not type(v)==str:
-        #            graph_prop_dict[k] = str(v)
-        #    json.dump(graph_prop_dict, f, indent=4)
 
 
 def train_and_evaluate(

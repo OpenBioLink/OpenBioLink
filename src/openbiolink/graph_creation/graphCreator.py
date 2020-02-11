@@ -99,7 +99,9 @@ class GraphCreator:
         nodes_dic = {}
         namespaces_set = set()
         tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
-        for d in tqdm(edge_metadata_list, file=tqdmbuffer):
+        it = tqdm(edge_metadata_list, file=tqdmbuffer, desc='meta edges to graph')
+        for d in it:
+            it.write(f'Converting {d}')
             nodes1, nodes2, edges = self.create_nodes_and_edges(d, tn)
             if str(d.edgeType) in edges_dic:
                 edges_dic[str(d.edgeType)].update(edges)
@@ -195,9 +197,7 @@ class GraphCreator:
         no_cutoff_defined = edge_metadata.cutoff_num is None and edge_metadata.cutoff_txt is None
 
         with open(edge_metadata.edges_file_path, "r", encoding="utf8") as edge_content:
-
             reader = csv.reader(edge_content, delimiter=";")
-
             for row in reader:
                 raw_id1 = row[edge_metadata.colindex1]
                 raw_id2 = row[edge_metadata.colindex2]

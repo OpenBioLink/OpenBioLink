@@ -19,6 +19,7 @@ import click
 
 from openbiolink import globalConfig as glob
 from openbiolink.cli_helper import create_graph, train_and_evaluate
+from openbiolink.graph_creation import graphCreationConfig as gcConst
 from openbiolink.graph_creation.types.qualityType import QualityType
 from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
@@ -50,7 +51,7 @@ def handle_quality(_, __, qual):
 @click.option(
     "--qual",
     type=click.Choice(["hq", "mq", "lq"]),
-    default='lq',
+    default="lq",
     show_default=True,
     callback=handle_quality,
     help="quality level od the output-graph (default = None -> all entries are used)",
@@ -65,8 +66,8 @@ def handle_quality(_, __, qual):
     is_flag=True,
     help="Existing files will be skipped - in combination with --no_interact (default = replace)",
 )
-@click.option("--no-dl", is_flag=True, help="No download is being performed (e.g. when local data is used)")
-@click.option("--no-in", is_flag=True, help="No input_files are created (e.g. when local data is used)")
+@click.option("--no-download", is_flag=True, help="No download is being performed (e.g. when local data is used)")
+@click.option("--no-input", is_flag=True, help="No input_files are created (e.g. when local data is used)")
 @click.option("--no-create", is_flag=True, help="No graph is created (e.g. when only in-files should be created)")
 @click.option("--no-qscore", is_flag=True, help="The output files will contain no scores")
 @click.option(
@@ -80,15 +81,15 @@ def generate(
     qual: QualityType,
     no_interact: bool,
     skip: bool,
-    no_dl: bool,
-    no_in: bool,
+    no_download: bool,
+    no_input: bool,
     no_create: bool,
     no_qscore: bool,
     dbs,
     mes,
 ):
     """Generate a graph."""
-    if no_in and not no_dl and not no_create:
+    if no_input and not no_download and not no_create:
         click.secho(
             "Graph Creation: downloading graph files and creating the graph without creating in_files is not possible",
             fg="red",
@@ -100,8 +101,8 @@ def generate(
         quality_type=qual,
         interactive_mode=not no_interact,
         skip_existing_files=skip,
-        do_download=not no_dl,
-        do_create_input_files=not no_in,
+        do_download=not no_download,
+        do_create_input_files=not no_input,
         do_create_graph=not no_create,
         qscore=not no_qscore,
         dbs=dbs,
