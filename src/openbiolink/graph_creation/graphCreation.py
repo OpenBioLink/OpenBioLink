@@ -160,7 +160,9 @@ class GraphCreation:
             nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, print_qscore=print_qscore
         )
         # create TN edges
-        tn_nodes_dic, tn_edges_dic, tn_namespaces_set = graph_creator.meta_edges_to_graph(self.tn_edge_metadata, tn=True)
+        tn_nodes_dic, tn_edges_dic, tn_namespaces_set = graph_creator.meta_edges_to_graph(
+            self.tn_edge_metadata, tn=True
+        )
         graph_writer.output_graph(
             tn_nodes_dic,
             tn_edges_dic,

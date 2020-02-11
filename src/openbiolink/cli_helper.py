@@ -107,7 +107,7 @@ def train_and_evaluate(
     if do_evaluation:
         print("starting evaluation")
         metrics_to_use = list(
-            itertools.chain(RankMetricType.__members__.values(), ThresholdMetricType.__members__.values(), )
+            itertools.chain(RankMetricType.__members__.values(), ThresholdMetricType.__members__.values())
         )
         if metrics is not None:
             metrics_to_use = [x for x in metrics_to_use if x.name in metrics]

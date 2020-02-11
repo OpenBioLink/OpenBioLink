@@ -19,7 +19,6 @@ import click
 
 from openbiolink import globalConfig as glob
 from openbiolink.cli_helper import create_graph, train_and_evaluate
-from openbiolink.graph_creation import graphCreationConfig as gcConst
 from openbiolink.graph_creation.types.qualityType import QualityType
 from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
@@ -125,39 +124,12 @@ def split():
 @edges_option
 @tn_edges_option
 @nodes_option
-@sep_option
-def time(edges, tn_edges, nodes, sep):
-    """Split based on time."""
-    tts = TrainTestSetCreation(graph_path=edges, tn_graph_path=tn_edges, all_nodes_path=nodes, sep=sep,)
-
-    click.secho("Creating time slice split", fg="blue")
-    tts.time_slice_split()
-
-
-@split.command()
-@edges_option
-@tn_edges_option
-@nodes_option
-@sep_option
 @click.option("--tmo-edges", required=True, help="Path to edges.csv file of t-minus-one graph")
 @click.option("--tmo-tn-edges", required=True, help="Path to true_negatives_edges.csv file of t-minus-one graph")
 @click.option("--tmo-nodes", required=True, help="Path to nodes.csv file of t-minus-one graph")
-@click.option("--test-frac", type=float, default=0.2, help="Fraction of test set as float (default= 0.2)")
-@click.option("--crossval", is_flag=True, help="Multiple train-validation-sets are generated")
-@click.option(
-    "--val",
-    type=float,
-    default=0.2,
-    help="Fraction of validation set as float (default= 0.2) or number of folds as int",
-)
-def rand(edges, tn_edges, nodes, sep, tmo_edges, tmo_tn_edges, tmo_nodes, test_frac, crossval, val):
-    """Split randomly."""
-    if crossval and (val == 0 or val == 1 or (val > 1 and not float(val).is_integer())):
-        click.secho(
-            "fold entry must be either an int>1 (number of folds) or a float >0 and <1 (validation fraction)", fg="red",
-        )
-        sys.exit(-1)
-
+@sep_option
+def time(edges, tn_edges, nodes, tmo_edges, tmo_tn_edges, tmo_nodes, sep):
+    """Split based on time."""
     tts = TrainTestSetCreation(
         graph_path=edges,
         tn_graph_path=tn_edges,
@@ -167,6 +139,34 @@ def rand(edges, tn_edges, nodes, sep, tmo_edges, tmo_tn_edges, tmo_nodes, test_f
         t_minus_one_tn_graph_path=tmo_tn_edges,
         t_minus_one_nodes_path=tmo_nodes,
     )
+    click.secho("Creating time slice split", fg="blue")
+    tts.time_slice_split()
+
+
+@split.command()
+@edges_option
+@tn_edges_option
+@nodes_option
+@sep_option
+@click.option("--test-frac", type=float, show_default=True, default=0.2, help="Fraction of test set as float")
+@click.option("--crossval", is_flag=True, help="Multiple train-validation-sets are generated")
+@click.option(
+    "--val",
+    type=float,
+    default=0.2,
+    show_default=True,
+    help="Fraction of validation set as float or number of folds as int",
+)
+def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
+    """Split randomly."""
+    if crossval and (val == 0 or val == 1 or (val > 1 and not float(val).is_integer())):
+        click.secho(
+            "fold entry must be either an int>1 (number of folds) or a float >0 and <1 (validation fraction)", fg="red",
+        )
+        sys.exit(-1)
+
+    click.secho("Loading data")
+    tts = TrainTestSetCreation(graph_path=edges, tn_graph_path=tn_edges, all_nodes_path=nodes, sep=sep,)
     click.secho("Creating random slice split", fg="blue")
     tts.random_edge_split(val=val, test_frac=test_frac, crossval=crossval)
 
@@ -207,4 +207,5 @@ def train(
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
