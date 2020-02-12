@@ -317,17 +317,17 @@ class GraphCreationFrame(tk.Frame):
             ):
                 messagebox.showerror("ERROR", "Please provide a separator for desired output file")
                 return
-        self.controller.ARGS_LIST_GRAPH_CREATION.append("-g")
+        self.controller.ARGS_LIST_GRAPH_CREATION.append("generate")
         if self.undir.get():
-            self.controller.ARGS_LIST_GRAPH_CREATION.append("--undir")
-        if not self.qual.get() == "None":
+            self.controller.ARGS_LIST_GRAPH_CREATION.append("--undirected")
+        if self.qual.get() != "None":
             self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--qual", self.qual.get()])
         if not self.download.get():
-            self.controller.ARGS_LIST_GRAPH_CREATION.append("--no_dl")
+            self.controller.ARGS_LIST_GRAPH_CREATION.append("--no-download")
         if not self.create_infiles.get():
-            self.controller.ARGS_LIST_GRAPH_CREATION.append("--no_in")
+            self.controller.ARGS_LIST_GRAPH_CREATION.append("--no-input")
         if not self.create_graph.get():
-            self.controller.ARGS_LIST_GRAPH_CREATION.append("--no_create")
+            self.controller.ARGS_LIST_GRAPH_CREATION.append("--no-create")
         if self.one_output_file.get():
             if self.multi_output_file.get():
                 self.controller.ARGS_LIST_GRAPH_CREATION.extend(
@@ -342,16 +342,12 @@ class GraphCreationFrame(tk.Frame):
                 ["--out_format", self.format.get(), "m", self.multi_sep.get()]
             )
         if self.no_qscore.get():
-            self.controller.ARGS_LIST_GRAPH_CREATION.append("--no_qscore")
+            self.controller.ARGS_LIST_GRAPH_CREATION.append("--no-qscore")
         if self.selected_dbs:
-            self.controller.ARGS_LIST_GRAPH_CREATION.append("--dbs")
-            self.controller.ARGS_LIST_GRAPH_CREATION.extend(
-                [x.__module__ + "." + x.__name__ for x in self.selected_dbs]
-            )
+            for x in self.selected_dbs:
+                self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--dbs", x.__module__ + "." + x.__name__])
         if self.selected_meta_edges:
-            self.controller.ARGS_LIST_GRAPH_CREATION.append("--mes")
-            self.controller.ARGS_LIST_GRAPH_CREATION.extend(
-                [x.__module__ + "." + x.__name__ for x in self.selected_meta_edges]
-            )
+            for x in self.selected_meta_edges:
+                self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--mes", x.__module__ + "." + x.__name__])
 
         self.controller.show_next_frame()
