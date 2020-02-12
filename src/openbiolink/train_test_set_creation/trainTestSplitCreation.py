@@ -15,7 +15,6 @@ from openbiolink.train_test_set_creation.trainTestSetWriter import TrainTestSetW
 
 random.seed(glob.RANDOM_STATE)
 numpy.random.seed(glob.RANDOM_STATE)
-logger = logging.getLogger(__name__)
 
 
 class TrainTestSetCreation:
@@ -66,36 +65,36 @@ class TrainTestSetCreation:
         t_minus_one_nodes_path=None,
     ):
         if os.path.splitext(graph_path)[1] != ".csv":
-            logger.error("graph path must be a csv file")
+            logging.error("graph path must be a csv file")
             sys.exit()
         if os.path.splitext(tn_graph_path)[1] != ".csv":
-            logger.error("tn_graph path must be a csv file")
+            logging.error("tn_graph path must be a csv file")
             sys.exit()
         if os.path.splitext(all_nodes_path)[1] != ".csv":
-            logger.error("all_nodes path must be a csv file")
+            logging.error("all_nodes path must be a csv file")
             sys.exit()
         if t_minus_one_graph_path is not None and os.path.splitext(t_minus_one_graph_path)[1] != ".csv":
-            logger.error("t_minus_one_graph path must be a csv file")
+            logging.error("t_minus_one_graph path must be a csv file")
             sys.exit()
         if t_minus_one_tn_graph_path is not None and os.path.splitext(t_minus_one_tn_graph_path)[1] != ".csv":
-            logger.error("t_minus_one_tn_graph path must be a csv file")
+            logging.error("t_minus_one_tn_graph path must be a csv file")
             sys.exit()
         if t_minus_one_nodes_path is not None and os.path.splitext(t_minus_one_nodes_path)[1] != ".csv":
-            logger.error("t_minus_one_nodes path must be a csv file")
+            logging.error("t_minus_one_nodes path must be a csv file")
             sys.exit()
 
         self.writer = TrainTestSetWriter()
-        logger.info(f"loading nodes from {all_nodes_path}")
+        logging.info(f"loading nodes from {all_nodes_path}")
         self.all_nodes = pandas.read_csv(all_nodes_path, sep=sep, names=globalConfig.COL_NAMES_NODES)
         self.all_nodes = self.all_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
 
-        logger.info(f"loading true edges from {graph_path}")
+        logging.info(f"loading true edges from {graph_path}")
         self.all_tp = pandas.read_csv(graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
         self.all_tp[globalConfig.VALUE_COL_NAME] = 1
         self.all_tp = self.all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
         self.tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
-        logger.info(f"loading false edges from {tn_graph_path}")
+        logging.info(f"loading false edges from {tn_graph_path}")
         self.all_tn = pandas.read_csv(tn_graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
         self.all_tn[globalConfig.VALUE_COL_NAME] = 0
         self.all_tn = self.all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
@@ -122,7 +121,7 @@ class TrainTestSetCreation:
 
         # for time slices
         if not (bool(t_minus_one_graph_path) == bool(t_minus_one_tn_graph_path) == (bool(t_minus_one_nodes_path))):
-            logger.error("either all three or none of these variables must be provided")
+            logging.error("either all three or none of these variables must be provided")
             sys.exit()
         if (
             t_minus_one_nodes_path is not None
@@ -168,7 +167,7 @@ class TrainTestSetCreation:
             old_nodes_list=nodes_in_train_val_set, new_nodes_list=self.all_nodes[globalConfig.ID_NODE_COL_NAME].tolist()
         )
         if new_test_nodes:
-            logger.info(
+            logging.info(
                 "The test set contains nodes, that are not present in the trainings-set. These edges will be dropped."
             )  # nicetohave (6): option to keep edges with new nodes
             test_set = self.remove_edges_with_nodes(test_set, new_test_nodes)
@@ -189,7 +188,7 @@ class TrainTestSetCreation:
                     new_nodes_list=nodes_in_train_val_set,
                 )
                 if new_val_nodes:  # nicetohave (6)
-                    logger.info(
+                    logging.info(
                         f"Validation set {i} contains nodes that are not present in the trainings-set. These edges will be dropped."
                     )
                     val_set = self.remove_edges_with_nodes(val_set, new_val_nodes)
@@ -237,7 +236,7 @@ class TrainTestSetCreation:
         )
         test_tn_samples, vanished_tn_samples = utils.get_diff(self.all_tn, self.tmo_all_tn, ignore_qscore=True)
         if not vanished_positive_samples.empty or not vanished_tn_samples.empty:
-            logger.info("Some edges existing in the first time slice are no longer present in the second one")
+            logging.info("Some edges existing in the first time slice are no longer present in the second one")
             self.writer.print_vanished_edges(vanished_positive_samples.append(vanished_tn_samples))
         test_negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, test_tn_samples, self.all_nodes)
         test_negative_samples = test_negative_sampler.generate_random_neg_samples(test_positive_samples)
@@ -250,7 +249,7 @@ class TrainTestSetCreation:
             new_nodes_list=self.all_nodes[globalConfig.ID_NODE_COL_NAME].tolist(),
         )
         if new_test_nodes:
-            logger.info(
+            logging.info(
                 "The test set contains nodes, that are not present in the trainings-set. These edges will be removed."
             )  # nicetohave (6)
             test_set = self.remove_edges_with_nodes(test_set, new_test_nodes)
@@ -306,7 +305,7 @@ class TrainTestSetCreation:
     def create_cross_val(df: pandas.DataFrame, n_folds):
         nel_total, _ = df.shape
         if n_folds == 0 or n_folds == 1 or (n_folds > 1 and not float(n_folds).is_integer()):
-            logger.error("provided folds are not possible!")
+            logging.error("provided folds are not possible!")
             raise Exception(
                 "fold entry must be either an int>1 (number of folds) or a float >0 and <1 (validation fraction)"
             )
