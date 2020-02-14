@@ -26,7 +26,7 @@ FORMATS = {
 }
 
 
-class GraphCreation:
+class Graph_Creation:
     def __init__(self, folder_path, use_db_metadata_classes=None, use_edge_metadata_classes=None):
         gcConst.O_FILE_PATH = os.path.join(folder_path, gcConst.O_FILE_FOLDER_NAME)
         gcConst.IN_FILE_PATH = os.path.join(folder_path, gcConst.IN_FILE_FOLDER_NAME)

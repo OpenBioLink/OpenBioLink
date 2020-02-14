@@ -3,7 +3,7 @@ import unittest
 
 import openbiolink.graphProperties as graphProp
 from openbiolink import globalConfig
-from openbiolink.graph_creation.graphCreation import GraphCreation
+from openbiolink.graph_creation.graphCreation import Graph_Creation
 from openbiolink.graph_creation.metadata_db_file import *
 
 
@@ -127,7 +127,7 @@ class TestGraphCreation(unittest.TestCase):
             with self.subTest(graph_is_directed=graph_is_directed):
                 graphProp.DIRECTED = graph_is_directed
 
-                graph_creator = GraphCreation(test_data_folder, manual_db_file_metadata)
+                graph_creator = Graph_Creation(test_data_folder, manual_db_file_metadata)
                 graph_creator.create_input_files()
                 graph_creator.create_graph(one_file_sep="\t", multi_file_sep="\t")
 

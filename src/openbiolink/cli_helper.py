@@ -7,7 +7,7 @@ from openbiolink import globalConfig, globalConfig as glob, graphProperties as g
 from openbiolink.evaluation.evaluation import Evaluation
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from openbiolink.evaluation.models.modelTypes import ModelTypes
-from openbiolink.graph_creation.graphCreation import GraphCreation
+from openbiolink.graph_creation.graphCreation import Graph_Creation
 from openbiolink.graph_creation.types.qualityType import QualityType
 
 
@@ -48,7 +48,7 @@ def create_graph(
             getattr(sys.modules[module_name], cls_name) for module_name, cls_name in zip(db_module_names, db_cls_names)
         ]
 
-    graph_creator = GraphCreation(
+    graph_creator = Graph_Creation(
         folder_path=glob.WORKING_DIR,
         use_db_metadata_classes=use_db_metadata_classes,
         use_edge_metadata_classes=use_edge_metadata_classes,
