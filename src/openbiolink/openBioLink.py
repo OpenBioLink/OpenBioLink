@@ -20,6 +20,7 @@ import click
 from openbiolink import globalConfig as glob
 from openbiolink.cli_helper import create_graph, train_and_evaluate
 from openbiolink.evaluation.models.modelTypes import ModelTypes
+from openbiolink.graph_creation.graphCreation import FORMATS
 from openbiolink.graph_creation.types.qualityType import QualityType
 from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
@@ -70,6 +71,9 @@ def handle_quality(_, __, qual):
 @click.option("--no-input", is_flag=True, help="No input_files are created (e.g. when local data is used)")
 @click.option("--no-create", is_flag=True, help="No graph is created (e.g. when only in-files should be created)")
 @click.option("--no-qscore", is_flag=True, help="The output files will contain no scores")
+@click.option("--output-format", type=click.Choice(list(FORMATS)), default="TSV", show_default=True)
+@click.option("--output-single-sep")
+@click.option("--output-multi-sep")
 @click.option(
     "--dbs", multiple=True, help="custom source databases selection to be used, full class name, options --> see doc"
 )
@@ -85,6 +89,9 @@ def generate(
     no_input: bool,
     no_create: bool,
     no_qscore: bool,
+    output_format: str,
+    output_single_sep,
+    output_multi_sep,
     dbs,
     mes,
 ):
@@ -105,6 +112,9 @@ def generate(
         do_create_input_files=not no_input,
         do_create_graph=not no_create,
         qscore=not no_qscore,
+        output_format=output_format,
+        output_single_sep=output_single_sep,
+        output_multisep_sep=output_multi_sep,
         dbs=dbs,
         mes=mes,
     )
@@ -167,7 +177,7 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
         sys.exit(-1)
 
     click.secho("Loading data")
-    tts = TrainTestSetCreation(graph_path=edges, tn_graph_path=tn_edges, all_nodes_path=nodes, sep=sep,)
+    tts = TrainTestSetCreation(graph_path=edges, tn_graph_path=tn_edges, all_nodes_path=nodes, sep=sep)
     click.secho("Creating random slice split", fg="blue")
     tts.random_edge_split(val=val, test_frac=test_frac, crossval=crossval)
 

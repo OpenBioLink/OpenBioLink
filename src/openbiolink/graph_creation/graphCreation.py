@@ -20,6 +20,11 @@ from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdg
 from openbiolink.graph_creation.metadata_infile import *
 from openbiolink.gui.tqdmbuf import TqdmBuffer
 
+FORMATS = {
+    "TSV": GraphTSVWriter,
+    "RDF-N3": GraphRDFWriter,
+}
+
 
 class GraphCreation:
     def __init__(self, folder_path, use_db_metadata_classes=None, use_edge_metadata_classes=None):
@@ -144,26 +149,26 @@ class GraphCreation:
     def create_graph(self, format=None, one_file_sep=None, multi_file_sep=None, print_qscore=True):
         logging.info("## Start creating graph ##")
         graph_creator = GraphCreator()
-        if format is None or format.upper() == "TSV":
-            graph_writer = GraphTSVWriter()
-        elif format.upper() == "RDF-N3":
-            graph_writer = GraphRDFWriter()
-        else:
+        if format is None:
+            gw = GraphTSVWriter()
+        elif format.upper() not in FORMATS:
             raise ValueError(f"Invalid format: {format}")
+        else:
+            gw = FORMATS[format.upper()]()
 
         if one_file_sep is None:
             one_file_sep = "\t"
 
         # create graph
         nodes_dic, edges_dic, namespaces_set = graph_creator.meta_edges_to_graph(self.edge_metadata)
-        graph_writer.output_graph(
+        gw.output_graph(
             nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, print_qscore=print_qscore
         )
         # create TN edges
         tn_nodes_dic, tn_edges_dic, tn_namespaces_set = graph_creator.meta_edges_to_graph(
             self.tn_edge_metadata, tn=True
         )
-        graph_writer.output_graph(
+        gw.output_graph(
             tn_nodes_dic,
             tn_edges_dic,
             one_file_sep=one_file_sep,
@@ -178,7 +183,7 @@ class GraphCreation:
                 temp.update(set(values))
                 values = temp
             all_nodes_dic[key] = values
-        graph_writer.output_graph(
+        gw.output_graph(
             all_nodes_dic,
             None,
             one_file_sep=one_file_sep,
@@ -191,7 +196,7 @@ class GraphCreation:
         graphProp.NODE_TYPES = list(nodes_dic.keys())
         graphProp.NODE_NAMESPACES = list(namespaces_set)
 
-        graph_writer.output_graph_props()
+        gw.output_graph_props()
 
     # ----------- helper init functions ----------
 

@@ -318,6 +318,8 @@ class GraphCreationFrame(tk.Frame):
                 messagebox.showerror("ERROR", "Please provide a separator for desired output file")
                 return
         self.controller.ARGS_LIST_GRAPH_CREATION.append("generate")
+        self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--out_format", self.format.get()])
+
         if self.undir.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append("--undirected")
         if self.qual.get() != "None":
@@ -329,18 +331,9 @@ class GraphCreationFrame(tk.Frame):
         if not self.create_graph.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append("--no-create")
         if self.one_output_file.get():
-            if self.multi_output_file.get():
-                self.controller.ARGS_LIST_GRAPH_CREATION.extend(
-                    ["--out_format", self.format.get(), "sm", self.single_sep.get() + self.multi_sep.get()]
-                )
-            else:
-                self.controller.ARGS_LIST_GRAPH_CREATION.extend(
-                    ["--out_format", self.format.get(), "s", self.single_sep.get()]
-                )
-        elif self.multi_output_file.get():
-            self.controller.ARGS_LIST_GRAPH_CREATION.extend(
-                ["--out_format", self.format.get(), "m", self.multi_sep.get()]
-            )
+            self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--output-single-sep", self.single_sep.get()])
+        if self.multi_output_file.get():
+            self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--output-multi-sep", self.multi_sep.get()])
         if self.no_qscore.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append("--no-qscore")
         if self.selected_dbs:
