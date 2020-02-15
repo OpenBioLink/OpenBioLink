@@ -88,7 +88,6 @@ class BimegGui(tk.Tk):
                     openBioLink.main(arg_list)
 
             args = [self.ARGS_LIST_GLOBAL, self.ARGS_LIST_GRAPH_CREATION, self.ARGS_LIST_TRAIN_TEST_SPLIT, self.ARGS_LIST_EVAL]
-            print(args)
             thread = threading.Thread(target=_main, args=args, daemon=True)
             thread.start()
 
