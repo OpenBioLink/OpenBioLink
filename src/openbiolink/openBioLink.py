@@ -71,9 +71,26 @@ def handle_quality(_, __, qual):
 @click.option("--no-input", is_flag=True, help="No input_files are created (e.g. when local data is used)")
 @click.option("--no-create", is_flag=True, help="No graph is created (e.g. when only in-files should be created)")
 @click.option("--no-qscore", is_flag=True, help="The output files will contain no scores")
-@click.option("--output-format", type=click.Choice(list(FORMATS)), default="TSV", show_default=True)
-@click.option("--output-single-sep")
-@click.option("--output-multi-sep")
+@click.option(
+    "--output-format",
+    type=click.Choice(list(FORMATS)),
+    default="TSV",
+    show_default=True,
+    help="Format of output files TSV or RDF-N3"
+)
+@click.option(
+    "--output-sep",
+    default="t",
+    show_default=True,
+    help="Seperator used in the output files (t = tab seperated, n = newline, or any other char)"
+)
+@click.option(
+    "--output-multi-file",
+    is_flag=True,
+    default=False,
+    help="Edges and nodes are written to multiple files, instead of" 
+         "single files (accordingly grouped by edge type and node type)"
+)
 @click.option(
     "--dbs", multiple=True, help="custom source databases selection to be used, full class name, options --> see doc"
 )
@@ -90,8 +107,8 @@ def generate(
     no_create: bool,
     no_qscore: bool,
     output_format: str,
-    output_single_sep,
-    output_multi_sep,
+    output_sep: str,
+    output_multi_file: bool,
     dbs,
     mes,
 ):
@@ -113,8 +130,8 @@ def generate(
         do_create_graph=not no_create,
         qscore=not no_qscore,
         output_format=output_format,
-        output_single_sep=output_single_sep,
-        output_multisep_sep=output_multi_sep,
+        output_sep=output_sep,
+        output_multi=output_multi_file,
         dbs=dbs,
         mes=mes,
     )

@@ -146,7 +146,7 @@ class Graph_Creation:
 
     # ----------- create graph ----------
 
-    def create_graph(self, format=None, one_file_sep=None, multi_file_sep=None, print_qscore=True):
+    def create_graph(self, format=None, file_sep=None, multi_file=None, print_qscore=True):
         logging.info("## Start creating graph ##")
         graph_creator = GraphCreator()
         if format is None:
@@ -156,13 +156,13 @@ class Graph_Creation:
         else:
             gw = FORMATS[format.upper()]()
 
-        if one_file_sep is None:
-            one_file_sep = "\t"
+        if file_sep is None:
+            file_sep = "\t"
 
         # create graph
         nodes_dic, edges_dic, namespaces_set = graph_creator.meta_edges_to_graph(self.edge_metadata)
         gw.output_graph(
-            nodes_dic, edges_dic, one_file_sep=one_file_sep, multi_file_sep=multi_file_sep, print_qscore=print_qscore
+            nodes_dic, edges_dic, file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore
         )
         # create TN edges
         tn_nodes_dic, tn_edges_dic, tn_namespaces_set = graph_creator.meta_edges_to_graph(
@@ -171,8 +171,8 @@ class Graph_Creation:
         gw.output_graph(
             tn_nodes_dic,
             tn_edges_dic,
-            one_file_sep=one_file_sep,
-            multi_file_sep=multi_file_sep,
+            file_sep=file_sep,
+            multi_file=multi_file,
             prefix="TN_",
             print_qscore=print_qscore,
         )
@@ -186,8 +186,8 @@ class Graph_Creation:
         gw.output_graph(
             all_nodes_dic,
             None,
-            one_file_sep=one_file_sep,
-            multi_file_sep=None,
+            file_sep=file_sep,
+            multi_file=False,
             prefix="ALL_",
             print_qscore=False,
             node_edge_list=False,

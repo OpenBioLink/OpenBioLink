@@ -25,8 +25,8 @@ class GraphTSVWriter:
     def output_graph(
         nodes_dic: dict = None,
         edges_dic: dict = None,
-        one_file_sep=None,
-        multi_file_sep=None,
+        file_sep=None,
+        multi_file=None,
         prefix=None,
         print_qscore=True,
         node_edge_list=True,
@@ -34,17 +34,18 @@ class GraphTSVWriter:
         if not prefix:
             prefix = ""
 
-        if one_file_sep is None and multi_file_sep is None:
+        if file_sep is None:
             one_file_sep = ","
+
         # one file
-        if one_file_sep is not None:
+        if not multi_file:
             GraphTSVWriter().output_graph_in_single_file(
-                prefix=prefix, file_sep=one_file_sep, nodes_dic=nodes_dic, edges_dic=edges_dic, qscore=print_qscore
+                prefix=prefix, file_sep=file_sep, nodes_dic=nodes_dic, edges_dic=edges_dic, qscore=print_qscore
             )
         # separate files
-        if multi_file_sep is not None:
+        if multi_file:
             GraphTSVWriter().output_graph_in_multi_files(
-                prefix, multi_file_sep, nodes_dic, edges_dic, qscore=print_qscore
+                prefix, file_sep, nodes_dic, edges_dic, qscore=print_qscore
             )
         # lists of all nodes and metaedges
         if node_edge_list:
@@ -60,6 +61,7 @@ class GraphTSVWriter:
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + ".csv"), "w") as out_file:
                 writer = csv.writer(out_file, delimiter=file_sep, lineterminator="\n")
                 for key, value in nodes_dic.items():
+                    print(key)
                     for node in value:
                         writer.writerow(list(node))
         if edges_dic is not None:

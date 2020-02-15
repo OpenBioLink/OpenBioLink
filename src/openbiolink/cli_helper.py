@@ -21,10 +21,10 @@ def create_graph(
     do_download=True,
     do_create_input_files=True,
     do_create_graph=True,
+    output_multi=False,
     quality_type: Optional[QualityType] = None,
     output_format: Optional[str] = None,
-    output_single_sep: Optional[str] = None,
-    output_multisep_sep: Optional[str] = None,
+    output_sep: Optional[str] = None,
 ):
     graphProp.DIRECTED = directed
     graphProp.QUALITY = quality_type
@@ -64,8 +64,8 @@ def create_graph(
     if do_create_graph:
         graph_creator.create_graph(
             format=output_format,
-            one_file_sep=output_single_sep,
-            multi_file_sep=output_multisep_sep,
+            file_sep=output_sep,
+            multi_file=output_multi,
             print_qscore=qscore,
         )
 
