@@ -237,7 +237,7 @@ class GraphCreationFrame(tk.Frame):
                 separator2.pack(side="top", fill="x", pady=5, padx=5, anchor="w")
                 no_qscore_box.pack(side="top", padx=5, anchor="w")
             else:
-                raise ValueError(f'Invalid format: {fmt}')
+                raise ValueError(f"Invalid format: {fmt}")
 
         self.format.trace("w", change_dropdown)
         format_selector_label = tk.Label(format_selection, text="Format:")
