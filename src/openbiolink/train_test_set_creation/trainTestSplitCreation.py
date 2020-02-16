@@ -3,6 +3,7 @@ import math
 import os
 import random
 import sys
+from typing import Optional
 
 import numpy
 import pandas
@@ -58,28 +59,30 @@ class TrainTestSetCreation:
         graph_path,
         tn_graph_path,
         all_nodes_path,
-        sep="\t",
+        sep: Optional[str] = None,
         # meta_edge_triples=None, #nicetohave (1) split for subsample of edges, define own meta edges
         t_minus_one_graph_path=None,
         t_minus_one_tn_graph_path=None,
         t_minus_one_nodes_path=None,
     ):
-        if os.path.splitext(graph_path)[1] != ".csv":
+        if sep is None:
+            sep = "\t"
+        if _not_csv(graph_path):
             logging.error("graph path must be a csv file")
             sys.exit()
-        if os.path.splitext(tn_graph_path)[1] != ".csv":
+        if _not_csv(tn_graph_path):
             logging.error("tn_graph path must be a csv file")
             sys.exit()
-        if os.path.splitext(all_nodes_path)[1] != ".csv":
+        if _not_csv(all_nodes_path):
             logging.error("all_nodes path must be a csv file")
             sys.exit()
-        if t_minus_one_graph_path is not None and os.path.splitext(t_minus_one_graph_path)[1] != ".csv":
+        if t_minus_one_graph_path is not None and _not_csv(t_minus_one_graph_path):
             logging.error("t_minus_one_graph path must be a csv file")
             sys.exit()
-        if t_minus_one_tn_graph_path is not None and os.path.splitext(t_minus_one_tn_graph_path)[1] != ".csv":
+        if t_minus_one_tn_graph_path is not None and _not_csv(t_minus_one_tn_graph_path):
             logging.error("t_minus_one_tn_graph path must be a csv file")
             sys.exit()
-        if t_minus_one_nodes_path is not None and os.path.splitext(t_minus_one_nodes_path)[1] != ".csv":
+        if t_minus_one_nodes_path is not None and _not_csv(t_minus_one_nodes_path):
             logging.error("t_minus_one_nodes path must be a csv file")
             sys.exit()
 
@@ -189,7 +192,8 @@ class TrainTestSetCreation:
                 )
                 if new_val_nodes:  # nicetohave (6)
                     logging.info(
-                        f"Validation set {i} contains nodes that are not present in the trainings-set. These edges will be dropped."
+                        f"Validation set {i} contains nodes that are"
+                        f" not present in the training set. These edges will be dropped."
                     )
                     val_set = self.remove_edges_with_nodes(val_set, new_val_nodes)
                     train_val_set_tuples[i] = (train_set, val_set)
@@ -250,7 +254,7 @@ class TrainTestSetCreation:
         )
         if new_test_nodes:
             logging.info(
-                "The test set contains nodes, that are not present in the trainings-set. These edges will be removed."
+                "The test set contains nodes that are not present in the trainings-set. These edges will be removed."
             )  # nicetohave (6)
             test_set = self.remove_edges_with_nodes(test_set, new_test_nodes)
 
@@ -339,3 +343,7 @@ class TrainTestSetCreation:
             folds.append((df.loc[train_indices], df.loc[val_indices]))
 
         return folds
+
+
+def _not_csv(f):
+    return os.path.splitext(f)[1] not in {".csv", ".tsv"}

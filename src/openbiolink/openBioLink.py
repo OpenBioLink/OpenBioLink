@@ -28,7 +28,14 @@ logger = logging.getLogger(__name__)
 
 
 @click.group()
-@click.option("-p", "--directory", default=os.getcwd(), help="the working directory")
+@click.option(
+    "-p",
+    "--directory",
+    default=os.getcwd(),
+    show_default=True,
+    type=click.Path(dir_okay=True, file_okay=False),
+    help="The output directory. Uses current if not given.",
+)
 def main(directory: str):
     """OpenBioLink CLI."""
     glob.WORKING_DIR = directory
@@ -52,21 +59,15 @@ def handle_quality(_, __, qual):
 @click.option(
     "--qual",
     type=click.Choice(["hq", "mq", "lq"]),
-    default="lq",
-    show_default=True,
     callback=handle_quality,
-    help="quality level od the output-graph (default = None -> all entries are used)",
+    help="minimum quality level of the output-graph. If not specified, all entries are used.",
 )
 @click.option(
     "--no-interact",
     is_flag=True,
     help="Disables interactive mode - existing files will be replaced (default = interactive)",
 )
-@click.option(
-    "--skip",
-    is_flag=True,
-    help="Existing files will be skipped - in combination with --no_interact (default = replace)",
-)
+@click.option("--skip", is_flag=True, help="Skip re-downloading existing files.")
 @click.option("--no-download", is_flag=True, help="No download is being performed (e.g. when local data is used)")
 @click.option("--no-input", is_flag=True, help="No input_files are created (e.g. when local data is used)")
 @click.option("--no-create", is_flag=True, help="No graph is created (e.g. when only in-files should be created)")
@@ -78,18 +79,12 @@ def handle_quality(_, __, qual):
     show_default=True,
     help="Format of output files TSV or RDF-N3",
 )
-@click.option(
-    "--output-sep",
-    default="t",
-    show_default=True,
-    help="Seperator used in the output files (t = tab seperated, n = newline, or any other char)",
-)
+@click.option("--output-sep", help="The separator used in the output files. Defaults to tab")
 @click.option(
     "--output-multi-file",
     is_flag=True,
-    default=False,
-    help="Edges and nodes are written to multiple files, instead of"
-    "single files (accordingly grouped by edge type and node type)",
+    help="Edges and nodes are written to multiple files, "
+    "instead of single files (accordingly grouped by edge type and node type)",
 )
 @click.option(
     "--dbs", multiple=True, help="custom source databases selection to be used, full class name, options --> see doc"
@@ -140,7 +135,7 @@ def generate(
 edges_option = click.option("--edges", required=True, help="Path to edges.csv file")
 tn_edges_option = click.option("--tn-edges", required=True, help="Path to true_negatives_edges.csv file")
 nodes_option = click.option("--nodes", required=True, help="Path to nodes.csv file")
-sep_option = click.option("--sep", default="\t", show_default=True, help="Separator of edge, tn-edge, and nodes file")
+sep_option = click.option("--sep", help="Separator of edge, tn-edge, and nodes file")
 
 
 @main.group()
