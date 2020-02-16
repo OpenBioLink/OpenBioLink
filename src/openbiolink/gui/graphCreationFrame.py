@@ -254,7 +254,9 @@ class GraphCreationFrame(tk.Frame):
 
         self.output_file_cardinality = tk.IntVar(value=1)
         single_out_file_box = tk.Radiobutton(el, text="single file", variable=self.output_file_cardinality, value=1)
-        multi_out_file_box = tk.Radiobutton(el, text="multiple files (one/type)", variable=self.output_file_cardinality, value=2)
+        multi_out_file_box = tk.Radiobutton(
+            el, text="multiple files (one/type)", variable=self.output_file_cardinality, value=2
+        )
 
         # seperator of file/s
         self.sep = tk.StringVar(value="t")

@@ -39,9 +39,7 @@ class GraphTSVWriter:
 
         # separate files
         if multi_file:
-            GraphTSVWriter().output_graph_in_multi_files(
-                prefix, file_sep, nodes_dic, edges_dic, qscore=print_qscore
-            )
+            GraphTSVWriter().output_graph_in_multi_files(prefix, file_sep, nodes_dic, edges_dic, qscore=print_qscore)
         # one file
         else:
             GraphTSVWriter().output_graph_in_single_file(

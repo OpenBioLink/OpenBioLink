@@ -76,20 +76,20 @@ def handle_quality(_, __, qual):
     type=click.Choice(list(FORMATS)),
     default="TSV",
     show_default=True,
-    help="Format of output files TSV or RDF-N3"
+    help="Format of output files TSV or RDF-N3",
 )
 @click.option(
     "--output-sep",
     default="t",
     show_default=True,
-    help="Seperator used in the output files (t = tab seperated, n = newline, or any other char)"
+    help="Seperator used in the output files (t = tab seperated, n = newline, or any other char)",
 )
 @click.option(
     "--output-multi-file",
     is_flag=True,
     default=False,
-    help="Edges and nodes are written to multiple files, instead of" 
-         "single files (accordingly grouped by edge type and node type)"
+    help="Edges and nodes are written to multiple files, instead of"
+    "single files (accordingly grouped by edge type and node type)",
 )
 @click.option(
     "--dbs", multiple=True, help="custom source databases selection to be used, full class name, options --> see doc"

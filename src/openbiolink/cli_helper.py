@@ -63,10 +63,7 @@ def create_graph(
 
     if do_create_graph:
         graph_creator.create_graph(
-            format=output_format,
-            file_sep=output_sep,
-            multi_file=output_multi,
-            print_qscore=qscore,
+            format=output_format, file_sep=output_sep, multi_file=output_multi, print_qscore=qscore,
         )
 
 

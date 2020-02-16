@@ -40,9 +40,7 @@ class GraphRDFWriter:
 
         # separate files
         if multi_file:
-            GraphRDFWriter().output_graph_in_multi_files(
-                prefix, file_sep, nodes_dic, edges_dic, qscore=print_qscore
-            )
+            GraphRDFWriter().output_graph_in_multi_files(prefix, file_sep, nodes_dic, edges_dic, qscore=print_qscore)
         # one file
         else:
             GraphRDFWriter().output_graph_in_single_file(

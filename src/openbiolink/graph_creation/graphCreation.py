@@ -161,9 +161,7 @@ class Graph_Creation:
 
         # create graph
         nodes_dic, edges_dic, namespaces_set = graph_creator.meta_edges_to_graph(self.edge_metadata)
-        gw.output_graph(
-            nodes_dic, edges_dic, file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore
-        )
+        gw.output_graph(nodes_dic, edges_dic, file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore)
         # create TN edges
         tn_nodes_dic, tn_edges_dic, tn_namespaces_set = graph_creator.meta_edges_to_graph(
             self.tn_edge_metadata, tn=True
