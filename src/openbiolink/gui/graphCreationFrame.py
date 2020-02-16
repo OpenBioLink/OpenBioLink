@@ -213,7 +213,7 @@ class GraphCreationFrame(tk.Frame):
             fmt = self.format.get()
             if fmt == "TSV":
                 forget_packing()
-                self.single_sep = tk.StringVar(value="t")
+                self.single_sep = tk.StringVar(value=None)
                 self.multi_sep = tk.StringVar(value=None)
                 # packing
                 separator1.pack(side="top", fill="x", pady=5, padx=5, anchor="w")
@@ -262,10 +262,10 @@ class GraphCreationFrame(tk.Frame):
         )
 
         # seperator of file/s
-        self.sep = tk.StringVar(value="t")
+        self.sep = tk.StringVar(value=None)
         sep_frame = tk.Frame(el)
         sep_label = tk.Label(sep_frame, text="separator:")
-        sep_info = tk.Label(sep_frame, text="(t for tab, n for newline)", font=self.controller.info_font)
+        sep_info = tk.Label(sep_frame, text="Defaults to tab.", font=self.controller.info_font)
         sep_value = tk.Entry(sep_frame, textvariable=self.sep, width=5)
 
         # qscore
