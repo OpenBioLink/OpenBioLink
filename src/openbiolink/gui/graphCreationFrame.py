@@ -210,7 +210,8 @@ class GraphCreationFrame(tk.Frame):
         self.format.set("TSV")
 
         def change_dropdown(*args):
-            if self.format.get() == "TSV":
+            fmt = self.format.get()
+            if fmt == "TSV":
                 forget_packing()
                 self.single_sep = tk.StringVar(value="t")
                 self.multi_sep = tk.StringVar(value=None)
@@ -224,7 +225,7 @@ class GraphCreationFrame(tk.Frame):
                 sep_value.pack(side="left", anchor="w")
                 sep_info.pack(side="left", anchor="w")
                 no_qscore_box.pack(side="top", padx=5, anchor="w")
-            elif self.format.get() == "RDF-N3":
+            elif fmt == "RDF-N3":
                 forget_packing()
                 self.single_sep = tk.StringVar(value=None)
                 self.multi_sep = tk.StringVar(value=None)
@@ -235,6 +236,8 @@ class GraphCreationFrame(tk.Frame):
                 multi_out_file_box.pack(side="top", padx=5, anchor="w")
                 separator2.pack(side="top", fill="x", pady=5, padx=5, anchor="w")
                 no_qscore_box.pack(side="top", padx=5, anchor="w")
+            else:
+                raise ValueError(f'Invalid format: {fmt}')
 
         self.format.trace("w", change_dropdown)
         format_selector_label = tk.Label(format_selection, text="Format:")
@@ -301,8 +304,8 @@ class GraphCreationFrame(tk.Frame):
                 messagebox.showerror("ERROR", "Please provide a separator for desired output file")
                 return
         self.controller.ARGS_LIST_GRAPH_CREATION.append("generate")
-        self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--output-format", self.format.get()])
-
+        if self.format.get():
+            self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--output-format", self.format.get()])
         if self.undir.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append("--undirected")
         if self.qual.get() != "None":
