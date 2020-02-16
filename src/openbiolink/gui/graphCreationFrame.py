@@ -277,7 +277,7 @@ class GraphCreationFrame(tk.Frame):
 
         warning = tk.Label(
             el,
-            text="Warning, currrently only N3 graph creation is supported.\n You can not perform a split or evaluation.",
+            text="Warning, currently only N3 graph creation is supported.\n You can not perform a split or evaluation.",
         )
 
         # packing
