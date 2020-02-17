@@ -1,7 +1,7 @@
 import json
 import os
 from abc import ABC, abstractmethod
-from typing import Mapping
+from typing import Mapping, Optional
 
 from openbiolink import globalConfig as globConst, graphProperties
 from openbiolink.edge import Edge
@@ -22,10 +22,11 @@ class OpenBioLinkGraphWriter(GraphWriter):
     """A writer class that abstracts the OpenBioLink RDF and TSV exporters."""
 
     def __init__(
-        self, multi_file, print_qscore, file_sep=None,
+        self, *, multi_file, print_qscore: bool, file_sep: Optional[str] = None,
     ):
         self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
         os.makedirs(self.graph_dir_path, exist_ok=True)
+
         self.multi_file = multi_file
         self.print_qscore = print_qscore
         if file_sep is None:
@@ -53,42 +54,31 @@ class OpenBioLinkGraphWriter(GraphWriter):
             out_file.writelines(list("\n".join(edges_list)))
 
     @abstractmethod
-    def output_graph(self, *args, **kwargs):
+    def output_graph(
+        self,
+        nodes: Optional[Mapping] = None,
+        edges: Optional[Mapping] = None,
+        prefix: Optional[str] = None,
+        node_edge_list: bool = True,
+    ):
         raise NotImplementedError
 
     def write(
         self, *, tp_nodes, tp_edges: Mapping[str, Edge], tp_namespaces, tn_nodes, tn_edges, tn_namespaces,
     ):
-        self.output_graph(
-            tp_nodes, tp_edges, file_sep=self.file_sep, multi_file=self.multi_file, print_qscore=self.print_qscore,
-        )
+        # create/output positive edges
+        self.output_graph(nodes=tp_nodes, edges=tp_edges)
         # create/output negative edges
+        self.output_graph(nodes=tn_nodes, edges=tn_edges, prefix="TN_")
 
-        self.output_graph(
-            tn_nodes,
-            tn_edges,
-            file_sep=self.file_sep,
-            multi_file=self.multi_file,
-            prefix="TN_",
-            print_qscore=self.print_qscore,
-        )
-
-        all_nodes_dic = tp_nodes.copy()
+        all_nodes = tp_nodes.copy()
         for key, values in tn_nodes.items():
-            if key in all_nodes_dic.keys():
-                temp = set(all_nodes_dic[key])
+            if key in all_nodes.keys():
+                temp = set(all_nodes[key])
                 temp.update(set(values))
                 values = temp
-            all_nodes_dic[key] = values
-        self.output_graph(
-            all_nodes_dic,
-            None,
-            file_sep=self.file_sep,
-            multi_file=False,
-            prefix="ALL_",
-            print_qscore=False,
-            node_edge_list=False,
-        )
+            all_nodes[key] = values
+        self.output_graph(nodes=all_nodes, edges=None, prefix="ALL_", node_edge_list=False)
 
         graphProperties.EDGE_TYPES = list(tp_edges.keys())
         graphProperties.NODE_TYPES = list(tp_nodes.keys())
