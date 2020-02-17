@@ -11,6 +11,13 @@ from openbiolink.graph_creation import graphCreationConfig as gcConst
 class GraphWriter(ABC):
     """A class that can write information to a directory."""
 
+    def __init__(self, *, directory: Optional[str] = None):
+        if directory is None:
+            self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
+        else:
+            self.graph_dir_path = directory
+        os.makedirs(self.graph_dir_path, exist_ok=True)
+
     @abstractmethod
     def write(
         self, *, tp_nodes, tp_edges: Mapping[str, Edge], tp_namespaces, tn_nodes, tn_edges, tn_namespaces,
@@ -21,12 +28,8 @@ class GraphWriter(ABC):
 class OpenBioLinkGraphWriter(GraphWriter):
     """A writer class that abstracts the OpenBioLink RDF and TSV exporters."""
 
-    def __init__(
-        self, *, multi_file, print_qscore: bool, file_sep: Optional[str] = None,
-    ):
-        self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
-        os.makedirs(self.graph_dir_path, exist_ok=True)
-
+    def __init__(self, *, multi_file, print_qscore: bool, file_sep: Optional[str] = None):
+        super().__init__()
         self.multi_file = multi_file
         self.print_qscore = print_qscore
         if file_sep is None:
