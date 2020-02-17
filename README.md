@@ -138,6 +138,47 @@ For a list of arguments, use:
 openbiolink train --help
 ```
 
+## File description
+### Graph Generation
+| Default file name | Description | Columns |
+|----------------------|--------------|-----------------|
+| ALL_nodes.csv | All nodes present in the graph |Node Id, Node type|
+| edges.csv | All true positive edges | Node 1 ID, Edge type, Node 2 ID, Quality score, Source |
+| edges_list.csv | List of edge types present in edges.csv | Edge type |
+|nodes.csv| All nodes present in edges.csv | Node ID, Node type |
+|nodes_list.csv| List of node types present in nodes.csv | Node type |
+|TN_edges.csv| All true negative edges | Node 1 ID, Edge type, Node 2 ID, Quality score, Source |
+|TN_edges_list.csv| List of edge types present in TN_edges.csv | Edge type |
+|TN_nodes.csv| All nodes present in TN_edges.csv | Node ID, Node type |
+|TN_nodes_list.csv| List of node types present in TN_nodes.csv | Node type |
+|ids_no_mapping.tsv| ID's of nodes that could not be mapped to other ontology systems | Node ID, Node type |
+|tn_ids_no_mapping.tsv| ID's of nodes that could not be mapped to other ontology systems | Node ID, Node type 
+|stats.txt| Statistics about edges.csv and nodes.csv | (See column headers of file) |
+|tn_stats.txt| Statistics about TN_edges.csv and TN_nodes.csv | (See column headers of file) |
+
+### Train-test split creation
+| Default file name | Description | Column descriptions |
+|----------------------|--------------|-----------------|
+| train_sample.csv| All samples from the training set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| test_sample.csv| All samples from the test set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| val_sample.csv| All samples from the validation set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| train_val_nodes.csv | All nodes present in the training and validation set combined | Node ID, Node type |
+| test_nodes.csv | All nodes present in the test set | Node ID, Node typ |
+| removed_test_nodes.csv | All nodes which got removed from the test set, due to not being present in the trainingset | Node ID |
+| removed_val_nodes.csv | All nodes which got removed from the validation set, due to not being present in the trainingset | Node ID |
+
+### CURIE's
+
+All node ID's in the graph are CURIES, meaning entities can be easily looked up online by concatenating https://identifiers.org/ with the ID, f.e.:
+
+|CURIE|Identifiers.org|
+|--|--|
+|GO:0006915|https://identifiers.org/GO:0006915|
+|REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
+
+Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
+We are aware of an issue where entities of the Human Phenotype Ontology are not resolved correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
+
 # Train-test-split creation
 
 ## Random split
@@ -228,14 +269,3 @@ The OpenBioLink benchmark files integrate data or identifiers from these sources
 All original data in the benchmark files created by the OpenBioLink project (not covered by the licenses of external data sources)  are released as [CC 0](https://creativecommons.org/publicdomain/zero/1.0/). 
 
 We offer the benchmark files as-is and make no representations or warranties of any kind concerning the benchmark files, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
-
-All nodes in the graph are CURIES, meaning entities can be easily looked up online by concatenating https://identifiers.org/ with the ID of the entity, f.e.:
-
-|CURIE|Identifiers.org|
-|--|--|
-|GO:0006915|https://identifiers.org/GO:0006915|
-|REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
-
-Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
-We are aware of an issue where entities of the Human Phenotype Ontology are not resolved correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
-
