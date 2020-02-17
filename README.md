@@ -84,61 +84,59 @@ the corresponding command line options are displayed.
 
 #### Calling via command line
 From folder src
-```bash
+```sh
 openbiolink -p WORKING_DIR_PATH [-action] [--options] ...
 ```
 
 **Action: Graph Creation**
-````
--g:    
-    --undir         Output-Graph should be undirectional (default = directional)
-    --qual          quality cutoff of the output-graph, options = [hq, mq, lq], (default = None -> all entries are used)
-    --no_interact   Disables interactive mode - existing files will be replaced (default = interactive)
-    --skip          Existing files will be skipped - in combination with --no_interact (default = replace)
-    --no_dl         No download is being performed (e.g. when local data is used)
-    --no_in         No input_files are created (e.g. when local data is used)
-    --no_create     No graph is created (e.g. when only in-files should be created)
-    --out_format [TSV|RDF-N3] [Format] [Sep]       Format of graph output, takes 3 arguments: 
-                                                   - The format of the graph files (Currently TSV or RDF-N3 are supported)
-                                                   - A list of file formats [s= single file, m=multiple files] 
-                                                   - A list of separators (only needed if TSV, e.g. t=tab, n=newline, or any other character)
-                                                   (default= TSV s t)
-    --no_qscore     The output files will contain no scores
-    --dbs [Cls]     custom source databases selection to be used, full class name, options --> see doc
-    --mes [Cls]     custom meta edges selection to be used, full class name, options --> see doc
-````
-**Action: Train-Test Split Generation**
- ````
--s
-    --edges Path        Path to edges.csv file (required with action -s
-    --tn_edges Path     Path to true_negatives_edges.csv file (required with action -s)
-    --nodes Path        Path to nodes.csv file (required with action -s)
-    --tts_sep [Sep]     Separator of edge, tn-edge and nodes file (e.g. t=tab, n=newline, 
-                        or any other character) (default=t)
-    --mode rand|time    Mode of train-test-set split, options=[rand, time], (default=rand)
-    --test_frac F       Fraction of test set as float (default= 0.2)
-    --crossval          Multiple train-validation-sets are generated
-    --val F             fraction of validation set as float (default= 0.2) or number of folds as int
-    --tmo_edges Path    Path to edges.csv file of t-minus-one graph (required for --mode time
-    --tmo_tn_edges Path     Path to true_negatives_edges.csv file of t-minus-one graph (required for --mode time)
-    --tmo_nodes Path        Path to nodes.csv file of t-minus-one graph (required for --mode time)
-````
-**Action: Training and Evaluation**
-````
--e
-    --model_cls Cls         class of the model to be trained/evaluated (required with -e)
-    --config Path           Path to the models config file
-    --no_train              No training is being performed, trained model id provided via --trained_model
-    --trained_model Path    Path to trained model (required with --no_train)
-    --no_eval               No evaluation is being performed, only training
-    --test Path             Path to test set file (required with -e)
-    --train Path            Path to trainings set file')
-    --eval_nodes Path       Path to the nodes file (required for ranked triples if no corrupted triples 
-                            file is provided and nodes cannot be taken from graph creation
-    --metrics [Metric]      list of evaluation metrics
-    --ks [K]                k's for hits@k metric (integer list)
-````
 
+To generate the default graph (with all edges of all qualifies) in the current directory, use:
+
+```sh
+openbiolink generate
+```
+
+For a list of arguments, use:
+
+```sh
+openbiolink generate --help
+```
+
+**Action: Train-Test Split Generation**
+
+To split the default graph using the random scheme, use:
+
+```sh
+openbiolink split rand --edges graph_files/edges.csv --tn-edges graph_files/TN_edges.csv --nodes graph_files/nodes.csv
+```
+
+For a list of arguments, use:
+
+```sh
+openbiolink split rand --help
+```
+
+Splitting can also be done by time with 
+
+```sh
+openbiolink split time
+```
+
+More documentation will be provided later.
+
+**Action: Training and Evaluation**
+
+To train on the split default graph, use:
+
+```shell script
+openbiolink train -m TransE_Pykeen -t train_test_data/train_sample.csv -s train_test_data/test_sample.csv
+```
+
+For a list of arguments, use:
+
+```sh
+openbiolink train --help
+```
 
 # Train-test-split creation
 

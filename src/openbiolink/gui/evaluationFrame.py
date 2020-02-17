@@ -295,36 +295,40 @@ class EvalFrame(tk.Frame):
                 messagebox.showerror("ERROR", "'Perform evaluation' is chosen, but no evaluation metrics are selected")
                 return
         self.controller.ARGS_LIST_EVAL = []
-        self.controller.ARGS_LIST_EVAL.append("-e")
-        self.controller.ARGS_LIST_EVAL.extend(["--model_cls", str(ModelTypes[self.select_model.get()].name)])
+        self.controller.ARGS_LIST_EVAL.append("train")
+        self.controller.ARGS_LIST_EVAL.extend(["-m", str(ModelTypes[self.select_model.get()].name)])
         if self.config_path.get():
             self.controller.ARGS_LIST_EVAL.extend(["--config", self.config_path.get()])
         if not self.train.get():
-            self.controller.ARGS_LIST_EVAL.append("--no_train")
-            self.controller.ARGS_LIST_EVAL.extend(["--trained_model", self.trained_model_path.get()])
+            self.controller.ARGS_LIST_EVAL.append("--no-train")
+            self.controller.ARGS_LIST_EVAL.extend(["--trained-model", self.trained_model_path.get()])
         else:
-            self.controller.ARGS_LIST_EVAL.extend(["--train", self.train_path.get()])
+            self.controller.ARGS_LIST_EVAL.extend(["--trainining-path", self.train_path.get()])
         if not self.evaluate.get():
-            self.controller.ARGS_LIST_EVAL.append("--no_eval")
+            self.controller.ARGS_LIST_EVAL.append("--no-eval")
         else:
             self.controller.ARGS_LIST_EVAL.extend(["--test", self.test_path.get()])
             ranked_metrics = [x.name for x, y in self.rank_metrics_dict.items() if y.get()]
+            for ranked_metric in ranked_metrics:
+                self.controller.ARGS_LIST_EVAL.extend(["--metrics", ranked_metric])
+
             threshold_metrics = [x.name for x, y in self.threshold_metrics_dict.items() if y.get()]
-            self.controller.ARGS_LIST_EVAL.append("--metrics")
-            self.controller.ARGS_LIST_EVAL.extend(ranked_metrics)
-            self.controller.ARGS_LIST_EVAL.extend(threshold_metrics)
+            for threshold_metric in threshold_metrics:
+                self.controller.ARGS_LIST_EVAL.extend(["--metrics", threshold_metric])
+
             if (
                 RankMetricType.HITS_AT_K in self.rank_metrics_dict.keys()
                 or RankMetricType.HITS_AT_K_UNFILTERED in self.rank_metrics_dict.keys()
             ):
-                self.controller.ARGS_LIST_EVAL.append("--ks")
                 import ast
 
-                self.controller.ARGS_LIST_EVAL.extend([str(x) for x in ast.literal_eval(self.ks.get())])
+                for x in ast.literal_eval(self.ks.get()):
+                    self.controller.ARGS_LIST_EVAL.extend(["--ks", str(x)])
+
             # if metrics
             if self.select_node_corrupted.get() == "nodes path":
-                self.controller.ARGS_LIST_EVAL.extend(["--eval_nodes", self.nodes_or_corr_path.get()])
-            elif self.select_node_corrupted.get() == "corrupted triples path":
-                self.controller.ARGS_LIST_EVAL.extend(["--corrupted", self.nodes_or_corr_path.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--eval-nodes", self.nodes_or_corr_path.get()])
+            # elif self.select_node_corrupted.get() == "corrupted triples path":
+            #    self.controller.ARGS_LIST_EVAL.extend(["--corrupted", self.nodes_or_corr_path.get()])
 
         self.controller.show_next_frame()

@@ -20,6 +20,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
+        "click",
         "numpy",
         "pandas>=0.23.4",
         "pykeen==0.0.26",

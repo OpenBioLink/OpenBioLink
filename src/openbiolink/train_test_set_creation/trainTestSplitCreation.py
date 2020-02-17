@@ -3,6 +3,7 @@ import math
 import os
 import random
 import sys
+from typing import Optional
 
 import numpy
 import pandas
@@ -58,58 +59,59 @@ class TrainTestSetCreation:
         graph_path,
         tn_graph_path,
         all_nodes_path,
-        sep="\t",
+        sep: Optional[str] = None,
         # meta_edge_triples=None, #nicetohave (1) split for subsample of edges, define own meta edges
         t_minus_one_graph_path=None,
         t_minus_one_tn_graph_path=None,
         t_minus_one_nodes_path=None,
     ):
-
-        if os.path.splitext(graph_path)[1] != ".csv":
+        if sep is None:
+            sep = "\t"
+        if _not_csv(graph_path):
             logging.error("graph path must be a csv file")
             sys.exit()
-        if os.path.splitext(tn_graph_path)[1] != ".csv":
+        if _not_csv(tn_graph_path):
             logging.error("tn_graph path must be a csv file")
             sys.exit()
-        if os.path.splitext(all_nodes_path)[1] != ".csv":
+        if _not_csv(all_nodes_path):
             logging.error("all_nodes path must be a csv file")
             sys.exit()
-        if t_minus_one_graph_path is not None and os.path.splitext(t_minus_one_graph_path)[1] != ".csv":
+        if t_minus_one_graph_path is not None and _not_csv(t_minus_one_graph_path):
             logging.error("t_minus_one_graph path must be a csv file")
             sys.exit()
-        if t_minus_one_tn_graph_path is not None and os.path.splitext(t_minus_one_tn_graph_path)[1] != ".csv":
+        if t_minus_one_tn_graph_path is not None and _not_csv(t_minus_one_tn_graph_path):
             logging.error("t_minus_one_tn_graph path must be a csv file")
             sys.exit()
-        if t_minus_one_nodes_path is not None and os.path.splitext(t_minus_one_nodes_path)[1] != ".csv":
+        if t_minus_one_nodes_path is not None and _not_csv(t_minus_one_nodes_path):
             logging.error("t_minus_one_nodes path must be a csv file")
             sys.exit()
 
         self.writer = TrainTestSetWriter()
-        with open(all_nodes_path) as file:
-            self.all_nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
-            self.all_nodes = self.all_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
+        logging.info(f"loading nodes from {all_nodes_path}")
+        self.all_nodes = pandas.read_csv(all_nodes_path, sep=sep, names=globalConfig.COL_NAMES_NODES)
+        self.all_nodes = self.all_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
 
-        with open(graph_path) as file:
-            self.all_tp = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
-            self.all_tp[globalConfig.VALUE_COL_NAME] = 1
-            self.all_tp = self.all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
+        logging.info(f"loading true edges from {graph_path}")
+        self.all_tp = pandas.read_csv(graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
+        self.all_tp[globalConfig.VALUE_COL_NAME] = 1
+        self.all_tp = self.all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
         self.tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
-        with open(tn_graph_path) as file:
-            self.all_tn = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
-            self.all_tn[globalConfig.VALUE_COL_NAME] = 0
-            self.all_tn = self.all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
+        logging.info(f"loading false edges from {tn_graph_path}")
+        self.all_tn = pandas.read_csv(tn_graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
+        self.all_tn[globalConfig.VALUE_COL_NAME] = 0
+        self.all_tn = self.all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
 
         self.tn_edgeTypes = list(self.all_tn[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
         self.meta_edges_dic = {}
 
         for metaEdge in utils.get_leaf_subclasses(meta.EdgeMetadata):
-            edgeType = str(metaEdge.EDGE_INMETA_CLASS.EDGE_TYPE)
-            node1Type = str(metaEdge.EDGE_INMETA_CLASS.NODE1_TYPE)
-            node2Type = str(metaEdge.EDGE_INMETA_CLASS.NODE2_TYPE)
-            if edgeType in self.tp_edgeTypes:
-                self.meta_edges_dic["%s_%s_%s" % (node1Type, edgeType, node2Type)] = (node1Type, edgeType, node2Type)
+            edge_type = str(metaEdge.EDGE_INMETA_CLASS.EDGE_TYPE)
+            node1_type = str(metaEdge.EDGE_INMETA_CLASS.NODE1_TYPE)
+            node2_type = str(metaEdge.EDGE_INMETA_CLASS.NODE2_TYPE)
+            if edge_type in self.tp_edgeTypes:
+                self.meta_edges_dic[f"{node1_type}_{edge_type}_{node2_type}"] = node1_type, edge_type, node2_type
 
         # nicetohave (2) check for transient onto edges
         # transitiv_IS_A_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp[ttsConst.EDGE_TYPE_COL_NAME] == 'IS_A'])
@@ -124,21 +126,22 @@ class TrainTestSetCreation:
         if not (bool(t_minus_one_graph_path) == bool(t_minus_one_tn_graph_path) == (bool(t_minus_one_nodes_path))):
             logging.error("either all three or none of these variables must be provided")
             sys.exit()
-        if t_minus_one_nodes_path and t_minus_one_graph_path and t_minus_one_tn_graph_path:
-            with open(t_minus_one_nodes_path) as file:
-                self.tmo_nodes = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_NODES)
-                self.tmo_nodes = self.tmo_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
+        if (
+            t_minus_one_nodes_path is not None
+            and t_minus_one_graph_path is not None
+            and t_minus_one_tn_graph_path is not None
+        ):
+            self.tmo_nodes = pandas.read_csv(t_minus_one_nodes_path, sep=sep, names=globalConfig.COL_NAMES_NODES)
+            self.tmo_nodes = self.tmo_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
 
-            with open(t_minus_one_graph_path) as file:
-                self.tmo_all_tp = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
-                self.tmo_all_tp[globalConfig.VALUE_COL_NAME] = 1
-                self.tmo_all_tp = self.tmo_all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
+            self.tmo_all_tp = pandas.read_csv(t_minus_one_graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
+            self.tmo_all_tp[globalConfig.VALUE_COL_NAME] = 1
+            self.tmo_all_tp = self.tmo_all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
             self.tmo_tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
-            with open(t_minus_one_tn_graph_path) as file:
-                self.tmo_all_tn = pandas.read_csv(file, sep=sep, names=globalConfig.COL_NAMES_EDGES)
-                self.tmo_all_tn[globalConfig.VALUE_COL_NAME] = 0
-                self.tmo_all_tn = self.tmo_all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
+            self.tmo_all_tn = pandas.read_csv(t_minus_one_tn_graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
+            self.tmo_all_tn[globalConfig.VALUE_COL_NAME] = 0
+            self.tmo_all_tn = self.tmo_all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
             self.tmo_tn_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
 
     def random_edge_split(self, test_frac=None, val=None, crossval=None):
@@ -189,8 +192,8 @@ class TrainTestSetCreation:
                 )
                 if new_val_nodes:  # nicetohave (6)
                     logging.info(
-                        "Validation set %d contains nodes, that are not present in the trainings-set. These edges will be dropped."
-                        % i
+                        f"Validation set {i} contains nodes that are"
+                        f" not present in the training set. These edges will be dropped."
                     )
                     val_set = self.remove_edges_with_nodes(val_set, new_val_nodes)
                     train_val_set_tuples[i] = (train_set, val_set)
@@ -219,7 +222,6 @@ class TrainTestSetCreation:
         return train_val_set_tuples, test_set
 
     def time_slice_split(self):
-
         # nicetohave (4) like that, neg samples are restricted to edge_types appearing in test_sample --> good idea?
         # nicetohave (4) idea: calculate nodes like above, then tmo_nodes= test_nodes --> mehr auswahl bei neg examples
         tmo_positive_samples = self.tmo_all_tp
@@ -252,7 +254,7 @@ class TrainTestSetCreation:
         )
         if new_test_nodes:
             logging.info(
-                "The test set contains nodes, that are not present in the trainings-set. These edges will be removed."
+                "The test set contains nodes that are not present in the trainings-set. These edges will be removed."
             )  # nicetohave (6)
             test_set = self.remove_edges_with_nodes(test_set, new_test_nodes)
 
@@ -273,7 +275,7 @@ class TrainTestSetCreation:
             nodes_in_test_set=nodes_in_test_set,
             new_test_nodes=new_test_nodes,
         )
-        return (train_val_set_tuples, test_set)
+        return train_val_set_tuples, test_set
 
         # niceToHave (5) slice size?
         # extra nur für diff? --> eig nciht --> eig schon weil nur pos
@@ -341,3 +343,7 @@ class TrainTestSetCreation:
             folds.append((df.loc[train_indices], df.loc[val_indices]))
 
         return folds
+
+
+def _not_csv(f):
+    return os.path.splitext(f)[1] not in {".csv", ".tsv"}

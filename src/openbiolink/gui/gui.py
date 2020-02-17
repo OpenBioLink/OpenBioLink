@@ -51,14 +51,6 @@ class BimegGui(tk.Tk):
 
         self.show_frame("StartPage")
 
-    def get_args(self):
-        arg_list = []
-        arg_list.extend(self.ARGS_LIST_GLOBAL)
-        arg_list.extend(self.ARGS_LIST_GRAPH_CREATION)
-        arg_list.extend(self.ARGS_LIST_TRAIN_TEST_SPLIT)
-        arg_list.extend(self.ARGS_LIST_EVAL)
-        return arg_list
-
     def set_selected_frames(self, selected_frames):
         self.selected_frames = selected_frames + self.selected_frames
 
@@ -90,8 +82,17 @@ class BimegGui(tk.Tk):
         """ start script and close gui"""
         if messagebox.askokcancel("Start", "Do you want to start now?"):
             self.show_frame("ConsoleFrame")
-            arg_list = self.get_args()
-            thread = threading.Thread(target=openBioLink.main, args=[arg_list], daemon=True)
+
+            def _main(*args_lists):
+                for arg_list in args_lists:
+                    openBioLink.main(arg_list)
+
+            args = [
+                list(self.ARGS_LIST_GLOBAL) + list(args)
+                for args in (self.ARGS_LIST_GRAPH_CREATION, self.ARGS_LIST_TRAIN_TEST_SPLIT, self.ARGS_LIST_EVAL)
+                if args
+            ]
+            thread = threading.Thread(target=_main, args=args, daemon=True)
             thread.start()
 
             # fixme start detached

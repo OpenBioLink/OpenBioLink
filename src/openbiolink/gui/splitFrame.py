@@ -230,29 +230,45 @@ class SplitFrame(tk.Frame):
 
     def next_page(self):
         self.controller.ARGS_LIST_TRAIN_TEST_SPLIT = []
-        self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.append("-s")
-        self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--edges", self.edge_path.get()])
-        self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--tn_edges", self.tn_path.get()])
-        self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--nodes", self.nodes_path.get()])
 
-        if self.mode.get() == "time":
+        mode = self.mode.get()
+
+        self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+            [
+                "split",
+                mode,
+                "--edges",
+                self.edge_path.get(),
+                "--tn_edges",
+                self.tn_path.get(),
+                "--nodes",
+                self.nodes_path.get(),
+            ]
+        )
+
+        if mode == "time":
             if (self.tmo_edge_path.get() == "") or (self.tmo_tn_path.get() == "") or (self.tmo_nodes_path.get() == ""):
                 messagebox.showerror("ERROR", "Please provide all three t-minus one paths.")
                 return
-            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--mode", "time"])
-            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--tmo_edges", self.tmo_edge_path.get()])
-            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--tmo_tn_edges", self.tmo_tn_path.get()])
-            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--tmo_nodes", self.tmo_nodes_path.get()])
-
-        elif self.mode.get() == "rand":
+            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+                [
+                    "--tmo-edges",
+                    self.tmo_edge_path.get(),
+                    "--tmo-tn-edges",
+                    self.tmo_tn_path.get(),
+                    "--tmo-nodes",
+                    self.tmo_nodes_path.get(),
+                ]
+            )
+        elif mode == "rand":
             if self.test_frac.get() == "":
                 messagebox.showerror("ERROR", "Please provide a test set fraction.")
                 return
-            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--mode", "rand"])
-            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--test_frac", self.test_frac.get()])
+            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--test-frac", self.test_frac.get()])
 
             if self.crossval.get():
-                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.append("--crossval")  # todo crossval
-                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--val", self.folds.get()])
+                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+                    ["--crossval", "--val", self.folds.get(),]  # todo crossval
+                )
 
         self.controller.show_next_frame()

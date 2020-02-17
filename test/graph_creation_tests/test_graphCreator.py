@@ -1,18 +1,14 @@
 import os
 import unittest
-import sys
 
-sys.path.append(os.path.abspath("src/openbiolink"))
-
-import globalConfig
-import graphProperties as graphProp
-from src.openbiolink.graph_creation.graphCreation import Graph_Creation
-from src.openbiolink.graph_creation.metadata_db_file import *
+import openbiolink.graphProperties as graphProp
+from openbiolink import globalConfig
+from openbiolink.graph_creation.graphCreation import Graph_Creation
+from openbiolink.graph_creation.metadata_db_file import *
 
 
 class TestGraphCreation(unittest.TestCase):
     def test_graph_creation(self):
-
         # creates test graph from test o_files and compares against true reference test graph
         # tests directed and undirected version of graph (and TN-graph)
         # well as the output into a single as well as in separate files
