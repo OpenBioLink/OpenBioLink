@@ -23,6 +23,7 @@ from openbiolink.gui.tqdmbuf import TqdmBuffer
 FORMATS = {
     "TSV": GraphTSVWriter,
     "RDF-N3": GraphRDFWriter,
+    "BEL": GraphBELGraphWriter,
 }
 
 
@@ -149,52 +150,34 @@ class Graph_Creation:
     def create_graph(self, format=None, file_sep=None, multi_file=None, print_qscore=True):
         logging.info("## Start creating graph ##")
         graph_creator = GraphCreator()
+        # create/output positive graph
+        tp_nodes, tp_edges, tp_namespaces = graph_creator.meta_edges_to_graph(
+            edge_metadata_list=self.edge_metadata, tn=False,
+        )
+        tn_nodes, tn_edges, tn_namespaces = graph_creator.meta_edges_to_graph(
+            edge_metadata_list=self.tn_edge_metadata, tn=True,
+        )
+
+        logging.info("## Start writing graph ##")
         if format is None:
-            gw = GraphTSVWriter()
-        elif format.upper() not in FORMATS:
-            raise ValueError(f"Invalid format: {format}")
+            format = "tsv"
+        format = format.upper()
+
+        if format == "TSV":
+            graph_writer = GraphTSVWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore,)
+        elif format == "RDF-N3":
+            graph_writer = GraphRDFWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore,)
         else:
-            gw = FORMATS[format.upper()]()
+            raise ValueError(f"Invalid format: {format}")
 
-        if file_sep is None:
-            file_sep = "\t"
-
-        # create graph
-        nodes_dic, edges_dic, namespaces_set = graph_creator.meta_edges_to_graph(self.edge_metadata)
-        gw.output_graph(nodes_dic, edges_dic, file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore)
-        # create TN edges
-        tn_nodes_dic, tn_edges_dic, tn_namespaces_set = graph_creator.meta_edges_to_graph(
-            self.tn_edge_metadata, tn=True
+        graph_writer.write(
+            tp_nodes=tp_nodes,
+            tp_edges=tp_edges,
+            tp_namespaces=tp_namespaces,
+            tn_nodes=tn_nodes,
+            tn_edges=tn_edges,
+            tn_namespaces=tn_namespaces,
         )
-        gw.output_graph(
-            tn_nodes_dic,
-            tn_edges_dic,
-            file_sep=file_sep,
-            multi_file=multi_file,
-            prefix="TN_",
-            print_qscore=print_qscore,
-        )
-        all_nodes_dic = nodes_dic.copy()
-        for key, values in tn_nodes_dic.items():
-            if key in all_nodes_dic.keys():
-                temp = set(all_nodes_dic[key])
-                temp.update(set(values))
-                values = temp
-            all_nodes_dic[key] = values
-        gw.output_graph(
-            all_nodes_dic,
-            None,
-            file_sep=file_sep,
-            multi_file=False,
-            prefix="ALL_",
-            print_qscore=False,
-            node_edge_list=False,
-        )
-        graphProp.EDGE_TYPES = list(edges_dic.keys())
-        graphProp.NODE_TYPES = list(nodes_dic.keys())
-        graphProp.NODE_NAMESPACES = list(namespaces_set)
-
-        gw.output_graph_props()
 
     # ----------- helper init functions ----------
 

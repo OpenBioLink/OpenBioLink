@@ -1,29 +1,14 @@
-import json
 import os
 
-import openbiolink.graphProperties as graphProp
-from openbiolink import globalConfig as globConst
 from openbiolink.graph_creation import graphCreationConfig as gcConst
+from openbiolink.graph_creation.graph_writer.base import OpenBioLinkGraphWriter
 
 
-class GraphRDFWriter:
+class GraphRDFWriter(OpenBioLinkGraphWriter):
     identifiersURL = "https://identifiers.org/"
 
-    def __init__(self):
-        self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
-        os.makedirs(self.graph_dir_path, exist_ok=True)
-
-    def output_graph_props(self):
-        graph_prop_list = [item for item in dir(graphProp) if not item.startswith("__")]
-        graph_prop_dict = {var: getattr(graphProp, var) for var in graph_prop_list}
-        with open(os.path.join(self.graph_dir_path, "graph_props.json"), "w") as json_file:
-            for k, v in graph_prop_dict.items():
-                if not type(v) == str:
-                    graph_prop_dict[k] = str(v)
-            json.dump(graph_prop_dict, json_file, indent=4)
-
-    @staticmethod
     def output_graph(
+        self,
         nodes_dic: dict = None,
         edges_dic: dict = None,
         file_sep=None,
@@ -40,16 +25,16 @@ class GraphRDFWriter:
 
         # separate files
         if multi_file:
-            GraphRDFWriter().output_graph_in_multi_files(prefix, file_sep, nodes_dic, edges_dic, qscore=print_qscore)
+            self.output_graph_in_multi_files(prefix, file_sep, nodes_dic, edges_dic, qscore=print_qscore)
         # one file
         else:
-            GraphRDFWriter().output_graph_in_single_file(
+            self.output_graph_in_single_file(
                 prefix=prefix, file_sep=file_sep, nodes_dic=nodes_dic, edges_dic=edges_dic, qscore=print_qscore
             )
 
         # lists of all nodes and metaedges
         if node_edge_list:
-            GraphRDFWriter().write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
+            self.write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
 
         # niceToHave (8) adjacency matrix
         # key, value = nodes_dic
@@ -142,10 +127,3 @@ class GraphRDFWriter:
                             + edge.sourcedb
                             + "\n"
                         )
-
-    def write_node_and_edge_list(self, prefix, nodes_list, edges_list):
-        with open(os.path.join(self.graph_dir_path, prefix + "nodes_list.csv"), "w") as out_file:
-            out_file.writelines(list("\n".join(nodes_list)))
-
-        with open(os.path.join(self.graph_dir_path, prefix + "edges_list.csv"), "w") as out_file:
-            out_file.writelines(list("\n".join(edges_list)))
