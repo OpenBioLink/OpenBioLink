@@ -23,7 +23,6 @@ from openbiolink.gui.tqdmbuf import TqdmBuffer
 FORMATS = {
     "TSV": GraphTSVWriter,
     "RDF-N3": GraphRDFWriter,
-    "BEL": GraphBELGraphWriter,
 }
 
 
@@ -164,9 +163,9 @@ class Graph_Creation:
         format = format.upper()
 
         if format == "TSV":
-            graph_writer = GraphTSVWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore,)
+            graph_writer = GraphTSVWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore)
         elif format == "RDF-N3":
-            graph_writer = GraphRDFWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore,)
+            graph_writer = GraphRDFWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore)
         else:
             raise ValueError(f"Invalid format: {format}")
 
