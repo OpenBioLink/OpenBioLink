@@ -11,7 +11,7 @@ from openbiolink.edge import Edge
 from openbiolink.graph_creation.graph_writer.base import GraphWriter
 
 __all__ = [
-    'GraphPickleWriter',
+    "GraphPickleWriter",
 ]
 
 

@@ -166,7 +166,7 @@ class Graph_Creation:
             graph_writer = GraphTSVWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore)
         elif format == "RDF-N3":
             graph_writer = GraphRDFWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore)
-        elif format == 'PICKLE':
+        elif format == "PICKLE":
             graph_writer = GraphPickleWriter()
         else:
             raise ValueError(f"Invalid format: {format}")
