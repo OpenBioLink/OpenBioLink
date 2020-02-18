@@ -1,101 +1,67 @@
 import csv
-import json
 import os
+from typing import Mapping
 
-import openbiolink.graphProperties as graphProp
-from openbiolink import globalConfig as globConst
 from openbiolink.graph_creation import graphCreationConfig as gcConst
+from openbiolink.graph_creation.graph_writer.base import OpenBioLinkGraphWriter
 
 
-class GraphTSVWriter:
-    def __init__(self):
-        self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)
-        os.makedirs(self.graph_dir_path, exist_ok=True)
-
-    def output_graph_props(self):
-        graph_prop_list = [item for item in dir(graphProp) if not item.startswith("__")]
-        graph_prop_dict = {var: getattr(graphProp, var) for var in graph_prop_list}
-        with open(os.path.join(self.graph_dir_path, "graph_props.json"), "w") as json_file:
-            for k, v in graph_prop_dict.items():
-                if not type(v) == str:
-                    graph_prop_dict[k] = str(v)
-            json.dump(graph_prop_dict, json_file, indent=4)
-
-    @staticmethod
+class GraphTSVWriter(OpenBioLinkGraphWriter):
     def output_graph(
-        nodes_dic: dict = None,
-        edges_dic: dict = None,
-        file_sep=None,
-        multi_file=None,
-        prefix=None,
-        print_qscore=True,
-        node_edge_list=True,
+        self, nodes: Mapping = None, edges: Mapping = None, prefix=None, node_edge_list=True,
     ):
-        if not prefix:
+        if prefix is None:
             prefix = ""
 
-        if file_sep is None:
-            file_sep = ","
-
         # separate files
-        if multi_file:
-            GraphTSVWriter().output_graph_in_multi_files(prefix, file_sep, nodes_dic, edges_dic, qscore=print_qscore)
+        if self.multi_file:
+            self._output_graph_in_multi_files(prefix=prefix, nodes=nodes, edges=edges)
         # one file
         else:
-            GraphTSVWriter().output_graph_in_single_file(
-                prefix=prefix, file_sep=file_sep, nodes_dic=nodes_dic, edges_dic=edges_dic, qscore=print_qscore
-            )
+            self._output_graph_in_single_file(prefix=prefix, nodes=nodes, edges=edges)
 
         # lists of all nodes and metaedges
         if node_edge_list:
-            GraphTSVWriter().write_node_and_edge_list(prefix, nodes_dic.keys(), edges_dic.keys())
+            self.write_node_and_edge_list(prefix, nodes.keys(), edges.keys())
 
         # niceToHave (8) adjacency matrix
         # key, value = nodes_dic
         # d = {x: i for i, x in enumerate(value)}
         # niceToHave (8) outputformat for graph DB
 
-    def output_graph_in_single_file(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
-        if nodes_dic is not None:
+    def _output_graph_in_single_file(self, *, prefix, nodes, edges):
+        if nodes is not None:
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + ".csv"), "w") as out_file:
-                writer = csv.writer(out_file, delimiter=file_sep, lineterminator="\n")
-                for key, value in nodes_dic.items():
+                writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
+                for key, value in nodes.items():
                     for node in value:
                         writer.writerow(list(node))
-        if edges_dic is not None:
+        if edges is not None:
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + ".csv"), "w") as out_file:
-                writer = csv.writer(out_file, delimiter=file_sep, lineterminator="\n")
-                for key, value in edges_dic.items():
+                writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
+                for key, value in edges.items():
                     for edge in value:
-                        if qscore:
+                        if self.print_qscore:
                             writer.writerow(list(edge))
                         else:
                             writer.writerow(edge.to_sub_rel_obj_list())
 
-    def output_graph_in_multi_files(self, prefix, file_sep, nodes_dic, edges_dic, qscore):
+    def _output_graph_in_multi_files(self, *, prefix, nodes_dic, edges_dic):
         # write nodes
         for key, value in nodes_dic.items():
-            with open(
-                os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + "_" + key + ".csv"), "w"
-            ) as out_file:
-                writer = csv.writer(out_file, delimiter=file_sep, lineterminator="\n")
+            nodes_path = os.path.join(self.graph_dir_path, f"{prefix}{gcConst.NODES_FILE_PREFIX}_{key}.csv")
+            with open(nodes_path, "w") as out_file:
+                writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
                 for node in value:
                     writer.writerow(list(node))
+
         # write edges
         for key, value in edges_dic.items():
-            with open(
-                os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + "_" + key + ".csv"), "w"
-            ) as out_file:
-                writer = csv.writer(out_file, delimiter=file_sep, lineterminator="\n")
+            edges_path = os.path.join(self.graph_dir_path, f"{prefix}{gcConst.EDGES_FILE_PREFIX}_{key}.csv")
+            with open(edges_path, "w") as out_file:
+                writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
                 for edge in value:
-                    if qscore:
+                    if self.print_qscore:
                         writer.writerow(list(edge))
                     else:
                         writer.writerow(edge.to_sub_rel_obj_list())
-
-    def write_node_and_edge_list(self, prefix, nodes_list, edges_list):
-        with open(os.path.join(self.graph_dir_path, prefix + "nodes_list.csv"), "w") as out_file:
-            out_file.writelines(list("\n".join(nodes_list)))
-
-        with open(os.path.join(self.graph_dir_path, prefix + "edges_list.csv"), "w") as out_file:
-            out_file.writelines(list("\n".join(edges_list)))

@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 
 
 class QualityType(Enum):
@@ -7,12 +8,14 @@ class QualityType(Enum):
     LQ = 2
 
     @classmethod
-    def get_quality_type(cls, qual: str) -> "QualityType":
-        if qual == "hq":
+    def get_quality_type(cls, qual: Optional[str]) -> Optional["QualityType"]:
+        if qual is None:
+            return None
+        qual = qual.lower()
+        if qual in {"hq", "high", "h"}:
             return cls.HQ
-        elif qual == "mq":
+        if qual == {"mq", "medium", "m"}:
             return cls.MQ
-        elif qual == "lq":
+        if qual == {"lq", "low", "l"}:
             return cls.LQ
-        else:
-            raise ValueError(f"Invalid QualityType: {qual}")
+        raise ValueError(f"Invalid QualityType: {qual}")
