@@ -48,20 +48,22 @@ class Sampler:
 
 
 class NegativeSampler(Sampler):
-    def __init__(self, meta_edges_dic, tn_edgeTypes, all_tn, nodes):
+
+    def __init__(self, meta_edges_dic, tn_edgeTypes, all_tn, nodes, identifier2type):
         super().__init__(meta_edges_dic, nodes)
         self.meta_edges_dic = meta_edges_dic
         self.tn_edgeTypes = tn_edgeTypes
         self.all_tn = all_tn
+        self.identifier2type = identifier2type
         self.all_tn = self.add_edge_type_key_column(all_tn)
 
     def add_edge_type_key_column(self, df):
         df[ttsConst.EDGE_TYPE_KEY_NAME] = (
-            df[globConst.NODE1_ID_COL_NAME].str.split("_").map(lambda x: x[0])
+            df[globConst.NODE1_ID_COL_NAME].str.split(":").map(lambda x: self.identifier2type[x[0]])
             + "_"
             + df[globConst.EDGE_TYPE_COL_NAME]
             + "_"
-            + df[globConst.NODE2_ID_COL_NAME].str.split("_").map(lambda x: x[0])
+            + df[globConst.NODE2_ID_COL_NAME].str.split(":").map(lambda x: self.identifier2type[x[0]])
         )
         return df
 

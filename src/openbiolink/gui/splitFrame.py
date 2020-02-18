@@ -239,7 +239,7 @@ class SplitFrame(tk.Frame):
                 mode,
                 "--edges",
                 self.edge_path.get(),
-                "--tn_edges",
+                "--tn-edges",
                 self.tn_path.get(),
                 "--nodes",
                 self.nodes_path.get(),

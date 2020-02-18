@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from abc import ABC, abstractmethod
 from typing import Mapping, Optional
@@ -70,8 +71,10 @@ class OpenBioLinkGraphWriter(GraphWriter):
         self, *, tp_nodes, tp_edges: Mapping[str, Edge], tp_namespaces, tn_nodes, tn_edges, tn_namespaces,
     ):
         # create/output positive edges
+        logging.info("Creating TP files...")
         self.output_graph(nodes=tp_nodes, edges=tp_edges)
         # create/output negative edges
+        logging.info("Creating TN files...")
         self.output_graph(nodes=tn_nodes, edges=tn_edges, prefix="TN_")
 
         all_nodes = tp_nodes.copy()
@@ -81,9 +84,32 @@ class OpenBioLinkGraphWriter(GraphWriter):
                 temp.update(set(values))
                 values = temp
             all_nodes[key] = values
+        logging.info("Creating all nodes file...")
         self.output_graph(nodes=all_nodes, edges=None, prefix="ALL_", node_edge_list=False)
 
         graphProperties.EDGE_TYPES = list(tp_edges.keys())
         graphProperties.NODE_TYPES = list(tp_nodes.keys())
         graphProperties.NODE_NAMESPACES = list(tp_namespaces)
         self.output_graph_props()
+
+    @staticmethod
+    def sort_nodes(nodes):
+        # sort order id -> nodeType
+        sorted_nodes = set()
+        for key in nodes:
+            sorted_nodes.update(nodes[key])
+        sorted_nodes = sorted(sorted_nodes, key=lambda x: str(x.type))
+        sorted_nodes = sorted(sorted_nodes, key=lambda x: str(x.type) + "_" + x.id)
+        return sorted_nodes
+
+    @staticmethod
+    def sort_edges(edges):
+        # sort order id1 -> edgeType -> id2 -> qscore
+        sorted_edges = set()
+        for key in edges:
+            sorted_edges.update(edges[key])
+        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.qScore))
+        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.nodeType2) + "_" + x.id2)
+        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.type))
+        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.nodeType1) + "_" + x.id1)
+        return sorted_edges

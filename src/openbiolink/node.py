@@ -17,4 +17,4 @@ class Node:
         return hash((self.id, self.type))
 
     def __iter__(self):
-        return iter([self.id, self.type])
+        return iter([self.namespace.resolve(self.id), self.type])
