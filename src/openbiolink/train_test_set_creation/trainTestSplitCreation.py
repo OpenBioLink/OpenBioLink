@@ -199,7 +199,7 @@ class TrainTestSetCreation:
         # nicetohave (4) idea: calculate nodes like above, then tmo_nodes= test_nodes --> mehr auswahl bei neg examples
         tmo_positive_samples = self.tmo_all_tp
         tmo_negative_sampler = NegativeSampler(
-            self.meta_edges_dic, self.tmo_tn_edgeTypes, self.tmo_all_tn, self.tmo_nodes
+            self.meta_edges_dic, self.tmo_tn_edgeTypes, self.tmo_all_tn, self.tmo_nodes, self.identifier2type
         )
         tmo_negative_samples = tmo_negative_sampler.generate_random_neg_samples(tmo_positive_samples)
         # todo remove not consistent edges
@@ -215,7 +215,7 @@ class TrainTestSetCreation:
         if not vanished_positive_samples.empty or not vanished_tn_samples.empty:
             logging.info("Some edges existing in the first time slice are no longer present in the second one")
             self.writer.print_vanished_edges(vanished_positive_samples.append(vanished_tn_samples))
-        test_negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, test_tn_samples, self.all_nodes)
+        test_negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, test_tn_samples, self.all_nodes, self.identifier2type)
         test_negative_samples = test_negative_sampler.generate_random_neg_samples(test_positive_samples)
         test_negative_samples[globalConfig.VALUE_COL_NAME] = 0
 

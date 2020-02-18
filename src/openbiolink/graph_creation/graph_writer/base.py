@@ -108,8 +108,8 @@ class OpenBioLinkGraphWriter(GraphWriter):
         sorted_edges = set()
         for key in edges:
             sorted_edges.update(edges[key])
-        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.qScore))
-        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.nodeType2) + "_" + x.id2)
+        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.qscore))
+        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.node2.type) + "_" + x.node2.id)
         sorted_edges = sorted(sorted_edges, key=lambda x: str(x.type))
-        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.nodeType1) + "_" + x.id1)
+        sorted_edges = sorted(sorted_edges, key=lambda x: str(x.node1.type) + "_" + x.node1.id)
         return sorted_edges

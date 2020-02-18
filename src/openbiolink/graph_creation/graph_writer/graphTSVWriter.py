@@ -43,9 +43,9 @@ class GraphTSVWriter(OpenBioLinkGraphWriter):
                 for edge in sorted_edges:
                     writer.writerow(edge.to_list(self.print_qscore))
 
-    def _output_graph_in_multi_files(self, *, prefix, nodes_dic, edges_dic):
+    def _output_graph_in_multi_files(self, *, prefix, nodes, edges):
         # write nodes
-        for key, value in nodes_dic.items():
+        for key, value in nodes.items():
             nodes_path = os.path.join(self.graph_dir_path, f"{prefix}{gcConst.NODES_FILE_PREFIX}_{key}.csv")
             with open(nodes_path, "w") as out_file:
                 writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
@@ -53,7 +53,7 @@ class GraphTSVWriter(OpenBioLinkGraphWriter):
                     writer.writerow(list(node))
 
         # write edges
-        for key, value in edges_dic.items():
+        for key, value in edges.items():
             edges_path = os.path.join(self.graph_dir_path, f"{prefix}{gcConst.EDGES_FILE_PREFIX}_{key}.csv")
             with open(edges_path, "w") as out_file:
                 writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")

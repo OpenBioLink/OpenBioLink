@@ -42,14 +42,14 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
                         out_file.write(
                             "<"
                             + self.identifiersURL
-                            + edge.namespace1.resolve(edge.id1)
+                            + edge.resolve(edge.node1)
                             + "> <#"
                             + str(edge.type)
                             + "> <"
                             + self.identifiersURL
-                            + edge.namespace2.resolve(edge.id2)
+                            + edge.resolve(edge.node2)
                             + "> . #quality:"
-                            + str(edge.qScore)
+                            + str(edge.qscore)
                             + " source:"
                             + edge.sourcedb
                             + "\n"
@@ -58,12 +58,12 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
                         out_file.write(
                             "<"
                             + self.identifiersURL
-                            + edge.namespace1.resolve(edge.id1)
+                            + edge.resolve(edge.node1)
                             + "> <#"
                             + str(edge.type)
                             + "> <"
                             + self.identifiersURL
-                            + edge.namespace2.resolve(edge.id2)
+                            + edge.resolve(edge.node2)
                             + "> . #source:"
                             + edge.sourcedb
                             + "\n"
@@ -88,14 +88,14 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
                         out_file.write(
                             "<"
                             + self.identifiersURL
-                            + edge.id1
+                            + edge.resolve(edge.node1)
                             + "> <#"
                             + str(edge.type)
                             + "> <"
                             + self.identifiersURL
-                            + edge.id2
+                            + edge.resolve(edge.node2)
                             + "> . #quality:"
-                            + str(edge.qScore)
+                            + str(edge.qscore)
                             + " source:"
                             + edge.sourcedb
                             + "\n"
@@ -104,13 +104,13 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
                         out_file.write(
                             "<"
                             + self.identifiersURL
-                            + edge.id1
+                            + edge.resolve(edge.node1)
                             + "> <#"
                             + self.identifiersURL
                             + str(edge.type)
                             + "> <"
                             + self.identifiersURL
-                            + edge.id2
+                            + edge.resolve(edge.node2)
                             + "> . #source:"
                             + edge.sourcedb
                             + "\n"
