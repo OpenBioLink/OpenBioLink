@@ -23,6 +23,8 @@ from openbiolink.gui.tqdmbuf import TqdmBuffer
 FORMATS = {
     "TSV": GraphTSVWriter,
     "RDF-N3": GraphRDFWriter,
+    "PICKLE": GraphPickleWriter,
+    "BEL": GraphBELWriter,
 }
 
 
@@ -168,6 +170,8 @@ class Graph_Creation:
             graph_writer = GraphRDFWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore)
         elif format == "PICKLE":
             graph_writer = GraphPickleWriter()
+        elif format == "BEL":
+            graph_writer = GraphBELWriter()
         else:
             raise ValueError(f"Invalid format: {format}")
 
