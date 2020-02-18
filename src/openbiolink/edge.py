@@ -26,15 +26,11 @@ class Edge:
 
     def to_list(self, include_qscore):
         if include_qscore:
-            return iter([self.resolve(self.node1), self.type,
-                         self.resolve(self.node2), self.qscore, self.sourcedb])
+            return iter([self.node1.resolved_id, self.type,
+                         self.node2.resolved_id, self.qscore, self.sourcedb])
         else:
-            return iter([self.resolve(self.node1), self.type,
-                         self.resolve(self.node2), "", self.sourcedb])
+            return iter([self.node1.resolved_id, self.type,
+                         self.node2.resolved_id, "", self.sourcedb])
 
     def to_sub_rel_obj_list(self):
         return iter([self.node1.id, self.type, self.node2.id, self.sourcedb])
-
-    @staticmethod
-    def resolve(node):
-        return node.namespace.resolve(node.id)

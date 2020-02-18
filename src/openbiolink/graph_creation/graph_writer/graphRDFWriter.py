@@ -33,7 +33,7 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
             sorted_nodes = self.sort_nodes(nodes)
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + ".N3"), "w") as out_file:
                 for node in sorted_nodes:
-                    out_file.write("<" + self.identifiersURL + node.namespace.resolve(node.id) + "> a #" + str(node.type) + " .\n")
+                    out_file.write("<" + self.identifiersURL + node.resolved_id + "> a #" + str(node.type) + " .\n")
         if edges is not None:
             sorted_edges = self.sort_edges(edges)
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + ".N3"), "w") as out_file:
@@ -42,12 +42,12 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
                         out_file.write(
                             "<"
                             + self.identifiersURL
-                            + edge.resolve(edge.node1)
+                            + edge.node1.resolved_id
                             + "> <#"
                             + str(edge.type)
                             + "> <"
                             + self.identifiersURL
-                            + edge.resolve(edge.node2)
+                            + edge.node2.resolved_id
                             + "> . #quality:"
                             + str(edge.qscore)
                             + " source:"
@@ -58,12 +58,12 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
                         out_file.write(
                             "<"
                             + self.identifiersURL
-                            + edge.resolve(edge.node1)
+                            + edge.node1.resolved_id
                             + "> <#"
                             + str(edge.type)
                             + "> <"
                             + self.identifiersURL
-                            + edge.resolve(edge.node2)
+                            + edge.node2.resolved_id
                             + "> . #source:"
                             + edge.sourcedb
                             + "\n"
@@ -88,12 +88,12 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
                         out_file.write(
                             "<"
                             + self.identifiersURL
-                            + edge.resolve(edge.node1)
+                            + edge.node1.resolved_id
                             + "> <#"
                             + str(edge.type)
                             + "> <"
                             + self.identifiersURL
-                            + edge.resolve(edge.node2)
+                            + edge.node2.resolved_id
                             + "> . #quality:"
                             + str(edge.qscore)
                             + " source:"
@@ -104,13 +104,13 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
                         out_file.write(
                             "<"
                             + self.identifiersURL
-                            + edge.resolve(edge.node1)
+                            + edge.node1.resolved_id
                             + "> <#"
                             + self.identifiersURL
                             + str(edge.type)
                             + "> <"
                             + self.identifiersURL
-                            + edge.resolve(edge.node2)
+                            + edge.node2.resolved_id
                             + "> . #source:"
                             + edge.sourcedb
                             + "\n"

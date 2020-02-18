@@ -35,7 +35,7 @@ class GraphTSVWriter(OpenBioLinkGraphWriter):
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + ".csv"), "w") as out_file:
                 writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
                 for node in sorted_nodes:
-                    writer.writerow([node.namespace.resolve(node.id), node.type])
+                    writer.writerow([node.resolved_id, node.type])
         if edges is not None:
             with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + ".csv"), "w") as out_file:
                 sorted_edges = self.sort_edges(edges)
