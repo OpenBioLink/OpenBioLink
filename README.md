@@ -59,7 +59,7 @@ Additionally, each graph is available in [RDF N3](https://en.wikipedia.org/wiki/
 * [OpenBioLink2020: undirected, no quality cutoff](https://samwald.info/res/OpenBioLink_2020_final/ALL_UNDIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_ALL_UNDIR.zip)
 
 <details>
-  <summary>Previous versions of the Benchmark</summary>
+  <summary>Previous versions of the Benchmark (click to expand)</summary>
     
 ### OpenBioLink 2020 alpha-release
     
