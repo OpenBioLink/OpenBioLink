@@ -49,7 +49,7 @@ e.g.:
 evaluation graph, four variants of OpenBioLink2020 are provided -- in directed and undirected setting,
 with and without quality cutoff. 
 
-Additionally, each graph is available in [RDF N3](https://en.wikipedia.org/wiki/Notation3) format. 
+Additionally, each graph is available in [RDF N3](https://en.wikipedia.org/wiki/Notation3) format (without train-validation-test splits). 
 
 ### OpenBioLink 2020 datasets
 
