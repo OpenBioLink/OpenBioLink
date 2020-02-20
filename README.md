@@ -190,7 +190,6 @@ All node ID's in the graph are CURIES, meaning entities can be easily looked up 
 |REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
 
 Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
-We are aware of an issue where entities of the Human Phenotype Ontology are not resolved correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
 
 # Train-test-split creation
 

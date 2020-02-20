@@ -247,20 +247,25 @@ class GraphCreator:
                                 edge_metadata.cutoff_txt is not None and qscore not in edge_metadata.cutoff_txt
                             )
                             if no_cutoff_defined or within_num_cutoff or within_text_cutoff:
-                                bimeg_id1 = namespace1.resolve(id1)
-                                bimeg_id2 = namespace2.resolve(id2)
+                                node1 = Node(id1, edge_metadata.node1_type, namespace1)
+                                node2 = Node(id2, edge_metadata.node2_type, namespace2)
                                 edges.add(
                                     Edge(
-                                        bimeg_id1, edge_metadata.edgeType, bimeg_id2, None, qscore, edge_metadata.source
+                                        node1,
+                                        edge_metadata.edgeType,
+                                        node2,
+                                        None,
+                                        qscore,
+                                        edge_metadata.source
                                     )
                                 )
                                 # add an edge in the other direction when edge is undirectional and graph is directional
                                 if (not edge_metadata.is_directional) and graphProp.DIRECTED:
                                     edges.add(
                                         Edge(
-                                            bimeg_id2,
+                                            node2,
                                             edge_metadata.edgeType,
-                                            bimeg_id1,
+                                            node1,
                                             None,
                                             qscore,
                                             edge_metadata.source,
@@ -268,8 +273,8 @@ class GraphCreator:
                                     )
                                     nr_edges_incl_dup += 1
                                     nr_edges_return_dir += 1
-                                nodes1.add(Node(bimeg_id1, edge_metadata.node1_type, namespace1))
-                                nodes2.add(Node(bimeg_id2, edge_metadata.node2_type, namespace2))
+                                nodes1.add(node1)
+                                nodes2.add(node2)
 
                                 nr_edges_incl_dup += 1
                             else:

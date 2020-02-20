@@ -154,6 +154,7 @@ def split():
 def time(edges, tn_edges, nodes, tmo_edges, tmo_tn_edges, tmo_nodes, sep):
     """Split based on time."""
     tts = TrainTestSetCreation(
+        vars(glob),
         graph_path=edges,
         tn_graph_path=tn_edges,
         all_nodes_path=nodes,
@@ -189,7 +190,13 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
         sys.exit(-1)
 
     click.secho("Loading data")
-    tts = TrainTestSetCreation(graph_path=edges, tn_graph_path=tn_edges, all_nodes_path=nodes, sep=sep)
+    tts = TrainTestSetCreation(
+        vars(glob),
+        graph_path=edges,
+        tn_graph_path=tn_edges,
+        all_nodes_path=nodes,
+        sep=sep
+    )
     click.secho("Creating random slice split", fg="blue")
     tts.random_edge_split(val=val, test_frac=test_frac, crossval=crossval)
 
