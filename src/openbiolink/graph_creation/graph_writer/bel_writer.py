@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 """A utility for outputting graphs as BEL documents.
 
 To test, run ``openbiolink generate --no-download --no-input --output-format BEL --qual hq``.
 """
+
 import logging
 import os
 from typing import Mapping, Optional, Set
@@ -67,22 +70,22 @@ def _get_type_to_adder():
         EdgeType.GENE_INHIBITION_GENE: BELGraph.add_inhibits,
         EdgeType.GENE_EXPRESSED_ANATOMY: BELGraph.add_association,
         EdgeType.DRUG_ACTIVATION_GENE: BELGraph.add_activates,
-        EdgeType.DRUG_PREDBIND_GENE: None,
+        EdgeType.DRUG_PREDBIND_GENE: None,  # skip these since downstream is used for link prediction
         EdgeType.GENE_PHENOTYPE: BELGraph.add_association,
-        EdgeType.GENE_PTMOD_GENE: None,
+        EdgeType.GENE_PTMOD_GENE: BELGraph.add_binds,
         EdgeType.GENE_EXPRESSION_GENE: BELGraph.add_correlation,
-        EdgeType.GENE_REACTION_GENE: None,
+        EdgeType.GENE_REACTION_GENE: BELGraph.add_regulates,
         EdgeType.DIS_PHENOTYPE: BELGraph.add_association,
         EdgeType.DRUG_INHIBITION_GENE: BELGraph.add_inhibits,
         EdgeType.DRUG_PHENOTYPE: BELGraph.add_association,
         EdgeType.DRUG_BINDING_GENE: BELGraph.add_binds,
-        EdgeType.DRUG_REACTION_GENE: None,
+        EdgeType.DRUG_REACTION_GENE: BELGraph.add_regulates,
         EdgeType.GENE_ACTIVATION_GENE: BELGraph.add_activates,
         EdgeType.GENE_BINDINH_GENE: BELGraph.add_directly_activates,
         EdgeType.GENE_DRUG: BELGraph.add_association,
         EdgeType.GENE_BINDING_GENE: BELGraph.add_binds,
-        EdgeType.GENE_CATALYSIS_GENE: None,
-        EdgeType.DRUG_CATALYSIS_GENE: None,
+        EdgeType.GENE_CATALYSIS_GENE: BELGraph.add_regulates,
+        EdgeType.DRUG_CATALYSIS_GENE: BELGraph.add_regulates,
         EdgeType.DRUG_EXPRESSION_GENE: BELGraph.add_positive_correlation,
         EdgeType.GENE_PATHWAY: BELGraph.add_part_of,
         EdgeType.DIS_DRUG: BELGraph.add_association,
