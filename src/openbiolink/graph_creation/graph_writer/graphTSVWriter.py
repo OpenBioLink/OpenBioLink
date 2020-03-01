@@ -7,7 +7,7 @@ from openbiolink.graph_creation.graph_writer.base import OpenBioLinkGraphWriter
 
 
 class GraphTSVWriter(OpenBioLinkGraphWriter):
-    extension = 'TSV'
+    format_key = 'TSV'
 
     def output_graph(
         self, nodes: Mapping = None, edges: Mapping = None, prefix=None, node_edge_list=True,

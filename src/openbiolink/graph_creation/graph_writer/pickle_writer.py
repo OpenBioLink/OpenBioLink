@@ -16,7 +16,7 @@ __all__ = [
 
 
 class GraphPickleWriter(GraphWriter):
-    extension = 'PICKLE'
+    format_key = 'PICKLE'
 
     def write(self, *, tp_nodes, tp_edges: Mapping[str, Edge], tp_namespaces, tn_nodes, tn_edges, tn_namespaces):
         """Write the graph as pickles."""

@@ -27,7 +27,7 @@ def _get_subclasses_recursive(cls):
 
 
 FORMATS: Mapping[str, Type[GraphWriter]] = {
-    cls.extension: cls
+    cls.format_key: cls
     for cls in _get_subclasses_recursive(GraphWriter)
-    if hasattr(cls, 'extension')
+    if cls.format_key is not None
 }
