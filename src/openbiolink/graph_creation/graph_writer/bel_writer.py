@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class GraphBELWriter(GraphWriter):
+    """Writes the OpenBioLink postive/negative graphs to a directory in BEL files."""
 
     def __init__(self, directory: Optional[str] = None, nodelink_gz: bool = True):
         super().__init__(directory=directory)
