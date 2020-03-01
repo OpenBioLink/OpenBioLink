@@ -12,6 +12,8 @@ from openbiolink.graph_creation import graphCreationConfig as gcConst
 class GraphWriter(ABC):
     """A class that can write information to a directory."""
 
+    extension: str
+
     def __init__(self, *, directory: Optional[str] = None):
         if directory is None:
             self.graph_dir_path = os.path.join(globConst.WORKING_DIR, gcConst.GRAPH_FILES_FOLDER_NAME)

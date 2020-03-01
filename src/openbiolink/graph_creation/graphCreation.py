@@ -20,13 +20,6 @@ from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdg
 from openbiolink.graph_creation.metadata_infile import *
 from openbiolink.gui.tqdmbuf import TqdmBuffer
 
-FORMATS = {
-    "TSV": GraphTSVWriter,
-    "RDF-N3": GraphRDFWriter,
-    "PICKLE": GraphPickleWriter,
-    "BEL": GraphBELWriter,
-}
-
 
 class Graph_Creation:
     def __init__(self, folder_path, use_db_metadata_classes=None, use_edge_metadata_classes=None):
