@@ -109,6 +109,7 @@ UNQUALIFIED_EDGE_TYPES = {
 def convert(*, nodes: Mapping[str, Set[Node]], edges: Mapping[str, Set[Edge]], **graph_kwargs):
     """Convert a set of edges to a BEL graph."""
     from pybel import BELGraph, BaseEntity
+    from pybel.constants import PYBEL_PUBMED
 
     type_to_dsl = _get_type_to_dsl()
     type_to_adder = _get_type_to_adder()
@@ -142,8 +143,8 @@ def convert(*, nodes: Mapping[str, Set[Node]], edges: Mapping[str, Set[Edge]], *
                     graph,
                     u=_get_node(edge.id1),
                     v=_get_node(edge.id2),
-                    citation="",
-                    evidence="",
+                    citation=PYBEL_PUBMED,  # FIXME would be nice to have a PMID for each source
+                    evidence=edge.sourcedb,
                     annotations=annotations,
                 )
 
