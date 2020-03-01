@@ -37,12 +37,14 @@ class GraphBELWriter(GraphWriter):
         **kwargs,
     ) -> None:
         """Write the graph as gzipped BEL graphs."""
-        from pybel import to_nodelink_gz
+        from pybel import to_nodelink_gz, to_bel_script_gz
 
         for nodes, edges, name in ((tp_nodes, tp_edges, "positive"), (tn_nodes, tn_edges, "negative")):
             graph = convert(nodes=nodes, edges=edges, name=name)
-            graph_path = os.path.join(self.graph_dir_path, f"{name}.bel.nodelink.json.gz")
-            to_nodelink_gz(graph, graph_path)
+            nodelink_path = os.path.join(self.graph_dir_path, f"{name}.bel.nodelink.json.gz")
+            to_nodelink_gz(graph, nodelink_path)
+            bel_script_path = os.path.join(self.graph_dir_path, f"{name}.bel.gz")
+            to_bel_script_gz(graph, bel_script_path)
 
 
 def _get_type_to_dsl():
