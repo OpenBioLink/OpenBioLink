@@ -5,7 +5,7 @@ import random
 import sys
 from typing import Optional
 
-import numpy
+import numpy as np
 import pandas
 
 import openbiolink.graphProperties as graphProp
@@ -15,7 +15,7 @@ from openbiolink.train_test_set_creation.sampler import NegativeSampler
 from openbiolink.train_test_set_creation.trainTestSetWriter import TrainTestSetWriter
 
 random.seed(glob.RANDOM_STATE)
-numpy.random.seed(glob.RANDOM_STATE)
+np.random.seed(glob.RANDOM_STATE)
 
 
 class TrainTestSetCreation:
@@ -56,6 +56,7 @@ class TrainTestSetCreation:
 
     def __init__(
         self,
+        global_config: dict,
         graph_path,
         tn_graph_path,
         all_nodes_path,
@@ -63,7 +64,7 @@ class TrainTestSetCreation:
         # meta_edge_triples=None, #nicetohave (1) split for subsample of edges, define own meta edges
         t_minus_one_graph_path=None,
         t_minus_one_tn_graph_path=None,
-        t_minus_one_nodes_path=None,
+        t_minus_one_nodes_path=None
     ):
         if sep is None:
             sep = "\t"
@@ -86,32 +87,39 @@ class TrainTestSetCreation:
             logging.error("t_minus_one_nodes path must be a csv file")
             sys.exit()
 
-        self.writer = TrainTestSetWriter()
+        self.identifier2type = global_config["IDENTIFIER_2_TYPE"]
+        self.col_names_nodes = global_config["COL_NAMES_NODES"]
+        self.col_names_edges = global_config["COL_NAMES_EDGES"]
+        self.edge_type_col_name = global_config["EDGE_TYPE_COL_NAME"]
+        self.value_col_name = global_config["VALUE_COL_NAME"]
+
         logging.info(f"loading nodes from {all_nodes_path}")
-        self.all_nodes = pandas.read_csv(all_nodes_path, sep=sep, names=globalConfig.COL_NAMES_NODES)
-        self.all_nodes = self.all_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
+        self.all_nodes = pandas.read_csv(all_nodes_path, sep=sep, names=self.col_names_nodes)
 
         logging.info(f"loading true edges from {graph_path}")
-        self.all_tp = pandas.read_csv(graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
-        self.all_tp[globalConfig.VALUE_COL_NAME] = 1
-        self.all_tp = self.all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
-        self.tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
+        self.all_tp = pandas.read_csv(graph_path, sep=sep, names=self.col_names_edges, usecols=range(4))
+        self.all_tp[self.value_col_name] = 1
+        self.tp_edgeTypes = list(self.all_tp[self.edge_type_col_name].unique())
 
         logging.info(f"loading false edges from {tn_graph_path}")
-        self.all_tn = pandas.read_csv(tn_graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
-        self.all_tn[globalConfig.VALUE_COL_NAME] = 0
-        self.all_tn = self.all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
+        self.all_tn = pandas.read_csv(tn_graph_path, sep=sep, names=self.col_names_edges, usecols=range(4))
+        self.all_tn[self.value_col_name] = 0
 
-        self.tn_edgeTypes = list(self.all_tn[globalConfig.EDGE_TYPE_COL_NAME].unique())
+        self.tn_edgeTypes = list(self.all_tn[self.edge_type_col_name].unique())
 
         self.meta_edges_dic = {}
+        sources = {}
 
         for metaEdge in utils.get_leaf_subclasses(meta.EdgeMetadata):
             edge_type = str(metaEdge.EDGE_INMETA_CLASS.EDGE_TYPE)
             node1_type = str(metaEdge.EDGE_INMETA_CLASS.NODE1_TYPE)
             node2_type = str(metaEdge.EDGE_INMETA_CLASS.NODE2_TYPE)
+            source = str(metaEdge.EDGE_INMETA_CLASS.SOURCE)
             if edge_type in self.tp_edgeTypes:
                 self.meta_edges_dic[f"{node1_type}_{edge_type}_{node2_type}"] = node1_type, edge_type, node2_type
+                sources[f"{node1_type}_{edge_type}_{node2_type}"] = source
+
+        self.writer = TrainTestSetWriter(self.identifier2type, sources)
 
         # nicetohave (2) check for transient onto edges
         # transitiv_IS_A_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp[ttsConst.EDGE_TYPE_COL_NAME] == 'IS_A'])
@@ -131,102 +139,67 @@ class TrainTestSetCreation:
             and t_minus_one_graph_path is not None
             and t_minus_one_tn_graph_path is not None
         ):
-            self.tmo_nodes = pandas.read_csv(t_minus_one_nodes_path, sep=sep, names=globalConfig.COL_NAMES_NODES)
-            self.tmo_nodes = self.tmo_nodes.sort_values(by=globalConfig.COL_NAMES_NODES).reset_index(drop=True)
+            self.tmo_nodes = pandas.read_csv(t_minus_one_nodes_path, sep=sep, names=self.col_names_nodes)
 
-            self.tmo_all_tp = pandas.read_csv(t_minus_one_graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
-            self.tmo_all_tp[globalConfig.VALUE_COL_NAME] = 1
-            self.tmo_all_tp = self.tmo_all_tp.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
-            self.tmo_tp_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
+            self.tmo_all_tp = pandas.read_csv(t_minus_one_graph_path, sep=sep, names=self.col_names_edges, usecols=range(4))
+            self.tmo_all_tp[self.value_col_name] = 1
+            self.tmo_tp_edgeTypes = list(self.all_tp[self.edge_type_col_name].unique())
 
-            self.tmo_all_tn = pandas.read_csv(t_minus_one_tn_graph_path, sep=sep, names=globalConfig.COL_NAMES_EDGES)
-            self.tmo_all_tn[globalConfig.VALUE_COL_NAME] = 0
-            self.tmo_all_tn = self.tmo_all_tn.sort_values(by=globalConfig.COL_NAMES_EDGES).reset_index(drop=True)
-            self.tmo_tn_edgeTypes = list(self.all_tp[globalConfig.EDGE_TYPE_COL_NAME].unique())
+            self.tmo_all_tn = pandas.read_csv(t_minus_one_tn_graph_path, sep=sep, names=self.col_names_edges, usecols=range(4))
+            self.tmo_all_tn[self.value_col_name] = 0
+            self.tmo_tn_edgeTypes = list(self.all_tp[self.edge_type_col_name].unique())
 
     def random_edge_split(self, test_frac=None, val=None, crossval=None):
         if not val:
-            val = 0.2
+            val = 0.05
         if not test_frac:
-            test_frac = 0.2
+            test_frac = 0.05
 
         # create positive and negative examples
         positive_samples = self.all_tp.copy()
-        negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, self.all_tn.copy(), self.all_nodes)
+        negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, self.all_tn.copy(),
+                                           self.all_nodes, self.identifier2type)
         negative_samples = negative_sampler.generate_random_neg_samples(positive_samples)
         all_samples = (positive_samples.append(negative_samples, ignore_index=True)).reset_index(drop=True)
         all_samples = utils.remove_inconsistent_edges(all_samples).reset_index(drop=True)
 
         # generate, train-, test-, validation-sets
-        test_set = all_samples.sample(frac=test_frac, random_state=glob.RANDOM_STATE)
+        test_set = all_samples.sample(frac=test_frac, random_state=globalConfig.RANDOM_STATE)
         train_val_set = all_samples.drop(list(test_set.index.values))
         test_set = utils.remove_parent_duplicates_and_reverses(remain_set=test_set, remove_set=train_val_set)
 
-        nodes_in_train_val_set = (
+        train_val_nodes = (
             train_val_set[globalConfig.NODE1_ID_COL_NAME].tolist()
             + train_val_set[globalConfig.NODE2_ID_COL_NAME].tolist()
         )
         new_test_nodes = self.get_additional_nodes(
-            old_nodes_list=nodes_in_train_val_set, new_nodes_list=self.all_nodes[globalConfig.ID_NODE_COL_NAME].tolist()
+            old_nodes_list=train_val_nodes, new_nodes_list=self.all_nodes[globalConfig.NODE_TYPE_COL_NAME].tolist()
         )
         if new_test_nodes:
             logging.info(
                 "The test set contains nodes, that are not present in the trainings-set. These edges will be dropped."
             )  # nicetohave (6): option to keep edges with new nodes
             test_set = self.remove_edges_with_nodes(test_set, new_test_nodes)
-        nodes_in_test_set = (
+        test_set_nodes = (
             test_set[globalConfig.NODE1_ID_COL_NAME].tolist() + test_set[globalConfig.NODE2_ID_COL_NAME].tolist()
         )
         if graphProp.DIRECTED:
             train_val_set = utils.remove_reverse_edges(remain_set=train_val_set, remove_set=test_set)
 
         if crossval:
-            train_val_set_tuples = self.create_cross_val(train_val_set, val)
-            new_val_nodes = None
-            for i, train_val_set_tuple in enumerate(train_val_set_tuples):
-                train_set, val_set = train_val_set_tuple
-                new_val_nodes = self.get_additional_nodes(
-                    old_nodes_list=train_set[globalConfig.NODE1_ID_COL_NAME].tolist()
-                    + train_set[globalConfig.NODE2_ID_COL_NAME].tolist(),
-                    new_nodes_list=nodes_in_train_val_set,
-                )
-                if new_val_nodes:  # nicetohave (6)
-                    logging.info(
-                        f"Validation set {i} contains nodes that are"
-                        f" not present in the training set. These edges will be dropped."
-                    )
-                    val_set = self.remove_edges_with_nodes(val_set, new_val_nodes)
-                    train_val_set_tuples[i] = (train_set, val_set)
+            logging.info("Performing cross validation on trainingset...")
+            train_val_set = self.create_and_write_cross_val(train_val_set, train_val_nodes, val)
 
-        else:
-            train_val_set_tuples = [(train_val_set, pandas.DataFrame())]
-            new_val_nodes = None
-        if graphProp.DIRECTED:
-            train_val_set_tuples = [
-                (utils.remove_reverse_edges(remain_set=t, remove_set=v), v) for t, v in train_val_set_tuples
-            ]
-        train_val_set_tuples = [
-            (t, utils.remove_parent_duplicates_and_reverses(remain_set=v, remove_set=t))
-            for t, v in train_val_set_tuples
-        ]
+        self.writer.write_train_test_set(train_val_set, train_val_nodes, test_set, test_set_nodes, new_test_nodes)
 
-        self.writer.print_sets(
-            train_val_set_tuples=train_val_set_tuples,
-            new_val_nodes=new_val_nodes,
-            test_set=test_set,
-            new_test_nodes=new_test_nodes,
-            nodes_in_train_val_set=set(nodes_in_train_val_set),
-            nodes_in_test_set=set(nodes_in_test_set),
-        )
         # nicetohave (3) option to remove examples with new nodes
-        return train_val_set_tuples, test_set
 
     def time_slice_split(self):
         # nicetohave (4) like that, neg samples are restricted to edge_types appearing in test_sample --> good idea?
         # nicetohave (4) idea: calculate nodes like above, then tmo_nodes= test_nodes --> mehr auswahl bei neg examples
         tmo_positive_samples = self.tmo_all_tp
         tmo_negative_sampler = NegativeSampler(
-            self.meta_edges_dic, self.tmo_tn_edgeTypes, self.tmo_all_tn, self.tmo_nodes
+            self.meta_edges_dic, self.tmo_tn_edgeTypes, self.tmo_all_tn, self.tmo_nodes, self.identifier2type
         )
         tmo_negative_samples = tmo_negative_sampler.generate_random_neg_samples(tmo_positive_samples)
         # todo remove not consistent edges
@@ -242,7 +215,7 @@ class TrainTestSetCreation:
         if not vanished_positive_samples.empty or not vanished_tn_samples.empty:
             logging.info("Some edges existing in the first time slice are no longer present in the second one")
             self.writer.print_vanished_edges(vanished_positive_samples.append(vanished_tn_samples))
-        test_negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, test_tn_samples, self.all_nodes)
+        test_negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, test_tn_samples, self.all_nodes, self.identifier2type)
         test_negative_samples = test_negative_sampler.generate_random_neg_samples(test_positive_samples)
         test_negative_samples[globalConfig.VALUE_COL_NAME] = 0
 
@@ -261,21 +234,13 @@ class TrainTestSetCreation:
         if graphProp.DIRECTED:
             train_set = utils.remove_reverse_edges(remain_set=train_set, remove_set=test_set)
 
-        train_val_set_tuples = [(train_set, pandas.DataFrame())]
-        nodes_in_train_set = (
+        train_set_nodes = (
             train_set[globalConfig.NODE1_ID_COL_NAME].tolist() + train_set[globalConfig.NODE2_ID_COL_NAME].tolist()
         )
-        nodes_in_test_set = (
+        test_set_nodes = (
             test_set[globalConfig.NODE1_ID_COL_NAME].tolist() + test_set[globalConfig.NODE2_ID_COL_NAME].tolist()
         )
-        self.writer.print_sets(
-            train_val_set_tuples=train_val_set_tuples,
-            test_set=test_set,
-            nodes_in_train_val_set=nodes_in_train_set,
-            nodes_in_test_set=nodes_in_test_set,
-            new_test_nodes=new_test_nodes,
-        )
-        return train_val_set_tuples, test_set
+        self.writer.write_train_test_set(train_set, train_set_nodes, test_set, test_set_nodes, new_test_nodes)
 
         # niceToHave (5) slice size?
         # extra nur für diff? --> eig nciht --> eig schon weil nur pos
@@ -305,8 +270,7 @@ class TrainTestSetCreation:
         new_set = set(new_nodes_list)
         return new_set - old_set
 
-    @staticmethod
-    def create_cross_val(df: pandas.DataFrame, n_folds):
+    def create_and_write_cross_val(self, df: pandas.DataFrame, nodes_in_train_val_set, n_folds):
         nel_total, _ = df.shape
         if n_folds == 0 or n_folds == 1 or (n_folds > 1 and not float(n_folds).is_integer()):
             logging.error("provided folds are not possible!")
@@ -317,33 +281,38 @@ class TrainTestSetCreation:
         if n_folds < 1:  # n_folds is fraction
             n_folds = math.ceil(1 / n_folds)
         n_folds = int(n_folds)
-        nel_per_chunk = math.ceil(nel_total / n_folds)
-        rand_index = list(df.index.values)
+
+        rand_index = list(df.index)
         random.shuffle(rand_index)
+        chunks = np.array_split(rand_index, n_folds)
 
-        bounds = []
         for i in range(n_folds):
-            bounds.append(i * nel_per_chunk)
-        bounds.append(nel_total)
-
-        chunks = []
-        for i in range(n_folds):
-            chunks.append(rand_index[bounds[i] : bounds[i + 1]])
-
-        folds_indices = []
-        for i in range(n_folds):
+            logging.info(f"Creating fold number {i+1} ...")
             train_chunk_indices = [(x + i) % n_folds for x in range(n_folds - 1)]
             val_chunk_index = (n_folds - 1 + i) % n_folds
             train_indices = [element for chunk_index in train_chunk_indices for element in chunks[chunk_index]]
             val_indices = chunks[val_chunk_index]
-            folds_indices.append((train_indices, val_indices))
+            train_set = df.loc[train_indices]
+            val_set = df.loc[val_indices]
 
-        folds = []
-        for train_indices, val_indices in folds_indices:
-            folds.append((df.loc[train_indices], df.loc[val_indices]))
+            new_val_nodes = self.get_additional_nodes(
+                old_nodes_list=train_set[globalConfig.NODE1_ID_COL_NAME].tolist()
+                               + train_set[globalConfig.NODE2_ID_COL_NAME].tolist(),
+                new_nodes_list=nodes_in_train_val_set,
+            )
+            if len(new_val_nodes) > 0:  # nicetohave (6)
+                logging.info(
+                    f"Validation set {i+1} contains nodes that are"
+                    f" not present in the training set. These edges will be dropped."
+                )
+                val_set = self.remove_edges_with_nodes(val_set, new_val_nodes)
+            if graphProp.DIRECTED:
+                train_set = utils.remove_reverse_edges(remain_set=train_set, remove_set=val_set)
+            val_set = utils.remove_parent_duplicates_and_reverses(remain_set=val_set, remove_set=train_set)
 
-        return folds
+            self.writer.write_train_val_set(train_set, val_set, new_val_nodes, i)
 
+        return train_set.append(val_set)
 
 def _not_csv(f):
     return os.path.splitext(f)[1] not in {".csv", ".tsv"}

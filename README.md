@@ -45,27 +45,40 @@ e.g.:
  and does contain all different edge types, to provide a more realistic edge prediction
  scenario.
  
- ### Leaderboard    
- 
- | model | hits@10 | hits@1 |  paper | code |
-|-------|---------|--------|-------|------|
-|   TransE (Baseline)   |    0.0749     |   0.0125     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
-|   TransR (Baseline)   |    0.0639     |   0.0096     | (under review)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
+[OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020_final/HQ_DIR.zip) is the default dataset that should be used for benchmarking purposes. To allow anayzing the effect of data quality as well as the directionality of the 
+evaluation graph, four variants of OpenBioLink2020 are provided -- in directed and undirected setting,
+with and without quality cutoff. 
 
-Please contact us if you want to see your results added to the Leaderboard.
+Additionally, each graph is available in [RDF N3](https://en.wikipedia.org/wiki/Notation3) format (without train-validation-test splits). 
 
+### OpenBioLink 2020 datasets
 
-To allow anayzing the effect of data quality as well as the directionality of the 
-evaluation graph, other variants of OpenBioLink2020 are provided, in directed and undirected setting,
-with and without quality cutoff.
+* __[OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020_final/HQ_DIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_HQ_DIR.zip) (default dataset for benchmarking)__
+* [OpenBioLink2020: undirected, high quality](https://samwald.info/res/OpenBioLink_2020_final/HQ_UNDIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_HQ_UNDIR.zip)
+* [OpenBioLink2020: directed, no quality cutoff](https://samwald.info/res/OpenBioLink_2020_final/ALL_DIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_ALL_DIR.zip)
+* [OpenBioLink2020: undirected, no quality cutoff](https://samwald.info/res/OpenBioLink_2020_final/ALL_UNDIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_ALL_UNDIR.zip)
 
+<details>
+  <summary>Previous versions of the Benchmark (click to expand)</summary>
+    
+### OpenBioLink 2020 alpha-release
+    
 * [OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020/HQ_DIR.zip) (default dataset)
 * [OpenBioLink2020: undirected, high quality](https://samwald.info/res/OpenBioLink_2020/HQ_UNDIR.zip)
 * [OpenBioLink2020: directed, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_DIR.zip)
 * [OpenBioLink2020: undirected, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_UNDIR.zip)
+</details>
 
 Please note that the OpenBioLink benchmark files contain data derived from external ressources. Licensing terms of these external resources are detailed [below](#Source-databases-and-their-licenses). 
 
+ ## Leaderboard    
+ 
+ | model | hits@10 | hits@1 |  paper | code |
+|-------|---------|--------|-------|------|
+|   TransE (Baseline)   |    0.0749     |   0.0125     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
+|   TransR (Baseline)   |    0.0639     |   0.0096     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
+
+Please contact us if you want to see your results added to the Leaderboard.
  
 ## Manual
 
@@ -177,7 +190,6 @@ All node ID's in the graph are CURIES, meaning entities can be easily looked up 
 |REACTOME:R-HSA-201451|https://identifiers.org/REACTOME:R-HSA-201451|
 
 Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
-We are aware of an issue where entities of the Human Phenotype Ontology are not resolved correctly [(Issue)](https://github.com/identifiers-org/identifiers-org.github.io/issues/81). There is a workaround of this problem by using the ols resource, f.e. https://identifiers.org/ols/HP:0000118
 
 # Train-test-split creation
 

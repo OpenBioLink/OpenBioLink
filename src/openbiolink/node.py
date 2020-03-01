@@ -18,4 +18,8 @@ class Node:
         return hash((self.id, self.type))
 
     def __iter__(self):
-        return iter([self.id, self.type])
+        return iter([self.resolved_id, self.type])
+
+    @property
+    def resolved_id(self):
+        return self.namespace.resolve(self.id)
