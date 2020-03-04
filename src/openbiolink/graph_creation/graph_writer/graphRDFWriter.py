@@ -6,6 +6,7 @@ from openbiolink.graph_creation.graph_writer.base import OpenBioLinkGraphWriter
 
 
 class GraphRDFWriter(OpenBioLinkGraphWriter):
+    format_key = 'RDF-N3'
     identifiersURL = "https://identifiers.org/"
 
     def output_graph(

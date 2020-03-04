@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from abc import ABC, abstractmethod
-from typing import Mapping, Optional
+from typing import ClassVar, Mapping, Optional
 
 from openbiolink import globalConfig as globConst, graphProperties
 from openbiolink.edge import Edge
@@ -11,6 +11,9 @@ from openbiolink.graph_creation import graphCreationConfig as gcConst
 
 class GraphWriter(ABC):
     """A class that can write information to a directory."""
+
+    #: The name of the format for lookup
+    format_key: ClassVar[str] = None
 
     def __init__(self, *, directory: Optional[str] = None):
         if directory is None:

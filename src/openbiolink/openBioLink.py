@@ -20,7 +20,7 @@ import click
 from openbiolink import globalConfig as glob
 from openbiolink.cli_helper import create_graph, train_and_evaluate
 from openbiolink.evaluation.models.modelTypes import ModelTypes
-from openbiolink.graph_creation.graphCreation import FORMATS
+from openbiolink.graph_creation.graph_writer import FORMATS
 from openbiolink.graph_creation.types.qualityType import QualityType
 from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
 
@@ -77,7 +77,7 @@ def handle_quality(_, __, qual):
     type=click.Choice(list(FORMATS)),
     default="TSV",
     show_default=True,
-    help="Format of output files TSV or RDF-N3",
+    help="Format of output files",
 )
 @click.option("--output-sep", help="The separator used in the output files. Defaults to tab")
 @click.option(

@@ -205,7 +205,7 @@ class GraphCreationFrame(tk.Frame):
 
         # output format selection
         format_selection = tk.Frame(el)
-        choices = {"TSV", "RDF-N3"}
+        choices = {"TSV", "RDF-N3", "PICKLE", "BEL"}
         self.format = tk.StringVar(format_selection)
         self.format.set("TSV")
 
@@ -225,7 +225,7 @@ class GraphCreationFrame(tk.Frame):
                 sep_value.pack(side="left", anchor="w")
                 sep_info.pack(side="left", anchor="w")
                 no_qscore_box.pack(side="top", padx=5, anchor="w")
-            elif fmt == "RDF-N3":
+            else:
                 forget_packing()
                 self.single_sep = tk.StringVar(value=None)
                 self.multi_sep = tk.StringVar(value=None)

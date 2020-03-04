@@ -20,11 +20,6 @@ from openbiolink.graph_creation.metadata_edge.tnEdgeRegularMetadata import TnEdg
 from openbiolink.graph_creation.metadata_infile import *
 from openbiolink.gui.tqdmbuf import TqdmBuffer
 
-FORMATS = {
-    "TSV": GraphTSVWriter,
-    "RDF-N3": GraphRDFWriter,
-}
-
 
 class Graph_Creation:
     def __init__(self, folder_path, use_db_metadata_classes=None, use_edge_metadata_classes=None):
@@ -168,6 +163,8 @@ class Graph_Creation:
             graph_writer = GraphRDFWriter(file_sep=file_sep, multi_file=multi_file, print_qscore=print_qscore)
         elif format == "PICKLE":
             graph_writer = GraphPickleWriter()
+        elif format == "BEL":
+            graph_writer = GraphBELWriter()
         else:
             raise ValueError(f"Invalid format: {format}")
 

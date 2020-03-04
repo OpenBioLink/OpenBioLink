@@ -3,10 +3,11 @@ from openbiolink.nodeType import NodeType
 
 
 class Node:
-    def __init__(self, id: str, type: NodeType, namespace: Namespace, name=""):
+    def __init__(self, id: str, type: NodeType, namespace: Namespace, name=None):
         self.id = id
         self.type = type
         self.namespace = namespace
+        self.name = name
 
     def __eq__(self, other):
         if isinstance(other, Node):
