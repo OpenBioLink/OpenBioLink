@@ -1,6 +1,7 @@
 import numpy
 import pandas
 from tqdm import tqdm
+import logging
 
 import openbiolink.train_test_set_creation.ttsConfig as ttsConst
 from openbiolink import globalConfig as globConst, utils
@@ -23,6 +24,13 @@ class Sampler:
         while len(samples) < n:
             if i > 100:
                 break
+            if num_nodes1 == 0:
+                logging.warning("Number of nodes with type 1 was 0")
+                break
+            if num_nodes2 == 0:
+                logging.warning("Number of nodes with type 2 was 0")
+                break
+
             num_examples = n - len(samples)
             node1_list = nodes_nodeType1.sample(n=num_examples, random_state=(globConst.RANDOM_STATE + i), replace=True)
             node1_list = node1_list.id.tolist()

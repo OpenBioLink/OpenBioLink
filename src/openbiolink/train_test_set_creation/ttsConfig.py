@@ -1,6 +1,7 @@
 TTS_FOLDER_NAME = "train_test_data"
 CROSS_VAL_FOLDER_NAME = "cross_val"
 FOLD_FOLDER_PREFIX = "fold_"
+NEGATIVE_PREFIX = "negative_"
 
 TEST_FILE_NAME = "test_sample.csv"
 TRAIN_FILE_NAME = "train_sample.csv"

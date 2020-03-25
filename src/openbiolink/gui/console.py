@@ -1,10 +1,12 @@
 # """ source: #https://github.com/beenje/tkinter-logging-text-widget/blob/master/main.py """
 import logging
 import queue
+import sys
+import tkinter as tk
+from tkinter import font as tkfont, messagebox
 from tkinter import E, N, S, W, ttk
 from tkinter.scrolledtext import ScrolledText
 
-from openbiolink.gui.gui import *
 from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 logger = logging.getLogger()
@@ -80,7 +82,13 @@ class ConsoleFrame(tk.Frame):
         # Create the panes and frames
         console_frame = ttk.Labelframe(self, text="Console")
         buttons_panel = tk.Frame(self)
-        next_button = tk.Button(buttons_panel, text="Cancel", command=lambda: on_closing(), height=1, width=15)
+        
+        # have to redefine on_closing because of import cycle from importing gui
+        def on_closing():
+            if messagebox.askokcancel("Quit", "Do you really want to quit?"):
+                parent.destroy()
+                sys.exit()
+        next_button = tk.Button(buttons_panel, text="Cancel", command=on_closing, height=1, width=15)
 
         # Initialize all frames
         self.console = ConsoleUi(console_frame)
@@ -100,6 +108,8 @@ class ConsoleFrame(tk.Frame):
     def poll_progress(self):
         self.progress["text"] = TqdmBuffer.buf
         self.progress.after(100, self.poll_progress)
+        
+    
 
     # def quit(self, *args):
     #    self.root.destroy()

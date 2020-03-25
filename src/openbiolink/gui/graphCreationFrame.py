@@ -225,7 +225,7 @@ class GraphCreationFrame(tk.Frame):
                 sep_value.pack(side="left", anchor="w")
                 sep_info.pack(side="left", anchor="w")
                 no_qscore_box.pack(side="top", padx=5, anchor="w")
-            else:
+            elif fmt in ["RDF-N3", "PICKLE", "BEL"]:
                 forget_packing()
                 self.single_sep = tk.StringVar(value=None)
                 self.multi_sep = tk.StringVar(value=None)

@@ -111,6 +111,16 @@ class SplitFrame(tk.Frame):
             folds_frame, text="folds as int\n validation fraction as float", font=self.controller.info_font
         )
 
+        self.neg_train = tk.BooleanVar(value=False)
+        neg_train_checkbox = tk.Checkbutton(el, text="Generate negative samples for trainingset",
+                                            variable = self.neg_train)
+        self.neg_test = tk.BooleanVar(value=False)
+        neg_test_checkbox = tk.Checkbutton(el, text="Generate negative samples for testset",
+                                            variable=self.neg_test)
+        self.neg_val = tk.BooleanVar(value=False)
+        neg_val_checkbox = tk.Checkbutton(el, text="Generate negative samples for validationset",
+                                            variable=self.neg_val)
+
         # packing
         test_frac_frame.pack(side="top", padx=5, pady=20, anchor="w")
         test_frac_label.pack(side="left", padx=5, anchor="w")
@@ -122,6 +132,9 @@ class SplitFrame(tk.Frame):
         folds_label.pack(side="left", padx=5, anchor="w")
         folds_value.pack(side="left", anchor="w")
         folds_info.pack(side="left", anchor="w")
+        neg_train_checkbox.pack(side="top", padx=5, anchor="w")
+        neg_test_checkbox.pack(side="top", padx=5, anchor="w")
+        neg_val_checkbox.pack(side="top", padx=5, anchor="w")
         return el
 
     # todo style: 6 times same function
@@ -269,6 +282,19 @@ class SplitFrame(tk.Frame):
             if self.crossval.get():
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
                     ["--crossval", "--val", self.folds.get(),]  # todo crossval
+                )
+
+            if self.neg_train.get():
+                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+                    ["--neg-train"]
+                )
+            if self.neg_test.get():
+                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+                    ["--neg-test"]
+                )
+            if self.neg_val.get():
+                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+                    ["--neg-val"]
                 )
 
         self.controller.show_next_frame()

@@ -181,7 +181,10 @@ def time(edges, tn_edges, nodes, tmo_edges, tmo_tn_edges, tmo_nodes, sep):
     show_default=True,
     help="Fraction of validation set as float or number of folds as int",
 )
-def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
+@click.option("--neg-train", is_flag=True, help="If flag is set, negative samples for the training set are generated")
+@click.option("--neg-test", is_flag=True, help="If flag is set, negative samples for the test set are generated")
+@click.option("--neg-val", is_flag=True, help="If flag is set, negative samples for the validation set are generated")
+def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val, neg_train, neg_test, neg_val):
     """Split randomly."""
     if crossval and (val == 0 or val == 1 or (val > 1 and not float(val).is_integer())):
         click.secho(
@@ -195,7 +198,10 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
         graph_path=edges,
         tn_graph_path=tn_edges,
         all_nodes_path=nodes,
-        sep=sep
+        sep=sep,
+        neg_train=neg_train,
+        neg_test=neg_test,
+        neg_val=neg_val
     )
     click.secho("Creating random slice split", fg="blue")
     tts.random_edge_split(val=val, test_frac=test_frac, crossval=crossval)
