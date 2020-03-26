@@ -47,6 +47,7 @@ class Sampler:
             )
             _, sub_samples = utils.get_diff(exclude_df[globConst.COL_NAMES_TRIPLES], sample_candidates)
             sub_samples.drop_duplicates(inplace=True)
+            sub_samples[globConst.SOURCE_COL_NAME] = ["GENERATED"] * len(sub_samples)
             sub_samples[globConst.QSCORE_COL_NAME] = [None] * len(sub_samples)
             samples = samples.append(sub_samples, ignore_index=True)
             exclude_df = exclude_df.append(pandas.DataFrame(sub_samples))
@@ -75,11 +76,12 @@ class NegativeSampler(Sampler):
         )
         return df
 
-    def generate_random_neg_samples(self, pos_samples, distrib="orig"):
+    def generate_random_neg_samples(self, pos_samples, exclude_df, distrib="orig"):
         col_names = globConst.COL_NAMES_EDGES
         pos_samples = pos_samples[col_names]
         neg_samples = pandas.DataFrame(columns=col_names)
         pos_samples = self.add_edge_type_key_column(pos_samples)
+        exclude_df = self.add_edge_type_key_column(exclude_df)
 
         # generate distribution of meta_edge types for negative samples
         meta_edges = list(self.meta_edges_dic.keys())
@@ -107,6 +109,9 @@ class NegativeSampler(Sampler):
             pos_samples_of_meta_edge = pos_samples.loc[
                 (pos_samples[ttsConst.EDGE_TYPE_KEY_NAME] == meta_edge_triple_key)
             ]
+            exclude_samples_of_meta_edge = exclude_df.loc[
+                (exclude_df[ttsConst.EDGE_TYPE_KEY_NAME] == meta_edge_triple_key)
+            ]
 
             if (
                 edge_type in self.tn_edgeTypes
@@ -115,7 +120,7 @@ class NegativeSampler(Sampler):
                     self.subsample_with_tn(
                         meta_edge_triple_key=meta_edge_triple_key,
                         subsample_size=count,
-                        exclude_df=pos_samples_of_meta_edge[col_names],
+                        exclude_df=pos_samples_of_meta_edge[col_names].append(exclude_samples_of_meta_edge[col_names], ignore_index=True),
                     ),
                     ignore_index=True,
                 )
@@ -126,7 +131,7 @@ class NegativeSampler(Sampler):
                         node_type_1=node_type_1,
                         edge_type=edge_type,
                         node_type_2=node_type_2,
-                        exclude_df=pos_samples_of_meta_edge[col_names],
+                        exclude_df=pos_samples_of_meta_edge[col_names].append(exclude_samples_of_meta_edge[col_names], ignore_index=True),
                     ),
                     ignore_index=True,
                 )

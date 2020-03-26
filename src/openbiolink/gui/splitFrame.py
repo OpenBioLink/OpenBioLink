@@ -94,21 +94,21 @@ class SplitFrame(tk.Frame):
         el = tk.Frame(parent)
 
         # test frac
-        self.test_frac = tk.StringVar(value="0.2")
+        self.test_frac = tk.StringVar(value="0.05")
         test_frac_frame = tk.Frame(el)
         test_frac_label = tk.Label(test_frac_frame, text="test set fraction:")
         test_frac_value = tk.Entry(test_frac_frame, textvariable=self.test_frac, width=5)
-        test_frac_info = tk.Label(test_frac_frame, text="as float, e.g. 0.2", font=self.controller.info_font)
+        test_frac_info = tk.Label(test_frac_frame, text="as float, e.g. 0.05", font=self.controller.info_font)
 
         # cross val
         self.crossval = tk.BooleanVar(value=False)
         crossval_box = tk.Checkbutton(el, text="cross validation", variable=self.crossval)
-        self.folds = tk.StringVar(value="5")
+        self.folds = tk.StringVar(value="0.05")
         folds_frame = tk.Frame(el)
-        folds_label = tk.Label(folds_frame, text="folds / validation set fraction:")
+        folds_label = tk.Label(folds_frame, text="validation set fraction:")
         folds_value = tk.Entry(folds_frame, textvariable=self.folds, width=5)
         folds_info = tk.Label(
-            folds_frame, text="folds as int\n validation fraction as float", font=self.controller.info_font
+            folds_frame, text="as float, e.g. 0.05", font=self.controller.info_font
         )
 
         self.neg_train = tk.BooleanVar(value=False)
@@ -122,16 +122,16 @@ class SplitFrame(tk.Frame):
                                             variable=self.neg_val)
 
         # packing
-        test_frac_frame.pack(side="top", padx=5, pady=20, anchor="w")
+        test_frac_frame.pack(side="top", padx=5, pady=10, anchor="w")
         test_frac_label.pack(side="left", padx=5, anchor="w")
         test_frac_value.pack(side="left", anchor="w")
         test_frac_info.pack(side="left", anchor="w")
-        ttk.Separator(el, orient="horizontal").pack(side="top", fill="x", pady=5, padx=5, anchor="w")
-        crossval_box.pack(side="top", padx=5, anchor="w")
-        folds_frame.pack(side="top", padx=5, anchor="w")
+        folds_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
         folds_label.pack(side="left", padx=5, anchor="w")
         folds_value.pack(side="left", anchor="w")
         folds_info.pack(side="left", anchor="w")
+        crossval_box.pack(side="top", padx=5, anchor="w")
+        ttk.Separator(el, orient="horizontal").pack(side="top", fill="x", pady=10, padx=5, anchor="w")
         neg_train_checkbox.pack(side="top", padx=5, anchor="w")
         neg_test_checkbox.pack(side="top", padx=5, anchor="w")
         neg_val_checkbox.pack(side="top", padx=5, anchor="w")
@@ -283,6 +283,20 @@ class SplitFrame(tk.Frame):
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
                     ["--crossval", "--val", self.folds.get(),]  # todo crossval
                 )
+            else:
+                try:
+                    if 0.0 < float(self.folds.get()) < 1.0:
+                        self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+                            ["--val", self.folds.get()]
+                        )
+                    else:
+                        self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+                            ["--val", "0.0"]
+                        )
+                except ValueError:
+                    self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
+                        ["--val", "0.0"]
+                    )
 
             if self.neg_train.get():
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(

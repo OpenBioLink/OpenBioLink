@@ -105,29 +105,26 @@ class TrainTestSetCreation:
         self.all_nodes = pandas.read_csv(all_nodes_path, sep=sep, names=self.col_names_nodes)
 
         logging.info(f"loading positive edges from {graph_path}")
-        self.all_tp = pandas.read_csv(graph_path, sep=sep, names=self.col_names_edges, usecols=range(4))
+        self.all_tp = pandas.read_csv(graph_path, sep=sep, names=self.col_names_edges)
         self.all_tp[self.value_col_name] = 1
         self.tp_edgeTypes = list(self.all_tp[self.edge_type_col_name].unique())
 
         logging.info(f"loading negative edges from {tn_graph_path}")
-        self.all_tn = pandas.read_csv(tn_graph_path, sep=sep, names=self.col_names_edges, usecols=range(4))
+        self.all_tn = pandas.read_csv(tn_graph_path, sep=sep, names=self.col_names_edges)
         self.all_tn[self.value_col_name] = 0
 
         self.tn_edgeTypes = list(self.all_tn[self.edge_type_col_name].unique())
 
         self.meta_edges_dic = {}
-        sources = {}
 
         for metaEdge in utils.get_leaf_subclasses(meta.EdgeMetadata):
             edge_type = str(metaEdge.EDGE_INMETA_CLASS.EDGE_TYPE)
             node1_type = str(metaEdge.EDGE_INMETA_CLASS.NODE1_TYPE)
             node2_type = str(metaEdge.EDGE_INMETA_CLASS.NODE2_TYPE)
-            source = str(metaEdge.EDGE_INMETA_CLASS.SOURCE)
             if edge_type in self.tp_edgeTypes:
                 self.meta_edges_dic[f"{node1_type}_{edge_type}_{node2_type}"] = (node1_type, edge_type, node2_type)
-                sources[f"{node1_type}_{edge_type}_{node2_type}"] = source
 
-        self.writer = TrainTestSetWriter(self.identifier2type, sources)
+        self.writer = TrainTestSetWriter(self.identifier2type)
 
         # nicetohave (2) check for transient onto edges
         # transitiv_IS_A_edges = utils.check_for_transitive_edges(self.all_tp[self.all_tp[ttsConst.EDGE_TYPE_COL_NAME] == 'IS_A'])
@@ -160,11 +157,7 @@ class TrainTestSetCreation:
             self.tmo_tn_edgeTypes = list(self.all_tp[self.edge_type_col_name].unique())
 
     def random_edge_split(self, test_frac=None, val=None, crossval=None):
-        if not val:
-            val = 0.05
-        if not test_frac:
-            test_frac = 0.05
-
+        logging.info(f"Creating random edge split with test_frac: {test_frac}, val_frac: {val}, crossval: {crossval}")
         # create positive and negative examples
         logging.info("Removing inconsistent edges from positive edges...")
         positive_samples = self.all_tp.copy()
@@ -197,29 +190,93 @@ class TrainTestSetCreation:
             logging.info("Removing reverse edges from train-val set")
             train_val_set = utils.remove_reverse_edges(remain_set=train_val_set, remove_set=test_set)
 
+        # split with crossvalidation
         if crossval:
             logging.info("Performing cross validation on trainingset...")
-            train_val_set = self.create_and_write_cross_val(train_val_set, train_val_nodes, val)
+            self.writer.write_set(test_set, ttsConf.TEST_FILE_NAME)
+            self.create_and_write_cross_val(train_val_set, train_val_nodes, test_set, val)
+        # train/test/val split
+        elif 0 < val < 1 and not float(val).is_integer():
+            logging.info("Creating validation set ...")
+            val_indices = list(train_val_set.sample(frac=val, random_state=globalConfig.RANDOM_STATE).index.values)
+            train_indices = list(train_val_set.drop(val_indices).index.values)
+            train_set, val_set, new_val_nodes = self.perform_val_split(train_val_set, train_val_nodes, train_indices, val_indices)
 
-        self.writer.write_train_test_set(train_val_set, train_val_nodes, test_set, test_set_nodes, new_test_nodes)
+            # write train set
+            self.writer.write_set(train_set, ttsConf.TRAIN_FILE_NAME)
+            self.writer.write_nodes(set(train_val_nodes), ttsConf.TRAIN_VAL_NODES_FILE_NAME)
 
-        if self.neg_train:
-            logging.info("Generating negative samples for trainingset...")
-            negative_samples = self.generate_neg_samples(train_val_set)
-            self.writer.write_set(negative_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TRAIN_FILE_NAME)
-        if self.neg_test:
-            logging.info("Generating negative samples for testset...")
-            negative_samples = self.generate_neg_samples(test_set)
-            self.writer.write_set(negative_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TEST_FILE_NAME)
+            # write test set
+            self.writer.write_set(test_set, ttsConf.TEST_FILE_NAME)
+            self.writer.write_nodes(set(test_set_nodes), ttsConf.TEST_NODES_FILE_NAME)
+            self.writer.write_new_nodes(new_test_nodes, ttsConf.NEW_TEST_NODES_FILE_NAME)
+
+            # write test set
+            self.writer.write_set(val_set, ttsConf.VAL_FILE_NAME)
+            self.writer.write_new_nodes(new_val_nodes, ttsConf.NEW_VAL_NODES_FILE_NAME)
+
+            # generate and write negative samples
+            if self.neg_train or self.neg_val or self.neg_test:
+                negative_train_samples, negative_test_samples, negative_val_samples = self.generate_neg_samples(train_set, test_set, val_set)
+                if negative_train_samples is not None:
+                    self.writer.write_set(negative_train_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TRAIN_FILE_NAME)
+                if negative_test_samples is not None:
+                    self.writer.write_set(negative_test_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TEST_FILE_NAME)
+                if negative_val_samples is not None:
+                    self.writer.write_set(negative_val_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.VAL_FILE_NAME)
+
+        # only train/test split
+        else:
+            self.writer.write_set(test_set, ttsConf.TEST_FILE_NAME)
+            self.writer.write_nodes(set(test_set_nodes), ttsConf.TEST_NODES_FILE_NAME)
+            self.writer.write_new_nodes(new_test_nodes, ttsConf.NEW_TEST_NODES_FILE_NAME)
+            self.writer.write_set(train_val_set, ttsConf.TRAIN_FILE_NAME)
+            self.writer.write_nodes(set(train_val_nodes), ttsConf.TRAIN_VAL_NODES_FILE_NAME)
+
+            # generate and write negative samples
+            if self.neg_train or self.neg_test:
+                negative_train_samples, negative_test_samples, _ = self.generate_neg_samples(train_val_set, test_set)
+                if negative_train_samples is not None:
+                    self.writer.write_set(negative_train_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TRAIN_FILE_NAME)
+                if negative_test_samples is not None:
+                    self.writer.write_set(negative_test_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TEST_FILE_NAME)
+
         logging.info("Done splitting!")
         # nicetohave (3) option to remove examples with new nodes
 
-    def generate_neg_samples(self, positive_samples):
+    def generate_neg_samples(self, train_set=None, test_set=None, val_set=None):
+        negative_train_samples = None
+        negative_test_samples = None
+        negative_val_samples = None
+        exclude_df = pandas.DataFrame(columns=globalConfig.COL_NAMES_EDGES)
+        if self.neg_train and train_set is not None:
+            logging.info("Generating negative samples for trainingset...")
+            negative_train_samples = self.sample_negative(train_set, exclude_df)
+            exclude_df.append(negative_train_samples, ignore_index=True)
+        if self.neg_test and test_set is not None:
+            logging.info("Generating negative samples for testset...")
+            negative_test_samples = self.sample_negative(test_set, exclude_df)
+            exclude_df.append(negative_test_samples, ignore_index=True)
+        if self.neg_val and val_set is not None:
+            logging.info("Generating negative samples for validationset...")
+            negative_val_samples = self.sample_negative(val_set, exclude_df)
+        return negative_train_samples, negative_test_samples, negative_val_samples
+
+    def sample_negative(self, positive_samples, exclude_df):
         negative_sampler = NegativeSampler(self.meta_edges_dic, self.tn_edgeTypes, self.all_tn.copy(),
                                            self.all_nodes, self.identifier2type)
-        negative_samples = negative_sampler.generate_random_neg_samples(positive_samples)
-        negative_samples.drop_duplicates()
-        return
+        negative_samples = negative_sampler.generate_random_neg_samples(positive_samples, exclude_df)
+        negative_samples.drop_duplicates(inplace=True)
+        return negative_samples
+
+    def filter_neg_samples(self, neg_train=None, neg_test=None, neg_val=None):
+        if neg_train is not None and neg_test is not None:
+            neg_train, neg_test = utils.get_diff(neg_train, neg_test, True)
+        if neg_train is not None and neg_val is not None:
+            neg_train, neg_test = utils.get_diff(neg_train, neg_val, True)
+        if neg_test is not None and neg_val is not None:
+            neg_test, neg_val = utils.get_diff(neg_test, neg_val, True)
+        return neg_train, neg_test, neg_val
 
     def time_slice_split(self):
         # nicetohave (4) like that, neg samples are restricted to edge_types appearing in test_sample --> good idea?
@@ -268,7 +325,12 @@ class TrainTestSetCreation:
         test_set_nodes = (
                 test_set[globalConfig.NODE1_ID_COL_NAME].tolist() + test_set[globalConfig.NODE2_ID_COL_NAME].tolist()
         )
-        self.writer.write_train_test_set(train_set, train_set_nodes, test_set, test_set_nodes, new_test_nodes)
+
+        self.writer.write_set(train_set, ttsConf.TRAIN_FILE_NAME)
+        self.writer.write_nodes(set(train_set_nodes), ttsConf.TRAIN_VAL_NODES_FILE_NAME)
+        self.writer.write_set(test_set, ttsConf.TEST_FILE_NAME)
+        self.writer.write_nodes(set(test_set_nodes), ttsConf.TEST_NODES_FILE_NAME)
+        self.writer.write_new_nodes(new_test_nodes, ttsConf.NEW_TEST_NODES_FILE_NAME)
 
         # niceToHave (5) slice size?
         # extra nur für diff? --> eig nciht --> eig schon weil nur pos
@@ -298,8 +360,8 @@ class TrainTestSetCreation:
         new_set = set(new_nodes_list)
         return new_set - old_set
 
-    def create_and_write_cross_val(self, df: pandas.DataFrame, nodes_in_train_val_set, n_folds):
-        nel_total, _ = df.shape
+    def create_and_write_cross_val(self, train_val_set: pandas.DataFrame, nodes_in_train_val_set, test_set, n_folds):
+        nel_total, _ = train_val_set.shape
         if n_folds == 0 or n_folds == 1 or (n_folds > 1 and not float(n_folds).is_integer()):
             logging.error("provided folds are not possible!")
             raise Exception(
@@ -310,7 +372,7 @@ class TrainTestSetCreation:
             n_folds = math.ceil(1 / n_folds)
         n_folds = int(n_folds)
 
-        rand_index = list(df.index)
+        rand_index = list(train_val_set.index)
         random.shuffle(rand_index)
         chunks = np.array_split(rand_index, n_folds)
 
@@ -322,36 +384,45 @@ class TrainTestSetCreation:
             val_chunk_index = (n_folds - 1 + i) % n_folds
             train_indices = [element for chunk_index in train_chunk_indices for element in chunks[chunk_index]]
             val_indices = chunks[val_chunk_index]
-            train_set = df.loc[train_indices]
-            val_set = df.loc[val_indices]
 
-            new_val_nodes = self.get_additional_nodes(
-                old_nodes_list=train_set[globalConfig.NODE1_ID_COL_NAME].tolist()
-                               + train_set[globalConfig.NODE2_ID_COL_NAME].tolist(),
-                new_nodes_list=nodes_in_train_val_set,
-            )
-            if len(new_val_nodes) > 0:  # nicetohave (6)
-                logging.info(
-                    f"Validation set {i + 1} contains nodes that are"
-                    f" not present in the training set. These edges will be dropped."
+            train_set, val_set, new_val_nodes = self.perform_val_split(train_val_set, nodes_in_train_val_set, train_indices, val_indices)
+
+            fold_folder_path = self.writer.get_fold_path(i)
+            os.makedirs(fold_folder_path, exist_ok=True)
+            self.writer.write_set(train_set, ttsConf.TRAIN_FILE_NAME, fold_folder_path)
+            self.writer.write_set(val_set, ttsConf.VAL_FILE_NAME, fold_folder_path)
+            self.writer.write_new_nodes(new_val_nodes, ttsConf.NEW_VAL_NODES_FILE_NAME, fold_folder_path)
+
+            if self.neg_train or self.neg_val or self.neg_test:
+                negative_train_samples, negative_test_samples, negative_val_samples = self.generate_neg_samples(
+                    train_set, test_set, val_set
                 )
-                val_set = self.remove_edges_with_nodes(val_set, new_val_nodes)
-            if graphProp.DIRECTED:
-                train_set = utils.remove_reverse_edges(remain_set=train_set, remove_set=val_set)
-            val_set = utils.remove_parent_duplicates_and_reverses(remain_set=val_set, remove_set=train_set)
+                if negative_train_samples is not None:
+                    self.writer.write_set(negative_train_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TRAIN_FILE_NAME, fold_folder_path)
+                if negative_val_samples is not None:
+                    self.writer.write_set(negative_val_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.VAL_FILE_NAME, fold_folder_path)
+                if negative_test_samples is not None:
+                    self.writer.write_set(negative_test_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TEST_FILE_NAME, fold_folder_path)
 
-            self.writer.write_train_val_set(train_set, val_set, new_val_nodes, i)
+    def perform_val_split(self, train_val_set, nodes_in_train_val_set, train_indices, val_indices):
+        train_set = train_val_set.loc[train_indices]
+        val_set = train_val_set.loc[val_indices]
 
-            if self.neg_train:
-                logging.info("Generating negative samples for trainingset...")
-                negative_samples = self.generate_neg_samples(train_set)
-                self.writer.write_set(negative_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TRAIN_FILE_NAME)
-            if self.neg_val:
-                logging.info("Generating negative samples for validationset...")
-                negative_samples = self.generate_neg_samples(val_set)
-                self.writer.write_set(negative_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.VAL_FILE_NAME)
-
-        return train_set.append(val_set)
+        new_val_nodes = self.get_additional_nodes(
+            old_nodes_list=train_set[globalConfig.NODE1_ID_COL_NAME].tolist()
+                           + train_set[globalConfig.NODE2_ID_COL_NAME].tolist(),
+            new_nodes_list=nodes_in_train_val_set,
+        )
+        if len(new_val_nodes) > 0:  # nicetohave (6)
+            logging.info(
+                f"Validation set contains nodes that are"
+                f" not present in the training set. These edges will be dropped."
+            )
+            val_set = self.remove_edges_with_nodes(val_set, new_val_nodes)
+        if graphProp.DIRECTED:
+            train_set = utils.remove_reverse_edges(remain_set=train_set, remove_set=val_set)
+        val_set = utils.remove_parent_duplicates_and_reverses(remain_set=val_set, remove_set=train_set)
+        return train_set, val_set, new_val_nodes
 
 
 def _not_csv(f):

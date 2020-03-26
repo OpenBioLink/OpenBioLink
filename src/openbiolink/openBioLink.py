@@ -172,14 +172,14 @@ def time(edges, tn_edges, nodes, tmo_edges, tmo_tn_edges, tmo_nodes, sep):
 @tn_edges_option
 @nodes_option
 @sep_option
-@click.option("--test-frac", type=float, show_default=True, default=0.2, help="Fraction of test set as float")
+@click.option("--test-frac", type=float, show_default=True, default=0.05, help="Fraction of test set as float")
 @click.option("--crossval", is_flag=True, help="Multiple train-validation-sets are generated")
 @click.option(
     "--val",
     type=float,
-    default=0.2,
+    default=0.05,
     show_default=True,
-    help="Fraction of validation set as float or number of folds as int",
+    help="Fraction of validation set as float",
 )
 @click.option("--neg-train", is_flag=True, help="If flag is set, negative samples for the training set are generated")
 @click.option("--neg-test", is_flag=True, help="If flag is set, negative samples for the test set are generated")
@@ -188,7 +188,7 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val, neg_train, neg_t
     """Split randomly."""
     if crossval and (val == 0 or val == 1 or (val > 1 and not float(val).is_integer())):
         click.secho(
-            "fold entry must be either an int>1 (number of folds) or a float >0 and <1 (validation fraction)", fg="red",
+            "fold entry must be a float >0 and <1 (validation fraction)", fg="red",
         )
         sys.exit(-1)
 

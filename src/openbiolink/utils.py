@@ -261,21 +261,45 @@ def get_diff(df1, df2, ignore_qscore=False, path=None):
     df2["id1"] = df2["id1"].astype(str)
     df2["id2"] = df2["id2"].astype(str)
     df2["edgeType"] = df2["edgeType"].astype(str)
+    all_cols = globConst.COL_NAMES_SAMPLES
+    all_cols_without_source = [
+        globConst.NODE1_ID_COL_NAME,
+        globConst.EDGE_TYPE_COL_NAME,
+        globConst.NODE2_ID_COL_NAME,
+        globConst.QSCORE_COL_NAME,
+        globConst.VALUE_COL_NAME
+    ]
+
     if ignore_qscore:
-        all_cols = globConst.COL_NAMES_SAMPLES
         cols = globConst.COL_NAMES_TRIPLES + [globConst.VALUE_COL_NAME]
         diff = pandas.merge(df1, df2, how="outer", left_on=cols, right_on=cols, indicator=True).loc[
             lambda x: x["_merge"] != "both"
         ]
         left_only = diff.loc[lambda x: x._merge == "left_only"]
+        left_only[globConst.SOURCE_COL_NAME] = left_only[globConst.SOURCE_COL_NAME + "_x"]
         left_only[globConst.QSCORE_COL_NAME] = left_only[globConst.QSCORE_COL_NAME + "_x"]
         left_only = left_only[all_cols]
-        left_only.drop_duplicates(inplace=True, keep=False)
+        left_only.drop_duplicates(subset=all_cols_without_source, inplace=True, keep=False)
         right_only = diff.loc[lambda x: x._merge == "right_only"]
         right_only[globConst.QSCORE_COL_NAME] = right_only[globConst.QSCORE_COL_NAME + "_y"]
+        right_only[globConst.SOURCE_COL_NAME] = right_only[globConst.SOURCE_COL_NAME + "_y"]
         right_only = right_only[all_cols]
-        right_only.drop_duplicates(inplace=True, keep=False)
-
+        right_only.drop_duplicates(subset=all_cols_without_source, inplace=True, keep=False)
+    elif set(all_cols) == set(df1.columns.values) and set(all_cols) == set(df2.columns.values):
+        diff = pandas.merge(
+            df1,
+            df2,
+            how="outer",
+            left_on=all_cols_without_source,
+            right_on=all_cols_without_source,
+            indicator=True
+        ).loc[lambda x: x["_merge"] != "both"]
+        left_only = diff.loc[lambda x: x._merge == "left_only"]
+        left_only[globConst.SOURCE_COL_NAME] = left_only[globConst.SOURCE_COL_NAME + "_x"]
+        left_only = left_only[all_cols]
+        right_only = diff.loc[lambda x: x._merge == "right_only"]
+        right_only[globConst.SOURCE_COL_NAME] = right_only[globConst.SOURCE_COL_NAME + "_x"]
+        right_only = right_only[all_cols]
     else:
         diff = pandas.merge(df1, df2, how="outer", indicator=True).loc[lambda x: x["_merge"] != "both"]
         left_only = diff.loc[lambda x: x._merge == "left_only"].drop(["_merge"], axis=1)
