@@ -111,13 +111,13 @@ class SplitFrame(tk.Frame):
             folds_frame, text="as float, e.g. 0.05", font=self.controller.info_font
         )
 
-        self.neg_train = tk.BooleanVar(value=False)
+        self.neg_train = tk.BooleanVar(value=True)
         neg_train_checkbox = tk.Checkbutton(el, text="Generate negative samples for trainingset",
                                             variable = self.neg_train)
-        self.neg_test = tk.BooleanVar(value=False)
+        self.neg_test = tk.BooleanVar(value=True)
         neg_test_checkbox = tk.Checkbutton(el, text="Generate negative samples for testset",
                                             variable=self.neg_test)
-        self.neg_val = tk.BooleanVar(value=False)
+        self.neg_val = tk.BooleanVar(value=True)
         neg_val_checkbox = tk.Checkbutton(el, text="Generate negative samples for validationset",
                                             variable=self.neg_val)
 
@@ -277,7 +277,9 @@ class SplitFrame(tk.Frame):
             if self.test_frac.get() == "":
                 messagebox.showerror("ERROR", "Please provide a test set fraction.")
                 return
-            self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--test-frac", self.test_frac.get()])
+
+            if float(self.test_frac.get()) != 0.05:
+                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(["--test-frac", self.test_frac.get()])
 
             if self.crossval.get():
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
@@ -285,7 +287,10 @@ class SplitFrame(tk.Frame):
                 )
             else:
                 try:
-                    if 0.0 < float(self.folds.get()) < 1.0:
+                    # default value doesn't have to be appended
+                    if float(self.folds.get()) == 0.05:
+                        pass
+                    elif 0.0 < float(self.folds.get()) < 1.0:
                         self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
                             ["--val", self.folds.get()]
                         )
@@ -298,17 +303,17 @@ class SplitFrame(tk.Frame):
                         ["--val", "0.0"]
                     )
 
-            if self.neg_train.get():
+            if self.neg_train.get() is False:
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
-                    ["--neg-train"]
+                    ["--no-neg-train"]
                 )
-            if self.neg_test.get():
+            if self.neg_test.get() is False:
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
-                    ["--neg-test"]
+                    ["--no-neg-test"]
                 )
-            if self.neg_val.get():
+            if self.neg_val.get() is False:
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
-                    ["--neg-val"]
+                    ["--no-neg-val"]
                 )
 
         self.controller.show_next_frame()

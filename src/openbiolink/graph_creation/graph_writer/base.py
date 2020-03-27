@@ -46,9 +46,9 @@ class OpenBioLinkGraphWriter(GraphWriter):
         }
 
         # Sanitize - not necessary since all types can be dumped to JSON?
-        # for k, v in graph_prop_dict.items():
-        #    if not isinstance(v, str):
-        #        graph_prop_dict[k] = str(v)
+        for k, v in graph_prop_dict.items():
+            if not isinstance(v, str):
+                graph_prop_dict[k] = str(v)
 
         with open(os.path.join(self.graph_dir_path, "graph_props.json"), "w") as file:
             json.dump(graph_prop_dict, file, indent=2)
