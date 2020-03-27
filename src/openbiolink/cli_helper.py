@@ -65,6 +65,7 @@ def create_graph(
         graph_creator.create_graph(
             format=output_format, file_sep=output_sep, multi_file=output_multi, print_qscore=qscore,
         )
+    logging.info("##### Graph creation done! #####")
 
 
 def train_and_evaluate(
