@@ -90,6 +90,8 @@ The OpenBioLink framework consists of three parts, called 'actions':
 With the graph creation and the train-test set action, customized datasets can be created to suit individual needs.
 The third action serves as an interface for training and evaluating link prediction models.
 
+For HOW-TO's please check also the [wiki](https://github.com/OpenBioLink/OpenBioLink/wiki/Table-of-Contents)
+
 #### Calling via GUI
 By calling the program without any parameters, the GUI is started, 
 providing an interface to define required parameters. In the last step, 
