@@ -227,6 +227,8 @@ All node ID's in the graph are CURIES, meaning entities can be easily looked up 
 
 Detailed information of how the Identifiers are resolved can be found here https://registry.identifiers.org/
 
+
+
 # Train-test-split creation
 
 ## Random split
@@ -278,6 +280,13 @@ The reason for this is that if the original edge a-b was undirected, both direct
  the existence of a relation y between those same entities, but the presence of y necessarily implies the existence of x. These kinds of relationships 
  could cause information leakage in the datasets, therefore super-relations of relations present in the training set are removed 
  from the test set.
+ 
+ # True Negative edges
+As randomly sampled negative edges can produce noise or trivial examples, true negative edges (i.e., relationships that were explicitly mentioned to not exist) were used wherever possible. 
+Specifically, for disease_drug and disease_phenotype edges, true negative examples were extracted from the data source directly, as they were explicitly stated. For gene-anatomy relationships, over-expression and under-expression data was used as contradicting data. For other relationship-types, e.g., gene_activation_gene and drug_inhibition_gene, this indirect true negative sample creation could not be applied, as the relationship does not hold all information necessary (the same substance can have both activating and inhibiting effects, e.g. depending on dosage).
+
+ 
+
 
 
 # Source databases and their licenses
@@ -291,7 +300,7 @@ The reason for this is that if the original edge a-b was undirected, both direct
 | edge (gene-anatomy)            | [Bgee](https://bgee.org/)                    | CC 0                                        | Yes	        | Yes     |
 | edge (gene-drug)               | [STITCH](http://stitch.embl.de/)             | CC BY                                       | No	        | Yes     |
 | edge (gene-pathway)            | [CTD](http://ctdbase.org/)                   | Custom: [CTD](http://ctdbase.org/about/legal.jsp)   | No	        | No     |
-| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      | No	        | No     |
+| edge (disease-phenotype)       | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      | Yes	        | No     |
 | edge (disease-drug)            | [DrugCentral](http://drugcentral.org/)       | CC BY-SA                                    | Yes	        | No     |
 | edge (drug-phenotype)          | [SIDER](http://sideeffects.embl.de/)         | CC BY-NC-CA                                 | No	        | No     |
 | ontology (genes)               | [GO](http://geneontology.org/)               | CC BY                                       | 	        |      |
@@ -317,3 +326,11 @@ The OpenBioLink benchmark files integrate data or identifiers from these sources
 All original data in the benchmark files created by the OpenBioLink project (not covered by the licenses of external data sources)  are released as [CC 0](https://creativecommons.org/publicdomain/zero/1.0/). 
 
 We offer the benchmark files as-is and make no representations or warranties of any kind concerning the benchmark files, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
+
+#Evaluating your own Model
+
+Currently, models provided in pykeen can be tested in the framework. To add your own models, please perform the following steps:
+1) implement the model interface ``src/openbiolink/evaluation/models/model.py`` 
+1) add your model to the modeltypes ``src/openbiolink/evaluation/models/modelTypes.py``
+ 
+
