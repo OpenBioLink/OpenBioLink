@@ -327,7 +327,7 @@ All original data in the benchmark files created by the OpenBioLink project (not
 
 We offer the benchmark files as-is and make no representations or warranties of any kind concerning the benchmark files, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
 
-#Evaluating your own Model
+# Evaluating your own Model
 
 Currently, models provided in pykeen can be tested in the framework. To add your own models, please perform the following steps:
 1) implement the model interface ``src/openbiolink/evaluation/models/model.py`` 
