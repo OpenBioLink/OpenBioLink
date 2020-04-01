@@ -111,15 +111,11 @@ class SplitFrame(tk.Frame):
             folds_frame, text="as float, e.g. 0.05", font=self.controller.info_font
         )
 
-        self.neg_train = tk.BooleanVar(value=True)
-        neg_train_checkbox = tk.Checkbutton(el, text="Generate negative samples for trainingset",
-                                            variable = self.neg_train)
+        self.neg_train_val = tk.BooleanVar(value=True)
+        neg_train_val_checkbox = tk.Checkbutton(el, text="Generate negative samples for training/validation set",
+                                                variable=self.neg_train_val)
         self.neg_test = tk.BooleanVar(value=True)
-        neg_test_checkbox = tk.Checkbutton(el, text="Generate negative samples for testset",
-                                            variable=self.neg_test)
-        self.neg_val = tk.BooleanVar(value=True)
-        neg_val_checkbox = tk.Checkbutton(el, text="Generate negative samples for validationset",
-                                            variable=self.neg_val)
+        neg_test_checkbox = tk.Checkbutton(el, text="Generate negative samples for test set", variable=self.neg_test)
 
         # packing
         test_frac_frame.pack(side="top", padx=5, pady=10, anchor="w")
@@ -132,9 +128,8 @@ class SplitFrame(tk.Frame):
         folds_info.pack(side="left", anchor="w")
         crossval_box.pack(side="top", padx=5, anchor="w")
         ttk.Separator(el, orient="horizontal").pack(side="top", fill="x", pady=10, padx=5, anchor="w")
-        neg_train_checkbox.pack(side="top", padx=5, anchor="w")
+        neg_train_val_checkbox.pack(side="top", padx=5, anchor="w")
         neg_test_checkbox.pack(side="top", padx=5, anchor="w")
-        neg_val_checkbox.pack(side="top", padx=5, anchor="w")
         return el
 
     # todo style: 6 times same function
@@ -303,17 +298,13 @@ class SplitFrame(tk.Frame):
                         ["--val", "0.0"]
                     )
 
-            if self.neg_train.get() is False:
+            if self.neg_train_val.get() is False:
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
-                    ["--no-neg-train"]
+                    ["--no-neg-train-val"]
                 )
             if self.neg_test.get() is False:
                 self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
                     ["--no-neg-test"]
-                )
-            if self.neg_val.get() is False:
-                self.controller.ARGS_LIST_TRAIN_TEST_SPLIT.extend(
-                    ["--no-neg-val"]
                 )
 
         self.controller.show_next_frame()
