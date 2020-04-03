@@ -71,7 +71,7 @@ Additionally, each graph is available in [RDF N3](https://en.wikipedia.org/wiki/
 
 Please note that the OpenBioLink benchmark files contain data derived from external ressources. Licensing terms of these external resources are detailed [below](#Source-databases-and-their-licenses). 
 
- ## Leaderboard    
+ ## OpenBioLink 2020 Leaderboard    
  
  | model | hits@10 | hits@1 |  paper | code |
 |-------|---------|--------|-------|------|
