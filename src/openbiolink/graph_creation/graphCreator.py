@@ -101,7 +101,7 @@ class GraphCreator:
         tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
         it = tqdm(edge_metadata_list, file=tqdmbuffer, desc="meta edges to graph")
         for d in it:
-            it.write(f"Converting {d}")
+            logging.info(f"Converting {d.__class__.__name__}")
             nodes1, nodes2, edges = self.create_nodes_and_edges(d, tn)
             if str(d.edgeType) in edges_dic:
                 edges_dic[str(d.edgeType)].update(edges)

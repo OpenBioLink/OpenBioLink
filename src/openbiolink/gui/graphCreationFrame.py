@@ -181,11 +181,11 @@ class GraphCreationFrame(tk.Frame):
     def _create_graph_prop_el(self, parent):
         el = tk.LabelFrame(parent, text="Graph Properties")
         # quality
-        self.qual = tk.StringVar(value="None")
+        self.qual = tk.StringVar(value="hq")
         hq_box = tk.Radiobutton(el, text="high quality", variable=self.qual, value="hq")
         mq_box = tk.Radiobutton(el, text="medium quality", variable=self.qual, value="mq")
         lq_box = tk.Radiobutton(el, text="low quality", variable=self.qual, value="lq")
-        none_box = tk.Radiobutton(el, text="no quality cutoff", variable=self.qual, value="None")
+        none_box = tk.Radiobutton(el, text="no quality cutoff", variable=self.qual, value="nq")
         # undirected
         self.undir = tk.BooleanVar()
         undirected_box = tk.Radiobutton(el, text="undirected", variable=self.undir, value=True)
@@ -225,7 +225,7 @@ class GraphCreationFrame(tk.Frame):
                 sep_value.pack(side="left", anchor="w")
                 sep_info.pack(side="left", anchor="w")
                 no_qscore_box.pack(side="top", padx=5, anchor="w")
-            else:
+            elif fmt in ["RDF-N3", "PICKLE", "BEL"]:
                 forget_packing()
                 self.single_sep = tk.StringVar(value=None)
                 self.multi_sep = tk.StringVar(value=None)
@@ -304,11 +304,11 @@ class GraphCreationFrame(tk.Frame):
                 messagebox.showerror("ERROR", "Please provide a separator for desired output file")
                 return
         self.controller.ARGS_LIST_GRAPH_CREATION.append("generate")
-        if self.format.get():
+        if self.format.get() != "TSV":
             self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--output-format", self.format.get()])
         if self.undir.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append("--undirected")
-        if self.qual.get() != "None":
+        if self.qual.get() != "hq":
             self.controller.ARGS_LIST_GRAPH_CREATION.extend(["--qual", self.qual.get()])
         if not self.download.get():
             self.controller.ARGS_LIST_GRAPH_CREATION.append("--no-download")

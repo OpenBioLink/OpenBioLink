@@ -58,9 +58,10 @@ def handle_quality(_, __, qual):
 @click.option("--undirected", is_flag=True, help="Output-Graph should be undirectional (default = directional)")
 @click.option(
     "--qual",
-    type=click.Choice(["hq", "mq", "lq"]),
+    type=click.Choice(["hq", "mq", "lq", "nq"]),
+    default="hq",
     callback=handle_quality,
-    help="minimum quality level of the output-graph. If not specified, all entries are used.",
+    help="minimum quality level of the output-graph. If not specified, high quality is used.",
 )
 @click.option(
     "--no-interact",
@@ -172,20 +173,22 @@ def time(edges, tn_edges, nodes, tmo_edges, tmo_tn_edges, tmo_nodes, sep):
 @tn_edges_option
 @nodes_option
 @sep_option
-@click.option("--test-frac", type=float, show_default=True, default=0.2, help="Fraction of test set as float")
+@click.option("--test-frac", type=float, show_default=True, default=0.05, help="Fraction of test set as float")
 @click.option("--crossval", is_flag=True, help="Multiple train-validation-sets are generated")
 @click.option(
     "--val",
     type=float,
-    default=0.2,
+    default=0.05,
     show_default=True,
-    help="Fraction of validation set as float or number of folds as int",
+    help="Fraction of validation set as float",
 )
-def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
+@click.option("--no-neg-train-val", is_flag=True, help="If flag is set, negative samples for the training/validation set are generated")
+@click.option("--no-neg-test", is_flag=True, help="If flag is set, negative samples for the test set are generated")
+def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val, no_neg_train_val, no_neg_test):
     """Split randomly."""
     if crossval and (val == 0 or val == 1 or (val > 1 and not float(val).is_integer())):
         click.secho(
-            "fold entry must be either an int>1 (number of folds) or a float >0 and <1 (validation fraction)", fg="red",
+            "fold entry must be a float >0 and <1 (validation fraction)", fg="red",
         )
         sys.exit(-1)
 
@@ -195,7 +198,9 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val):
         graph_path=edges,
         tn_graph_path=tn_edges,
         all_nodes_path=nodes,
-        sep=sep
+        sep=sep,
+        neg_train_val=not no_neg_train_val,
+        neg_test=not no_neg_test
     )
     click.secho("Creating random slice split", fg="blue")
     tts.random_edge_split(val=val, test_frac=test_frac, crossval=crossval)

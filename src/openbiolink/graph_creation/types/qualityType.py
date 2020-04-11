@@ -9,7 +9,7 @@ class QualityType(Enum):
 
     @classmethod
     def get_quality_type(cls, qual: Optional[str]) -> Optional["QualityType"]:
-        if qual is None:
+        if qual in {None, "nq"}:
             return None
         qual = qual.lower()
         if qual in {"hq", "high", "h"}:

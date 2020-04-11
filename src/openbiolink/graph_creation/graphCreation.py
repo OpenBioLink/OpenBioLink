@@ -72,15 +72,14 @@ class Graph_Creation:
         logging.info("## Start downloading files ##")
         directory = gcConst.O_FILE_PATH
         os.makedirs(directory, exist_ok=True)
-        tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
-        it = tqdm(self.db_file_metadata, file=tqdmbuffer, desc="Downloading files")
-        for db_file in it:
+        #tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+        #it = tqdm(self.db_file_metadata, file=tqdmbuffer, desc="Downloading files")
+        for index, db_file in enumerate(self.db_file_metadata):
             path = os.path.join(directory, db_file.ofile_name)
             if skip_existing and os.path.exists(path):
-                it.write(f"Skipping: {db_file.NAME}")
+                logging.info(f"Skipping: {db_file.NAME}")
                 continue
-            if not globConst.GUI_MODE:
-                it.write(f"Downloading: {db_file.NAME}")
+            logging.info(f"Downloading {index + 1}/{len(self.db_file_metadata)}: {db_file.NAME}")
             FileDownloader.download(db_file.url, path)
 
     # ----------- create input files ----------
@@ -98,9 +97,9 @@ class Graph_Creation:
         it = tqdm(self.file_readers, file=tqdmbuffer)
         for reader in it:
             if reader.readerType not in self.readerType_processor_map:
-                it.write(f"There is no processor for the reader {reader.readerType}")
+                logging.info(f"There is no processor for the reader {reader.readerType}")
                 continue
-            it.write(f"Reading: {reader.__class__.__name__}")
+            logging.info(f"Reading: {reader.__class__.__name__}")
             # check beforehand if read in content is processed as parsing can be time consuming
             all_files_exist = all(
                 os.path.isfile(
@@ -136,6 +135,7 @@ class Graph_Creation:
                         else:
                             skip, for_all = Cli.skip_existing_files(out_file_path)
                     if not (skip and os.path.isfile(out_file_path)):
+                        logging.info(f"Processing: {processor.__class__.__name__}")
                         out_data = processor.process(in_data)
                         FileWriter.write_to_file(out_data, out_file_path)
 

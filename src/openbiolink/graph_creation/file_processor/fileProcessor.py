@@ -43,11 +43,13 @@ class FileProcessor:
         data = self.individual_preprocessing(data)
         data = data[self.use_cols]
         if self.mapping_sep is not None:
+            logging.info(f"Flatten dataframe...")
             data = self.flat_df(data)
         data = self.individual_postprocessing(data)
         rows, _ = data.shape
         if rows == 0:
             logging.warning("WARNING: The preprocessing of this processor removed all data.")
+        data.drop_duplicates(inplace=True)
         return data
 
     @staticmethod
