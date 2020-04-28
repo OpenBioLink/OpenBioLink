@@ -72,7 +72,9 @@ def train_and_evaluate(
     model_cls: str,
     trained_model,
     training_set_path,
+    negative_training_set_path,
     test_set_path,
+    negative_test_set_path,
     nodes_path,
     do_training,
     do_evaluation,
@@ -94,7 +96,9 @@ def train_and_evaluate(
     e = Evaluation(
         model=model,
         training_set_path=training_set_path,
+        negative_training_set_path=negative_training_set_path,
         test_set_path=test_set_path,
+        negative_test_set_path=negative_test_set_path,
         nodes_path=nodes_path,
         mappings_avail=bool(trained_model),
     )
