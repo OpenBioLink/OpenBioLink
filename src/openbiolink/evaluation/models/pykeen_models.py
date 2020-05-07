@@ -55,7 +55,6 @@ class PyKeen_BasicModel(Model):
     def train(self, pos_triples: np.array, neg_triples: np.array):
 
         all_triples = np.concatenate((pos_triples, neg_triples))
-
         # testme
         self.config[keenConst.NUM_ENTITIES] = len(np.unique(np.concatenate((all_triples[:, 0], all_triples[:, 2]))))
         self.config[keenConst.NUM_RELATIONS] = len(np.unique(all_triples[:, 1]))
@@ -82,9 +81,8 @@ class PyKeen_BasicModel(Model):
             neg_triples = neg_triples[indices_neg]
             neg_batches = self._split_list_in_batches(input_list=neg_triples, batch_size=self.config["batch_size"])
             current_epoch_loss = 0.0
-
-            tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
-            for pos_batch, neg_batch in tqdm(zip(pos_batches, neg_batches), total=len(neg_batches), file=tqdmbuffer):
+            #tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
+            for pos_batch, neg_batch in tqdm(zip(pos_batches, neg_batches), total=len(neg_batches)):
                 current_batch_size = len(pos_batch)
 
                 # if not len(pos_batch) == len(neg_batch):
@@ -125,7 +123,6 @@ class PyKeen_BasicModel(Model):
 
     def get_ranked_and_sorted_predictions(self, mapped_test_triples):
         # ** original code can be found in utilities/prediction_utils.py
-
         mapped_test_triples = torch.tensor(mapped_test_triples, dtype=torch.long, device=self.device)
         borders = []
         i = 0

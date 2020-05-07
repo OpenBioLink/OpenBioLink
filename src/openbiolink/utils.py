@@ -496,7 +496,7 @@ def _get_corrupted_examples(corrupted_triples, pos_examples, filtered):
     else:
         corrupted_triples_df[globConst.VALUE_COL_NAME] = 0
         # corrupted_triples[globConst.VALUE_COL_NAME][neg_indices] = 0
-    return corrupted_triples_df.values
+    return corrupted_triples_df.astype(float).astype(int).values
 
 
 def _group_corrupted_examples(corrupted_dict, col_names):

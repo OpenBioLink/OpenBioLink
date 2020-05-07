@@ -30,7 +30,9 @@ class EvalFrame(tk.Frame):
         paths_box = tk.LabelFrame(options_panel, text="file paths")
         self.config_path_el = self._create_config_path_el(paths_box)
         self.train_file_el = self._create_train_path_el(paths_box)
+        self.neg_train_file_el = self._create_neg_train_path_el(paths_box)
         self.test_file_el = self._create_test_path_el(paths_box)
+        self.neg_test_file_el = self._create_neg_test_path_el(paths_box)
         self.trained_model_file_el = self._create_trained_model_path_el(paths_box)
         self.node_or_corrupted_file_el = self._create_nodes_or_corrupted_path_el(paths_box)
 
@@ -80,10 +82,12 @@ class EvalFrame(tk.Frame):
         self.unpack_file_paths()
         if self.train.get():
             self.train_file_el.pack(side="top", fill="x")
+            self.neg_train_file_el.pack(side="top", fill="x")
         elif self.evaluate.get():
             self.trained_model_file_el.pack(side="top", fill="x")
         if self.evaluate.get():
             self.test_file_el.pack(side="top", fill="x")
+            self.neg_test_file_el.pack(side="top", fill="x")
             self.metrics_frame.pack(side="top", fill="both", expand=True)
 
         else:
@@ -193,6 +197,18 @@ class EvalFrame(tk.Frame):
         train_label.pack(fill="x", padx=5, pady=5)
         return el
 
+    def _create_neg_train_path_el(self, parent):
+        el = tk.Frame(parent)
+        panel = tk.Frame(el)
+        self.neg_train_path = tk.StringVar()
+        train_button = tk.Button(panel, text="select path ...", command=lambda: self.browse_neg_train_file())
+        train_label = tk.Entry(el, textvariable=self.neg_train_path)
+        panel.pack(side="top", fill="x")
+        tk.Label(panel, text="negative training set path:").pack(side="left", anchor="w", padx=5, pady=5)
+        train_button.pack(side="right", anchor="w", padx=5, pady=5)
+        train_label.pack(fill="x", padx=5, pady=5)
+        return el
+
     def _create_test_path_el(self, parent):
         el = tk.Frame(parent)
         panel = tk.Frame(el)
@@ -201,6 +217,18 @@ class EvalFrame(tk.Frame):
         test_label = tk.Entry(el, textvariable=self.test_path)
         panel.pack(side="top", fill="x")
         tk.Label(panel, text="test set path:").pack(side="left", anchor="w", padx=5, pady=5)
+        test_button.pack(side="right", anchor="w", padx=5, pady=5)
+        test_label.pack(fill="x", padx=5, pady=5)
+        return el
+
+    def _create_neg_test_path_el(self, parent):
+        el = tk.Frame(parent)
+        panel = tk.Frame(el)
+        self.neg_test_path = tk.StringVar()
+        test_button = tk.Button(panel, text="select path ...", command=lambda: self.browse_neg_test_file())
+        test_label = tk.Entry(el, textvariable=self.neg_test_path)
+        panel.pack(side="top", fill="x")
+        tk.Label(panel, text="negative test set path:").pack(side="left", anchor="w", padx=5, pady=5)
         test_button.pack(side="right", anchor="w", padx=5, pady=5)
         test_label.pack(fill="x", padx=5, pady=5)
         return el
@@ -237,8 +265,14 @@ class EvalFrame(tk.Frame):
     def browse_test_file(self):
         self.test_path.set(filedialog.askopenfilename())
 
+    def browse_neg_test_file(self):
+        self.neg_test_path.set(filedialog.askopenfilename())
+
     def browse_train_file(self):
         self.train_path.set(filedialog.askopenfilename())
+
+    def browse_neg_train_file(self):
+        self.neg_train_path.set(filedialog.askopenfilename())
 
     def browse_trained_model(self):
         self.trained_model_path.set(filedialog.askopenfilename())
@@ -260,9 +294,21 @@ class EvalFrame(tk.Frame):
         if os.path.exists(train_path) or "SplitFrame" in self.controller.selected_frames:
             self.train_path.set(train_path)
 
+        neg_test_path = os.path.join(tts_files_folder, ttsConst.NEGATIVE_PREFIX + ttsConst.TEST_FILE_NAME)
+        if os.path.exists(neg_test_path) or "SplitFrame" in self.controller.selected_frames:
+            self.neg_test_path.set(neg_test_path)
+
+        neg_train_path = os.path.join(tts_files_folder, ttsConst.NEGATIVE_PREFIX + ttsConst.TRAIN_FILE_NAME)
+        if os.path.exists(neg_train_path) or "SplitFrame" in self.controller.selected_frames:
+            self.neg_train_path.set(neg_train_path)
+
+        # train val nodes path for obl 2020
         nodes_path = os.path.join(tts_files_folder, ttsConst.TRAIN_VAL_NODES_FILE_NAME)
-        if os.path.exists(nodes_path) or "GraphCreationFrame" in self.controller.selected_frames:
+        train_nodes_path = os.path.join(tts_files_folder, ttsConst.TRAIN_NODES_FILE_NAME)
+        if os.path.exists(nodes_path):
             self.nodes_or_corr_path.set(nodes_path)
+        elif os.path.exists(train_nodes_path) or "GraphCreationFrame" in self.controller.selected_frames:
+            self.nodes_or_corr_path.set(train_nodes_path)
 
     def next_page(self):
         if not self.train.get() and not self.evaluate.get():
@@ -303,11 +349,15 @@ class EvalFrame(tk.Frame):
             self.controller.ARGS_LIST_EVAL.append("--no-train")
             self.controller.ARGS_LIST_EVAL.extend(["--trained-model", self.trained_model_path.get()])
         else:
-            self.controller.ARGS_LIST_EVAL.extend(["--trainining-path", self.train_path.get()])
+            self.controller.ARGS_LIST_EVAL.extend(["--training-path", self.train_path.get()])
+            if self.neg_train_path.get():
+                self.controller.ARGS_LIST_EVAL.extend(["--negative-training-path", self.neg_train_path.get()])
         if not self.evaluate.get():
             self.controller.ARGS_LIST_EVAL.append("--no-eval")
         else:
-            self.controller.ARGS_LIST_EVAL.extend(["--test", self.test_path.get()])
+            self.controller.ARGS_LIST_EVAL.extend(["--testing-path", self.test_path.get()])
+            if self.neg_test_path.get():
+                self.controller.ARGS_LIST_EVAL.extend(["--negative-testing-path", self.neg_test_path.get()])
             ranked_metrics = [x.name for x, y in self.rank_metrics_dict.items() if y.get()]
             for ranked_metric in ranked_metrics:
                 self.controller.ARGS_LIST_EVAL.extend(["--metrics", ranked_metric])

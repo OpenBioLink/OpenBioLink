@@ -194,6 +194,9 @@ class TrainTestSetCreation:
             val_indices, train_indices = np.array_split(rand_index, [int(len(rand_index) * val)])
 
             train_set, val_set, new_val_nodes = self.perform_val_split(train_val_set, train_val_nodes, train_indices, val_indices)
+
+            train_nodes = self.get_nodes(train_set, self.neg_train_val)
+            val_nodes = self.get_nodes(val_set, self.neg_train_val)
             
             test_set, new_test_nodes = self.filter(train_set, self.neg_train_val, test_set, self.neg_test, "test")
             test_set_nodes = self.get_nodes(test_set, self.neg_test)
@@ -204,7 +207,7 @@ class TrainTestSetCreation:
 
             # write train set
             self.writer.write_set(positive_train_samples, ttsConf.TRAIN_FILE_NAME)
-            self.writer.write_nodes(set(train_val_nodes), ttsConf.TRAIN_VAL_NODES_FILE_NAME)
+            self.writer.write_nodes(set(train_nodes), ttsConf.TRAIN_NODES_FILE_NAME)
 
             # write test set
             self.writer.write_set(positive_test_samples, ttsConf.TEST_FILE_NAME)
@@ -213,6 +216,7 @@ class TrainTestSetCreation:
 
             # write val set
             self.writer.write_set(positive_val_samples, ttsConf.VAL_FILE_NAME)
+            self.writer.write_nodes(set(val_nodes), ttsConf.VAL_NODES_FILE_NAME)
             self.writer.write_new_nodes(new_val_nodes, ttsConf.NEW_VAL_NODES_FILE_NAME)
 
             if self.neg_train_val:
@@ -383,6 +387,9 @@ class TrainTestSetCreation:
             train_set, val_set, new_val_nodes = self.perform_val_split(train_val_set, nodes_in_train_val_set, train_indices, val_indices)
             
             test_set, new_test_nodes = self.filter(train_set, self.neg_train_val, test_set, self.neg_test, "test")
+
+            train_set_nodes = self.get_nodes(train_set, self.neg_train_val)
+            val_set_nodes = self.get_nodes(val_set, self.neg_train_val)
             test_set_nodes = self.get_nodes(test_set, self.neg_test)
 
             fold_folder_path = self.writer.get_fold_path(i)
@@ -396,7 +403,10 @@ class TrainTestSetCreation:
             negative_test_samples = test_set.loc[lambda x: x[self.value_col_name] == 0]
             
             self.writer.write_set(positive_train_samples, ttsConf.TRAIN_FILE_NAME, fold_folder_path)
+            self.writer.write_nodes(set(train_set_nodes), ttsConf.TRAIN_NODES_FILE_NAME, fold_folder_path)
+
             self.writer.write_set(positive_val_samples, ttsConf.VAL_FILE_NAME, fold_folder_path)
+            self.writer.write_nodes(set(val_set_nodes), ttsConf.VAL_NODES_FILE_NAME, fold_folder_path)
             self.writer.write_new_nodes(new_val_nodes, ttsConf.NEW_VAL_NODES_FILE_NAME, fold_folder_path)
             
             self.writer.write_set(positive_test_samples, ttsConf.TEST_FILE_NAME, fold_folder_path)

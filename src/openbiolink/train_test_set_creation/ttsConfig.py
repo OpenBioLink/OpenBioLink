@@ -11,6 +11,8 @@ NEW_TEST_NODES_FILE_NAME = "removed_test_nodes.csv"
 NEW_VAL_NODES_FILE_NAME = "removed_val_nodes.csv"
 
 TRAIN_VAL_NODES_FILE_NAME = "train_val_nodes.csv"
+TRAIN_NODES_FILE_NAME = "train_nodes.csv"
+VAL_NODES_FILE_NAME = "val_nodes.csv"
 TEST_NODES_FILE_NAME = "test_nodes.csv"
 
 VANISHED_FILE_NAME = "vanished_edges.csv"
