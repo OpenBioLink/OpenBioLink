@@ -179,6 +179,8 @@ class TrainTestSetCreation:
 
         train_val_nodes = self.get_nodes(train_val_set, self.neg_train_val)
 
+        test_set, new_test_nodes = self.filter(train_val_set, self.neg_train_val, test_set, self.neg_test, "test")
+
         if graphProp.DIRECTED:
             logging.info("Removing reverse edges from train-val set")
             train_val_set = utils.remove_reverse_edges(remain_set=train_val_set, remove_set=test_set)
@@ -254,8 +256,8 @@ class TrainTestSetCreation:
         # return positive, negative
         return samples.loc[lambda x: x[self.value_col_name] == 1], samples.loc[lambda x: x[self.value_col_name] == 0]
         
-    def filter(remain_df, include_negative_remain, filter_df, include_negative_filter, filter_name):
-        new_nodes = set(self.get_nodes(remain_df, include_negative_remain)) - set(self.get_nodes(filter_df, include_negative_filter))
+    def filter(self, remain_df, include_negative_remain, filter_df, include_negative_filter, filter_name):
+        new_nodes = set(self.get_nodes(filter_df, include_negative_filter)) - set(self.get_nodes(remain_df, include_negative_remain))
         if len(new_nodes) > 0:
             logging.info(
                 f"The {filter_name} set contains nodes, that are not present in the trainings-set. These edges will be dropped."
