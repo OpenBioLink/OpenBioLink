@@ -208,9 +208,12 @@ graph = from_nodelink_gz('positive.bel.nodelink.json.gz')
 
 | Default file name | Description | Column descriptions |
 |----------------------|--------------|-----------------|
-| train_sample.csv| All samples from the training set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
-| test_sample.csv| All samples from the test set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
-| val_sample.csv| All samples from the validation set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| train_sample.csv| All positive samples from the training set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| test_sample.csv| All positive samples from the test set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| val_sample.csv| All positive samples from the validation set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| negative_train_sample.csv| All negative samples from the training set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| negative_test_sample.csv| All negative samples from the test set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
+| negative_val_sample.csv| All negative samples from the validation set | Node 1 ID, Edge type, Node 2 ID, Quality score, TP/TN, Source |
 | train_val_nodes.csv | All nodes present in the training and validation set combined | Node ID, Node type |
 | test_nodes.csv | All nodes present in the test set | Node ID, Node typ |
 | removed_test_nodes.csv | All nodes which got removed from the test set, due to not being present in the trainingset | Node ID |

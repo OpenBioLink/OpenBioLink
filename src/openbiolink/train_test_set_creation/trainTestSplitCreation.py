@@ -179,17 +179,7 @@ class TrainTestSetCreation:
 
         train_val_nodes = self.get_nodes(train_val_set, self.neg_train_val)
 
-        new_test_nodes = self.get_additional_nodes(
-            old_nodes_list=train_val_nodes,
-            new_nodes_list=self.all_nodes[globalConfig.ID_NODE_COL_NAME].tolist()
-        )
-
-        if new_test_nodes:
-            logging.info(
-                "The test set contains nodes, that are not present in the trainings-set. These edges will be dropped."
-            )  # nicetohave (6): option to keep edges with new nodes
-            test_set = self.remove_edges_with_nodes(test_set, new_test_nodes)
-        test_set_nodes = self.get_nodes(test_set, self.neg_test)
+        test_set, new_test_nodes = self.filter(train_val_set, self.neg_train_val, test_set, self.neg_test, "test")
 
         if graphProp.DIRECTED:
             logging.info("Removing reverse edges from train-val set")
@@ -204,6 +194,9 @@ class TrainTestSetCreation:
             val_indices, train_indices = np.array_split(rand_index, [int(len(rand_index) * val)])
 
             train_set, val_set, new_val_nodes = self.perform_val_split(train_val_set, train_val_nodes, train_indices, val_indices)
+            
+            test_set, new_test_nodes = self.filter(train_set, self.neg_train_val, test_set, self.neg_test, "test")
+            test_set_nodes = self.get_nodes(test_set, self.neg_test)
 
             positive_train_samples, negative_train_samples = self.split_positive_negative(train_set)
             positive_test_samples, negative_test_samples = self.split_positive_negative(test_set)
@@ -231,6 +224,9 @@ class TrainTestSetCreation:
 
         # only train/test split or crossval
         else:
+            test_set, new_test_nodes = self.filter(train_val_set, self.neg_train_val, test_set, self.neg_test, "test")
+            test_set_nodes = self.get_nodes(test_set, self.neg_test)
+            
             positive_train_val_samples, negative_train_val_samples = self.split_positive_negative(train_val_set)
             positive_test_samples, negative_test_samples = self.split_positive_negative(test_set)
 
@@ -252,13 +248,22 @@ class TrainTestSetCreation:
             if 0 < val < 1 and not float(val).is_integer() and crossval:
                 # split with crossvalidation
                 logging.info("Performing cross validation on trainingset...")
-                self.create_and_write_cross_val(train_val_set, train_val_nodes, val)
+                self.create_and_write_cross_val(train_val_set, train_val_nodes, test_set, val)
         logging.info("Done splitting!")
         # nicetohave (3) option to remove examples with new nodes
 
     def split_positive_negative(self, samples):
         # return positive, negative
         return samples.loc[lambda x: x[self.value_col_name] == 1], samples.loc[lambda x: x[self.value_col_name] == 0]
+        
+    def filter(self, remain_df, include_negative_remain, filter_df, include_negative_filter, filter_name):
+        new_nodes = set(self.get_nodes(filter_df, include_negative_filter)) - set(self.get_nodes(remain_df, include_negative_remain))
+        if len(new_nodes) > 0:
+            logging.info(
+                f"The {filter_name} set contains nodes, that are not present in the trainings-set. These edges will be dropped."
+            )  # nicetohave (6): option to keep edges with new nodes
+            filter_df = self.remove_edges_with_nodes(filter_df, new_nodes)
+        return(filter_df, new_nodes)
 
     def get_nodes(self, samples, negatives_included):
         if negatives_included:
@@ -350,7 +355,7 @@ class TrainTestSetCreation:
         new_set = set(new_nodes_list)
         return new_set - old_set
 
-    def create_and_write_cross_val(self, train_val_set: pandas.DataFrame, nodes_in_train_val_set, n_folds):
+    def create_and_write_cross_val(self, train_val_set: pandas.DataFrame, nodes_in_train_val_set, test_set: pandas.DataFrame, n_folds):
         nel_total, _ = train_val_set.shape
         if n_folds == 0 or n_folds == 1 or (n_folds > 1 and not float(n_folds).is_integer()):
             logging.error("provided folds are not possible!")
@@ -376,23 +381,35 @@ class TrainTestSetCreation:
             val_indices = chunks[val_chunk_index]
 
             train_set, val_set, new_val_nodes = self.perform_val_split(train_val_set, nodes_in_train_val_set, train_indices, val_indices)
+            
+            test_set, new_test_nodes = self.filter(train_set, self.neg_train_val, test_set, self.neg_test, "test")
+            test_set_nodes = self.get_nodes(test_set, self.neg_test)
 
             fold_folder_path = self.writer.get_fold_path(i)
             os.makedirs(fold_folder_path, exist_ok=True)
 
             positive_train_samples = train_set.loc[lambda x: x[self.value_col_name] == 1]
             positive_val_samples = val_set.loc[lambda x: x[self.value_col_name] == 1]
+            positive_test_samples = test_set.loc[lambda x: x[self.value_col_name] == 1]
             negative_train_samples = train_set.loc[lambda x: x[self.value_col_name] == 0]
             negative_val_samples = val_set.loc[lambda x: x[self.value_col_name] == 0]
-
+            negative_test_samples = test_set.loc[lambda x: x[self.value_col_name] == 0]
+            
             self.writer.write_set(positive_train_samples, ttsConf.TRAIN_FILE_NAME, fold_folder_path)
             self.writer.write_set(positive_val_samples, ttsConf.VAL_FILE_NAME, fold_folder_path)
             self.writer.write_new_nodes(new_val_nodes, ttsConf.NEW_VAL_NODES_FILE_NAME, fold_folder_path)
+            
+            self.writer.write_set(positive_test_samples, ttsConf.TEST_FILE_NAME, fold_folder_path)
+            self.writer.write_nodes(set(test_set_nodes), ttsConf.TEST_NODES_FILE_NAME, fold_folder_path)
+            self.writer.write_new_nodes(new_test_nodes, ttsConf.NEW_TEST_NODES_FILE_NAME, fold_folder_path)
 
             if self.neg_train_val:
                 self.writer.write_set(negative_train_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TRAIN_FILE_NAME,
                                       fold_folder_path)
                 self.writer.write_set(negative_val_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.VAL_FILE_NAME,
+                                      fold_folder_path)
+            if self.neg_test:
+                self.writer.write_set(negative_test_samples, ttsConf.NEGATIVE_PREFIX + ttsConf.TEST_FILE_NAME, 
                                       fold_folder_path)
 
     def perform_val_split(self, train_val_set, nodes_in_train_val_set, train_indices, val_indices):

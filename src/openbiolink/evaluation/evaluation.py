@@ -17,16 +17,22 @@ from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class Evaluation:
-    def __init__(self, model: Model, training_set_path=None, test_set_path=None, nodes_path=None, mappings_avail=False):
+    def __init__(self, model: Model, training_set_path=None, negative_training_set_path=None, test_set_path=None, negative_test_set_path=None, nodes_path=None, mappings_avail=False):
         self.model = model
         if training_set_path:
             self.training_examples = pandas.read_csv(training_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
         else:
             self.training_examples = pandas.DataFrame(columns=globConst.COL_NAMES_SAMPLES)
+        if negative_training_set_path:
+            negative_training_samples = pandas.read_csv(negative_training_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
+            self.training_examples = self.training_examples.append(negative_training_samples)
         if test_set_path:
             self.test_examples = pandas.read_csv(test_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
         else:
             self.test_examples = pandas.DataFrame(columns=globConst.COL_NAMES_SAMPLES)
+        if negative_test_set_path:
+            negative_test_samples = pandas.read_csv(negative_test_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
+            self.training_examples = self.training_examples.append(negative_test_samples)
         if nodes_path is not None:
             self.nodes = pandas.read_csv(nodes_path, sep="\t", names=globConst.COL_NAMES_NODES)
         else:
