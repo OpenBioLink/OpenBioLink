@@ -11,4 +11,10 @@ from .openBioLink import main
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    main()
+    import openbiolink.globalConfig as glob
+    glob.WORKING_DIR = r"C:\Users\Simon\Desktop\testdelme"
+    from openbiolink.evaluation.anyburl_evaluation import AnyBURLEvaluation
+
+    asdf = AnyBURLEvaluation("", "", "")
+    asdf.train("")
+    #main()

@@ -14,6 +14,7 @@ from openbiolink import globalConfig as globConst, utils
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from openbiolink.evaluation.models.model import Model
 from openbiolink.gui.tqdmbuf import TqdmBuffer
+from openbiolink.evaluation.metrics import Metrics
 
 
 class Evaluation:
@@ -284,7 +285,7 @@ class Evaluation:
 
         # HITS@K
         if RankMetricType.HITS_AT_K in metrics:
-            metric_results[RankMetricType.HITS_AT_K] = self.calculate_hits_at_k(
+            metric_results[RankMetricType.HITS_AT_K] = Metrics.calculate_hits_at_k(
                 ks=ks,
                 ranks_corrupted_heads=filtered_ranks_corrupted_heads,
                 ranks_corrupted_tails=filtered_ranks_corrupted_tails,
@@ -292,7 +293,7 @@ class Evaluation:
             )
         # HITS@K unfiltered
         if RankMetricType.HITS_AT_K_UNFILTERED in metrics:
-            metric_results[RankMetricType.HITS_AT_K_UNFILTERED] = self.calculate_hits_at_k(
+            metric_results[RankMetricType.HITS_AT_K_UNFILTERED] = Metrics.calculate_hits_at_k(
                 ks=ks,
                 ranks_corrupted_heads=unfiltered_ranks_corrupted_heads,
                 ranks_corrupted_tails=unfiltered_ranks_corrupted_tails,
@@ -300,14 +301,14 @@ class Evaluation:
             )
         # MRR
         if RankMetricType.MRR in metrics:
-            metric_results[RankMetricType.MRR] = self.calculate_mrr(
+            metric_results[RankMetricType.MRR] = Metrics.calculate_mrr(
                 ranks_corrupted_heads=filtered_ranks_corrupted_heads,
                 ranks_corrupted_tails=filtered_ranks_corrupted_tails,
                 num_examples=filtered_num_examples,
             )
         # MRR unfiltered
         if RankMetricType.MRR_UNFILTERED in metrics:
-            metric_results[RankMetricType.MRR] = self.calculate_mrr(
+            metric_results[RankMetricType.MRR] = Metrics.calculate_mrr(
                 ranks_corrupted_heads=unfiltered_ranks_corrupted_heads,
                 ranks_corrupted_tails=unfiltered_ranks_corrupted_tails,
                 num_examples=unfiltered_num_examples,
@@ -369,7 +370,7 @@ class Evaluation:
 
         # HITS@K
         if RankMetricType.HITS_AT_K in metrics:
-            metric_results[RankMetricType.HITS_AT_K] = self.calculate_hits_at_k(
+            metric_results[RankMetricType.HITS_AT_K] = Metrics.calculate_hits_at_k(
                 ks=ks,
                 ranks_corrupted_heads=filtered_ranks_corrupted_heads,
                 ranks_corrupted_tails=filtered_ranks_corrupted_tails,
@@ -377,7 +378,7 @@ class Evaluation:
             )
         # HITS@K unfiltered
         if RankMetricType.HITS_AT_K_UNFILTERED in metrics:
-            metric_results[RankMetricType.HITS_AT_K_UNFILTERED] = self.calculate_hits_at_k(
+            metric_results[RankMetricType.HITS_AT_K_UNFILTERED] = Metrics.calculate_hits_at_k(
                 ks=ks,
                 ranks_corrupted_heads=unfiltered_ranks_corrupted_heads,
                 ranks_corrupted_tails=unfiltered_ranks_corrupted_tails,
@@ -385,14 +386,14 @@ class Evaluation:
             )
         # MRR
         if RankMetricType.MRR in metrics:
-            metric_results[RankMetricType.MRR] = self.calculate_mrr(
+            metric_results[RankMetricType.MRR] = Metrics.calculate_mrr(
                 ranks_corrupted_heads=filtered_ranks_corrupted_heads,
                 ranks_corrupted_tails=filtered_ranks_corrupted_tails,
                 num_examples=filtered_num_examples,
             )
         # MRR unfiltered
         if RankMetricType.MRR_UNFILTERED in metrics:
-            metric_results[RankMetricType.MRR] = self.calculate_mrr(
+            metric_results[RankMetricType.MRR] = Metrics.calculate_mrr(
                 ranks_corrupted_heads=unfiltered_ranks_corrupted_heads,
                 ranks_corrupted_tails=unfiltered_ranks_corrupted_tails,
                 num_examples=unfiltered_num_examples,
@@ -437,33 +438,33 @@ class Evaluation:
         ranked_labels = ranked_test_examples[:, 3].tolist()  # todo change here!!
         # ROC Curve
         if ThresholdMetricType.ROC in metrics:
-            fpr, tpr = self.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
+            fpr, tpr = Metrics.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
             metric_results[ThresholdMetricType.ROC] = (fpr, tpr)
         # Precision Recall Curve
         if ThresholdMetricType.PR_REC_CURVE in metrics:
-            pr, rec = self.calculate_pr_curve(ranked_labels, ranked_scores)
+            pr, rec = Metrics.calculate_pr_curve(ranked_labels, ranked_scores)
             metric_results[ThresholdMetricType.PR_REC_CURVE] = (pr, rec)
         # ROC AUC
         if ThresholdMetricType.ROC_AUC:
             if ThresholdMetricType.ROC in metric_results.keys():
                 fpr, tpr = metric_results[ThresholdMetricType.ROC]
             else:
-                fpr, tpr = self.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
+                fpr, tpr = Metrics.calculate_roc_curve(labels=ranked_labels, scores=ranked_scores)
                 # todo ? auch unique?
-            roc_auc = self.calculate_auc(fpr, tpr)
+            roc_auc = Metrics.calculate_auc(fpr, tpr)
             metric_results[ThresholdMetricType.ROC_AUC] = roc_auc
         # Precision Recall AUC
         if ThresholdMetricType.PR_AUC:
             if ThresholdMetricType.PR_AUC in metric_results.keys():
                 pr, rec = metric_results[ThresholdMetricType.PR_REC_CURVE]
             else:
-                pr, rec = self.calculate_pr_curve(labels=ranked_labels, scores=ranked_scores)
+                pr, rec = Metrics.calculate_pr_curve(labels=ranked_labels, scores=ranked_scores)
                 pr = np.asarray(pr)
                 rec = np.asarray(rec)
             _, indices = np.unique(pr, return_index=True)
             pr_unique = pr[indices]
             rec_unique = rec[indices]
-            pr_auc = self.calculate_auc(pr_unique, rec_unique)
+            pr_auc = Metrics.calculate_auc(pr_unique, rec_unique)
             metric_results[ThresholdMetricType.PR_AUC] = pr_auc
         return metric_results
 
@@ -543,42 +544,4 @@ class Evaluation:
         edges.reset_index(drop=True, inplace=True)
         return edges
 
-    ###### calculate metrics ######
 
-    @staticmethod
-    def calculate_hits_at_k(ks, ranks_corrupted_heads, ranks_corrupted_tails, num_examples):
-        corrupted_heads_hits_at_k = dict()
-        corrupted_tails_hits_at_k = dict()
-        for k in ks:
-            corrupted_heads_hits_at_k[k] = len([x for x in ranks_corrupted_heads if x <= k]) / num_examples
-            corrupted_tails_hits_at_k[k] = len([x for x in ranks_corrupted_tails if x <= k]) / num_examples
-        return corrupted_heads_hits_at_k, corrupted_tails_hits_at_k
-
-    @staticmethod
-    def calculate_mrr(ranks_corrupted_heads, ranks_corrupted_tails, num_examples):
-        inverse_ranks_corrupted_heads = [1 / n for n in ranks_corrupted_heads]
-        inverse_ranks_corrupted_tails = [1 / n for n in ranks_corrupted_tails]
-        mrr_heads = sum(inverse_ranks_corrupted_heads) / num_examples
-        mrr_tails = sum(inverse_ranks_corrupted_tails) / num_examples
-        return mrr_heads, mrr_tails
-
-    @staticmethod
-    def calculate_roc_curve(labels, scores):
-        from sklearn.metrics import roc_curve
-
-        fpr, tpr, _ = roc_curve(labels, scores)
-        return list(fpr), list(tpr)
-
-    @staticmethod
-    def calculate_pr_curve(labels, scores):
-        from sklearn.metrics import precision_recall_curve
-
-        precision, recall, thresholds = precision_recall_curve(labels, scores)
-        return list(precision), list(recall)
-
-    @staticmethod
-    def calculate_auc(x_values, y_values):
-        from sklearn.metrics import auc
-
-        auc_value = auc(x_values, y_values)
-        return auc_value
