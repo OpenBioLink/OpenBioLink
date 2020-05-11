@@ -181,6 +181,12 @@ The Biological Expression Language (BEL) is a domain specific language that enab
 biological relationships in a machine-readable format. It is supported by the [PyBEL](https://github.com/pybel/pybel)
 software ecosystem.
 
+BEL can be exported with:
+
+```sh
+openbiolink generate --output-format BEL
+```
+
 | Default File Name | Description             |
 |-------------------|-------------------------|
 | positive.bel.gz   | All true positive edges in [BEL Script](https://language.bel.bio/language/structure/) format (gzipped) for usage in PyBEL or other BEL-aware applications) |   
@@ -203,6 +209,9 @@ Example opening Nodelink JSON using [`pybel.from_nodelink_gz()`](https://pybel.r
 from pybel import from_nodelink_gz
 graph = from_nodelink_gz('positive.bel.nodelink.json.gz')
 ```
+
+There's an externally hosted copy of OpenBioLink at https://github.com/pybel/openbiolink-bel that contains
+the exports as BEL.
 
 ### Train-test split creation
 
