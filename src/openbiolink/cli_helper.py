@@ -83,38 +83,40 @@ def train_and_evaluate(
     config=None,
 ):
     model_cls = ModelTypes[model_cls].value
-    if trained_model:  # fixme when model provided, config also has to be
-        model = model_cls()
-        model.kge_model = model_cls.load_model(config)
-        # model.kge_model.load_state_dict(torch.load(trained_model))
-        # testme
-    elif config:
-        model = model_cls(config)
-    else:
-        model = model_cls()
-
-    e = Evaluation(
-        model=model,
-        training_set_path=training_set_path,
-        negative_training_set_path=negative_training_set_path,
-        test_set_path=test_set_path,
-        negative_test_set_path=negative_test_set_path,
-        nodes_path=nodes_path,
-        mappings_avail=bool(trained_model),
-    )
-    # todo doku: mappings have to be in model folder with correct name, or change here
-    if do_training:
-        print("starting training")
-        e.train()
-    if do_evaluation:
-        print("starting evaluation")
-        metrics_to_use = list(
-            itertools.chain(RankMetricType.__members__.values(), ThresholdMetricType.__members__.values())
-        )
-        if metrics is not None:
-            metrics_to_use = [x for x in metrics_to_use if x.name in metrics]
-        if ks is None:
-            int_ks = [1, 3, 5, 10]
+    if model_cls != "anyburl":
+        if trained_model:  # fixme when model provided, config also has to be
+            model = model_cls()
+            model.kge_model = model_cls.load_model(config)
+            # model.kge_model.load_state_dict(torch.load(trained_model))
+            # testme
+        elif config:
+            model = model_cls(config)
         else:
-            int_ks = [int(k) for k in ks]
-        e.evaluate(metrics=metrics_to_use, ks=int_ks)
+            model = model_cls()
+
+        e = Evaluation(
+            model=model,
+            training_set_path=training_set_path,
+            negative_training_set_path=negative_training_set_path,
+            test_set_path=test_set_path,
+            negative_test_set_path=negative_test_set_path,
+            nodes_path=nodes_path,
+            mappings_avail=bool(trained_model),
+        )
+        # todo doku: mappings have to be in model folder with correct name, or change here
+        if do_training:
+            print("starting training")
+            e.train()
+        if do_evaluation:
+            print("starting evaluation")
+            metrics_to_use = list(
+                itertools.chain(RankMetricType.__members__.values(), ThresholdMetricType.__members__.values())
+            )
+            if metrics is not None:
+                metrics_to_use = [x for x in metrics_to_use if x.name in metrics]
+            if ks is None:
+                int_ks = [1, 3, 5, 10]
+            else:
+                int_ks = [int(k) for k in ks]
+            e.evaluate(metrics=metrics_to_use, ks=int_ks)
+

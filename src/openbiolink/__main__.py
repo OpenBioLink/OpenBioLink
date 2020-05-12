@@ -12,9 +12,11 @@ from .openBioLink import main
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     import openbiolink.globalConfig as glob
-    glob.WORKING_DIR = r"C:\Users\Simon\Desktop\testdelme"
-    from openbiolink.evaluation.anyburl_evaluation import AnyBURLEvaluation
+    glob.WORKING_DIR = r"C:\Users\sott\Desktop\testdelme"
+    from openbiolink.evaluation.symbolicEvaluation import AnyBURLEvaluation
 
     asdf = AnyBURLEvaluation("", "", "")
-    asdf.train("")
+
+    from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
+    asdf.evaluate(r"C:\Users\sott\Desktop\config-eval.properties", [RankMetricType.HITS_AT_K_REL], [1, 3, 10])
     #main()

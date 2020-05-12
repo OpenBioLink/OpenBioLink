@@ -8,3 +8,4 @@ class ModelTypes(Enum):
     # PYKEEN_TRANS_R = 'TransR_PyKeen'
     TransE_Pykeen = pykeen_models.TransE_PyKeen
     TransR_Pykeen = pykeen_models.TransR_PyKeen
+    AnyBURL = "anyburl"

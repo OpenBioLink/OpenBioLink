@@ -4,6 +4,7 @@ from enum import Enum
 class RankMetricType(Enum):
     HITS_AT_K = "hits@K"
     HITS_AT_K_UNFILTERED = "unfiltered hits@k"
+    HITS_AT_K_REL = "hits@K per relation"
     MRR = "MRR"
     MRR_UNFILTERED = "unfiltered MRR"
 

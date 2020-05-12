@@ -8,7 +8,11 @@ class Metrics:
         for k in ks:
             corrupted_heads_hits_at_k[k] = len([x for x in ranks_corrupted_heads if x <= k]) / num_examples
             corrupted_tails_hits_at_k[k] = len([x for x in ranks_corrupted_tails if x <= k]) / num_examples
-        return corrupted_heads_hits_at_k, corrupted_tails_hits_at_k
+        return {
+                   "count": num_examples,
+                   "heads": corrupted_heads_hits_at_k,
+                   "tails": corrupted_tails_hits_at_k
+        }
 
     @staticmethod
     def calculate_mrr(ranks_corrupted_heads, ranks_corrupted_tails, num_examples):
@@ -21,7 +25,6 @@ class Metrics:
     @staticmethod
     def calculate_roc_curve(labels, scores):
         from sklearn.metrics import roc_curve
-
         fpr, tpr, _ = roc_curve(labels, scores)
         return list(fpr), list(tpr)
 
