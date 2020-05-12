@@ -31,22 +31,36 @@ class AnyBURLEvaluation:
     def train(self, learn_config_path: str):
         from subprocess import Popen, PIPE
         process = Popen(["java", "-Xmx12G", "-cp", self.anyburl_path, "de.unima.ki.anyburl.LearnReinforced", learn_config_path], stdout=PIPE, stderr=PIPE)
-        for stdout_line in iter(process.stderr.readline, ""):
-            print(stdout_line)
-            yield stdout_line
-        process.stderr.close()
-        process.stdout.close()
-        process.wait()
-
-
+        while True:
+            nextline = process.stdout.readline().decode("utf-8")
+            if nextline == '' and process.poll() is not None:
+                break
+            elif nextline != '':
+                print(nextline, end='')
+        while True:
+            nextline = process.stderr.readline().decode("utf-8")
+            if nextline == '' and process.poll() is not None:
+                break
+            elif nextline != '' and nextline != '\r':
+                print(nextline, end='')
+        output = process.communicate()
 
     def apply_rules(self, apply_config_path: str):
         from subprocess import Popen, PIPE
-        process = Popen([], stdout=PIPE, stderr=PIPE)
-        stdout, stderr = process.communicate()
-
-
-
+        process = Popen([self.irifab_path, apply_config_path], stdout=PIPE, stderr=PIPE)
+        while True:
+            nextline = process.stdout.readline().decode("utf-8")
+            if nextline == '' and process.poll() is not None:
+                break
+            elif nextline != '':
+                print(nextline, end='')
+        while True:
+            nextline = process.stderr.readline().decode("utf-8")
+            if nextline == '' and process.poll() is not None:
+                break
+            elif nextline != '' and nextline != '\r':
+                print(nextline, end='')
+        output = process.communicate()
 
     def evaluate(self, eval_config_path: str, metrics: list, ks=None):
         pass
