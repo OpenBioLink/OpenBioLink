@@ -39,13 +39,13 @@ e.g.:
 1) Install the requirements stated in requirements.txt e.g.  ```pip install -r requirements.txt```
 
 ## Benchmark Dataset
- The [OpenBioLink2020 Dataset](https://samwald.info/res/OpenBioLink_2020/HQ_DIR.zip) is a highly challenging
+ The [OpenBioLink2020 Dataset](https://zenodo.org/record/3826919/files/HQ_DIR.zip?download=1) is a highly challenging
  benchmark dataset containing over 5 million positive and negative edges.
  The test set does not contain trivially predictable, inverse edges from the training set 
  and does contain all different edge types, to provide a more realistic edge prediction
  scenario.
  
-[OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020_final/HQ_DIR.zip) is the default dataset that should be used for benchmarking purposes. To allow anayzing the effect of data quality as well as the directionality of the 
+[OpenBioLink2020: directed, high quality](https://zenodo.org/record/3826919/files/HQ_DIR.zip?download=1) is the default dataset that should be used for benchmarking purposes. To allow anayzing the effect of data quality as well as the directionality of the 
 evaluation graph, four variants of OpenBioLink2020 are provided -- in directed and undirected setting,
 with and without quality cutoff. 
 
@@ -53,10 +53,10 @@ Additionally, each graph is available in [RDF N3](https://en.wikipedia.org/wiki/
 
 ### OpenBioLink 2020 datasets
 
-* __[OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020_final/HQ_DIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_HQ_DIR.zip) (default dataset for benchmarking)__
-* [OpenBioLink2020: undirected, high quality](https://samwald.info/res/OpenBioLink_2020_final/HQ_UNDIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_HQ_UNDIR.zip)
-* [OpenBioLink2020: directed, no quality cutoff](https://samwald.info/res/OpenBioLink_2020_final/ALL_DIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_ALL_DIR.zip)
-* [OpenBioLink2020: undirected, no quality cutoff](https://samwald.info/res/OpenBioLink_2020_final/ALL_UNDIR.zip) // [RDF](https://samwald.info/res/OpenBioLink_2020_final/RDF_ALL_UNDIR.zip)
+* __[OpenBioLink2020: directed, high quality](https://zenodo.org/record/3826919/files/HQ_DIR.zip?download=1) // [RDF](https://zenodo.org/record/3826919/files/RDF_HQ_DIR.zip) (default dataset for benchmarking)__
+* [OpenBioLink2020: undirected, high quality](https://zenodo.org/record/3826919/files/HQ_UNDIR.zip?download=1) // [RDF](https://zenodo.org/record/3826919/files/RDF_HQ_UNDIR.zip)
+* [OpenBioLink2020: directed, no quality cutoff](https://zenodo.org/record/3826919/files/ALL_DIR.zip?download=1) // [RDF](https://zenodo.org/record/3826919/files/RDF_ALL_DIR.zip)
+* [OpenBioLink2020: undirected, no quality cutoff](https://zenodo.org/record/3826919/files/ALL_UNDIR.zip?download=1) // [RDF](https://zenodo.org/record/3826919/files/RDF_ALL_UNDIR.zip)
 
 <details>
   <summary>Previous versions of the Benchmark (click to expand)</summary>
