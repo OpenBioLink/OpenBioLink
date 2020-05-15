@@ -53,6 +53,8 @@ Additionally, each graph is available in [RDF N3](https://en.wikipedia.org/wiki/
 
 ### OpenBioLink 2020 datasets
 
+All datasets are hosted on [zenodo](https://zenodo.org/record/3826919).
+
 * __[OpenBioLink2020: directed, high quality](https://zenodo.org/record/3826919/files/HQ_DIR.zip?download=1) // [RDF](https://zenodo.org/record/3826919/files/RDF_HQ_DIR.zip) (default dataset for benchmarking)__
 * [OpenBioLink2020: undirected, high quality](https://zenodo.org/record/3826919/files/HQ_UNDIR.zip?download=1) // [RDF](https://zenodo.org/record/3826919/files/RDF_HQ_UNDIR.zip)
 * [OpenBioLink2020: directed, no quality cutoff](https://zenodo.org/record/3826919/files/ALL_DIR.zip?download=1) // [RDF](https://zenodo.org/record/3826919/files/RDF_ALL_DIR.zip)
