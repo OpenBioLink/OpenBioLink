@@ -42,8 +42,8 @@ class GraphBELWriter(GraphWriter):
         """Write the graph as gzipped BEL graphs."""
         from pybel import to_nodelink_gz, to_bel_script_gz
 
-        for nodes, edges, name in ((tp_nodes, tp_edges, "positive"), (tn_nodes, tn_edges, "negative")):
-            graph = convert(nodes=nodes, edges=edges, name=name)
+        for _nodes, edges, name in ((tp_nodes, tp_edges, "positive"), (tn_nodes, tn_edges, "negative")):
+            graph = convert(edges, name=name)
             nodelink_path = os.path.join(self.graph_dir_path, f"{name}.bel.nodelink.json.gz")
             to_nodelink_gz(graph, nodelink_path)
             bel_script_path = os.path.join(self.graph_dir_path, f"{name}.bel.gz")
@@ -109,19 +109,17 @@ UNQUALIFIED_EDGE_TYPES = {
 }
 
 
-def convert(*, nodes: Mapping[str, Set[Node]], edges: Mapping[str, Set[Edge]], **graph_kwargs):
+def convert(edges: Mapping[str, Set[Edge]], **graph_kwargs):
     """Convert a set of edges to a BEL graph."""
     from pybel import BELGraph, BaseEntity
     from pybel.constants import PYBEL_PUBMED
 
     type_to_dsl = _get_type_to_dsl()
     type_to_adder = _get_type_to_adder()
-    id_to_node: Mapping[str, Node] = {node.id: node for type_nodes in nodes.values() for node in type_nodes}
 
-    def _get_node(node_id: str) -> BaseEntity:
-        node = id_to_node[node_id]
+    def _get_node(node: Node) -> BaseEntity:
         dsl = type_to_dsl[node.type]
-        return dsl(namespace=node.namespace.namespace.value, identifier=node_id, name=node.name)
+        return dsl(namespace=node.namespace.namespace.value, identifier=node.id, name=node.name)
 
     graph = BELGraph(**graph_kwargs)
 
@@ -132,7 +130,7 @@ def convert(*, nodes: Mapping[str, Set[Node]], edges: Mapping[str, Set[Edge]], *
             continue
         if edge_type in UNQUALIFIED_EDGE_TYPES:
             for edge in tqdm(edge_type_edges, desc=edge_type, leave=False):
-                adder(graph, u=_get_node(edge.id1), v=_get_node(edge.id2))
+                adder(graph, u=_get_node(edge.node1), v=_get_node(edge.node2))
         else:
             for edge in tqdm(edge_type_edges, desc=edge_type, leave=False):
                 annotations = dict()
@@ -140,12 +138,12 @@ def convert(*, nodes: Mapping[str, Set[Node]], edges: Mapping[str, Set[Edge]], *
                     annotations["source"] = edge.source
                 if edge.sourcedb:
                     annotations["source_db"] = edge.sourcedb
-                if edge.qScore:
-                    annotations["q"] = edge.qScore
+                if edge.qscore:
+                    annotations["q"] = edge.qscore
                 adder(
                     graph,
-                    u=_get_node(edge.id1),
-                    v=_get_node(edge.id2),
+                    u=_get_node(edge.node1),
+                    v=_get_node(edge.node2),
                     citation=PYBEL_PUBMED,  # FIXME would be nice to have a PMID for each source
                     evidence=edge.sourcedb,
                     annotations=annotations,
