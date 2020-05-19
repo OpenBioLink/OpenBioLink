@@ -8,19 +8,16 @@ from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricTy
 from openbiolink.evaluation.metrics import Metrics
 
 from openbiolink.evaluation.symbolic.models.model import Model
-from openbiolink.evaluation.datasetreader import Reader
+from openbiolink.evaluation.dataset import Dataset
 
 import os
 
 
 class SymbolicEvaluation:
 
-    def __init__(self, model: Model, dataset: Reader):
+    def __init__(self, model: Model, dataset: Dataset):
         self.model = model
         self.dataset = dataset
-
-    def train(self):
-        self.model.train()
 
     def evaluate(self, metrics: list, ks=None):
         self.model.predict()
@@ -55,6 +52,7 @@ class SymbolicEvaluation:
 
     @staticmethod
     def get_prediction_paths(predictions_path: str):
+        """
         if "|" in predictions_path:
             prefix, values, _ = predictions_path.split("|")
             postfixes = values.split(",")
@@ -64,6 +62,8 @@ class SymbolicEvaluation:
         else:
             predictions_path = [predictions_path]
         return predictions_path
+        """
+        return os.path.join(predictions_path, "prediction")
 
     @staticmethod
     def read_prediction(prediction_path: str):

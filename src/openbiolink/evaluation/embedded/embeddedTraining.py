@@ -3,11 +3,11 @@ import openbiolink.evaluation.evalConfig as evalConst
 from openbiolink import globalConfig as globConst
 from openbiolink.evaluation.embedded.models.model import Model
 import openbiolink.evaluation.embedded.utils as utils
-from openbiolink.evaluation.datasetreader import Reader
+from openbiolink.evaluation.dataset import Dataset
 
 
 class EmbeddedTraining:
-    def __init__(self, model: Model, dataset: Reader):
+    def __init__(self, model: Model, dataset: Dataset):
         self.model = model
         self.dataset = dataset
 

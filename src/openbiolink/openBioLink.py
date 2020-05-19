@@ -18,7 +18,7 @@ import sys
 import click
 
 from openbiolink import globalConfig as glob
-from openbiolink.cli_helper import create_graph, train_and_evaluate
+from openbiolink.cli_helper import create_graph, train_embedded, train_symbolic, evaluate_embedded, evaluate_symbolic
 from openbiolink.evaluation.embedded.models.modelTypes import ModelTypes as EmbeddedModelTypes
 from openbiolink.evaluation.symbolic.models.modelTypes import ModelTypes as SymbolicModelTypes
 from openbiolink.graph_creation.graph_writer import FORMATS
@@ -219,14 +219,15 @@ def train():
     type=click.Choice(list(EmbeddedModelTypes.__members__)),
     help="class of the model to be trained/evaluated",
 )
+@click.option("--config", help="Path to the model' config file")
 @click.option("-s", "--training-path", help="Path to positive trainings set file")  # (alternative: --cv_folder)')
 @click.option("-ns", "--negative-training-path", help="Path to negative trainings set file")  # (alternative: --cv_folder)')
 @click.option(
     "--nodes",
     help="path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation",
 )
-def embedded(model_cls, training_path, negative_training_path, nodes):
-    train_embedded(model_cls, training_path, negative_training_path, nodes)
+def embedded(model_cls, training_path, negative_training_path, nodes, config):
+    train_embedded(model_cls, training_path, negative_training_path, nodes, config)
 
 
 @train.command()
@@ -237,13 +238,16 @@ def embedded(model_cls, training_path, negative_training_path, nodes):
     type=click.Choice(list(SymbolicModelTypes.__members__)),
     help="class of the model to be trained/evaluated",
 )
-@click.option("--policy", help="Path to positive trainings set file")
-@click.option("--reward", help="Path to positive trainings set file")
-@click.option("--epsilon", help="Path to positive trainings set file")
-@click.option("--snapshots-at", help="")
-@click.option("--worker-threads", help="")
-def symbolic():
-    train_symbolic()
+@click.option("-s", "--training-path", help="Path to positive trainings set file")
+@click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
+@click.option("-v", "--valid-path", required=True, help="Path to positive validation set file")
+@click.option("--policy", default=2, type=click.Choice([1, 2]), help="Path to positive trainings set file")
+@click.option("--reward", default=5, type=click.Choice([1, 3, 5]), help="Path to positive trainings set file")
+@click.option("--epsilon", default=0.1, type=float, help="Path to positive trainings set file")
+@click.option("--snapshot-at", default=100, help="")
+@click.option("--worker-threads", default=7, help="")
+def symbolic(model_cls, training_path, testing_path, valid_path, policy, reward, epsilon, snapshot_at, worker_threads):
+    train_symbolic(model_cls, training_path, testing_path, valid_path, policy, reward, epsilon, snapshot_at, worker_threads)
 
 @main.group()
 def evaluate():
@@ -267,40 +271,65 @@ def evaluate():
 )
 @click.option("--metrics", multiple=True, help="evaluation metrics")
 @click.option("--ks", multiple=True, help="k's for hits@k metric")
-def embedded(model_cls, trained_model, config, testing_path, negative_testing_path, nodes):
-    evaluate_embedded(model_cls, trained_model, config, testing_path, negative_testing_path, nodes)
+def embedded(model_cls, trained_model, config, testing_path, negative_testing_path, nodes, metrics, ks):
+    evaluate_embedded(model_cls, trained_model, config, testing_path, negative_testing_path, nodes, metrics, ks)
 
 
-
-@click.option("-s", "--training-path", help="Path to positive trainings set file")  # (alternative: --cv_folder)')
+@evaluate.command()
+@click.option(
+    "-m",
+    "--model-cls",
+    required=True,
+    type=click.Choice(list(SymbolicModelTypes.__members__)),
+    help="class of the model to be trained/evaluated",
+)
+@click.option("-s", "--training-path", required=True, help="Path to positive trainings set file")  # (alternative: --cv_folder)')
 @click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
 @click.option("-v", "--valid-path", required=True, help="Path to positive validation set file")
+@click.option("--snapshot-at", default=100, help="")
+@click.option("--discrimination-bound", type=int, default=1000, help="Path to positive trainings set file")
+@click.option("--unseen-negative-examples", default=5, type=int, help="Path to positive trainings set file")
+@click.option("--top-k-output", type=int, default=10,  help="Path to positive trainings set file")
+@click.option("--worker-threads", type=int, default=7, help="Path to positive trainings set file")
+@click.option("--threshold-confidence", type=float, default=0.001, help="Path to positive trainings set file")
+@click.option("--no-fast", is_flag=True, help="Path to positive trainings set file")
+@click.option("--discrimination-unique", is_flag=True, help="Path to positive trainings set file")
+@click.option("--no-intermediate-discrimination", is_flag=True, help="Path to positive trainings set file")
 @click.option("--metrics", multiple=True, help="evaluation metrics")
 @click.option("--ks", multiple=True, help="k's for hits@k metric")
-@evaluate.command()
-def symbolic():
-    evaluate_symbolic()
-
-
-
-@train.command()
-def embedded(
-    model_cls, trained_model, training_path, negative_training_path, testing_path, negative_testing_path, eval_nodes, no_train, no_eval, metrics, ks, config,
+def symbolic(
+        model_cls,
+        training_path,
+        testing_path,
+        valid_path,
+        snapshot_at,
+        discrimination_bound,
+        unseen_negative_examples,
+        top_k_output,
+        worker_threads,
+        threshold_confidence,
+        no_fast,
+        discrimination_unique,
+        no_intermediate_discrimination,
+        metrics,
+        ks
 ):
-    """Train and evaluate on a graph."""
-    train_and_evaluate(
-        model_cls=model_cls,
-        trained_model=trained_model,
-        training_set_path=training_path,
-        negative_training_set_path=negative_training_path,
-        test_set_path=testing_path,
-        negative_test_set_path=negative_testing_path,
-        nodes_path=eval_nodes,
-        do_training=not no_train,
-        do_evaluation=not no_eval,
-        metrics=metrics,
-        ks=ks,
-        config=config,
+    evaluate_symbolic(
+        model_cls,
+        training_path,
+        testing_path,
+        valid_path,
+        snapshot_at,
+        discrimination_bound,
+        unseen_negative_examples,
+        top_k_output,
+        worker_threads,
+        threshold_confidence,
+        no_fast,
+        discrimination_unique,
+        no_intermediate_discrimination,
+        metrics,
+        ks
     )
 
 

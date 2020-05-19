@@ -6,7 +6,7 @@ import openbiolink.evaluation.evalConfig as evalConf
 import os
 
 
-class Reader:
+class Dataset:
     def __init__(self,
                  training_set_path=None,
                  negative_training_set_path=None,
@@ -15,6 +15,7 @@ class Reader:
                  valid_set_path=None,
                  negative_valid_set_path=None,
                  nodes_path=None,
+                 mapping=True,
                  mappings_avail=False,
                  write_triples=False
                  ):
@@ -58,10 +59,11 @@ class Reader:
         else:
             self.nodes = None
 
-        if mappings_avail:
-            self.mapping = Mapping().read_mapping()
-        else:
-            self.mapping = Mapping().create_mapping(self.training_examples, self.test_examples, self.nodes)
+        if mapping:
+            if mappings_avail:
+                self.mapping = Mapping().read_mapping()
+            else:
+                self.mapping = Mapping().create_mapping(self.training_examples, self.test_examples, self.nodes)
 
         if write_triples:
             self.write_triples()
@@ -83,20 +85,24 @@ class Reader:
 
     def write_triples(self):
         evaluation_path = os.path.join(globConf.WORKING_DIR, evalConf.EVAL_OUTPUT_FOLDER_NAME)
-        self.training_examples[globConf.COL_NAMES_TRIPLES].get_train_triples().to_csv(
-            os.path.join(evaluation_path, "dataset", "train.txt"),
+        dataset_path = os.path.join(evaluation_path, "dataset")
+        if not os.path.exists(dataset_path):
+            os.mkdir(dataset_path)
+
+        self.training_examples[globConf.COL_NAMES_TRIPLES].to_csv(
+            os.path.join(dataset_path, "train.txt"),
             sep="\t",
             index=False,
             header=False
         )
-        self.test_examples[globConf.COL_NAMES_TRIPLES].get_test_triples().to_csv(
-            os.path.join(evaluation_path, "dataset", "test.txt"),
+        self.test_examples[globConf.COL_NAMES_TRIPLES].to_csv(
+            os.path.join(dataset_path, "test.txt"),
             sep="\t",
             index=False,
             header=False
         )
-        self.validation_examples[globConf.COL_NAMES_TRIPLES].get_validation_triples().to_csv(
-            os.path.join(evaluation_path, "dataset", "valid.txt"),
+        self.validation_examples[globConf.COL_NAMES_TRIPLES].to_csv(
+            os.path.join(dataset_path, "valid.txt"),
             sep="\t",
             index=False,
             header=False)

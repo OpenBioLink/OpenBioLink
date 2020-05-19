@@ -11,8 +11,10 @@ class AnyBURL(Model):
         self.evaluation_path = os.path.join(globConf.WORKING_DIR, evalConf.EVAL_OUTPUT_FOLDER_NAME)
         self.config = self.default_config(self.evaluation_path)
 
-        if not os.path.exists(self.config["path_predicitions"]):
-            os.mkdir(self.config["path_predicitions"])
+        if not os.path.exists(self.evaluation_path):
+            os.mkdir(self.evaluation_path)
+        if not os.path.exists(self.config["path_predictions"]):
+            os.mkdir(self.config["path_predictions"])
         if not os.path.exists(self.config["path_rules"]):
             os.mkdir(self.config["path_rules"])
 
@@ -54,7 +56,7 @@ class AnyBURL(Model):
                 break
             elif nextline != '' and nextline != '\r':
                 print(nextline, end='')
-        output = process.communicate()
+        process.communicate()
 
     def download_anyburl(self):
         anyburl_path = os.path.join(self.evaluation_path, "AnyBURL-RE.jar")
@@ -85,53 +87,44 @@ class AnyBURL(Model):
 
     def default_config(self, evaluation_path):
         return dict(
-            path_training=os.path.join(self.evaluation_path, "dataset", "train.txt"),
-            path_test=os.path.join(self.evaluation_path, "dataset", "test.txt"),
-            path_valid=os.path.join(self.evaluation_path, "dataset", "valid.txt"),
-            path_predicitions=os.path.join(self.evaluation_path, "predicitions"),
-            path_rules=os.path.join(self.evaluation_path, "rules"),
-            policy=2,
-            reward=5,
-            epsilon=0.1,
-            threshold_confidence=0.0001,
-            snapshots_at=[10, 50, 100],
-            worker_threads=7,
-            unseen_negative_examples=5,
-            discrimination_bound=1000,
-            top_k_output=10,
-            fast=1,
-            discrimination_unique=0,
-            intermediate_discrimination=1
+            path_training=os.path.join(self.evaluation_path, "dataset", "train.txt").replace("\\","/"),
+            path_test=os.path.join(self.evaluation_path, "dataset", "test.txt").replace("\\","/"),
+            path_valid=os.path.join(self.evaluation_path, "dataset", "valid.txt").replace("\\","/"),
+            path_predictions=os.path.join(self.evaluation_path, "predictions").replace("\\","/"),
+            path_rules=os.path.join(self.evaluation_path, "rules").replace("\\","/")
         )
 
     def write_config_learn(self, config):
-        config_learn_path = os.path.join(self.evaluation_path, "dataset", "config-learn.properties")
+        config_learn_path = os.path.join(self.evaluation_path, "config-learn.properties")
+        path_rules = os.path.join(config['path_rules'], 'ruleset').replace("\\","/")
         with open(config_learn_path, "w") as config_learn:
-            config_learn.write(f"PATH_TRAINING = {config['path_training']}")
-            config_learn.write(f"PATH_OUTPUT = {config['path_output']}")
-            config_learn.write(f"SNAPSHOTS_AT = {','.join(config['snapshots_at'])}")
-            config_learn.write(f"WORKER_THREADS = {config['worker_threads']}")
-            config_learn.write(f"POLICY = {config['policy']}")
-            config_learn.write(f"REWARD = {config['reward']}")
-            config_learn.write(f"EPSILON = {config['epsilon']}")
-            config_learn.write(f"THRESHOLD_CONFIDENCE = {config['threshold_confidence']}")
+            config_learn.write(f"PATH_TRAINING = {config['path_training']}\n")
+            config_learn.write(f"PATH_OUTPUT = {path_rules}\n")
+            config_learn.write(f"SNAPSHOTS_AT = {config['snapshot_at']}\n")
+            config_learn.write(f"WORKER_THREADS = {config['worker_threads']}\n")
+            config_learn.write(f"POLICY = {config['policy']}\n")
+            config_learn.write(f"REWARD = {config['reward']}\n")
+            config_learn.write(f"EPSILON = {config['epsilon']}\n")
         return config_learn_path
 
     def write_config_apply(self, config):
-        config_apply_path = os.path.join(self.evaluation_path, "dataset", "config-apply.properties")
+        config_apply_path = os.path.join(self.evaluation_path, "config-apply.properties")
+        path_rules = os.path.join(config['path_rules'], f"ruleset-{config['snapshot_at']}").replace("\\","/")
+        path_predictions = os.path.join(config['path_predictions'], 'prediction').replace("\\","/")
+
         with open(config_apply_path, "w") as config_apply:
-            config_apply.write(f"PATH_TRAINING = {config['path_training']}")
-            config_apply.write(f"PATH_TEST = {config['path_test']}")
-            config_apply.write(f"PATH_VALID = {config['path_valid']}")
-            config_apply.write(f"PATH_RULES = {config['path_rules']}")
-            config_apply.write(f"PATH_OUTPUT = {config['path_predicitions']}")
-            config_apply.write(f"UNSEEN_NEGATIVE_EXAMPLES = {config['unseen_negative_examples']}")
-            config_apply.write(f"DISCRIMINATION_BOUND = {config['discrimination_bound']}")
-            config_apply.write(f"TOP_K_OUTPUT = {config['top_k_output']}")
-            config_apply.write(f"WORKER_THREADS = {config['worker_threads']}")
-            config_apply.write(f"UNSEEN_NEGATIVE_EXAMPLES = {config['unseen_negative_examples']}")
-            config_apply.write(f"THRESHOLD_CONFIDENCE = {config['threshold_confidence']}")
-            config_apply.write(f"FAST = {config['threshold_confidence']}")
-            config_apply.write(f"DISCRIMINATION_UNIQUE = {config['discrimination_unique']}")
-            config_apply.write(f"INTERMEDIATE_DISCRIMINATION = {config['intermediate_discrimination']}")
+            config_apply.write(f"PATH_TRAINING = {config['path_training']}\n")
+            config_apply.write(f"PATH_TEST = {config['path_test']}\n")
+            config_apply.write(f"PATH_VALID = {config['path_valid']}\n")
+            config_apply.write(f"PATH_RULES = {path_rules}\n")
+            config_apply.write(f"PATH_OUTPUT = {path_predictions}\n")
+            config_apply.write(f"UNSEEN_NEGATIVE_EXAMPLES = {config['unseen_negative_examples']}\n")
+            config_apply.write(f"DISCRIMINATION_BOUND = {config['discrimination_bound']}\n")
+            config_apply.write(f"TOP_K_OUTPUT = {config['top_k_output']}\n")
+            config_apply.write(f"WORKER_THREADS = {config['worker_threads']}\n")
+            config_apply.write(f"UNSEEN_NEGATIVE_EXAMPLES = {config['unseen_negative_examples']}\n")
+            config_apply.write(f"THRESHOLD_CONFIDENCE = {config['threshold_confidence']}\n")
+            config_apply.write(f"FAST = {int(config['fast'])}\n")
+            config_apply.write(f"DISCRIMINATION_UNIQUE = {int(config['discrimination_unique'])}\n")
+            config_apply.write(f"INTERMEDIATE_DISCRIMINATION = {int(config['intermediate_discrimination'])}\n")
         return config_apply_path

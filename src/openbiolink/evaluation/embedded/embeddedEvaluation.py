@@ -12,12 +12,12 @@ from openbiolink.evaluation.embedded.models.model import Model
 from openbiolink.evaluation.metrics import Metrics
 
 import openbiolink.evaluation.embedded.utils as utils
-from openbiolink.evaluation.datasetreader import Reader
+from openbiolink.evaluation.dataset import Dataset
 
 
 class EmbeddedEvaluation:
 
-    def __init__(self, model: Model, dataset: Reader):
+    def __init__(self, model: Model, dataset: Dataset):
         self.model = model
         self.dataset = dataset
 
