@@ -5,7 +5,7 @@ from tkinter import filedialog, messagebox, ttk
 import openbiolink.evaluation.evalConfig as evalConst
 import openbiolink.train_test_set_creation.ttsConfig as ttsConst
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
-from openbiolink.evaluation.models.modelTypes import ModelTypes
+from openbiolink.evaluation.embedded.models.modelTypes import ModelTypes
 from openbiolink.gui import gui as gui
 
 

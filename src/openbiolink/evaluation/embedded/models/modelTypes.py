@@ -1,6 +1,6 @@
 from enum import Enum
 
-import openbiolink.evaluation.models.pykeen_models as pykeen_models
+import openbiolink.evaluation.embedded.models.pykeen_models as pykeen_models
 
 
 class ModelTypes(Enum):
@@ -8,4 +8,3 @@ class ModelTypes(Enum):
     # PYKEEN_TRANS_R = 'TransR_PyKeen'
     TransE_Pykeen = pykeen_models.TransE_PyKeen
     TransR_Pykeen = pykeen_models.TransR_PyKeen
-    AnyBURL = "anyburl"

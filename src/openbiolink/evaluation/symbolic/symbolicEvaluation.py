@@ -1,6 +1,5 @@
 from openbiolink import globalConfig as globConf
 from openbiolink.evaluation import evalConfig as evalConf
-import pandas as pd
 import numpy as np
 
 import openbiolink.evaluation.evaluationIO as io
@@ -8,73 +7,24 @@ from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricTy
 
 from openbiolink.evaluation.metrics import Metrics
 
+from openbiolink.evaluation.symbolic.models.model import Model
+from openbiolink.evaluation.datasetreader import Reader
+
 import os
 
 
-class AnyBURLEvaluation:
-    def __init__(self, train_path: str = None, test_path: str = None, valid_path: str = None):
-        self.evaluation_path = os.path.join(globConf.WORKING_DIR, evalConf.EVAL_OUTPUT_FOLDER_NAME)
-        if not os.path.exists(self.evaluation_path):
-            os.mkdir(self.evaluation_path)
+class SymbolicEvaluation:
 
-        if train_path is not None and train_path != "":
-            self.training_examples = pd.read_csv(train_path, sep="\t", names=globConf.COL_NAMES_SAMPLES)
-            self.training_examples = self.training_examples[globConf.COL_NAMES_TRIPLES]
-            self.training_examples.to_csv(os.path.join(self.evaluation_path, "train.txt"), sep="\t", index=False,
-                                          header=False)
+    def __init__(self, model: Model, dataset: Reader):
+        self.model = model
+        self.dataset = dataset
 
-        if test_path is not None and test_path != "":
-            self.test_examples = pd.read_csv(test_path, sep="\t", names=globConf.COL_NAMES_SAMPLES)
-            self.test_examples = self.test_examples[globConf.COL_NAMES_TRIPLES]
-            self.test_examples.to_csv(os.path.join(self.evaluation_path, "test.txt"), sep="\t", index=False,
-                                      header=False)
+    def train(self):
+        self.model.train()
 
-        if valid_path is not None and valid_path != "":
-            self.validation_examples = pd.read_csv(valid_path, sep="\t", names=globConf.COL_NAMES_SAMPLES)
-            self.validation_examples = self.validation_examples[globConf.COL_NAMES_TRIPLES]
-            self.validation_examples.to_csv(os.path.join(self.evaluation_path, "valid.txt"), sep="\t", index=False,
-                                            header=False)
+    def evaluate(self, metrics: list, ks=None):
+        self.model.predict()
 
-        self.anyburl_path = self.download_anyburl()
-        self.irifab_path = self.download_irifab()
-
-    def train(self, learn_config_path: str):
-        from subprocess import Popen, PIPE
-        process = Popen(
-            ["java", "-Xmx12G", "-cp", self.anyburl_path, "de.unima.ki.anyburl.LearnReinforced", learn_config_path],
-            stdout=PIPE, stderr=PIPE)
-        while True:
-            nextline = process.stdout.readline().decode("utf-8")
-            if nextline == '' and process.poll() is not None:
-                break
-            elif nextline != '':
-                print(nextline, end='')
-        while True:
-            nextline = process.stderr.readline().decode("utf-8")
-            if nextline == '' and process.poll() is not None:
-                break
-            elif nextline != '' and nextline != '\r':
-                print(nextline, end='')
-        process.communicate()
-
-    def apply_rules(self, apply_config_path: str):
-        from subprocess import Popen, PIPE
-        process = Popen([self.irifab_path, apply_config_path], stdout=PIPE, stderr=PIPE)
-        while True:
-            nextline = process.stdout.readline().decode("utf-8")
-            if nextline == '' and process.poll() is not None:
-                break
-            elif nextline != '':
-                print(nextline, end='')
-        while True:
-            nextline = process.stderr.readline().decode("utf-8")
-            if nextline == '' and process.poll() is not None:
-                break
-            elif nextline != '' and nextline != '\r':
-                print(nextline, end='')
-        output = process.communicate()
-
-    def evaluate(self, eval_config_path: str, metrics: list, ks=None):
         if not ks:
             ks = evalConf.DEFAULT_HITS_AT_K
         os.makedirs(os.path.join(globConf.WORKING_DIR, evalConf.EVAL_OUTPUT_FOLDER_NAME), exist_ok=True)
@@ -90,7 +40,7 @@ class AnyBURLEvaluation:
         unfiltered_options = bool(num_ranked_unfiltered_metrics)
         metrics_results = {}
 
-        prediction_paths = self.get_prediction_paths(eval_config_path)
+        prediction_paths = self.get_prediction_paths(self.model.config["path_predicitions"])
         for prediction_path in prediction_paths:
             predictions = self.read_prediction(prediction_path)
 
@@ -104,15 +54,7 @@ class AnyBURLEvaluation:
             io.write_metric_results(metrics_results)
 
     @staticmethod
-    def get_prediction_paths(eval_config_path: str):
-        with open(eval_config_path) as f:
-            file_content = '[root]\n' + f.read()
-
-        from configparser import ConfigParser
-        config_parser = ConfigParser()
-        config_parser.read_string(file_content)
-
-        predictions_path = config_parser["root"]["PATH_PREDICTIONS"]
+    def get_prediction_paths(predictions_path: str):
         if "|" in predictions_path:
             prefix, values, _ = predictions_path.split("|")
             postfixes = values.split(",")
@@ -256,34 +198,6 @@ class AnyBURLEvaluation:
             pr_auc = Metrics.calculate_auc(pr_unique, rec_unique)
             metric_results[ThresholdMetricType.PR_AUC] = pr_auc
         return metric_results
-
-    def download_anyburl(self):
-        anyburl_path = os.path.join(self.evaluation_path, "AnyBURL-RE.jar")
-        if not os.path.exists(os.path.join(self.evaluation_path, "AnyBURL-RE.jar")):
-            import wget
-            wget.download("http://web.informatik.uni-mannheim.de/AnyBURL/AnyBURL-RE.jar",
-                          os.path.join(self.evaluation_path, "AnyBURL-RE.jar"))
-        return anyburl_path
-
-    def download_irifab(self):
-        import platform
-        os_name = platform.system()
-        if os_name == "Linux":
-            irifab_name = "IRIFAB"
-        elif os_name == "Windows":
-            irifab_name = "IRIFAB.exe"
-        else:
-            print("OS not supported with IRIFAB")
-            import sys
-            sys.exit()
-
-        irifab_path = os.path.join(self.evaluation_path, irifab_name)
-        if not os.path.exists(irifab_path):
-            import wget
-            irifab_url = "https://github.com/OpenBioLink/IRIFAB/raw/master/resources/binaries/" + irifab_name
-            wget.download(irifab_url, irifab_path)
-        return irifab_path
-
 
 class Prediction:
 

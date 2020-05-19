@@ -5,9 +5,9 @@ from unittest.mock import MagicMock, patch
 
 import pandas
 
-from src.openbiolink.evaluation.evaluation import Evaluation
+from openbiolink.evaluation.embedded.embeddedEvaluation import Evaluation
 from src.openbiolink.evaluation.metricTypes import ThresholdMetricType, RankMetricType
-from src.openbiolink.evaluation.models.pykeen_models import TransR_PyKeen
+from openbiolink.evaluation.embedded.models.pykeen_models import TransR_PyKeen
 from src.openbiolink.globalConfig import *
 
 

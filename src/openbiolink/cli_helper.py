@@ -4,9 +4,10 @@ import sys
 from typing import List, Optional
 
 from openbiolink import globalConfig, globalConfig as glob, graphProperties as graphProp
-from openbiolink.evaluation.evaluation import Evaluation
+from openbiolink.evaluation import EmbeddedEvaluation, SymbolicEvaluation
+from openbiolink.evaluation.datasetreader import Reader
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
-from openbiolink.evaluation.models.modelTypes import ModelTypes
+from openbiolink.evaluation.embedded.models.modelTypes import ModelTypes
 from openbiolink.graph_creation.graphCreation import Graph_Creation
 from openbiolink.graph_creation.types.qualityType import QualityType
 
@@ -94,14 +95,18 @@ def train_and_evaluate(
         else:
             model = model_cls()
 
-        e = Evaluation(
-            model=model,
+        dataset = Reader(
             training_set_path=training_set_path,
             negative_training_set_path=negative_training_set_path,
             test_set_path=test_set_path,
             negative_test_set_path=negative_test_set_path,
             nodes_path=nodes_path,
-            mappings_avail=bool(trained_model),
+            mappings_avail=bool(trained_model)
+        )
+
+        e = EmbeddedEvaluation(
+            model=model,
+            dataset=dataset
         )
         # todo doku: mappings have to be in model folder with correct name, or change here
         if do_training:
@@ -119,4 +124,21 @@ def train_and_evaluate(
             else:
                 int_ks = [int(k) for k in ks]
             e.evaluate(metrics=metrics_to_use, ks=int_ks)
+    else:
+        model =
+        dataset = Reader(
+            training_set_path=training_set_path,
+            negative_training_set_path=negative_training_set_path,
+            test_set_path=test_set_path,
+            negative_test_set_path=negative_test_set_path,
+            nodes_path=nodes_path,
+            mappings_avail=bool(trained_model)
+        )
+
+
+        e = SymbolicEvaluation(
+            model=model,
+
+        )
+
 

@@ -19,7 +19,8 @@ import click
 
 from openbiolink import globalConfig as glob
 from openbiolink.cli_helper import create_graph, train_and_evaluate
-from openbiolink.evaluation.models.modelTypes import ModelTypes
+from openbiolink.evaluation.embedded.models.modelTypes import ModelTypes as EmbeddedModelTypes
+from openbiolink.evaluation.symbolic.models.modelTypes import ModelTypes as SymbolicModelTypes
 from openbiolink.graph_creation.graph_writer import FORMATS
 from openbiolink.graph_creation.types.qualityType import QualityType
 from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
@@ -206,29 +207,84 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val, no_neg_train_val
     tts.random_edge_split(val=val, test_frac=test_frac, crossval=crossval)
 
 
-@main.command()
+@main.group()
+def train():
+    """training"""
+
+@train.command()
 @click.option(
     "-m",
     "--model-cls",
     required=True,
-    type=click.Choice(list(ModelTypes.__members__)),
+    type=click.Choice(list(EmbeddedModelTypes.__members__)),
     help="class of the model to be trained/evaluated",
 )
-@click.option("--config", help="Path to the model' config file")
-@click.option("--no-train", is_flag=True, help="No training is being performed, trained model id provided via --model")
-@click.option("--trained-model", help="Path to trained model (required with --no-train)")
-@click.option("--no-eval", is_flag=True, help="No evaluation is being performed, only training")
-@click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
 @click.option("-s", "--training-path", help="Path to positive trainings set file")  # (alternative: --cv_folder)')
-@click.option("-nt", "--negative-testing-path", help="Path to negative test set file")
 @click.option("-ns", "--negative-training-path", help="Path to negative trainings set file")  # (alternative: --cv_folder)')
 @click.option(
-    "--eval-nodes",
+    "--nodes",
+    help="path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation",
+)
+def embedded(model_cls, training_path, negative_training_path, nodes):
+    train_embedded(model_cls, training_path, negative_training_path, nodes)
+
+
+@train.command()
+@click.option(
+    "-m",
+    "--model-cls",
+    required=True,
+    type=click.Choice(list(SymbolicModelTypes.__members__)),
+    help="class of the model to be trained/evaluated",
+)
+@click.option("--policy", help="Path to positive trainings set file")
+@click.option("--reward", help="Path to positive trainings set file")
+@click.option("--epsilon", help="Path to positive trainings set file")
+@click.option("--snapshots-at", help="")
+@click.option("--worker-threads", help="")
+def symbolic():
+    train_symbolic()
+
+@main.group()
+def evaluate():
+    """evaluation"""
+
+@evaluate.command()
+@click.option(
+    "-m",
+    "--model-cls",
+    required=True,
+    type=click.Choice(list(EmbeddedModelTypes.__members__)),
+    help="class of the model to be trained/evaluated",
+)
+@click.option("--trained-model", help="Path to trained model")
+@click.option("--config", help="Path to the model' config file")
+@click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
+@click.option("-nt", "--negative-testing-path", help="Path to negative test set file")
+@click.option(
+    "--nodes",
     help="path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation",
 )
 @click.option("--metrics", multiple=True, help="evaluation metrics")
 @click.option("--ks", multiple=True, help="k's for hits@k metric")
-def train(
+def embedded(model_cls, trained_model, config, testing_path, negative_testing_path, nodes):
+    evaluate_embedded(model_cls, trained_model, config, testing_path, negative_testing_path, nodes)
+
+
+
+@click.option("-s", "--training-path", help="Path to positive trainings set file")  # (alternative: --cv_folder)')
+@click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
+@click.option("-v", "--valid-path", required=True, help="Path to positive validation set file")
+@click.option("--metrics", multiple=True, help="evaluation metrics")
+@click.option("--ks", multiple=True, help="k's for hits@k metric")
+@evaluate.command()
+def symbolic():
+    evaluate_symbolic()
+
+
+
+@train.command()
+def embedded(
     model_cls, trained_model, training_path, negative_training_path, testing_path, negative_testing_path, eval_nodes, no_train, no_eval, metrics, ks, config,
 ):
     """Train and evaluate on a graph."""
