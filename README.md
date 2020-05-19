@@ -2,6 +2,10 @@
 
 OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as tools for creating custom benchmarks and training and evaluating models.
 
+<p align="center">
+  <img width="400" src="https://github.com/OpenBioLink/OpenBioLink/raw/master/wiki-resources/obl_overview.PNG">
+</p>
+
 [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)
 
 [Supplementary data](https://github.com/OpenBioLink/OpenBioLink/raw/master/paper/supplementary%20data.pdf)
