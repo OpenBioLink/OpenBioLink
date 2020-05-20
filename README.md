@@ -47,6 +47,14 @@ All datasets are hosted on [zenodo](https://zenodo.org/record/3834052).
 * [OpenBioLink2020: directed, no quality cutoff](https://zenodo.org/record/3834052/files/ALL_DIR.zip?download=1) // [RDF](https://zenodo.org/record/3834052/files/RDF_ALL_DIR.zip)
 * [OpenBioLink2020: undirected, no quality cutoff](https://zenodo.org/record/3834052/files/ALL_UNDIR.zip?download=1) // [RDF](https://zenodo.org/record/3834052/files/RDF_ALL_UNDIR.zip)
 
+#### Datasets summary
+|Dataset|Train|Test|Valid|Entities|Relations|
+|-------|-----|----|-----|--------|---------|
+|directed, high quality|8.503.580|401.901|397.066|184.732|28|
+|undirected, high quality|7.559.921|372.877|357.297|184.722|28|
+|directed, no quality cutoff|51.636.927|2.079.139|2.474.921|486.998|32|
+|undirected, no quality cutoff|41.383.093|2.010.662|1.932.436|486.998|32|
+
 <details>
   <summary>Previous versions of the Benchmark (click to expand)</summary>
     
