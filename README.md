@@ -25,23 +25,6 @@ The OpenBioLink benchmark aims to meet the following criteria:
 * Differentiating benchmarks for directed and undirected graphs in order to be applicable to a wide variety of link prediction methods
 * Clearly defined release cycle with versions of the benchmark and public leaderboard
 
-## Installation
-
-### Pip
-1) Install a pytorch version suitable for your system https://pytorch.org/
-1) ```pip install openbiolink```
-
-### Source
-1) clone the git repository or download the project
-1) Create a new python3.7, or python3.6 virtual environment  *(note: under Windows, only python3.6 will work)*
-e.g.:
-```python3 -m venv my_venv```
-1) activate the virtual environment
-    * windows: ``my_venv\Scrips\activate``
-    * linux/mac: ``source my_venv/bin/activate``
-1) Install a pytorch version suitable for your system https://pytorch.org/
-1) Install the requirements stated in requirements.txt e.g.  ```pip install -r requirements.txt```
-
 ## Benchmark Dataset
  The [OpenBioLink2020 Dataset](https://zenodo.org/record/3834052/files/HQ_DIR.zip?download=1) is a highly challenging
  benchmark dataset containing over 5 million positive and negative edges.
@@ -88,6 +71,8 @@ If you want to see your results added to the Leaderboard please create a new iss
  
 ## Manual
 
+### Installation
+
 The OpenBioLink framework consists of three parts, called 'actions':
  1) graph creation
  2) train-test split creation
@@ -98,12 +83,29 @@ The third action serves as an interface for training and evaluating link predict
 
 For HOW-TO's please check also the [wiki](https://github.com/OpenBioLink/OpenBioLink/wiki/Table-of-Contents)
 
-#### Calling via GUI
+#### Pip
+1) Install a pytorch version suitable for your system https://pytorch.org/
+1) ```pip install openbiolink```
+
+#### Source
+1) clone the git repository or download the project
+1) Create a new python3.7, or python3.6 virtual environment  *(note: under Windows, only python3.6 will work)*
+e.g.:
+```python3 -m venv my_venv```
+1) activate the virtual environment
+    * windows: ``my_venv\Scrips\activate``
+    * linux/mac: ``source my_venv/bin/activate``
+1) Install a pytorch version suitable for your system https://pytorch.org/
+1) Install the requirements stated in requirements.txt e.g.  ```pip install -r requirements.txt```
+
+
+
+### Calling via GUI
 By calling the program without any parameters, the GUI is started, 
 providing an interface to define required parameters. In the last step, 
 the corresponding command line options are displayed.
 
-#### Calling via command line
+### Calling via command line
 From folder src
 ```sh
 openbiolink -p WORKING_DIR_PATH [-action] [--options] ...
