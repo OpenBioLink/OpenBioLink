@@ -84,7 +84,7 @@ Please note that the OpenBioLink benchmark files contain data derived from exter
 |   TransE (Baseline)   |    0.0749     |   0.0125     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 |   TransR (Baseline)   |    0.0639     |   0.0096     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 
-Please contact us if you want to see your results added to the Leaderboard.
+If you want to see your results added to the Leaderboard please create a new issue.
  
 ## Manual
 
