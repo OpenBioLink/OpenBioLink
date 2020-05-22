@@ -72,10 +72,11 @@ class Dataset:
         ]
 
         if mapping:
+            self.mapping = Mapping()
             if mappings_avail:
-                self.mapping = Mapping().read_mapping()
+                self.mapping.read_mapping()
             else:
-                self.mapping = Mapping().create_mapping(self.training_examples, self.test_examples, self.nodes)
+                self.mapping.create_mapping(self.training_examples, self.test_examples, self.nodes)
 
         if write_triples:
             self.write_triples()

@@ -261,17 +261,20 @@ def evaluate():
     type=click.Choice(list(EmbeddedModelTypes.__members__)),
     help="class of the model to be trained/evaluated",
 )
-@click.option("--trained-model", help="Path to trained model")
-@click.option("--config", help="Path to the model' config file")
-@click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
-@click.option("-nt", "--negative-testing-path", help="Path to negative test set file")
+@click.option("--trained-model", help="Path to trained model", show_default=True, type=click.Path(dir_okay=False, file_okay=True), default="evaluation\\trained_model.pkl")
+@click.option("--config", help="Path to the model' config file", show_default=True, type=click.Path(dir_okay=False, file_okay=True), default="evaluation\\configuration.json")
+@click.option("-t", "--testing-path", help="Path to positive test set file", type=click.Path(dir_okay=False, file_okay=True))
+@click.option("-nt", "--negative-testing-path", help="Path to negative test set file", type=click.Path(dir_okay=False, file_okay=True))
 @click.option(
     "--nodes",
     help="path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation",
+    type=click.Path(dir_okay=False, file_okay=True)
 )
 @click.option("--metrics", multiple=True, help="evaluation metrics")
 @click.option("--ks", multiple=True, help="k's for hits@k metric")
 def embedded(model_cls, trained_model, config, testing_path, negative_testing_path, nodes, metrics, ks):
+    trained_model = os.path.join(glob.WORKING_DIR, trained_model)
+    config = os.path.join(glob.WORKING_DIR, config)
     evaluate_embedded(model_cls, trained_model, config, testing_path, negative_testing_path, nodes, metrics, ks)
 
 

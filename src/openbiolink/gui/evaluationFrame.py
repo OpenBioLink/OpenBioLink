@@ -110,8 +110,10 @@ class EvalFrame(tk.Frame):
 
     def unpack_file_paths(self):
         self.train_file_el.pack_forget()
+        self.neg_train_file_el.pack_forget()
         self.trained_model_file_el.pack_forget()
         self.test_file_el.pack_forget()
+        self.neg_test_file_el.pack_forget()
         self.node_or_corrupted_file_el.pack_forget()
 
     def _create_action_el(self, parent):
@@ -336,14 +338,14 @@ class EvalFrame(tk.Frame):
                 )
                 return
             if all([not self.mrr.get(), not self.hits.get()]) and all(
-                [not x.get() for _, x in self.threshold_metrics_dict.items()]
+                    [not x.get() for _, x in self.threshold_metrics_dict.items()]
             ):
                 messagebox.showerror("ERROR", "'Perform evaluation' is chosen, but no evaluation metrics are selected")
                 return
         self.controller.ARGS_LIST_EVAL = []
 
         if self.train.get():
-            self.controller.ARGS_LIST_EVAL.extend(["embedded", "train"])
+            self.controller.ARGS_LIST_EVAL.extend(["train", "embedded"])
             self.controller.ARGS_LIST_EVAL.extend(["-m", str(ModelTypes[self.select_model.get()].name)])
             if self.config_path.get():
                 self.controller.ARGS_LIST_EVAL.extend(["--config", self.config_path.get()])
@@ -354,11 +356,12 @@ class EvalFrame(tk.Frame):
                 self.controller.ARGS_LIST_EVAL.extend(["--nodes", self.nodes_or_corr_path.get()])
 
         if self.evaluate.get():
-            self.controller.ARGS_LIST_EVAL.extend(["embedded", "evaluate"])
+            self.controller.ARGS_LIST_EVAL.extend(["evaluate", "embedded"])
             self.controller.ARGS_LIST_EVAL.extend(["-m", str(ModelTypes[self.select_model.get()].name)])
             if self.config_path.get():
                 self.controller.ARGS_LIST_EVAL.extend(["--config", self.config_path.get()])
-            self.controller.ARGS_LIST_EVAL.extend(["--trained-model", self.trained_model_path.get()])
+            if self.trained_model_path.get():
+                self.controller.ARGS_LIST_EVAL.extend(["--trained-model", self.trained_model_path.get()])
             self.controller.ARGS_LIST_EVAL.extend(["--testing-path", self.test_path.get()])
             if self.neg_test_path.get():
                 self.controller.ARGS_LIST_EVAL.extend(["--negative-testing-path", self.neg_test_path.get()])
@@ -380,7 +383,5 @@ class EvalFrame(tk.Frame):
                     self.controller.ARGS_LIST_EVAL.extend(["--ks", str(x)])
             if self.select_node_corrupted.get() == "nodes path":
                 self.controller.ARGS_LIST_EVAL.extend(["--nodes", self.nodes_or_corr_path.get()])
-
-
 
         self.controller.show_next_frame()
