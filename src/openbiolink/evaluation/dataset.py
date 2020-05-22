@@ -59,6 +59,18 @@ class Dataset:
         else:
             self.nodes = None
 
+        training_nodes = set(self.training_examples[globConst.NODE1_ID_COL_NAME].tolist() +
+                                   self.training_examples[globConst.NODE2_ID_COL_NAME].tolist())
+
+        self.test_examples = self.test_examples[
+            self.test_examples[globConst.NODE1_ID_COL_NAME].isin(training_nodes) &
+            self.test_examples[globConst.NODE2_ID_COL_NAME].isin(training_nodes)
+        ]
+        self.validation_examples = self.validation_examples[
+            self.validation_examples[globConst.NODE1_ID_COL_NAME].isin(training_nodes) &
+            self.validation_examples[globConst.NODE2_ID_COL_NAME].isin(training_nodes)
+        ]
+
         if mapping:
             if mappings_avail:
                 self.mapping = Mapping().read_mapping()
