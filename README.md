@@ -1,3 +1,5 @@
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/openbiolink-a-resource-and-benchmarking/link-prediction-on-openbiolink)](https://paperswithcode.com/sota/link-prediction-on-openbiolink?p=openbiolink-a-resource-and-benchmarking)
+
 # OpenBioLink
 
 OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as tools for creating custom benchmarks and training and evaluating models.
