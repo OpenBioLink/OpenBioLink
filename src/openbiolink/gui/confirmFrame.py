@@ -53,6 +53,7 @@ class ConfirmFrame(tk.Frame):
         self.gc_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_GRAPH_CREATION))
         self.global_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_GLOBAL))
         self.tts_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_TRAIN_TEST_SPLIT))
+        self.eval_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_TRAIN))
         self.eval_message.insert("end", self.args_list_to_string(self.controller.ARGS_LIST_EVAL))
 
     def args_list_to_string(self, arg_list):
@@ -60,5 +61,7 @@ class ConfirmFrame(tk.Frame):
         for param in arg_list:
             if param.startswith("--"):
                 params_gc_string = params_gc_string + "\n\t"
+            elif param.startswith("evaluate") or param.startswith("train"):
+                params_gc_string = params_gc_string + "\n"
             params_gc_string = params_gc_string + " " + param
         return params_gc_string

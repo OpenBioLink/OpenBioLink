@@ -89,8 +89,8 @@ class BimegGui(tk.Tk):
 
             args = [
                 list(self.ARGS_LIST_GLOBAL) + list(args)
-                for args in (self.ARGS_LIST_GRAPH_CREATION, self.ARGS_LIST_TRAIN_TEST_SPLIT, self.ARGS_LIST_EVAL)
-                if args
+                for args in (self.ARGS_LIST_GRAPH_CREATION, self.ARGS_LIST_TRAIN_TEST_SPLIT, self.ARGS_LIST_TRAIN, self.ARGS_LIST_EVAL)
+                if args and len(args) > 0
             ]
             thread = threading.Thread(target=_main, args=args, daemon=True)
             thread.start()

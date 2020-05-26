@@ -37,6 +37,12 @@ class EvalFrame(tk.Frame):
         self.trained_model_file_el = self._create_trained_model_path_el(paths_box)
         self.node_or_corrupted_file_el = self._create_nodes_or_corrupted_path_el(paths_box)
 
+        self.select_model = None
+        self.snapshot_at = tk.StringVar(value="100")
+        self.valid_file_el = self._create_valid_path_el(paths_box)
+        self.anyburl_learn_el = self._create_anyburl_learn_el(paths_box)
+        self.anyburl_eval_el = self._create_anyburl_eval_el(paths_box)
+
         self.metrics_box = tk.LabelFrame(options_panel, text="choose metrics")
         self.metrics_frame = tk.Frame(self.metrics_box)
         self.rank_metrics_dict = {}
@@ -81,23 +87,30 @@ class EvalFrame(tk.Frame):
 
     def pack_file_paths(self):
         self.unpack_file_paths()
-        if self.train.get():
-            self.train_file_el.pack(side="top", fill="x")
-            if self.method.get() == "embedded":
+        if self.method.get() == "embedded":
+            self.config_path_el.pack(side="top", fill="x")
+            if self.train.get():
+                self.train_file_el.pack(side="top", fill="x")
                 self.neg_train_file_el.pack(side="top", fill="x")
-        elif self.evaluate.get():
-            if self.method.get() == "embedded":
+            elif self.evaluate.get():
                 self.trained_model_file_el.pack(side="top", fill="x")
-        if self.evaluate.get():
-            self.test_file_el.pack(side="top", fill="x")
-            if self.method.get() == "embedded":
+            if self.evaluate.get():
+                self.test_file_el.pack(side="top", fill="x")
                 self.neg_test_file_el.pack(side="top", fill="x")
-            self.metrics_frame.pack(side="top", fill="both", expand=True)
-
+                self.metrics_frame.pack(side="top", fill="both", expand=True)
+            else:
+                self.metrics_frame.pack_forget()
+            if (self.hits.get() or self.mrr.get()) and self.evaluate.get():
+                self.node_or_corrupted_file_el.pack(side="top", fill="x")
         else:
-            self.metrics_frame.pack_forget()
-        if (self.hits.get() or self.mrr.get()) and self.evaluate.get():
-            self.node_or_corrupted_file_el.pack(side="top", fill="x")
+            self.train_file_el.pack(side="top", fill="x")
+            self.test_file_el.pack(side="top", fill="x")
+            self.valid_file_el.pack(side="top", fill="x")
+            if self.train.get():
+                self.anyburl_learn_el.pack(side="top", fill="x")
+            if self.evaluate.get():
+                self.anyburl_eval_el.pack(side="top", fill="x")
+                self.metrics_frame.pack(side="top", fill="both", expand=True)
 
     def toggl_ranked_metrics(self):
         if not self.hits.get():
@@ -118,7 +131,11 @@ class EvalFrame(tk.Frame):
         self.trained_model_file_el.pack_forget()
         self.test_file_el.pack_forget()
         self.neg_test_file_el.pack_forget()
+        self.valid_file_el.pack_forget()
         self.node_or_corrupted_file_el.pack_forget()
+        self.anyburl_learn_el.pack_forget()
+        self.anyburl_eval_el.pack_forget()
+        self.config_path_el.pack_forget()
 
     def _create_action_el(self, parent):
         el = tk.LabelFrame(parent, text="general info")
@@ -138,10 +155,13 @@ class EvalFrame(tk.Frame):
         def pack_action(*args):
             if self.model_menu is not None:
                 unpack_action()
+                self.pack_file_paths()
             if self.method.get() == "embedded":
-                models = [EmbeddedModelTypes[item].name for item in dir(EmbeddedModelTypes) if not item.startswith("__")]
+                models = [EmbeddedModelTypes[item].name for item in dir(EmbeddedModelTypes) if
+                          not item.startswith("__")]
             else:
-                models = [SymbolicModelTypes[item].name for item in dir(SymbolicModelTypes) if not item.startswith("__")]
+                models = [SymbolicModelTypes[item].name for item in dir(SymbolicModelTypes) if
+                          not item.startswith("__")]
             self.select_choices_models = models
             self.select_model = tk.StringVar()
             self.model_menu = tk.OptionMenu(el, self.select_model, *self.select_choices_models)
@@ -266,6 +286,18 @@ class EvalFrame(tk.Frame):
         test_label.pack(fill="x", padx=5, pady=5)
         return el
 
+    def _create_valid_path_el(self, parent):
+        el = tk.Frame(parent)
+        panel = tk.Frame(el)
+        self.val_path = tk.StringVar()
+        test_button = tk.Button(panel, text="select path ...", command=lambda: self.browse_val_file())
+        test_label = tk.Entry(el, textvariable=self.val_path)
+        panel.pack(side="top", fill="x")
+        tk.Label(panel, text="Validation set path:").pack(side="left", anchor="w", padx=5, pady=5)
+        test_button.pack(side="right", anchor="w", padx=5, pady=5)
+        test_label.pack(fill="x", padx=5, pady=5)
+        return el
+
     def _create_trained_model_path_el(self, parent):
         el = tk.Frame(parent)
         panel = tk.Frame(el)
@@ -295,6 +327,167 @@ class EvalFrame(tk.Frame):
         label.pack(fill="x", padx=5, pady=5)
         return el
 
+    def _create_anyburl_learn_el(self, parent):
+        el = tk.LabelFrame(parent, text="learn config")
+        panel = tk.Frame(el)
+        panel.pack(side="top", fill="x")
+
+        snapshot_at_frame = tk.Frame(panel)
+        snapshot_at_label = tk.Label(snapshot_at_frame, text="Snapshot at:")
+        snapshot_at_entry = tk.Entry(snapshot_at_frame, textvariable=self.snapshot_at, width=5)
+        snapshot_at_info = tk.Label(
+            snapshot_at_frame, text="as int in seconds, e.g. 100", font=self.controller.info_font
+        )
+        snapshot_at_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        snapshot_at_label.pack(side="left", padx=5, anchor="w")
+        snapshot_at_entry.pack(side="left", anchor="w")
+        snapshot_at_info.pack(side="left", anchor="w")
+
+        policy_frame = tk.Frame(panel)
+        policy_label = tk.Label(policy_frame, text="Policy:")
+        policy_choices = ["1", "2"]
+        self.selected_policy = tk.StringVar()
+        self.selected_policy.set("2")
+        policy_menu = tk.OptionMenu(policy_frame, self.selected_policy, *policy_choices)
+        policy_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        policy_label.pack(side="left", padx=5, anchor="w")
+        policy_menu.pack(side="left", anchor="w")
+
+        reward_frame = tk.Frame(panel)
+        reward_label = tk.Label(reward_frame, text="Reward:")
+        reward_choices = ["1", "3", "5"]
+        self.selected_reward = tk.StringVar()
+        self.selected_reward.set("5")
+        reward_menu = tk.OptionMenu(reward_frame, self.selected_reward, *reward_choices)
+        reward_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        reward_label.pack(side="left", padx=5, anchor="w")
+        reward_menu.pack(side="left", anchor="w")
+
+        self.epsilon = tk.StringVar(value="0.1")
+        epsilon_frame = tk.Frame(panel)
+        epsilon_label = tk.Label(epsilon_frame, text="Epsilon:")
+        epsilon_entry = tk.Entry(epsilon_frame, textvariable=self.epsilon, width=5)
+        epsilon_info = tk.Label(
+            epsilon_frame, text="as float, e.g. 0.1", font=self.controller.info_font
+        )
+        epsilon_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        epsilon_label.pack(side="left", padx=5, anchor="w")
+        epsilon_entry.pack(side="left", anchor="w")
+        epsilon_info.pack(side="left", anchor="w")
+
+        self.worker_threads_learn = tk.StringVar(value="7")
+        worker_threads_frame = tk.Frame(panel)
+        worker_threads_label = tk.Label(worker_threads_frame, text="Worker threads:")
+        worker_threads_entry = tk.Entry(worker_threads_frame, textvariable=self.worker_threads_learn, width=5)
+        worker_threads_info = tk.Label(
+            worker_threads_frame, text="as int in seconds, e.g. 7", font=self.controller.info_font
+        )
+        worker_threads_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        worker_threads_label.pack(side="left", padx=5, anchor="w")
+        worker_threads_entry.pack(side="left", anchor="w")
+        worker_threads_info.pack(side="left", anchor="w")
+
+        return el
+
+    def _create_anyburl_eval_el(self, parent):
+        el = tk.LabelFrame(parent, text="eval config")
+        panel = tk.Frame(el)
+        panel.pack(side="top", fill="x")
+
+        snapshot_at_frame = tk.Frame(panel)
+        snapshot_at_label = tk.Label(snapshot_at_frame, text="Snapshot at:")
+        snapshot_at_entry = tk.Entry(snapshot_at_frame, textvariable=self.snapshot_at, width=5)
+        snapshot_at_info = tk.Label(
+            snapshot_at_frame, text="as int in seconds, e.g. 100", font=self.controller.info_font
+        )
+        snapshot_at_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        snapshot_at_label.pack(side="left", padx=5, anchor="w")
+        snapshot_at_entry.pack(side="left", anchor="w")
+        snapshot_at_info.pack(side="left", anchor="w")
+
+        discrimination_bound_frame = tk.Frame(panel)
+        self.discrimination_bound = tk.StringVar(value="1000")
+        discrimination_bound_label = tk.Label(discrimination_bound_frame, text="Discrimination bound:")
+        discrimination_bound_entry = tk.Entry(discrimination_bound_frame, textvariable=self.discrimination_bound, width=5)
+        discrimination_bound_info = tk.Label(
+            discrimination_bound_frame, text="as int, e.g. 1000", font=self.controller.info_font
+        )
+        discrimination_bound_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        discrimination_bound_label.pack(side="left", padx=5, anchor="w")
+        discrimination_bound_entry.pack(side="left", anchor="w")
+        discrimination_bound_info.pack(side="left", anchor="w")
+
+        unseen_negative_examples_frame = tk.Frame(panel)
+        self.unseen_negative_examples = tk.StringVar(value="5")
+        unseen_negative_examples_label = tk.Label(unseen_negative_examples_frame, text="Unseen negative examples:")
+        unseen_negative_examples_entry = tk.Entry(unseen_negative_examples_frame, textvariable=self.unseen_negative_examples,
+                                              width=5)
+        unseen_negative_examples_info = tk.Label(
+            unseen_negative_examples_frame, text="as int, e.g. 5", font=self.controller.info_font
+        )
+        unseen_negative_examples_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        unseen_negative_examples_label.pack(side="left", padx=5, anchor="w")
+        unseen_negative_examples_entry.pack(side="left", anchor="w")
+        unseen_negative_examples_info.pack(side="left", anchor="w")
+
+        top_k_output_frame = tk.Frame(panel)
+        self.top_k_output = tk.StringVar(value="10")
+        top_k_output_label = tk.Label(top_k_output_frame, text="Top k output:")
+        top_k_output_entry = tk.Entry(top_k_output_frame,
+                                                  textvariable=self.top_k_output,
+                                                  width=5)
+        top_k_output_info = tk.Label(
+            top_k_output_frame, text="as int, has to be equal or higher than highest specified k in metrics", font=self.controller.info_font
+        )
+        top_k_output_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        top_k_output_label.pack(side="left", padx=5, anchor="w")
+        top_k_output_entry.pack(side="left", anchor="w")
+        top_k_output_info.pack(side="left", anchor="w")
+
+        worker_threads_eval_frame = tk.Frame(panel)
+        self.worker_threads_eval = tk.StringVar(value="7")
+        worker_threads_eval_label = tk.Label(worker_threads_eval_frame, text="Worker threads:")
+        worker_threads_eval_entry = tk.Entry(worker_threads_eval_frame,
+                                      textvariable=self.worker_threads_eval,
+                                      width=5)
+        worker_threads_eval_info = tk.Label(
+            worker_threads_eval_frame, text="as int, e.g. 7",
+            font=self.controller.info_font
+        )
+        worker_threads_eval_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        worker_threads_eval_label.pack(side="left", padx=5, anchor="w")
+        worker_threads_eval_entry.pack(side="left", anchor="w")
+        worker_threads_eval_info.pack(side="left", anchor="w")
+
+        threshold_confidence_frame = tk.Frame(panel)
+        self.threshold_confidence = tk.StringVar(value="0.001")
+        threshold_confidence_label = tk.Label(threshold_confidence_frame, text="Threshold confidence:")
+        threshold_confidence_entry = tk.Entry(threshold_confidence_frame,
+                                             textvariable=self.threshold_confidence,
+                                             width=5)
+        threshold_confidence_info = tk.Label(
+            threshold_confidence_frame, text="as float, e.g. 0.001",
+            font=self.controller.info_font
+        )
+        threshold_confidence_frame.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+        threshold_confidence_label.pack(side="left", padx=5, anchor="w")
+        threshold_confidence_entry.pack(side="left", anchor="w")
+        threshold_confidence_info.pack(side="left", anchor="w")
+
+        self.fast = tk.IntVar(value=1)
+        no_fast_checkbox = tk.Checkbutton(panel, text="Fast", variable=self.fast)
+        no_fast_checkbox.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+
+        self.discrimination_unique = tk.IntVar(value=0)
+        discrimination_unique_checkbox = tk.Checkbutton(panel, text="Discrimination unique", variable=self.discrimination_unique)
+        discrimination_unique_checkbox.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+
+        self.intermediate_discrimination = tk.IntVar(value=1)
+        no_intermediate_discrimination_checkbox = tk.Checkbutton(panel, text="Intermediate discrimination", variable=self.intermediate_discrimination)
+        no_intermediate_discrimination_checkbox.pack(side="top", padx=5, pady=(0, 10), anchor="w")
+
+        return el
+
     def browse_test_file(self):
         self.test_path.set(filedialog.askopenfilename())
 
@@ -306,6 +499,9 @@ class EvalFrame(tk.Frame):
 
     def browse_neg_train_file(self):
         self.neg_train_path.set(filedialog.askopenfilename())
+
+    def browse_val_file(self):
+        self.val_path.set(filedialog.askopenfilename())
 
     def browse_trained_model(self):
         self.trained_model_path.set(filedialog.askopenfilename())
@@ -335,6 +531,10 @@ class EvalFrame(tk.Frame):
         if os.path.exists(neg_train_path) or "SplitFrame" in self.controller.selected_frames:
             self.neg_train_path.set(neg_train_path)
 
+        val_path = os.path.join(tts_files_folder, ttsConst.VAL_FILE_NAME)
+        if os.path.exists(val_path) or "SplitFrame" in self.controller.selected_frames:
+            self.val_path.set(val_path)
+
         # train val nodes path for obl 2020
         nodes_path = os.path.join(tts_files_folder, ttsConst.TRAIN_VAL_NODES_FILE_NAME)
         train_nodes_path = os.path.join(tts_files_folder, ttsConst.TRAIN_NODES_FILE_NAME)
@@ -344,75 +544,130 @@ class EvalFrame(tk.Frame):
             self.nodes_or_corr_path.set(train_nodes_path)
 
     def next_page(self):
-        if not self.train.get() and not self.evaluate.get():
-            messagebox.showerror("ERROR", "at least one action (training, evaluation) must be chosen")
-            return
-        if not self.select_model.get():
-            messagebox.showerror("ERROR", "Please select a model")
-            return
-        if self.train.get():
+        if self.method.get() == "embedded":
+            if not self.train.get() and not self.evaluate.get():
+                messagebox.showerror("ERROR", "at least one action (training, evaluation) must be chosen")
+                return
+            if not self.select_model.get():
+                messagebox.showerror("ERROR", "Please select a model")
+                return
+            if self.train.get():
+                if not self.train_path.get():
+                    messagebox.showerror("ERROR", "For training, please select a training set path")
+                    return
+            if self.evaluate.get():
+                if not self.train.get() and not self.trained_model_path.get():
+                    messagebox.showerror(
+                        "ERROR", "Please either provide a path to your trained model or choose 'perform training"
+                    )
+                    return
+                if not self.test_path.get():
+                    messagebox.showerror("ERROR", "Please provide a test path")
+                    return
+                if (self.hits.get() or self.mrr.get()) and not self.nodes_or_corr_path.get():
+                    messagebox.showerror(
+                        "ERROR", "Ranked metrics (his@K, MRR) require either a nodes file or a file of corrupted triples"
+                    )
+                    return
+                if all([not self.mrr.get(), not self.hits.get()]) and all(
+                        [not x.get() for _, x in self.threshold_metrics_dict.items()]
+                ):
+                    messagebox.showerror("ERROR", "'Perform evaluation' is chosen, but no evaluation metrics are selected")
+                    return
+
+            self.controller.ARGS_LIST_TRAIN = []
+            self.controller.ARGS_LIST_EVAL = []
+
+            if self.train.get():
+                self.controller.ARGS_LIST_TRAIN.extend(["train", "embedded"])
+                self.controller.ARGS_LIST_TRAIN.extend(["-m", str(EmbeddedModelTypes[self.select_model.get()].name)])
+                if self.config_path.get():
+                    self.controller.ARGS_LIST_TRAIN.extend(["--config", self.config_path.get()])
+                self.controller.ARGS_LIST_TRAIN.extend(["--training-path", self.train_path.get()])
+                if self.neg_train_path.get():
+                    self.controller.ARGS_LIST_TRAIN.extend(["--negative-training-path", self.neg_train_path.get()])
+                if self.select_node_corrupted.get() == "nodes path":
+                    self.controller.ARGS_LIST_TRAIN.extend(["--nodes", self.nodes_or_corr_path.get()])
+
+            if self.evaluate.get():
+                self.controller.ARGS_LIST_EVAL.extend(["evaluate", "embedded"])
+                self.controller.ARGS_LIST_EVAL.extend(["-m", str(EmbeddedModelTypes[self.select_model.get()].name)])
+                if self.config_path.get():
+                    self.controller.ARGS_LIST_EVAL.extend(["--config", self.config_path.get()])
+                if self.trained_model_path.get():
+                    self.controller.ARGS_LIST_EVAL.extend(["--trained-model", self.trained_model_path.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--testing-path", self.test_path.get()])
+                if self.neg_test_path.get():
+                    self.controller.ARGS_LIST_EVAL.extend(["--negative-testing-path", self.neg_test_path.get()])
+                ranked_metrics = [x.name for x, y in self.rank_metrics_dict.items() if y.get()]
+                for ranked_metric in ranked_metrics:
+                    self.controller.ARGS_LIST_EVAL.extend(["--metrics", ranked_metric])
+
+                threshold_metrics = [x.name for x, y in self.threshold_metrics_dict.items() if y.get()]
+                for threshold_metric in threshold_metrics:
+                    self.controller.ARGS_LIST_EVAL.extend(["--metrics", threshold_metric])
+
+                if (
+                        RankMetricType.HITS_AT_K in self.rank_metrics_dict.keys()
+                        or RankMetricType.HITS_AT_K_UNFILTERED in self.rank_metrics_dict.keys()
+                ):
+                    import ast
+
+                    for x in ast.literal_eval(self.ks.get()):
+                        self.controller.ARGS_LIST_EVAL.extend(["--ks", str(x)])
+                if self.select_node_corrupted.get() == "nodes path":
+                    self.controller.ARGS_LIST_EVAL.extend(["--nodes", self.nodes_or_corr_path.get()])
+
+        elif self.method.get() == "symbolic":
+            if not self.train.get() and not self.evaluate.get():
+                messagebox.showerror("ERROR", "at least one action (training, evaluation) must be chosen")
+                return
+            if not self.select_model.get():
+                messagebox.showerror("ERROR", "Please select a model")
+                return
             if not self.train_path.get():
                 messagebox.showerror("ERROR", "For training, please select a training set path")
                 return
-        if self.evaluate.get():
-            if not self.train.get() and not self.trained_model_path.get():
-                messagebox.showerror(
-                    "ERROR", "Please either provide a path to your trained model or choose 'perform training"
-                )
-                return
             if not self.test_path.get():
-                messagebox.showerror("ERROR", "Please provide a trainings path")
+                messagebox.showerror("ERROR", "Please provide a test path")
                 return
-            if (self.hits.get() or self.mrr.get()) and not self.nodes_or_corr_path.get():
-                messagebox.showerror(
-                    "ERROR", "Ranked metrics (his@K, MRR) require either a nodes file or a file of corrupted triples"
-                )
-                return
-            if all([not self.mrr.get(), not self.hits.get()]) and all(
-                    [not x.get() for _, x in self.threshold_metrics_dict.items()]
-            ):
-                messagebox.showerror("ERROR", "'Perform evaluation' is chosen, but no evaluation metrics are selected")
-                return
-        self.controller.ARGS_LIST_EVAL = []
+            if self.evaluate.get():
+                if all([not self.mrr.get(), not self.hits.get()]) and all(
+                        [not x.get() for _, x in self.threshold_metrics_dict.items()]
+                ):
+                    messagebox.showerror("ERROR", "'Perform evaluation' is chosen, but no evaluation metrics are selected")
+                    return
+            self.controller.ARGS_LIST_EVAL = []
+            self.controller.ARGS_LIST_TRAIN = []
 
-        if self.train.get():
-            self.controller.ARGS_LIST_EVAL.extend(["train", "embedded"])
-            self.controller.ARGS_LIST_EVAL.extend(["-m", str(ModelTypes[self.select_model.get()].name)])
-            if self.config_path.get():
-                self.controller.ARGS_LIST_EVAL.extend(["--config", self.config_path.get()])
-            self.controller.ARGS_LIST_EVAL.extend(["--training-path", self.train_path.get()])
-            if self.neg_train_path.get():
-                self.controller.ARGS_LIST_EVAL.extend(["--negative-training-path", self.neg_train_path.get()])
-            if self.select_node_corrupted.get() == "nodes path":
-                self.controller.ARGS_LIST_EVAL.extend(["--nodes", self.nodes_or_corr_path.get()])
+            if self.train.get():
+                self.controller.ARGS_LIST_TRAIN.extend(["train", "symbolic"])
+                self.controller.ARGS_LIST_TRAIN.extend(["-m", str(SymbolicModelTypes[self.select_model.get()].name)])
+                self.controller.ARGS_LIST_TRAIN.extend(["--training-path", self.train_path.get()])
+                self.controller.ARGS_LIST_TRAIN.extend(["--testing-path", self.test_path.get()])
+                self.controller.ARGS_LIST_TRAIN.extend(["--valid-path", self.val_path.get()])
+                self.controller.ARGS_LIST_TRAIN.extend(["--policy", self.selected_policy.get()])
+                self.controller.ARGS_LIST_TRAIN.extend(["--reward", self.selected_reward.get()])
+                self.controller.ARGS_LIST_TRAIN.extend(["--snapshot-at", self.snapshot_at.get()])
+                self.controller.ARGS_LIST_TRAIN.extend(["--worker-threads", self.worker_threads_learn.get()])
 
-        if self.evaluate.get():
-            self.controller.ARGS_LIST_EVAL.extend(["evaluate", "embedded"])
-            self.controller.ARGS_LIST_EVAL.extend(["-m", str(ModelTypes[self.select_model.get()].name)])
-            if self.config_path.get():
-                self.controller.ARGS_LIST_EVAL.extend(["--config", self.config_path.get()])
-            if self.trained_model_path.get():
-                self.controller.ARGS_LIST_EVAL.extend(["--trained-model", self.trained_model_path.get()])
-            self.controller.ARGS_LIST_EVAL.extend(["--testing-path", self.test_path.get()])
-            if self.neg_test_path.get():
-                self.controller.ARGS_LIST_EVAL.extend(["--negative-testing-path", self.neg_test_path.get()])
-            ranked_metrics = [x.name for x, y in self.rank_metrics_dict.items() if y.get()]
-            for ranked_metric in ranked_metrics:
-                self.controller.ARGS_LIST_EVAL.extend(["--metrics", ranked_metric])
+            if self.evaluate.get():
+                self.controller.ARGS_LIST_EVAL.extend(["evaluate", "symbolic"])
+                self.controller.ARGS_LIST_EVAL.extend(["-m", str(SymbolicModelTypes[self.select_model.get()].name)])
+                self.controller.ARGS_LIST_EVAL.extend(["--training-path", self.train_path.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--testing-path", self.test_path.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--valid-path", self.val_path.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--discrimination-bound", self.discrimination_bound.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--top-k-output", self.top_k_output.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--snapshot-at", self.snapshot_at.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--worker-threads", self.worker_threads_eval.get()])
+                self.controller.ARGS_LIST_EVAL.extend(["--threshold-confidence", self.threshold_confidence.get()])
+                if self.fast.get() == 0:
+                    self.controller.ARGS_LIST_EVAL.extend(["--no-fast"])
+                if self.discrimination_unique.get() == 1:
+                    self.controller.ARGS_LIST_EVAL.extend(["--discrimination-unique"])
+                if self.intermediate_discrimination.get() == 0:
+                    self.controller.ARGS_LIST_EVAL.extend(["--no-intermediate-discrimination"])
 
-            threshold_metrics = [x.name for x, y in self.threshold_metrics_dict.items() if y.get()]
-            for threshold_metric in threshold_metrics:
-                self.controller.ARGS_LIST_EVAL.extend(["--metrics", threshold_metric])
-
-            if (
-                    RankMetricType.HITS_AT_K in self.rank_metrics_dict.keys()
-                    or RankMetricType.HITS_AT_K_UNFILTERED in self.rank_metrics_dict.keys()
-            ):
-                import ast
-
-                for x in ast.literal_eval(self.ks.get()):
-                    self.controller.ARGS_LIST_EVAL.extend(["--ks", str(x)])
-            if self.select_node_corrupted.get() == "nodes path":
-                self.controller.ARGS_LIST_EVAL.extend(["--nodes", self.nodes_or_corr_path.get()])
 
         self.controller.show_next_frame()
