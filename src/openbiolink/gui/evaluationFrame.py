@@ -5,7 +5,8 @@ from tkinter import filedialog, messagebox, ttk
 import openbiolink.evaluation.evalConfig as evalConst
 import openbiolink.train_test_set_creation.ttsConfig as ttsConst
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
-from openbiolink.evaluation.embedded.models.modelTypes import ModelTypes
+from openbiolink.evaluation.embedded.models.modelTypes import ModelTypes as EmbeddedModelTypes
+from openbiolink.evaluation.symbolic.models.modelTypes import ModelTypes as SymbolicModelTypes
 from openbiolink.gui import gui as gui
 
 
@@ -82,12 +83,15 @@ class EvalFrame(tk.Frame):
         self.unpack_file_paths()
         if self.train.get():
             self.train_file_el.pack(side="top", fill="x")
-            self.neg_train_file_el.pack(side="top", fill="x")
+            if self.method.get() == "embedded":
+                self.neg_train_file_el.pack(side="top", fill="x")
         elif self.evaluate.get():
-            self.trained_model_file_el.pack(side="top", fill="x")
+            if self.method.get() == "embedded":
+                self.trained_model_file_el.pack(side="top", fill="x")
         if self.evaluate.get():
             self.test_file_el.pack(side="top", fill="x")
-            self.neg_test_file_el.pack(side="top", fill="x")
+            if self.method.get() == "embedded":
+                self.neg_test_file_el.pack(side="top", fill="x")
             self.metrics_frame.pack(side="top", fill="both", expand=True)
 
         else:
@@ -122,17 +126,44 @@ class EvalFrame(tk.Frame):
         train_box = tk.Checkbutton(el, text="perform training", variable=self.train, command=self.pack_file_paths)
         self.evaluate = tk.BooleanVar(value=True)
         eval_box = tk.Checkbutton(el, text="perform evaluation", variable=self.evaluate, command=self.pack_file_paths)
-        models = [ModelTypes[item].name for item in dir(ModelTypes) if not item.startswith("__")]
-        self.select_choices_models = models
-        self.select_model = tk.StringVar()
-        select_menu = tk.OptionMenu(el, self.select_model, *self.select_choices_models)
-        select_menu.configure(width=20)
-        train_box.pack(side="left", padx=5, anchor="w")
-        eval_box.pack(side="left", padx=5, anchor="w")
-        # ttk.Separator(el, orient='vertical').pack(side='left', fill='y', padx=10, anchor='w')
-        select_menu.pack(side="right", padx=(5, 15), anchor="w")
 
-        tk.Label(el, text="model:").pack(side="right")
+        model_label = tk.Label(el, text="model:")
+
+        method_choices = {"embedded", "symbolic"}
+        self.method = tk.StringVar()
+        self.method.set("embedded")
+        method_menu = tk.OptionMenu(el, self.method, *method_choices)
+        self.model_menu = None
+
+        def pack_action(*args):
+            if self.model_menu is not None:
+                unpack_action()
+            if self.method.get() == "embedded":
+                models = [EmbeddedModelTypes[item].name for item in dir(EmbeddedModelTypes) if not item.startswith("__")]
+            else:
+                models = [SymbolicModelTypes[item].name for item in dir(SymbolicModelTypes) if not item.startswith("__")]
+            self.select_choices_models = models
+            self.select_model = tk.StringVar()
+            self.model_menu = tk.OptionMenu(el, self.select_model, *self.select_choices_models)
+            self.model_menu.configure(width=20)
+            train_box.pack(side="left", padx=5, anchor="w")
+            eval_box.pack(side="left", padx=5, anchor="w")
+            self.model_menu.pack(side="right", padx=(5, 15), anchor="w")
+            model_label.pack(side="right")
+            method_menu.pack(side="right", padx=5, anchor="w")
+
+        def unpack_action():
+            train_box.pack_forget()
+            eval_box.pack_forget()
+            method_menu.pack_forget()
+            self.model_menu.pack_forget()
+            model_label.pack_forget()
+
+        self.method.trace("w", pack_action)
+        pack_action()
+
+        # ttk.Separator(el, orient='vertical').pack(side='left', fill='y', padx=10, anchor='w')
+
         return el
 
     def _create_hits_at_k_el(self, parent):
