@@ -10,6 +10,8 @@ OpenBioLink is a resource and evaluation framework for evaluating link predictio
 
 [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)
 
+[Peer reviewed version in the journal Bioinformatics (for citations)](https://doi.org/10.1093/bioinformatics/btaa274)
+
 [Supplementary data](https://github.com/OpenBioLink/OpenBioLink/raw/master/paper/supplementary%20data.pdf)
 
 The OpenBioLink benchmark aims to meet the following criteria:
