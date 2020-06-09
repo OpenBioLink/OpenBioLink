@@ -164,7 +164,7 @@ More documentation will be provided later.
 To train on the split default graph, use:
 
 ```shell script
-openbiolink train -m TransE_Pykeen -t train_test_data/train_sample.csv -s train_test_data/test_sample.csv
+openbiolink train -m TransE_Pykeen -s train_test_data/train_sample.csv -ns train_test_data/train_sample.csv -t train_test_data/test_sample.csv -nt train_test_data/negative_test_sample.csv 
 ```
 
 For a list of arguments, use:
