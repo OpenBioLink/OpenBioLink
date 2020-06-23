@@ -52,9 +52,8 @@ class PyKeen_BasicModel(Model):
             kge_model.load_state_dict(torch.load(path_to_model))
         return kge_model
 
-    def train(self, pos_train_triples, pos_train_nodes, neg_train_triples, neg_train_nodes,
-              pos_valid_triples, pos_valid_nodes, neg_valid_triples, neg_valid_nodes):
-
+    def train(self, pos_train_triples, neg_train_triples, pos_valid_triples, neg_valid_triples, mapped_nodes):
+        
         all_triples = np.concatenate((pos_train_triples, neg_train_triples))
 
         # testme

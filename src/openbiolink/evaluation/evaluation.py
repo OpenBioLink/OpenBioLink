@@ -112,13 +112,14 @@ class Evaluation:
         neg_train_examples = self.save_remove_n_edges(neg_train_examples, len(neg_train_examples) - num_examples)
         pos_train_triples = pos_train_examples[globConst.COL_NAMES_TRIPLES].values
         neg_train_triples = neg_train_examples[globConst.COL_NAMES_TRIPLES].values
-        mapped_pos_train_triples, mapped_pos_train_nodes = self.get_mapped_triples_and_nodes(
-            triples=pos_train_triples,
-            nodes=self.nodes.values
+        mapped_pos_train_triples, _ = self.get_mapped_triples_and_nodes(
+            triples=pos_train_triples
         )
-        mapped_neg_train_triples, mapped_neg_train_nodes = self.get_mapped_triples_and_nodes(
-            triples=neg_train_triples,
-            nodes=self.nodes.values
+        mapped_neg_train_triples, _ = self.get_mapped_triples_and_nodes(
+            triples=neg_train_triples
+        )
+        _, mapped_nodes = self.get_mapped_triples_and_nodes(
+            nodes = self.nodes.values
         )
 
         if len(self.validation_examples.index) > 0:
@@ -130,26 +131,21 @@ class Evaluation:
             neg_valid_examples = self.save_remove_n_edges(neg_valid_examples, len(neg_valid_examples) - num_examples)
             pos_valid_triples = pos_valid_examples[globConst.COL_NAMES_TRIPLES].values
             neg_valid_triples = neg_valid_examples[globConst.COL_NAMES_TRIPLES].values
-            mapped_pos_valid_triples, mapped_pos_valid_nodes = self.get_mapped_triples_and_nodes(
-                triples=pos_valid_triples,
-                nodes=self.nodes.values
+            mapped_pos_valid_triples, _ = self.get_mapped_triples_and_nodes(
+                triples=pos_valid_triples
             )
-            mapped_neg_valid_triples, mapped_neg_valid_nodes = self.get_mapped_triples_and_nodes(
-                triples=neg_valid_triples,
-                nodes=self.nodes.values
+            mapped_neg_valid_triples, _ = self.get_mapped_triples_and_nodes(
+                triples=neg_valid_triples
             )
         else:
             mapped_pos_valid_triples, mapped_pos_valid_nodes, mapped_neg_valid_triples, mapped_neg_valid_nodes = None, None, None, None
 
         self.model.train(
             pos_train_triples=mapped_pos_train_triples,
-            pos_train_nodes=mapped_pos_train_nodes,
             neg_train_triples=mapped_neg_train_triples,
-            neg_train_nodes=mapped_neg_train_nodes,
             pos_valid_triples=mapped_pos_valid_triples,
-            pos_valid_nodes=mapped_pos_valid_nodes,
             neg_valid_triples=mapped_neg_valid_triples,
-            neg_valid_nodes=mapped_neg_valid_nodes
+            mapped_nodes=mapped_nodes
         )
 
         output_directory = os.path.join(
