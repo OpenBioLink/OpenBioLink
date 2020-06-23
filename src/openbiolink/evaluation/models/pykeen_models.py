@@ -14,7 +14,7 @@ import openbiolink.train_test_set_creation.ttsConfig as ttsConst
 from openbiolink import globalConfig as globConst
 from openbiolink.evaluation.models.model import Model
 
-## ** code adapted from pykeen: https://github.com/SmartDataAnalytics/PyKEEN **
+# ** code adapted from pykeen: https://github.com/SmartDataAnalytics/PyKEEN **
 from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
@@ -52,9 +52,11 @@ class PyKeen_BasicModel(Model):
             kge_model.load_state_dict(torch.load(path_to_model))
         return kge_model
 
-    def train(self, pos_triples: np.array, neg_triples: np.array):
+    def train(self, pos_train_triples, pos_train_nodes, neg_train_triples, neg_train_nodes,
+              pos_valid_triples, pos_valid_nodes, neg_valid_triples, neg_valid_nodes):
 
-        all_triples = np.concatenate((pos_triples, neg_triples))
+        all_triples = np.concatenate((pos_train_triples, neg_train_triples))
+
         # testme
         self.config[keenConst.NUM_ENTITIES] = len(np.unique(np.concatenate((all_triples[:, 0], all_triples[:, 2]))))
         self.config[keenConst.NUM_RELATIONS] = len(np.unique(all_triples[:, 1]))
@@ -65,8 +67,8 @@ class PyKeen_BasicModel(Model):
 
         optimizer = optim.SGD(self.kge_model.parameters(), lr=self.config[keenConst.LEARNING_RATE])
         loss_per_epoch = []
-        num_pos_examples = pos_triples.shape[0]
-        num_neg_examples = neg_triples.shape[0]
+        num_pos_examples = pos_train_triples.shape[0]
+        num_neg_examples = neg_train_triples.shape[0]
 
         ### train model
         tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
@@ -74,12 +76,12 @@ class PyKeen_BasicModel(Model):
             # create batches
             indices_pos = np.arange(num_pos_examples)
             np.random.shuffle(indices_pos)
-            pos_triples = pos_triples[indices_pos]
-            pos_batches = self._split_list_in_batches(input_list=pos_triples, batch_size=self.config["batch_size"])
+            pos_train_triples = pos_train_triples[indices_pos]
+            pos_batches = self._split_list_in_batches(input_list=pos_train_triples, batch_size=self.config["batch_size"])
             indices_neg = np.arange(num_neg_examples)
             np.random.shuffle(indices_neg)
-            neg_triples = neg_triples[indices_neg]
-            neg_batches = self._split_list_in_batches(input_list=neg_triples, batch_size=self.config["batch_size"])
+            neg_train_triples = neg_train_triples[indices_neg]
+            neg_batches = self._split_list_in_batches(input_list=neg_train_triples, batch_size=self.config["batch_size"])
             current_epoch_loss = 0.0
             #tqdmbuffer = TqdmBuffer() if globConst.GUI_MODE else None
             for pos_batch, neg_batch in tqdm(zip(pos_batches, neg_batches), total=len(neg_batches)):
@@ -99,7 +101,7 @@ class PyKeen_BasicModel(Model):
                 loss.backward()
                 optimizer.step()
 
-            loss_per_epoch.append(current_epoch_loss / len(pos_triples))
+            loss_per_epoch.append(current_epoch_loss / len(pos_train_triples))
 
         ### prepare results for output
         entity_to_embedding = {

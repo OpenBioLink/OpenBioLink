@@ -17,15 +17,26 @@ from openbiolink.gui.tqdmbuf import TqdmBuffer
 
 
 class Evaluation:
-    def __init__(self, model: Model, training_set_path=None, negative_training_set_path=None, test_set_path=None, negative_test_set_path=None, nodes_path=None, mappings_avail=False):
+    def __init__(self, model: Model, training_set_path=None, negative_training_set_path=None, valid_set_path=None,
+                 negative_valid_set_path=None, test_set_path=None, negative_test_set_path=None, nodes_path=None,
+                 mappings_avail=False):
         self.model = model
         if training_set_path:
             self.training_examples = pandas.read_csv(training_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
         else:
             self.training_examples = pandas.DataFrame(columns=globConst.COL_NAMES_SAMPLES)
         if negative_training_set_path:
-            negative_training_samples = pandas.read_csv(negative_training_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
+            negative_training_samples = pandas.read_csv(negative_training_set_path, sep="\t",
+                                                        names=globConst.COL_NAMES_SAMPLES)
             self.training_examples = self.training_examples.append(negative_training_samples, ignore_index=True)
+        if valid_set_path:
+            self.validation_examples = pandas.read_csv(valid_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
+        else:
+            self.validation_examples = pandas.DataFrame(columns=globConst.COL_NAMES_SAMPLES)
+        if negative_valid_set_path:
+            negative_valid_samples = pandas.read_csv(negative_valid_set_path, sep="\t",
+                                                     names=globConst.COL_NAMES_SAMPLES)
+            self.validation_examples = self.validation_examples.append(negative_valid_samples, ignore_index=True)
         if test_set_path:
             self.test_examples = pandas.read_csv(test_set_path, sep="\t", names=globConst.COL_NAMES_SAMPLES)
         else:
@@ -48,6 +59,7 @@ class Evaluation:
             relation_labels = set()
             relation_labels.update(set(self.test_examples[globConst.EDGE_TYPE_COL_NAME]))
             relation_labels.update(set(self.training_examples[globConst.EDGE_TYPE_COL_NAME]))
+            relation_labels.update(set(self.validation_examples[globConst.EDGE_TYPE_COL_NAME]))
 
             self.node_label_to_id = None
             self.node_types_to_id = None
@@ -92,18 +104,54 @@ class Evaluation:
 
     def train(self):
         ### prepare input examples
-        pos_examples = self.training_examples[self.training_examples[globConst.VALUE_COL_NAME] == 1]
-        neg_examples = self.training_examples[self.training_examples[globConst.VALUE_COL_NAME] == 0]
+        pos_train_examples = self.training_examples[self.training_examples[globConst.VALUE_COL_NAME] == 1]
+        neg_train_examples = self.training_examples[self.training_examples[globConst.VALUE_COL_NAME] == 0]
         # pos and neg must be same length! but also, all entities must still be present!
-        num_examples = min(len(neg_examples), len(pos_examples))
-        pos_examples = self.save_remove_n_edges(pos_examples, len(pos_examples) - num_examples)
-        neg_examples = self.save_remove_n_edges(neg_examples, len(neg_examples) - num_examples)
-        pos_triples = pos_examples[globConst.COL_NAMES_TRIPLES].values
-        neg_triples = neg_examples[globConst.COL_NAMES_TRIPLES].values
-        mapped_pos_triples, _ = self.get_mapped_triples_and_nodes(triples=pos_triples)
-        mapped_neg_triples, _ = self.get_mapped_triples_and_nodes(triples=neg_triples)
+        num_examples = min(len(neg_train_examples), len(pos_train_examples))
+        pos_train_examples = self.save_remove_n_edges(pos_train_examples, len(pos_train_examples) - num_examples)
+        neg_train_examples = self.save_remove_n_edges(neg_train_examples, len(neg_train_examples) - num_examples)
+        pos_train_triples = pos_train_examples[globConst.COL_NAMES_TRIPLES].values
+        neg_train_triples = neg_train_examples[globConst.COL_NAMES_TRIPLES].values
+        mapped_pos_train_triples, mapped_pos_train_nodes = self.get_mapped_triples_and_nodes(
+            triples=pos_train_triples,
+            nodes=self.nodes.values
+        )
+        mapped_neg_train_triples, mapped_neg_train_nodes = self.get_mapped_triples_and_nodes(
+            triples=neg_train_triples,
+            nodes=self.nodes.values
+        )
 
-        self.model.train(pos_triples=mapped_pos_triples, neg_triples=mapped_neg_triples)
+        if len(self.validation_examples.index) > 0:
+            pos_valid_examples = self.validation_examples[self.validation_examples[globConst.VALUE_COL_NAME] == 1]
+            neg_valid_examples = self.validation_examples[self.validation_examples[globConst.VALUE_COL_NAME] == 0]
+            # pos and neg must be same length! but also, all entities must still be present!
+            num_examples = min(len(neg_valid_examples), len(pos_valid_examples))
+            pos_valid_examples = self.save_remove_n_edges(pos_valid_examples, len(pos_valid_examples) - num_examples)
+            neg_valid_examples = self.save_remove_n_edges(neg_valid_examples, len(neg_valid_examples) - num_examples)
+            pos_valid_triples = pos_valid_examples[globConst.COL_NAMES_TRIPLES].values
+            neg_valid_triples = neg_valid_examples[globConst.COL_NAMES_TRIPLES].values
+            mapped_pos_valid_triples, mapped_pos_valid_nodes = self.get_mapped_triples_and_nodes(
+                triples=pos_valid_triples,
+                nodes=self.nodes.values
+            )
+            mapped_neg_valid_triples, mapped_neg_valid_nodes = self.get_mapped_triples_and_nodes(
+                triples=neg_valid_triples,
+                nodes=self.nodes.values
+            )
+        else:
+            mapped_pos_valid_triples, mapped_pos_valid_nodes, mapped_neg_valid_triples, mapped_neg_valid_nodes = None, None, None, None
+
+        self.model.train(
+            pos_train_triples=mapped_pos_train_triples,
+            pos_train_nodes=mapped_pos_train_nodes,
+            neg_train_triples=mapped_neg_train_triples,
+            neg_train_nodes=mapped_neg_train_nodes,
+            pos_valid_triples=mapped_pos_valid_triples,
+            pos_valid_nodes=mapped_pos_valid_nodes,
+            neg_valid_triples=mapped_neg_valid_triples,
+            neg_valid_nodes=mapped_neg_valid_nodes
+        )
+
         output_directory = os.path.join(
             os.path.join(globConst.WORKING_DIR, evalConst.EVAL_OUTPUT_FOLDER_NAME), evalConst.MODEL_DIR
         )
@@ -190,7 +238,7 @@ class Evaluation:
             ranked_all_examples, _ = self.model.get_ranked_and_sorted_predictions(all_examples)
             increase_search_frame_by = [0] * len(ks)
             for example in ranked_pos_examples:
-                search_data = ranked_all_examples[0 : ks[-1] + 1, :]  # fixme this should be more?
+                search_data = ranked_all_examples[0: ks[-1] + 1, :]  # fixme this should be more?
                 for i, k in enumerate(ks):
                     current_k = k + increase_search_frame_by[i]
                     current_k = min(current_k, len(search_data))
@@ -222,7 +270,7 @@ class Evaluation:
             ranked_all_examples, _ = self.model.get_ranked_and_sorted_predictions(all_examples)
             increase_search_frame_by = [0] * len(ks)
             for example in ranked_pos_examples:
-                search_data = ranked_all_examples[0 : ks[-1] + 1, :]
+                search_data = ranked_all_examples[0: ks[-1] + 1, :]
                 for i, k in enumerate(ks):
                     current_k = k + increase_search_frame_by[i]
                     current_k = min(current_k, len(search_data))
@@ -516,6 +564,7 @@ class Evaluation:
         """
         if n < 1:
             return edges
+        print("Ensuring same size (Positive/Negative)...")
         all_edges = SortedList(list(edges[globConst.NODE1_ID_COL_NAME].append(edges[globConst.NODE2_ID_COL_NAME])))
         edges_list = set(all_edges)
         edges_count_dict = {x: all_edges.count(x) for x in edges_list}
@@ -530,11 +579,15 @@ class Evaluation:
                     break
                 drop_edge_candidate = edges.loc[drop_index]
                 if (
-                    edges_count_dict[drop_edge_candidate[globConst.NODE1_ID_COL_NAME]] > 1
-                    and edges_count_dict[drop_edge_candidate[globConst.NODE2_ID_COL_NAME]] > 1
+                        edges_count_dict[drop_edge_candidate[globConst.NODE1_ID_COL_NAME]] > 1
+                        and edges_count_dict[drop_edge_candidate[globConst.NODE2_ID_COL_NAME]] > 1
                 ):
-                    edges_count_dict[drop_edge_candidate[globConst.NODE1_ID_COL_NAME]] = edges_count_dict[drop_edge_candidate[globConst.NODE1_ID_COL_NAME]] - 1
-                    edges_count_dict[drop_edge_candidate[globConst.NODE2_ID_COL_NAME]] = edges_count_dict[drop_edge_candidate[globConst.NODE2_ID_COL_NAME]] - 1
+                    edges_count_dict[drop_edge_candidate[globConst.NODE1_ID_COL_NAME]] = edges_count_dict[
+                                                                                             drop_edge_candidate[
+                                                                                                 globConst.NODE1_ID_COL_NAME]] - 1
+                    edges_count_dict[drop_edge_candidate[globConst.NODE2_ID_COL_NAME]] = edges_count_dict[
+                                                                                             drop_edge_candidate[
+                                                                                                 globConst.NODE2_ID_COL_NAME]] - 1
                     drop_indices.append(drop_index)
                     i += 1
             edges.drop(inplace=True, index=drop_indices)

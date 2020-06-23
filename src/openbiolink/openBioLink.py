@@ -218,10 +218,12 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val, no_neg_train_val
 @click.option("--no-train", is_flag=True, help="No training is being performed, trained model id provided via --model")
 @click.option("--trained-model", help="Path to trained model (required with --no-train)")
 @click.option("--no-eval", is_flag=True, help="No evaluation is being performed, only training")
-@click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
 @click.option("-s", "--training-path", help="Path to positive trainings set file")  # (alternative: --cv_folder)')
-@click.option("-nt", "--negative-testing-path", help="Path to negative test set file")
 @click.option("-ns", "--negative-training-path", help="Path to negative trainings set file")  # (alternative: --cv_folder)')
+@click.option("-v", "--validation-path", help="Path to positive validation set file")  # (alternative: --cv_folder)')
+@click.option("-nv", "--negative-validation-path", help="Path to negative validation set file")  # (alternative: --cv_folder)')
+@click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
+@click.option("-nt", "--negative-testing-path", help="Path to negative test set file")
 @click.option(
     "--eval-nodes",
     help="path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation",
@@ -229,7 +231,7 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val, no_neg_train_val
 @click.option("--metrics", multiple=True, help="evaluation metrics")
 @click.option("--ks", multiple=True, help="k's for hits@k metric")
 def train(
-    model_cls, trained_model, training_path, negative_training_path, testing_path, negative_testing_path, eval_nodes, no_train, no_eval, metrics, ks, config,
+    model_cls, trained_model, training_path, negative_training_path, validation_path, negative_validation_path, testing_path, negative_testing_path, eval_nodes, no_train, no_eval, metrics, ks, config,
 ):
     """Train and evaluate on a graph."""
     train_and_evaluate(
@@ -237,6 +239,8 @@ def train(
         trained_model=trained_model,
         training_set_path=training_path,
         negative_training_set_path=negative_training_path,
+        validation_set_path=validation_path,
+        negative_validation_set_path=negative_validation_path,
         test_set_path=testing_path,
         negative_test_set_path=negative_testing_path,
         nodes_path=eval_nodes,

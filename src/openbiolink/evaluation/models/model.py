@@ -9,8 +9,10 @@ class Model(ABC):
         ...
 
     @abstractmethod
-    def train(self, pos_triples: np.array, neg_triples: np.array):
+    def train(self, pos_train_triples, pos_train_nodes, neg_train_triples, neg_train_nodes,
+              pos_valid_triples, pos_valid_nodes, neg_valid_triples, neg_valid_nodes):
         ...
+
 
     @abstractmethod
     def get_ranked_and_sorted_predictions(self, examples):
