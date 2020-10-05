@@ -86,9 +86,9 @@ If you want to see your results added to the Leaderboard please create a new iss
 ### Installation
 
 The OpenBioLink framework consists of three parts, called 'actions':
- 1) graph creation
- 2) train-test split creation
- 3) training and evaluation
+ 1) Graph creation
+ 2) Train-test split creation
+ 3) Training and evaluation
 
 With the graph creation and the train-test set action, customized datasets can be created to suit individual needs.
 The third action serves as an interface for training and evaluating link prediction models.
