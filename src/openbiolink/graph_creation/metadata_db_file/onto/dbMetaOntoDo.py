@@ -4,7 +4,7 @@ from openbiolink.graph_creation.types.dbType import DbType
 
 class DbMetaOntoDo(DbMetadataOnto):
     NAME = "Onto - DO - is_a, mapping(umls->do),(omim->do)"
-    URL = "https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/master/src/ontology/doid.obo"
+    URL = "https://raw.githubusercontent.com/DiseaseOntology/HumanDiseaseOntology/main/src/ontology/doid.obo"
     OFILE_NAME = "DO_ontology.obo"
     QUADRUPLES = [
         ("id", " ", 1, "ID"),
