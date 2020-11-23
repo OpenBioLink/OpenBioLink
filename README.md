@@ -78,6 +78,12 @@ Please note that the OpenBioLink benchmark files contain data derived from exter
 |-------|---------|--------|-------|------|
 |   TransE (Baseline)   |    0.0749     |   0.0125     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 |   TransR (Baseline)   |    0.0639     |   0.0096     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
+|   RotatE  |   0.522    |   0.156     |       | [Code](https://github.com/awslabs/dgl-ke)     |
+|   ComplEx  |    0.525     |    0.166     |       | [Code](https://github.com/awslabs/dgl-ke)     |
+|   DistMult   |    0.534    |   0.184      |     | [Code](https://github.com/awslabs/dgl-ke)     |
+|   TransR   |    0.592 |    0.369     |       | [Code](https://github.com/awslabs/dgl-ke)     |
+|   RESCAL  |    0.615   |  0.407     |      | [Code](https://github.com/awslabs/dgl-ke)     |
+
 
 If you want to see your results added to the Leaderboard please create a new issue.
  
