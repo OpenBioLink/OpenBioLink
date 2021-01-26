@@ -95,7 +95,7 @@ def train_and_evaluate(
     else:
         model = model_cls()
 
-    e = Evaluation(
+    e = Training(
         model=model,
         training_set_path=training_set_path,
         negative_training_set_path=negative_training_set_path,
