@@ -178,6 +178,24 @@ For a list of arguments, use:
 openbiolink train --help
 ```
 
+### Dataloader
+
+All versions of the OpenBioLink datasets can be easily accessed via the DataLoader, which downloads all required files automatically.
+
+```python
+from openbiolink.evaluation.dataLoader import DataLoader
+
+# Name of the Dataset, possible values HQ_DIR, HQ_UNDIR, ALL_DIR, ALL_UNDIR. Default: HQ_DIR
+dl = DataLoader("HQ_DIR")
+
+# Prints the structure of the DataLoader object
+print(dl.structure)
+
+train = dl.data["train_positive"]
+test = dl.data["test_positive"]
+valid = dl.data["valid_positive"]
+```
+
 ### Evaluating an external model
 
 To ensure a standardized evaluation of different methods applied to the OpenBioLink dataset, an evaluator is provided in the package  ```openbiolink``` . The code below shows the usage for test data using numpy arrays, a torch.Tensor can also be used.
