@@ -4,7 +4,7 @@ import sys
 from typing import List, Optional
 
 from openbiolink import globalConfig, globalConfig as glob, graphProperties as graphProp
-from openbiolink.evaluation.evaluation import Evaluation
+from openbiolink.evaluation.training import Training
 from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
 from openbiolink.evaluation.models.modelTypes import ModelTypes
 from openbiolink.graph_creation.graphCreation import Graph_Creation
