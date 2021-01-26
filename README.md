@@ -1,4 +1,4 @@
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/openbiolink-a-resource-and-benchmarking/link-prediction-on-openbiolink)](https://paperswithcode.com/sota/link-prediction-on-openbiolink?p=openbiolink-a-resource-and-benchmarking)
+[![PyPI](https://img.shields.io/pypi/v/openbiolink)](https://pypi.org/project/openbiolink/)[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/OpenBioLink/OpenBioLink/blob/master/LICENSE)[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/openbiolink-a-resource-and-benchmarking/link-prediction-on-openbiolink)](https://paperswithcode.com/sota/link-prediction-on-openbiolink?p=openbiolink-a-resource-and-benchmarking)
 
 # OpenBioLink
 
@@ -35,7 +35,7 @@ The OpenBioLink benchmark aims to meet the following criteria:
  The test set does not contain trivially predictable, inverse edges from the training set 
  and does contain all different edge types, to provide a more realistic edge prediction
  scenario.
- 
+
 [OpenBioLink2020: directed, high quality](https://zenodo.org/record/3834052/files/HQ_DIR.zip?download=1) is the default dataset that should be used for benchmarking purposes. To allow anayzing the effect of data quality as well as the directionality of the 
 evaluation graph, four variants of OpenBioLink2020 are provided -- in directed and undirected setting,
 with and without quality cutoff. 
@@ -61,9 +61,9 @@ All datasets are hosted on [zenodo](https://zenodo.org/record/3834052).
 
 <details>
   <summary>Previous versions of the Benchmark (click to expand)</summary>
-    
+
 ### OpenBioLink 2020 alpha-release
-    
+
 * [OpenBioLink2020: directed, high quality](https://samwald.info/res/OpenBioLink_2020/HQ_DIR.zip) (default dataset)
 * [OpenBioLink2020: undirected, high quality](https://samwald.info/res/OpenBioLink_2020/HQ_UNDIR.zip)
 * [OpenBioLink2020: directed, no quality cutoff](https://samwald.info/res/OpenBioLink_2020/ALL_DIR.zip)
@@ -73,8 +73,8 @@ All datasets are hosted on [zenodo](https://zenodo.org/record/3834052).
 Please note that the OpenBioLink benchmark files contain data derived from external ressources. Licensing terms of these external resources are detailed [below](#Source-databases-and-their-licenses). 
 
  ## OpenBioLink 2020 Leaderboard    
- 
- | model | hits@10 | hits@1 |  paper | code |
+
+| model | hits@10 | hits@1 |  paper | code |
 |-------|---------|--------|-------|------|
 |   TransE (Baseline)   |    0.0749     |   0.0125     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
 |   TransR (Baseline)   |    0.0639     |   0.0096     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
@@ -86,7 +86,7 @@ Please note that the OpenBioLink benchmark files contain data derived from exter
 
 
 If you want to see your results added to the Leaderboard please create a new issue.
- 
+
 ## Manual
 
 ### Installation
@@ -124,7 +124,6 @@ providing an interface to define required parameters. In the last step,
 the corresponding command line options are displayed.
 
 ### Calling via command line
-From folder src
 ```sh
 openbiolink -p WORKING_DIR_PATH [-action] [--options] ...
 ```
@@ -179,6 +178,35 @@ For a list of arguments, use:
 openbiolink train --help
 ```
 
+### Evaluating an external model
+
+To ensure a standardized evaluation of different methods applied to the OpenBioLink dataset, an evaluator is provided in the package  ```openbiolink``` . The code below shows the usage for test data using numpy arrays, a torch.Tensor can also be used.
+
+```python
+from openbiolink.evaluation.evaluation import Evaluator
+
+# Test data
+import numpy as np
+y_pred_pos = np.random.randn(1000,)
+y_pred_neg = np.random.randn(1000,100)
+
+evaluator = Evaluator()
+
+# Prints the expected input and output
+print(evaluator.expected_input_format)
+print(evaluator.expected_output_format)
+
+input_dict = {'y_pred_pos': y_pred_pos, 'y_pred_neg': y_pred_neg}
+result = evaluator.eval(input_dict)
+
+print(f"Hits@1 {result['hits@1_list'].mean()}")
+print(f"Hits@3 {result['hits@3_list'].mean()}")
+print(f"Hits@10 {result['hits@10_list'].mean()}")
+print(f"MRR {result['mrr_list'].mean()}")
+```
+
+
+
 ## File description
 
 ### Graph Generation
@@ -215,8 +243,8 @@ openbiolink generate --output-format BEL
 
 | Default File Name | Description             |
 |-------------------|-------------------------|
-| positive.bel.gz   | All true positive edges in [BEL Script](https://language.bel.bio/language/structure/) format (gzipped) for usage in PyBEL or other BEL-aware applications) |   
-| positive.bel.nodelink.json.gz | All true positive edges in [Nodelink JSON](https://pybel.readthedocs.io/en/latest/reference/io.html#pybel.from_nodelink_gz) format (gzipped) for direct usage with [PyBEL](https://pybel.readthedocs.io) |   
+| positive.bel.gz   | All true positive edges in [BEL Script](https://language.bel.bio/language/structure/) format (gzipped) for usage in PyBEL or other BEL-aware applications) |
+| positive.bel.nodelink.json.gz | All true positive edges in [Nodelink JSON](https://pybel.readthedocs.io/en/latest/reference/io.html#pybel.from_nodelink_gz) format (gzipped) for direct usage with [PyBEL](https://pybel.readthedocs.io) |
 | negative.bel.gz   | All true negative edges in BEL Script format (gzipped) |
 | negative.bel.nodelink.json.gz | All true negative edges in Nodelink JSON format (gzipped) |
 
@@ -273,26 +301,26 @@ Detailed information of how the Identifiers are resolved can be found here https
  In the random split setting, first, negative sampling is performed. Afterwards, the whole dataset (containing positive 
  and negative examples) is split randomly according to the defined ratio. Finally, post-processing steps are performed to
  facilitate training and to avoid information leakage.
- 
+
  ## Time-slice split
  In the time-slice split setting, for both of the provided time slices, first, negative sampling is performed. Afterwards,
  the first time slice (t-1 graph) is used as training sample, while the difference between the first and the second time 
  slice serves as the test set. Finally, post-processing steps are performed to
  facilitate training and to avoid information leakage.
- 
+
  Generally, the time slice setting is trickier to implement than the random split strategy, as it requires more manual evaluation and 
  knowledge of the data. One of the most difficult factors is the change of the source databases over time. For example, 
  a database might change its quality score, or even its ID-format. Also, the number of relationships stored might increase 
  sharply due to new mapping files being used. This might also result in ‘vanishing edges’, where edges that were present
  in the t-1 graph are no longer existent in the current graph. Although the OpenBioLink toolbox tries to assist the user with 
  different kinds of warnings to identify such difficulties in the data, it is unfortunately not possible to automatically detect nor solve all these problems, making some manual pre- and post-processing of the data inevitable.
- 
+
 
 ## Negative sampling
 First, the distribution of edges of different types is calculated to know how many samples are needed from each edge type. 
 For now, this distribution corresponds to the original distribution (uniform distribution could a future extension).
 Then, subsamples are either – where possible – taken from existing true negative edges or are created using type-based sampling.
- 
+
 In type-based sampling, head and tail node are randomly sampled from a reduced pool of all nodes, which only 
 includes nodes with types that are compatible with the corresponding head- or tail-role of the given relation type.
 E.g., for the relation type GENE_DRUG, one random node of type GENE is selected as head node and one
@@ -301,8 +329,8 @@ random node of type DRUG is selected as tail.
 In most cases where true negative edges exist, however, their number is smaller than the number of positive examples. 
 In these cases, all true negative samples are used for the negative set, which is then extended by samples created by type-based 
 sampling.
- 
- 
+
+
  ## Train-test-set post-processing
  **To facilitate model application**
  * Edges that contain nodes that are not present in the training set are dropped from the test set. This facilitates use of embedding-based models that usually cannot make predictions for nodes that have not been embedded during training.
@@ -318,7 +346,7 @@ The reason for this is that if the original edge a-b was undirected, both direct
  the existence of a relation y between those same entities, but the presence of y necessarily implies the existence of x. These kinds of relationships 
  could cause information leakage in the datasets, therefore super-relations of relations present in the training set are removed 
  from the test set.
- 
+
  # True Negative edges
 As randomly sampled negative edges can produce noise or trivial examples, true negative edges (i.e., relationships that were explicitly mentioned to not exist) were used wherever possible. 
 Specifically, for disease_drug and disease_phenotype edges, true negative examples were extracted from the data source directly, as they were explicitly stated. For gene-anatomy relationships, over-expression and under-expression data was used as contradicting data. For other relationship-types, e.g., gene_activation_gene and drug_inhibition_gene, this indirect true negative sample creation could not be applied, as the relationship does not hold all information necessary (the same substance can have both activating and inhibiting effects, e.g. depending on dosage).
@@ -355,7 +383,7 @@ Specifically, for disease_drug and disease_phenotype edges, true negative exampl
 | id (drug)                      | [PubChem](https://pubchem.ncbi.nlm.nih.gov/) | Public Domain                               |   	        |         |
 | id (phenotype)                 | [HPO](https://hpo.jax.org/app/)              | Custom: [HPO](https://hpo.jax.org/app/license)      |   	        |         |
 | id (pathway)                   | [REACTOME](https://reactome.org/)            | CC BY                                       |   	        |         |
-| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |   
+| id (pathway)                   | [KEGG](https://www.genome.jp/kegg/)          | Custom: [KEGG](https://www.kegg.jp/kegg/legal.html) |
 
 *(True neg.: whether the data contains true negative relations; Score: whether the data contains evidence quality scores for filtering relations)*
 
@@ -370,5 +398,5 @@ We offer the benchmark files as-is and make no representations or warranties of 
 Currently, models provided in pykeen can be tested in the framework. To add your own models, please perform the following steps:
 1) implement the model interface ``src/openbiolink/evaluation/models/model.py`` 
 1) add your model to the modeltypes ``src/openbiolink/evaluation/models/modelTypes.py``
- 
+
 
