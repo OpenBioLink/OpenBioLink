@@ -1,4 +1,4 @@
-[![PyPI](https://img.shields.io/pypi/v/openbiolink)](https://pypi.org/project/openbiolink/)[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/OpenBioLink/OpenBioLink/blob/master/LICENSE)[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/openbiolink-a-resource-and-benchmarking/link-prediction-on-openbiolink)](https://paperswithcode.com/sota/link-prediction-on-openbiolink?p=openbiolink-a-resource-and-benchmarking)
+[![PyPI](https://img.shields.io/pypi/v/openbiolink)](https://pypi.org/project/openbiolink/) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/OpenBioLink/OpenBioLink/blob/master/LICENSE) [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/openbiolink-a-resource-and-benchmarking/link-prediction-on-openbiolink)](https://paperswithcode.com/sota/link-prediction-on-openbiolink?p=openbiolink-a-resource-and-benchmarking)
 
 # OpenBioLink
 
