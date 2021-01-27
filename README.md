@@ -205,8 +205,13 @@ from openbiolink.evaluation.evaluation import Evaluator
 
 # Test data
 import numpy as np
+# Scores of positive triples
+# ndarray of size (num_pos_triples,) 
 y_pred_pos = np.random.randn(1000,)
+# Scores of negative triples
+# ndarray of size (num_pos_triples, num_neg_sample)
 y_pred_neg = np.random.randn(1000,100)
+# y_pred_pos[i] is ranked in y_pred_neg[i][:]
 
 evaluator = Evaluator()
 
