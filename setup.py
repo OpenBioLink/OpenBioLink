@@ -29,7 +29,7 @@ setuptools.setup(
         "tqdm>=4.29.1",
         "sortedcontainers",
     ],
-    extras_require{
+    extras_require={
         "docs": [
             "sphinx",
             "sphinx-rtd-theme",
