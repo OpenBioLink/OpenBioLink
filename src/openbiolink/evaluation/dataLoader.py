@@ -1,177 +1,169 @@
-import urllib.request
-import zipfile
-
-import pandas as pd
+import logging
 import os
+import urllib
+from itertools import chain
 from os import path
-from collections import defaultdict
+import zipfile
+from typing import Optional, cast, Iterable, Tuple
 
+from pykeen.evaluation.evaluator import create_sparse_positive_filter_, filter_scores_
+from pykeen.utils import split_list_in_batches_iter
 from tqdm import tqdm
 
-from openbiolink.graph_creation.file_downloader.fileDownloader import FileDownloader
+import torch
+import pandas as pd
+import numpy as np
+from pykeen.datasets.base import LazyDataset
+from pykeen.triples import TriplesFactory
+
+from openbiolink.graph_creation.file_downloader import FileDownloader
 
 
-class Paths:
-    def __init__(self,
-                 path_node_mapping,
-                 path_relation_mapping,
-                 path_training_positive,
-                 path_test_positive,
-                 path_valid_positive,
-                 path_training_negative,
-                 path_test_negative,
-                 path_valid_negative
-                 ):
-        self.node_mapping = path_node_mapping
-        self.relation_mapping = path_relation_mapping
-        self.training_positive = path_training_positive
-        self.test_positive = path_test_positive
-        self.valid_positive = path_valid_positive
-        self.training_negative = path_training_negative
-        self.test_negative = path_test_negative
-        self.valid_negative = path_valid_negative
+class DataLoader(LazyDataset):
+    """Downloads and creates mappings for the OpenBioLink dataset. If mapping files are already 
+    
+        :param name:
+            Version of the OpenBioLink dataset to load, possible values HQ_DIR, HQ_UNDIR, ALL_DIR, ALL_UNDIR
+        :param root:
+            Dictionary used to store the downloaded dataset
+        :param entity_to_id_path:
+            Path to an external dictionary file mapping entities to IDs. If none specified, a mapping is created.
+        :param relation_to_id_path:
+            Path to an external dictionary file mapping relation to IDs. If none specified, a mapping is created.
+        :param entity_to_id_sep:
+            Seperator used in the entity dictionary file (only required if entity_to_id_path is given)
+        :param entity_to_id_id_col:
+            Column index of the integer identifiers in the entity dictionary file (only required if entity_to_id_path is given)
+        :param entity_to_id_label_col:
+            Column index of the labels in the entity dictionary file (only required if entity_to_id_path is given)
+        :param relation_to_id_sep:
+            Seperator used in the relation dictionary file (only required if relation_to_id_path is given)
+        :param relation_to_id_id_col:
+            Column index of the integer identifiers in the relation dictionary file (only required if relation_to_id_path is given)
+        :param relation_to_id_label_col:
+            Column index of the labels in the relation dictionary file (only required if relation_to_id_path is given)
+    
+    """
 
+    head_column: int = 0
+    relation_column: int = 1
+    tail_column: int = 2
+    sep = '\t'
+    header = None
 
-class DataLoader:
+    relative_training_path = f'train_test_data/train_sample.csv'
+    relative_testing_path = f'train_test_data/test_sample.csv'
+    relative_validation_path = f'train_test_data/val_sample.csv'
 
     def __init__(
             self,
-            name="HQ_DIR",
-            root='datasets',
-            paths: Paths = None
+            name: str = "HQ_DIR",
+            root: str = "datasets",
+            eager: bool = False,
+            entity_to_id_path: Optional[str] = None,
+            relation_to_id_path: Optional[str] = None,
+            entity_to_id_sep: str = "\t",
+            entity_to_id_id_col: int = 0,
+            entity_to_id_label_col: int = 1,
+            relation_to_id_sep: str = "\t",
+            relation_to_id_id_col: int = 0,
+            relation_to_id_label_col: int = 1
     ):
+
+        self.root = root
+        self.dataset_path = path.join(root, name)
+        self.url = r"https://zenodo.org/record/3834052/files/" + name + ".zip"
+        self.name=f'{name}.zip'
+
+        self.entity_to_id_path = entity_to_id_path
+        self.relation_to_id_path = relation_to_id_path
+
+        self.entity_to_id_sep = entity_to_id_sep
+        self.entity_to_id_id_col = entity_to_id_id_col
+        self.entity_to_id_label_col = entity_to_id_label_col
+        self.relation_to_id_sep = relation_to_id_sep
+        self.relation_to_id_id_col = relation_to_id_id_col
+        self.relation_to_id_label_col = relation_to_id_label_col
+
         if not path.isdir(root):
             os.mkdir(root)
-        if paths is None:
-            self.dataset_path = path.join(root, name)
-            # check if exists
-            if not path.isdir(self.dataset_path) or not os.listdir(self.dataset_path):
-                print(f"Dataset not found in, downloading to {os.path.abspath(self.dataset_path)} ...")
-                url = r"https://zenodo.org/record/3834052/files/" + name +".zip"
-                filename = url.split('/')[-1]
-                with tqdm(unit = 'B', unit_scale = True, unit_divisor = 1024, miniters = 1, desc = filename) as t:
-                    zip_path, _ = urllib.request.urlretrieve(url, reporthook = FileDownloader.download_progress_hook(t))
-                    with zipfile.ZipFile(zip_path, "r") as f:
-                        f.extractall(root)
-            else:
-                print(f"Dataset found in {os.path.abspath(self.dataset_path)}, skipping download...")
+
+        # check if exists
+        if not path.isdir(self.dataset_path) or not os.listdir(self.dataset_path):
+            print(f"Dataset not found in, downloading to {os.path.abspath(self.dataset_path)} ...")
+            url = r"https://zenodo.org/record/3834052/files/" + name + ".zip"
+            filename = url.split('/')[-1]
+            with tqdm(unit='B', unit_scale=True, unit_divisor=1024, miniters=1, desc=filename) as t:
+                zip_path, _ = urllib.request.urlretrieve(url, reporthook=FileDownloader.download_progress_hook(t))
+                with zipfile.ZipFile(zip_path, "r") as f:
+                    f.extractall(root)
+        else:
+            print(f"Dataset found in {os.path.abspath(self.dataset_path)}, skipping download...")
+
+        if eager:
+            self._load()
+            self._load_validation()
+
+        self.all = torch.cat((self.training.mapped_triples, self.testing.mapped_triples, self.validation.mapped_triples), 0)
+        self.all.share_memory_()
 
 
-            paths = Paths(
-                path_node_mapping=self.dataset_path + r"/train_test_data/node_mapping.csv",
-                path_relation_mapping=self.dataset_path + r"/train_test_data/relation_mapping.csv",
-                path_training_positive=self.dataset_path + r"/train_test_data/train_sample.csv",
-                path_test_positive=self.dataset_path + r"/train_test_data/test_sample.csv",
-                path_valid_positive=self.dataset_path + r"/train_test_data/val_sample.csv",
-                path_training_negative=self.dataset_path + r"/train_test_data/negative_train_sample.csv",
-                path_test_negative=self.dataset_path + r"/train_test_data/negative_test_sample.csv",
-                path_valid_negative=self.dataset_path + r"/train_test_data/negative_val_sample.csv",
+    def _load(self) -> None:  # noqa: D102
+        self._training = self._load_helper(self.relative_training_path)
+        self._testing = self._load_helper(self.relative_testing_path)
+
+    def _load_validation(self) -> None:
+        self._validation = self._load_helper(self.relative_validation_path)
+
+    def _load_helper(self, relative_path) -> TriplesFactory:
+        relative_path = path.join(self.dataset_path,relative_path)
+
+        with open(relative_path) as file:
+            df = pd.read_csv(
+                file,
+                usecols=[self.head_column, self.relation_column, self.tail_column],
+                header=self.header,
+                sep=self.sep,
             )
 
-        print("Loading dataset ...")
-        self.data = {}
-        self.nodes = set()
-        self.relations = set()
-        self.mappings = defaultdict(dict)
+            entity_to_id = None
+            relation_to_id = None
 
-        # Load dataset edges
-        try:
-            self.data["train_positive"] = pd.read_csv(paths.training_positive, sep="\t", header=None)[[0,1,2]]
-            self.data["test_positive"] = pd.read_csv(paths.test_positive, sep="\t", header=None)[[0,1,2]]
-            self.data["valid_positive"] = pd.read_csv(paths.valid_positive, sep="\t", header=None)[[0,1,2]]
-            if paths.training_negative:
-                self.data["train_negative"] = pd.read_csv(paths.training_negative, sep="\t", header=None)[[0,1,2]]
-            if paths.test_negative:
-                self.data["test_negative"] = pd.read_csv(paths.test_negative, sep="\t", header=None)[[0,1,2]]
-            if paths.valid_negative:
-                self.data["valid_negative"] = pd.read_csv(paths.valid_negative, sep="\t", header=None)[[0,1,2]]
-        except FileNotFoundError as e:
-            print(e)
-            exit(-1)
+            if self.entity_to_id_path:
+                node_mapping = pd.read_csv(self.entity_to_id_path, sep=self.entity_to_id_sep, header=None)
+                entity_to_id = {label: id for label, id in
+                                                      zip(node_mapping[self.entity_to_id_label_col], node_mapping[self.entity_to_id_id_col])}
 
-        # Create sets of nodes and relations
-        for data in self.data.values():
-            self.nodes.update(data[0].tolist())
-            self.relations.update(data[1].tolist())
-            self.nodes.update(data[2].tolist())
+            if self.relation_to_id_path:
+                relation_mapping = pd.read_csv(self.relation_to_id_path, sep=self.relation_to_id_sep, header=None)
+                relation_to_id = {label: id for label, id in
+                                                          zip(relation_mapping[self.relation_to_id_label_col], relation_mapping[self.relation_to_id_id_col])}
 
-        # Creates mappings if not exist otherwise loads
-        if path.exists(paths.node_mapping):
-            node_mapping = pd.read_csv(paths.node_mapping, sep="\t", header=None)
-            self.mappings["nodes"]["label2id"] = {label: id for label, id in zip(node_mapping[0], node_mapping[1])}
-            self.mappings["nodes"]["id2label"] = {id: label for label, id in zip(node_mapping[0], node_mapping[1])}
-        else:
-            node_enum = enumerate(self.nodes)
-            self.mappings["nodes"]["label2id"] = {label: id for id, label in node_enum}
-            self.mappings["nodes"]["id2label"] = {id: label for id, label in node_enum}
-            self.save_mapping(paths.node_mapping, self.mappings["nodes"])
+            rv = TriplesFactory.from_labeled_triples(
+                triples=df.values,
+                entity_to_id=entity_to_id,
+                relation_to_id=relation_to_id
+            )
 
-        if path.exists(paths.relation_mapping):
-            relation_mapping = pd.read_csv(paths.relation_mapping, sep="\t", header=None)
-            self.mappings["relations"]["label2id"] = {label: id for label, id in zip(relation_mapping[0], relation_mapping[1])}
-            self.mappings["relations"]["id2label"] = {id: label for label, id in zip(relation_mapping[0], relation_mapping[1])}
-        else:
-            relation_enum = enumerate(self.relations)
-            self.mappings["relations"]["label2id"] = {label: id for id, label in relation_enum}
-            self.mappings["relations"]["id2label"] = {id: label for id, label in relation_enum}
-            self.save_mapping(paths.relation_mapping, self.mappings["relations"])
+            rv.path = relative_path
+            return rv
 
-        # Map string data to integer ids
-        self.map("train_positive")
-        self.map("test_positive")
-        self.map("valid_positive")
-        if paths.training_negative:
-            self.map("train_negative")
-        if paths.test_negative:
-            self.map("test_negative")
-        if paths.valid_negative:
-            self.map("valid_negative")
+    def get_test_batches(self, batch_size = 100):
+        """Splits the test set into batches of fixed size
 
-        self.nodes = self.map_nodes(self.nodes)
-        self.relations = self.map_relations(self.relations)
+            :param batch_size:
+                Size of a batch
 
-        print("Done!")
+            :return:
+                number of batches, iterable of batches
+        """
+        return int(np.ceil(len(self.testing.mapped_triples) / batch_size)), cast(Iterable[np.ndarray], split_list_in_batches_iter(input_list=self.testing.mapped_triples, batch_size=batch_size))
 
-    def save_mapping(self, mapping_path, mapping):
-        df = pd.DataFrame(mapping["label2id"].items())
-        df.to_csv(mapping_path, sep="\t", index=False, header=False)
 
-    def map(self, ds):
-        self.data[ds][0] = self.map_nodes(self.data[ds][0])
-        self.data[ds][1] = self.map_relations(self.data[ds][1])
-        self.data[ds][2] = self.map_nodes(self.data[ds][2])
-
-    def map_nodes(self, nodes):
-        return [self.mappings["nodes"]["label2id"][x] for x in nodes]
-
-    def map_relations(self, relations):
-        return [self.mappings["relations"]["label2id"][x] for x in relations]
-
-    @property
-    def structure(self):
-        desc = "Structure of the dataloader:\n"
-        desc += "nodes: integer id list of unique entities in the graph\n"
-        desc += "relations: integer id list of unique entities in the graph \n"
-        desc += "data['train_positive']: pd.DataFrame containing triples of the positive training set (triples are mapped to integer ids)\n"
-        desc += "data['test_positive']: pd.DataFrame containing triples of the positive test set (triples are mapped to integer ids)\n"
-        desc += "data['valid_positive']: pd.DataFrame containing triples of the positive validation set (triples are mapped to integer ids)\n"
-        desc += "data['train_negative']: pd.DataFrame containing triples of the negative training set (triples are mapped to integer ids)\n"
-        desc += "data['test_negative']: pd.DataFrame containing triples of the negative test set (triples are mapped to integer ids)\n"
-        desc += "data['valid_negative']: pd.DataFrame containing triples of the negative validation set (triples are mapped to integer ids)\n"
-        desc += "mappings['nodes']['label2id']: Dictionary mapping node labels to ids\n"
-        desc += "mappings['nodes']['id2label']: Dictionary mapping ids to node labels\n"
-        desc += "mappings['relation']['label2id']: Dictionary mapping relation labels to ids\n"
-        desc += "mappings['relation']['id2label']: Dictionary mapping ids to relation labels\n"
-        return desc
 
 if __name__ == '__main__':
+
+
+
     dl = DataLoader("HQ_DIR")
-    print(dl.structure)
-
-    train = dl.data["train_positive"]
-    test = dl.data["test_positive"]
-    valid = dl.data["valid_positive"]
-
-    neg_train = dl.data["train_negative"]
-    neg_test = dl.data["test_negative"]
-    neg_valid = dl.data["valid_negative"]
+    print(len(dl.all))

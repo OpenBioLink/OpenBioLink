@@ -1,17 +1,29 @@
+import torch
+
 from openbiolink.evaluation.evaluation import Evaluator
 import numpy as np
+import time
 
 evaluator = Evaluator()
 print(evaluator.expected_input_format)
 print(evaluator.expected_output_format)
 
-y_pred_pos = np.random.randn(1000,)
-y_pred_neg = np.random.randn(1000,100)
+np.random.seed(0)
 
-input_dict = {'y_pred_pos': y_pred_pos, 'y_pred_neg': y_pred_neg}
-result = evaluator.eval(input_dict)
+y_pred_pos = torch.randn(180, )
+y_pred_neg = torch.randn(180, 5000)
 
-print(f"Hits@1 {result['hits@1_list'].mean()}")
-print(f"Hits@3 {result['hits@3_list'].mean()}")
-print(f"Hits@10 {result['hits@10_list'].mean()}")
-print(f"MRR {result['mrr_list'].mean()}")
+start = time.time()
+
+for i in range(1000):
+    evaluator.update(y_pred_pos, y_pred_neg)
+
+
+result = evaluator.result()
+
+print(time.time() - start)
+
+print(f"Hits@1 {result['hits@1']}")
+print(f"Hits@3 {result['hits@3']}")
+print(f"Hits@10 {result['hits@10']}")
+print(f"MRR {result['mrr']}")
