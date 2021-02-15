@@ -115,7 +115,7 @@ Evaluate DGL-KE
        relation_to_id_path = r"G:\triples\relations.tsv"
    
        evaluator = DglkeEvaluator("HQ_DIR", model_path, entity_to_id_path, relation_to_id_path)
-       result = evaluator.evaluate(100, 1)
+       result = evaluator.evaluate(100, -1)
        print(result)
 
 Evaluate SAFRAN
