@@ -29,6 +29,16 @@ setuptools.setup(
         "tqdm>=4.29.1",
         "sortedcontainers",
     ],
+    extras_require{
+        "docs": [
+            "sphinx",
+            "sphinx-rtd-theme",
+            "sphinx-click",
+            "sphinx-autodoc-typehints",
+            "sphinx_automodapi",
+            "texext",
+        ]
+    },
     python_requires=">=3.6",
     entry_points={"console_scripts": ["openbiolink = openbiolink.openBioLink:main",],},
 )
