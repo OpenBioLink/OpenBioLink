@@ -8,10 +8,10 @@ OpenBioLink is a resource and evaluation framework for evaluating link predictio
   <img width="400" src="https://github.com/OpenBioLink/OpenBioLink/raw/master/wiki-resources/obl_overview.PNG">
 </p>
 
-[Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)
+[Documentation](https://openbiolink.readthedocs.io/en/latest/index.html)
 
-[Peer reviewed version in the journal Bioinformatics (for citations)](https://doi.org/10.1093/bioinformatics/btaa274)
-
+[Paper preprint on arXiv](https://arxiv.org/abs/1912.04616) •
+[Peer reviewed paper in the journal Bioinformatics (for citations)](https://doi.org/10.1093/bioinformatics/btaa274) •
 [Supplementary data](https://github.com/OpenBioLink/OpenBioLink/raw/master/paper/supplementary%20data.pdf)
 
 The OpenBioLink benchmark aims to meet the following criteria:
@@ -421,5 +421,24 @@ We offer the benchmark files as-is and make no representations or warranties of 
 Currently, models provided in pykeen can be tested in the framework. To add your own models, please perform the following steps:
 1) implement the model interface ``src/openbiolink/evaluation/models/model.py`` 
 1) add your model to the modeltypes ``src/openbiolink/evaluation/models/modelTypes.py``
+
+# Citation
+
+```bibtex
+@article{10.1093/bioinformatics/btaa274,
+    author = {Breit, Anna and Ott, Simon and Agibetov, Asan and Samwald, Matthias},
+    title = "{OpenBioLink: a benchmarking framework for large-scale biomedical link prediction}",
+    journal = {Bioinformatics},
+    volume = {36},
+    number = {13},
+    pages = {4097-4098},
+    year = {2020},
+    month = {04},
+    issn = {1367-4803},
+    doi = {10.1093/bioinformatics/btaa274},
+    url = {https://doi.org/10.1093/bioinformatics/btaa274},
+    eprint = {https://academic.oup.com/bioinformatics/article-pdf/36/13/4097/33458979/btaa274.pdf},
+}
+```
 
 
