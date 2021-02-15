@@ -1,16 +1,15 @@
-"""
-Author: Weihua Hu, Matthias Fey, Marinka Zitnik, Yuxiao Dong, Hongyu Ren, Bowen Liu, Michele Catasta, Jure Leskovec
-Copyright: Copyright (c) 2019 OGB Team
-License: MIT License
-Version: 1.2.4
-Repository: https://github.com/snap-stanford/ogb
 
-
-"""
-
-import pandas as pd
-import os
+from abc import ABC, abstractmethod
 import numpy as np
+import torch.multiprocessing as mp
+import time
+from typing import Dict, Tuple
+
+from pykeen.evaluation.evaluator import create_sparse_positive_filter_, filter_scores_
+
+from openbiolink.evaluation.dataLoader import DataLoader
+
+from tqdm import tqdm
 
 try:
     import torch
@@ -19,125 +18,108 @@ except ImportError:
 
 
 ### Evaluator for link property prediction
-class Evaluator:
+class Evaluator(ABC):
 
-    def _parse_and_check_input(self, input_dict):
-        if not 'y_pred_pos' in input_dict:
-            RuntimeError('Missing key of y_pred_pos')
-        if not 'y_pred_neg' in input_dict:
-            RuntimeError('Missing key of y_pred_neg')
+    """
+        :param dl:
+            Dataloader containing the OpenBioLink dataset
+    """
 
-        y_pred_pos, y_pred_neg = input_dict['y_pred_pos'], input_dict['y_pred_neg']
+    def __init__(self, dl : DataLoader):
+        
 
-        '''
-            y_pred_pos: numpy ndarray or torch tensor of shape (num_edge, )
-            y_pred_neg: numpy ndarray or torch tensor of shape (num_edge, num_node_negative)
-        '''
+        self.dl : DataLoader = dl
+        """Dataloader containing the OpenBioLink dataset"""
+        self.entities : torch.Tensor = torch.arange(self.dl.num_entities)
+        """1-D tensor of all entities in the dataset (to be used to corrupt the head/tail of a positive triple)"""
+        self.relations : torch.Tensor = torch.arange(self.dl.num_relations)
+        """1-D tensor of all relations in the dataset"""
+        self.num_neg : int = self.dl.num_entities
+        """Number of negative samples used for evaluation (equals to the number of entities in the dataset)"""
 
-        # convert y_pred_pos, y_pred_neg into either torch tensor or both numpy array
-        # type_info stores information whether torch or numpy is used
+    def get_ranking(self, y_pred_pos_head, y_pred_neg_head, y_pred_pos_tail, y_pred_neg_tail):
+        ranking_head = torch.sum(y_pred_neg_head >= y_pred_pos_head.view(-1,1), dim=1) + 1
+        ranking_tail = torch.sum(y_pred_neg_tail >= y_pred_pos_tail.view(-1,1), dim=1) + 1
+        ranking_list = torch.cat([ranking_head, ranking_tail], dim=0)
+        return ranking_list
 
-        type_info = None
+    def get_result(self, ranking_lists : list):
+        hits1 = 0.
+        hits3 = 0.
+        hits10 = 0.
+        mrr = 0.
+        count = 0
 
-        # check the raw tyep of y_pred_pos
-        if not (isinstance(y_pred_pos, np.ndarray) or (torch is not None and isinstance(y_pred_pos, torch.Tensor))):
-            raise ValueError('y_pred_pos needs to be either numpy ndarray or torch tensor')
+        for ranking_list in ranking_lists:
+            hits1 = hits1 + (ranking_list <= 1).sum()
+            hits3 = hits3 + (ranking_list <= 3).sum()
+            hits10 = hits10 + (ranking_list <= 10).sum()
+            mrr = mrr + (1. / ranking_list).sum()
+            count = count + ranking_list.shape[0]
 
-        # check the raw type of y_pred_neg
-        if not (isinstance(y_pred_neg, np.ndarray) or (torch is not None and isinstance(y_pred_neg, torch.Tensor))):
-            raise ValueError('y_pred_neg needs to be either numpy ndarray or torch tensor')
+        return {'hits@1': hits1 / count,
+                'hits@3': hits3 / count,
+                'hits@10': hits10 / count,
+                'mrr': mrr / count}
 
-        # if either y_pred_pos or y_pred_neg is torch tensor, use torch tensor
-        if torch is not None and (isinstance(y_pred_pos, torch.Tensor) or isinstance(y_pred_neg, torch.Tensor)):
-            # converting to torch.Tensor to numpy on cpu
-            if isinstance(y_pred_pos, np.ndarray):
-                y_pred_pos = torch.from_numpy(y_pred_pos)
+    def filter_scores(self, batch, filter_col, scores):
+        positive_filter, relation_filter = create_sparse_positive_filter_(
+            hrt_batch=batch,
+            all_pos_triples=self.dl.all,
+            filter_col = filter_col
+        )
+        return filter_scores_(
+            scores=scores,
+            filter_batch=positive_filter,
+        )
 
-            if isinstance(y_pred_neg, np.ndarray):
-                y_pred_neg = torch.from_numpy(y_pred_neg)
+    def evaluate(self, batch_size=100, cpu=-1, filtering=True) -> Dict[str, float]:
+        """Evaluates a model by retrieving scores from the (implemented) score_batch function.
 
-            # put both y_pred_pos and y_pred_neg on the same device
-            y_pred_pos = y_pred_pos.to(y_pred_neg.device)
+            :param batch_size:
+                Size of a test batch
+            :param cpu:
+                Number of processors to use, -1 means all processors are used.
 
-            type_info = 'torch'
+            :return:
+                Dictionary containing the evaluation results (keys: 'hits@1', 'hits@3', 'hits@10', 'mrr')
+        """
+        self.filtering = filtering
 
+        start = time.time()
+        n_batches, batches = self.dl.get_test_batches(batch_size)
 
+        if cpu == 1 or cpu == 0:
+            result = []
+            for batch in tqdm(batches, total=n_batches):
+                result.append(self.evaluate_batch(batch))
+        elif cpu == -1:
+            pool = mp.Pool(mp.cpu_count())
+            result = pool.map(self.evaluate_batch, batches)
         else:
-            # both y_pred_pos and y_pred_neg are numpy ndarray
+            pool = mp.Pool(cpu)
+            result = pool.map(self.evaluate_batch, batches)
+        print('Evaluation took {:.3f} seconds'.format(time.time() - start))
+        return self.get_result(result)
 
-            type_info = 'numpy'
+    def evaluate_batch(self, batch):
+        pos_scores_head, neg_scores_head, pos_scores_tail, neg_scores_tail = self.score_batch(batch)
+        if self.filtering:
+            neg_scores_head = self.filter_scores(batch, 0, neg_scores_head)
+            neg_scores_tail = self.filter_scores(batch, 2, neg_scores_tail)
+        return self.get_ranking(pos_scores_head, neg_scores_head, pos_scores_tail, neg_scores_tail)
 
-        if not y_pred_pos.ndim == 1:
-            raise RuntimeError('y_pred_pos must to 1-dim arrray, {}-dim array given'.format(y_pred_pos.ndim))
+    @abstractmethod
+    def score_batch(self, batch: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        """ Abstract function to be implemented: Should return the positive and negative head and tail scores of a batch of test data from a model.
 
-        if not y_pred_neg.ndim == 2:
-            raise RuntimeError('y_pred_neg must to 2-dim arrray, {}-dim array given'.format(y_pred_neg.ndim))
+            :param batch:
+                Batch of test data of size (batch_size,3)
 
-        return y_pred_pos, y_pred_neg, type_info
-
-    def eval(self, input_dict):
-        y_pred_pos, y_pred_neg, type_info = self._parse_and_check_input(input_dict)
-        return self._eval_mrr(y_pred_pos, y_pred_neg, type_info)
-
-    @property
-    def expected_input_format(self):
-        desc = 'Expected input format:\n'
-        desc += '{\'y_pred_pos\': y_pred_pos, \'y_pred_neg\': y_pred_neg}\n'
-        desc += '- y_pred_pos: numpy ndarray or torch tensor of shape (num_edge, ). Torch tensor on GPU is recommended for efficiency.\n'
-        desc += '- y_pred_neg: numpy ndarray or torch tensor of shape (num_edge, num_nodes_neg). Torch tensor on GPU is recommended for efficiency.\n'
-        desc += 'y_pred_pos is the predicted scores for positive edges.\n'
-        desc += 'y_pred_neg is the predicted scores for negative edges. It needs to be a 2d matrix.\n'
-        desc += 'the score y_pred_pos[i] is ranked among scores in y_pred_neg[i].\n'
-
-        return desc
-
-    @property
-    def expected_output_format(self):
-        desc = "Expected output format:\n"
-        desc += '{' + '\'hits@1_list\': hits@1_list, \'hits@3_list\': hits@3_list, \n\'hits@10_list\': hits@10_list, \'mrr_list\': mrr_list}\n'
-        desc += '- mrr_list (list of float): list of scores for calculating MRR \n'
-        desc += '- hits@1_list (list of float): list of scores for calculating Hits@1 \n'
-        desc += '- hits@3_list (list of float): list of scores to calculating Hits@3\n'
-        desc += '- hits@10_list (list of float): list of scores to calculating Hits@10\n'
-        desc += 'Note: i-th element corresponds to the prediction score for the i-th edge.\n'
-        desc += 'Note: To obtain the final score, you need to calculate the averages of the respective list.\n'
-
-        return desc
-
-    def _eval_mrr(self, y_pred_pos, y_pred_neg, type_info):
-        '''
-            compute mrr
-            y_pred_neg is an array with shape (batch size, num_entities_neg).
-            y_pred_pos is an array with shape (batch size, )
-        '''
-
-        if type_info == 'torch':
-            y_pred = torch.cat([y_pred_pos.view(-1, 1), y_pred_neg], dim=1)
-            argsort = torch.argsort(y_pred, dim=1, descending=True)
-            ranking_list = torch.nonzero(argsort == 0)
-            ranking_list = ranking_list[:, 1] + 1
-            hits1_list = (ranking_list <= 1).to(torch.float)
-            hits3_list = (ranking_list <= 3).to(torch.float)
-            hits10_list = (ranking_list <= 10).to(torch.float)
-            mrr_list = 1. / ranking_list.to(torch.float)
-
-            return {'hits@1_list': hits1_list,
-                    'hits@3_list': hits3_list,
-                    'hits@10_list': hits10_list,
-                    'mrr_list': mrr_list}
-
-        else:
-            y_pred = np.concatenate([y_pred_pos.reshape(-1, 1), y_pred_neg], axis=1)
-            argsort = np.argsort(-y_pred, axis=1)
-            ranking_list = (argsort == 0).nonzero()
-            ranking_list = ranking_list[1] + 1
-            hits1_list = (ranking_list <= 1).astype(np.float32)
-            hits3_list = (ranking_list <= 3).astype(np.float32)
-            hits10_list = (ranking_list <= 10).astype(np.float32)
-            mrr_list = 1. / ranking_list.astype(np.float32)
-
-            return {'hits@1_list': hits1_list,
-                    'hits@3_list': hits3_list,
-                    'hits@10_list': hits10_list,
-                    'mrr_list': mrr_list}
-
+            :return:
+                *   positive head scores (batch_size,)
+                *   negative head scores (batch_size, num_entities), where the value at [i,j] is the score of the triple batch[i], where the head was corrupted with the entity j.
+                *   positive tail scores (batch_size,)
+                *   negative tail scores (batch_size, num_entities), where the value at [i,j] is the score of the triple batch[i], where the tail was corrupted with the entity j.
+        """
+        raise NotImplementedError
