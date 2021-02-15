@@ -15,10 +15,10 @@ The latest stable version of OpenBioLink can be downloaded and installed from
 
     $ pip install openbiolink
 
-The latest version of PyKEEN can be installed directly from the
+The latest version of OpenBioLink can be installed directly from the
 source on `GitHub <https://github.com/OpenBioLink/OpenBioLink>`_ with::
 
-    git clone https://github.com/OpenBioLink/OpenBioLink.git
-    cd OpenBioLink
-    sudo python setup.py install
+    $ git clone https://github.com/OpenBioLink/OpenBioLink.git
+    $ cd OpenBioLink
+    $ sudo python setup.py install
 	

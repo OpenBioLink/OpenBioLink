@@ -4,7 +4,7 @@ import pickle
 
 import numpy as np
 import pykeen.constants as keenConst
-import pykeen.utilities.pipeline as pipeline
+import pykeen.pipeline as pipeline
 import torch
 import torch.optim as optim
 from tqdm import tqdm

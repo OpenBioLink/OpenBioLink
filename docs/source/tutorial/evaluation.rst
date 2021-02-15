@@ -25,7 +25,7 @@ After the creation of a custom class that implements :class:`~openbiolink.evalua
 
 The attribute :code:`filtering` should only be set to false, if you are evaluating a filtered top-k file (see example SAFRAN)
 
-Evaluate DGL-KE
+Example DGL-KE
 ---------------
 
 .. code-block:: python
@@ -118,7 +118,7 @@ Evaluate DGL-KE
        result = evaluator.evaluate(100, -1)
        print(result)
 
-Evaluate SAFRAN
+Example SAFRAN
 ---------------
 
 SAFRAN is a rule-based approach, that creates a filtered top-k text file in the form of 
