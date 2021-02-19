@@ -180,7 +180,7 @@ openbiolink train --help
 
 ### Dataloader
 
-All versions of the OpenBioLink datasets can be easily accessed via the DataLoader, which downloads all required files automatically.
+All versions of the OpenBioLink datasets can be easily accessed via the [DataLoader](https://openbiolink.readthedocs.io/en/latest/reference/dataloader.html), which downloads all required files automatically.
 
 ```python
 from openbiolink.evaluation.dataLoader import DataLoader
@@ -188,47 +188,14 @@ from openbiolink.evaluation.dataLoader import DataLoader
 # Name of the Dataset, possible values HQ_DIR, HQ_UNDIR, ALL_DIR, ALL_UNDIR. Default: HQ_DIR
 dl = DataLoader("HQ_DIR")
 
-# Prints the structure of the DataLoader object
-print(dl.structure)
-
-train = dl.data["train_positive"]
-test = dl.data["test_positive"]
-valid = dl.data["valid_positive"]
+train = dl.training.mapped_triples
+test = dl.testing.mapped_triples
+valid = dl.validation.mapped_triples
 ```
 
 ### Evaluating an external model
 
-To ensure a standardized evaluation of different methods applied to the OpenBioLink dataset, an evaluator is provided in the package  ```openbiolink``` . The code below shows the usage for test data using numpy arrays, a torch.Tensor can also be used.
-
-```python
-from openbiolink.evaluation.evaluation import Evaluator
-
-# Test data
-import numpy as np
-# Scores of positive triples
-# ndarray of size (num_pos_triples,) 
-y_pred_pos = np.random.randn(1000,)
-# Scores of negative triples
-# ndarray of size (num_pos_triples, num_neg_sample)
-y_pred_neg = np.random.randn(1000,100)
-# y_pred_pos[i] is ranked in y_pred_neg[i][:]
-
-evaluator = Evaluator()
-
-# Prints the expected input and output
-print(evaluator.expected_input_format)
-print(evaluator.expected_output_format)
-
-input_dict = {'y_pred_pos': y_pred_pos, 'y_pred_neg': y_pred_neg}
-result = evaluator.eval(input_dict)
-
-print(f"Hits@1 {result['hits@1_list'].mean()}")
-print(f"Hits@3 {result['hits@3_list'].mean()}")
-print(f"Hits@10 {result['hits@10_list'].mean()}")
-print(f"MRR {result['mrr_list'].mean()}")
-```
-
-
+To ensure a standardized evaluation of different methods applied to the OpenBioLink dataset, an evaluator is provided in the package  ```openbiolink``` . For examples how to evaluate a model, see [here](https://openbiolink.readthedocs.io/en/latest/tutorial/evaluation.html).
 
 ## File description
 
