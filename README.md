@@ -2,7 +2,7 @@
 
 # OpenBioLink
 
-OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as tools for creating custom benchmarks and training and evaluating models.
+OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as tools for creating custom benchmarks and evaluating models.
 
 <p align="center">
   <img width="400" src="https://github.com/OpenBioLink/OpenBioLink/raw/master/wiki-resources/obl_overview.PNG">
@@ -87,19 +87,7 @@ Please note that the OpenBioLink benchmark files contain data derived from exter
 
 If you want to see your results added to the Leaderboard please create a new issue.
 
-## Manual
-
-### Installation
-
-The OpenBioLink framework consists of three parts, called 'actions':
- 1) Graph creation
- 2) Train-test split creation
- 3) Training and evaluation
-
-With the graph creation and the train-test set action, customized datasets can be created to suit individual needs.
-The third action serves as an interface for training and evaluating link prediction models.
-
-For HOW-TO's please check also the [wiki](https://github.com/OpenBioLink/OpenBioLink/wiki/Table-of-Contents)
+## Installation
 
 #### Pip
 1) Install a pytorch version suitable for your system https://pytorch.org/
@@ -112,23 +100,37 @@ e.g.:
 ```python3 -m venv my_venv```
 1) activate the virtual environment
     * windows: ``my_venv\Scrips\activate``
-    * linux/mac: ``source my_venv/bin/activate``
+        * linux/mac: ``source my_venv/bin/activate``
 1) Install a pytorch version suitable for your system https://pytorch.org/
 1) Install the requirements stated in requirements.txt e.g.  ```pip install -r requirements.txt```
 
+## Manual
 
+The OpenBioLink framework consists of three parts:
+ 1) Graph creation
+ 2) Dataset split
+ 3) Evaluation
 
-### Calling via GUI
-By calling the program without any parameters, the GUI is started, 
-providing an interface to define required parameters. In the last step, 
-the corresponding command line options are displayed.
+The creation of the graph and the splitting of the created graph in training, testing and an optional validation set can be performed by either via the GUI or the command line interface. The evaluation of a trained model is served as part of the ```openbiolink``` library.
 
-### Calling via command line
+### Graph creation & Dataset split
+
+#### GUI
+
+By calling 
+
+```sh
+openbiolink gui
+```
+
+a graphical user interface is started, providing an interface to create a graph and perform a dataset split. Step by step instructions on how to use the GUI can be found in the [wiki](https://github.com/OpenBioLink/OpenBioLink/wiki/Table-of-Contents).
+
+#### Command line interface
 ```sh
 openbiolink -p WORKING_DIR_PATH [-action] [--options] ...
 ```
 
-**Action: Graph Creation**
+##### Graph Creation
 
 To generate the default graph (with all edges of all qualifies) in the current directory, use:
 
@@ -142,7 +144,7 @@ For a list of arguments, use:
 openbiolink generate --help
 ```
 
-**Action: Train-Test Split Generation**
+##### Dataset Split
 
 To split the default graph using the random scheme, use:
 
@@ -164,23 +166,13 @@ openbiolink split time
 
 More documentation will be provided later.
 
-**Action: Training and Evaluation**
+### Evaluation
 
-To train on the split default graph, use:
-
-```shell script
-openbiolink train -m TransE_Pykeen -s train_test_data/train_sample.csv -ns train_test_data/train_sample.csv -t train_test_data/test_sample.csv -nt train_test_data/negative_test_sample.csv 
-```
-
-For a list of arguments, use:
-
-```sh
-openbiolink train --help
-```
+To ensure a standardized evaluation of different methods applied to the OpenBioLink dataset, an evaluator is provided in the package  ```openbiolink``` . For examples how to evaluate a model, see [here](https://openbiolink.readthedocs.io/en/latest/tutorial/evaluation.html).
 
 ### Dataloader
 
-All versions of the OpenBioLink datasets can be easily accessed via the [DataLoader](https://openbiolink.readthedocs.io/en/latest/reference/dataloader.html), which downloads all required files automatically.
+All versions of the OpenBioLink datasets can be easily accessed within Python via the [DataLoader](https://openbiolink.readthedocs.io/en/latest/reference/dataloader.html), which downloads all required files automatically.
 
 ```python
 from openbiolink.evaluation.dataLoader import DataLoader
@@ -192,10 +184,6 @@ train = dl.training.mapped_triples
 test = dl.testing.mapped_triples
 valid = dl.validation.mapped_triples
 ```
-
-### Evaluating an external model
-
-To ensure a standardized evaluation of different methods applied to the OpenBioLink dataset, an evaluator is provided in the package  ```openbiolink``` . For examples how to evaluate a model, see [here](https://openbiolink.readthedocs.io/en/latest/tutorial/evaluation.html).
 
 ## File description
 
@@ -382,12 +370,6 @@ The OpenBioLink benchmark files integrate data or identifiers from these sources
 All original data in the benchmark files created by the OpenBioLink project (not covered by the licenses of external data sources)  are released as [CC 0](https://creativecommons.org/publicdomain/zero/1.0/). 
 
 We offer the benchmark files as-is and make no representations or warranties of any kind concerning the benchmark files, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
-
-# Evaluating your own Model
-
-Currently, models provided in pykeen can be tested in the framework. To add your own models, please perform the following steps:
-1) implement the model interface ``src/openbiolink/evaluation/models/model.py`` 
-1) add your model to the modeltypes ``src/openbiolink/evaluation/models/modelTypes.py``
 
 # Citation
 

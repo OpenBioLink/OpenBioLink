@@ -4,9 +4,6 @@ import sys
 from typing import List, Optional
 
 from openbiolink import globalConfig, globalConfig as glob, graphProperties as graphProp
-from openbiolink.evaluation.training import Training
-from openbiolink.evaluation.metricTypes import RankMetricType, ThresholdMetricType
-from openbiolink.evaluation.models.modelTypes import ModelTypes
 from openbiolink.graph_creation.graphCreation import Graph_Creation
 from openbiolink.graph_creation.types.qualityType import QualityType
 
@@ -66,59 +63,3 @@ def create_graph(
             format=output_format, file_sep=output_sep, multi_file=output_multi, print_qscore=qscore,
         )
     logging.info("##### Graph creation done! #####")
-
-
-def train_and_evaluate(
-    model_cls: str,
-    trained_model,
-    training_set_path,
-    negative_training_set_path,
-    validation_set_path,
-    negative_validation_set_path,
-    test_set_path,
-    negative_test_set_path,
-    nodes_path,
-    do_training,
-    do_evaluation,
-    metrics=None,
-    ks=None,
-    config=None,
-):
-    model_cls = ModelTypes[model_cls].value
-    if trained_model:  # fixme when model provided, config also has to be
-        model = model_cls()
-        model.kge_model = model_cls.load_model(config)
-        # model.kge_model.load_state_dict(torch.load(trained_model))
-        # testme
-    elif config:
-        model = model_cls(config)
-    else:
-        model = model_cls()
-
-    e = Training(
-        model=model,
-        training_set_path=training_set_path,
-        negative_training_set_path=negative_training_set_path,
-        valid_set_path=validation_set_path,
-        negative_valid_set_path=negative_validation_set_path,
-        test_set_path=test_set_path,
-        negative_test_set_path=negative_test_set_path,
-        nodes_path=nodes_path,
-        mappings_avail=bool(trained_model),
-    )
-    # todo doku: mappings have to be in model folder with correct name, or change here
-    if do_training:
-        print("starting training")
-        e.train()
-    if do_evaluation:
-        print("starting evaluation")
-        metrics_to_use = list(
-            itertools.chain(RankMetricType.__members__.values(), ThresholdMetricType.__members__.values())
-        )
-        if metrics is not None:
-            metrics_to_use = [x for x in metrics_to_use if x.name in metrics]
-        if ks is None:
-            int_ks = [1, 3, 5, 10]
-        else:
-            int_ks = [int(k) for k in ks]
-        e.evaluate(metrics=metrics_to_use, ks=int_ks)
