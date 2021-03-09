@@ -117,13 +117,7 @@ The creation of the graph and the splitting of the created graph in training, te
 
 #### GUI
 
-By calling 
-
-```sh
-openbiolink gui
-```
-
-a graphical user interface is started, providing an interface to create a graph and perform a dataset split. Step by step instructions on how to use the GUI can be found in the [wiki](https://github.com/OpenBioLink/OpenBioLink/wiki/Table-of-Contents).
+By calling ```openbiolink``` from the command line a graphical user interface is started, providing an interface to create a graph and perform a dataset split. Step by step instructions on how to use the GUI can be found in the [wiki](https://github.com/OpenBioLink/OpenBioLink/wiki/Table-of-Contents).
 
 #### Command line interface
 ```sh
