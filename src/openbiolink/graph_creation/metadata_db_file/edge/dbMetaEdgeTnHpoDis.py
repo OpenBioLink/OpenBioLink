@@ -5,7 +5,7 @@ from openbiolink.graph_creation.types.dbType import DbType
 class DbMetaEdgeTnHpoDis(DbMetadataEdge):
     NAME = "Edge - HPO - Disease Phenotype (Negative)"
 
-    URL = "http://compbio.charite.de/jenkins/job/hpo.annotations/1269/artifact/misc/negative_phenotype_annotation.tab"
+    URL = "http://purl.obolibrary.org/obo/hp/hpoa/phenotype_annotation_negated.tab"
     OFILE_NAME = "HPO_TN_disease_phenotype.tab"
     COLS = [
         "DB",

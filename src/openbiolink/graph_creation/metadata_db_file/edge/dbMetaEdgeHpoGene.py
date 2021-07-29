@@ -4,7 +4,7 @@ from openbiolink.graph_creation.types.dbType import DbType
 
 class DbMetaEdgeHpoGene(DbMetadataEdge):
     NAME = "Edge - HPO - Gene Phenotype"
-    URL = "http://compbio.charite.de/jenkins/job/hpo.annotations/1270/artifact/util/annotation/genes_to_phenotype.txt"
+    URL = "http://purl.obolibrary.org/obo/hp/hpoa/genes_to_phenotype.txt"
     OFILE_NAME = "HPO_gene_phenotype.tsv"
     COLS = ["geneID", "geneSymb", "hpoID", "hpoName", "frequencyRaw", "frequencyHPO", "addInfo", "source", "disId"]
     FILTER_COLS = ["geneID", "hpoID"]
