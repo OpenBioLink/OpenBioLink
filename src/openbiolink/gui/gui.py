@@ -8,7 +8,6 @@ from tkinter.ttk import Style
 from openbiolink import openBioLink
 from openbiolink.gui.confirmFrame import ConfirmFrame
 from openbiolink.gui.console import ConsoleFrame
-from openbiolink.gui.evaluationFrame import EvalFrame
 from openbiolink.gui.graphCreationFrame import GraphCreationFrame
 from openbiolink.gui.splitFrame import SplitFrame
 from openbiolink.gui.startPage import StartPage
@@ -37,7 +36,7 @@ class BimegGui(tk.Tk):
 
         # Initialize all frames
         self.frames = {}
-        for F in (StartPage, GraphCreationFrame, SplitFrame, EvalFrame, ConfirmFrame, ConsoleFrame):
+        for F in (StartPage, GraphCreationFrame, SplitFrame, ConfirmFrame, ConsoleFrame):
             page_name = F.__name__
             frame = F(parent=self.container, controller=self)
             self.frames[page_name] = frame

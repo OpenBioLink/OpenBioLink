@@ -28,6 +28,7 @@ setuptools.setup(
         "scikit-learn>=0.19.1",
         "tqdm>=4.29.1",
         "sortedcontainers",
+		"pybel",
     ],
     extras_require={
         "docs": [

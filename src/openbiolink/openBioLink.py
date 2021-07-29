@@ -18,8 +18,7 @@ import sys
 import click
 
 from openbiolink import globalConfig as glob
-from openbiolink.cli_helper import create_graph, train_and_evaluate
-from openbiolink.evaluation.models.modelTypes import ModelTypes
+from openbiolink.cli_helper import create_graph
 from openbiolink.graph_creation.graph_writer import FORMATS
 from openbiolink.graph_creation.types.qualityType import QualityType
 from openbiolink.train_test_set_creation.trainTestSplitCreation import TrainTestSetCreation
@@ -204,52 +203,6 @@ def rand(edges, tn_edges, nodes, sep, test_frac, crossval, val, no_neg_train_val
     )
     click.secho("Creating random slice split", fg="blue")
     tts.random_edge_split(val=val, test_frac=test_frac, crossval=crossval)
-
-
-@main.command()
-@click.option(
-    "-m",
-    "--model-cls",
-    required=True,
-    type=click.Choice(list(ModelTypes.__members__)),
-    help="class of the model to be trained/evaluated",
-)
-@click.option("--config", help="Path to the model' config file")
-@click.option("--no-train", is_flag=True, help="No training is being performed, trained model id provided via --model")
-@click.option("--trained-model", help="Path to trained model (required with --no-train)")
-@click.option("--no-eval", is_flag=True, help="No evaluation is being performed, only training")
-@click.option("-s", "--training-path", help="Path to positive trainings set file")  # (alternative: --cv_folder)')
-@click.option("-ns", "--negative-training-path", help="Path to negative trainings set file")  # (alternative: --cv_folder)')
-@click.option("-v", "--validation-path", help="Path to positive validation set file")  # (alternative: --cv_folder)')
-@click.option("-nv", "--negative-validation-path", help="Path to negative validation set file")  # (alternative: --cv_folder)')
-@click.option("-t", "--testing-path", required=True, help="Path to positive test set file")
-@click.option("-nt", "--negative-testing-path", help="Path to negative test set file")
-@click.option(
-    "--eval-nodes",
-    help="path to the nodes file (required for ranked triples if no corrupted triples file is provided and nodes cannot be taken from graph creation",
-)
-@click.option("--metrics", multiple=True, help="evaluation metrics")
-@click.option("--ks", multiple=True, help="k's for hits@k metric")
-def train(
-    model_cls, trained_model, training_path, negative_training_path, validation_path, negative_validation_path, testing_path, negative_testing_path, eval_nodes, no_train, no_eval, metrics, ks, config,
-):
-    """Train and evaluate on a graph."""
-    train_and_evaluate(
-        model_cls=model_cls,
-        trained_model=trained_model,
-        training_set_path=training_path,
-        negative_training_set_path=negative_training_path,
-        validation_set_path=validation_path,
-        negative_validation_set_path=negative_validation_path,
-        test_set_path=testing_path,
-        negative_test_set_path=negative_testing_path,
-        nodes_path=eval_nodes,
-        do_training=not no_train,
-        do_evaluation=not no_eval,
-        metrics=metrics,
-        ks=ks,
-        config=config,
-    )
 
 
 if __name__ == "__main__":

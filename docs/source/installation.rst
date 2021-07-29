@@ -21,4 +21,4 @@ source on `GitHub <https://github.com/OpenBioLink/OpenBioLink>`_ with::
     $ git clone https://github.com/OpenBioLink/OpenBioLink.git
     $ cd OpenBioLink
     $ sudo python setup.py install
-	
+

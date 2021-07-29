@@ -22,8 +22,6 @@ class StartPage(tk.Frame):
         g_box = tk.Checkbutton(actions_panel, text="(1) Generate Graph", variable=self.g)
         self.s = tk.BooleanVar()
         s_box = tk.Checkbutton(actions_panel, text="(2) Generate Train Test Split", variable=self.s)
-        self.e = tk.BooleanVar()
-        e_box = tk.Checkbutton(actions_panel, text="(3) Apply Testing and Evaluation", variable=self.e)
 
         buttons_panel = tk.Frame(self)
         next_button = tk.Button(buttons_panel, text="Next", command=lambda: self.next_page(), height=1, width=15)
@@ -35,7 +33,6 @@ class StartPage(tk.Frame):
         actions_panel.pack(side="top", fill="both", expand=True, anchor="w", padx=15, pady=10)
         g_box.pack(side="top", anchor="w", padx=20, pady=(20, 0))
         s_box.pack(side="top", anchor="w", padx=20, pady=(20, 0))
-        e_box.pack(side="top", anchor="w", padx=20, pady=(20, 0))
         ttk.Separator(self, orient="horizontal").pack(side="top", fill="x", pady=(15, 0), padx=10, anchor="s")
         buttons_panel.pack(side="bottom", padx=15, fill="x")
         next_button.pack(side="right", anchor="e", pady=(5, 10))
@@ -68,10 +65,6 @@ class StartPage(tk.Frame):
             selected_frames.append("SplitFrame")
         else:
             self.controller.ARGS_LIST_TRAIN_TEST_SPLIT = []
-        if self.e.get():
-            selected_frames.append("EvalFrame")
-        else:
-            self.controller.ARGS_LIST_EVAL = []
         if len(selected_frames) < 1:
             messagebox.showerror("ERROR", "At least one action must be chosen!")
             return
