@@ -72,20 +72,27 @@ All datasets are hosted on [zenodo](https://zenodo.org/record/3834052).
 
 Please note that the OpenBioLink benchmark files contain data derived from external ressources. Licensing terms of these external resources are detailed [below](#Source-databases-and-their-licenses). 
 
- ## OpenBioLink 2020 Leaderboard    
+ ## Baseline results    
 
-| model | hits@10 | hits@1 |  paper | code |
-|-------|---------|--------|-------|------|
-|   TransE (Baseline)   |    0.0749     |   0.0125     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
-|   TransR (Baseline)   |    0.0639     |   0.0096     | [Paper preprint on arXiv](https://arxiv.org/abs/1912.04616)      | [Code](https://github.com/OpenBioLink/OpenBioLink/tree/master/src/openBioLink/evaluation)     |
-|   RotatE  |   0.522    |   0.156     |       | [Code](https://github.com/awslabs/dgl-ke)     |
-|   ComplEx  |    0.525     |    0.166     |       | [Code](https://github.com/awslabs/dgl-ke)     |
-|   DistMult   |    0.534    |   0.184      |     | [Code](https://github.com/awslabs/dgl-ke)     |
-|   TransR   |    0.592 |    0.369     |       | [Code](https://github.com/awslabs/dgl-ke)     |
-|   RESCAL  |    0.615   |  0.407     |      | [Code](https://github.com/awslabs/dgl-ke)     |
+| Model     | Hits@10  | Hits@3  | Hits@1  |
+|-----------|----------|---------|---------|
+| RESCAL    | 0.615    | 0.479   | 0.407   |
+| TransR    | 0.592    | 0.451   | 0.369   |
+| DistMult  | 0.534    | 0.331   | 0.184   |
+| ComplEx   | 0.525    | 0.314   | 0.166   |
+| RotatE    | 0.522    | 0.315   | 0.156   |
+| TransE    | 0.441    | 0.268   | 0.128   |
 
+Hyperparameter used to achieve these results using [dglke](https://github.com/awslabs/dgl-ke):
 
-If you want to see your results added to the Leaderboard please create a new issue.
+|           | learning rate  | embedding   size  | regularization   coefficient  | gamma  | iterations         |
+|-----------|----------------|-------------------|-------------------------------|--------|--------------------|
+| RESCAL    | 0.05           | 300               | 3.00E-07                      |        | 350000   on 2 GPUs |
+| TransR    | 0.1            | 220               | 1.00E-08                      | 12     | 550000   on 2 GPUs |
+| ComplEx   | 0.1            | 380               | 2.00E-06                      |        | 360000   on 8 GPUs |
+| DistMult  | 0.1            | 380               | 4.00E-07                      |        | 950000   on 2 GPUs |
+| RotatE    | 0.05           | 128               | 1.00E-07                      | 12     | 550000   on 2 GPUs |
+| TransE    | 0.1            | 360               | 3.00E-09                      | 8      | 550000   on 2 GPUs |
 
 ## Installation
 
