@@ -24,3 +24,13 @@ playground*
 /evaluation
 
 docs/build
+
+src/html/obl2021.html
+**/obl2021/_dict_of_heads.pkl
+**/obl2021/_dict_of_tails.pkl
+**/obl2021/entities.tsv
+**/obl2021/relations.tsv
+**/obl2021/test.tsv
+**/obl2021/train.tsv
+**/obl2021/valid.tsv
+

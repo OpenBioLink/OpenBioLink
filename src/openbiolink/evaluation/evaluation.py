@@ -1,125 +1,98 @@
 
-from abc import ABC, abstractmethod
-import numpy as np
-import torch.multiprocessing as mp
 import time
+from abc import ABC, abstractmethod
 from typing import Dict, Tuple
 
-from pykeen.evaluation.evaluator import create_sparse_positive_filter_, filter_scores_
+import torch
+from tqdm import tqdm
 
 from openbiolink.evaluation.dataLoader import DataLoader
 
-from tqdm import tqdm
 
-try:
-    import torch
-except ImportError:
-    torch = None
-
-
-### Evaluator for link property prediction
 class Evaluator(ABC):
-
     """
-        :param dl:
-            Dataloader containing the OpenBioLink dataset
+        :param dl: Dataloader containing the OpenBioLink dataset
+        :param higher_is_better: Boolean which should be set to `True` if higher scores are considered better, `False` otherwise.
     """
 
-    def __init__(self, dl : DataLoader):
-        
+    def __init__(self, dl: DataLoader, higher_is_better: bool = True):
+        self.dl: DataLoader = dl
+        self.higher_is_better = higher_is_better
 
-        self.dl : DataLoader = dl
-        """Dataloader containing the OpenBioLink dataset"""
-        self.entities : torch.Tensor = torch.arange(self.dl.num_entities)
-        """1-D tensor of all entities in the dataset (to be used to corrupt the head/tail of a positive triple)"""
-        self.relations : torch.Tensor = torch.arange(self.dl.num_relations)
-        """1-D tensor of all relations in the dataset"""
-        self.num_neg : int = self.dl.num_entities
-        """Number of negative samples used for evaluation (equals to the number of entities in the dataset)"""
-
-    def get_ranking(self, y_pred_pos_head, y_pred_neg_head, y_pred_pos_tail, y_pred_neg_tail):
-        ranking_head = torch.sum(y_pred_neg_head >= y_pred_pos_head.view(-1,1), dim=1) + 1
-        ranking_tail = torch.sum(y_pred_neg_tail >= y_pred_pos_tail.view(-1,1), dim=1) + 1
+    def _get_ranking(self, y_pred_pos_head, y_pred_neg_head, y_pred_pos_tail, y_pred_neg_tail):
+        if self.higher_is_better:
+            ranking_head = torch.sum(y_pred_neg_head >= y_pred_pos_head.view(-1, 1), dim=1) + 1
+            ranking_tail = torch.sum(y_pred_neg_tail >= y_pred_pos_tail.view(-1, 1), dim=1) + 1
+        else:
+            ranking_head = torch.sum(y_pred_neg_head <= y_pred_pos_head.view(-1, 1), dim=1) + 1
+            ranking_tail = torch.sum(y_pred_neg_tail <= y_pred_pos_tail.view(-1, 1), dim=1) + 1
         ranking_list = torch.cat([ranking_head, ranking_tail], dim=0)
         return ranking_list
 
-    def get_result(self, ranking_lists : list):
+    def _get_result(self, ranking_lists: list):
         hits1 = 0.
         hits3 = 0.
         hits10 = 0.
         mrr = 0.
         count = 0
-
         for ranking_list in ranking_lists:
             hits1 = hits1 + (ranking_list <= 1).sum()
             hits3 = hits3 + (ranking_list <= 3).sum()
             hits10 = hits10 + (ranking_list <= 10).sum()
             mrr = mrr + (1. / ranking_list).sum()
             count = count + ranking_list.shape[0]
-
         return {'hits@1': hits1 / count,
                 'hits@3': hits3 / count,
                 'hits@10': hits10 / count,
                 'mrr': mrr / count}
 
-    def filter_scores(self, batch, filter_col, scores):
-        positive_filter, relation_filter = create_sparse_positive_filter_(
-            hrt_batch=batch,
-            all_pos_triples=self.dl.all,
-            filter_col = filter_col
+    def _evaluate_batch(self, batch):
+        scores_head, scores_tail = self.score_batch(batch)
+        pos_scores_head = scores_head.gather(1, batch[:, 0].view(-1, 1)).view(-1, 1)
+        pos_scores_tail = scores_tail.gather(1, batch[:, 2].view(-1, 1)).view(-1, 1)
+        neg_scores_head = self.dl.filter_scores(
+            batch,
+            0,
+            scores_head,
+            float('nan') if self.higher_is_better else float('Inf')
         )
-        return filter_scores_(
-            scores=scores,
-            filter_batch=positive_filter,
+        neg_scores_tail = self.dl.filter_scores(
+            batch,
+            2,
+            scores_tail,
+            float('nan') if self.higher_is_better else float('Inf')
         )
+        return self._get_ranking(pos_scores_head, neg_scores_head, pos_scores_tail, neg_scores_tail)
 
-    def evaluate(self, batch_size=100, cpu=-1, filtering=True) -> Dict[str, float]:
+    def evaluate(self, batch_size=100) -> Dict[str, float]:
         """Evaluates a model by retrieving scores from the (implemented) score_batch function.
 
-            :param batch_size:
-                Size of a test batch
-            :param cpu:
-                Number of processors to use, -1 means all processors are used.
+        :param batch_size:
+            Integer determining the size of the test batch which is passed to function `score_batch`
 
-            :return:
-                Dictionary containing the evaluation results (keys: 'hits@1', 'hits@3', 'hits@10', 'mrr')
+        :return:
+            Dictionary containing the evaluation results (keys: 'hits@1', 'hits@3', 'hits@10', 'mrr')
         """
-        self.filtering = filtering
 
         start = time.time()
         n_batches, batches = self.dl.get_test_batches(batch_size)
 
-        if cpu == 1 or cpu == 0:
-            result = []
-            for batch in tqdm(batches, total=n_batches):
-                result.append(self.evaluate_batch(batch))
-        elif cpu == -1:
-            pool = mp.Pool(mp.cpu_count())
-            result = pool.map(self.evaluate_batch, batches)
-        else:
-            pool = mp.Pool(cpu)
-            result = pool.map(self.evaluate_batch, batches)
-        print('Evaluation took {:.3f} seconds'.format(time.time() - start))
-        return self.get_result(result)
+        result = []
+        for batch in tqdm(batches, total=n_batches):
+            result.append(self._evaluate_batch(batch))
 
-    def evaluate_batch(self, batch):
-        pos_scores_head, neg_scores_head, pos_scores_tail, neg_scores_tail = self.score_batch(batch)
-        if self.filtering:
-            neg_scores_head = self.filter_scores(batch, 0, neg_scores_head)
-            neg_scores_tail = self.filter_scores(batch, 2, neg_scores_tail)
-        return self.get_ranking(pos_scores_head, neg_scores_head, pos_scores_tail, neg_scores_tail)
+        print('Evaluation took {:.3f} seconds'.format(time.time() - start))
+        return self._get_result(result)
 
     @abstractmethod
-    def score_batch(self, batch: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-        """ Abstract function to be implemented: Should return the positive and negative head and tail scores of a batch of test data from a model.
+    def score_batch(self, batch: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Abstract function, has to be implemented. Should return two arrays containing the head and tail scores of a batch of test data from a model.
 
-            :param batch:
-                Batch of test data of size (batch_size,3)
+        :param batch:
+            Batch of test data. Shape `(batch_size,3)`
 
-            :return:
-                *   positive head scores (batch_size,)
-                *   negative head scores (batch_size, num_entities), where the value at [i,j] is the score of the triple batch[i], where the head was corrupted with the entity j.
-                *   positive tail scores (batch_size,)
-                *   negative tail scores (batch_size, num_entities), where the value at [i,j] is the score of the triple batch[i], where the tail was corrupted with the entity j.
+        :return:
+            + head_scores: `torch.tensor` where the value at [i,j] is the score of the triple `(j, batch[i][1], batch[i][2])`. Shape `(batch_size, num_entities)`
+            + tail_scores: `torch.tensor` where the value at [i,j] is the score of the triple `(batch[i][0], batch[i][1], j)`. Shape `(batch_size, num_entities)`
         """
         raise NotImplementedError
