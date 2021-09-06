@@ -5,6 +5,7 @@ import os
 import sys
 import urllib.request
 from functools import reduce
+from typing import TypeVar, List, Iterable
 
 import numpy as np
 import pandas
@@ -541,3 +542,16 @@ def create_mappings(elements):
 
 def map_elements(elements, mapping):
     return np.vectorize(mapping.get)(elements)
+
+
+X = TypeVar('X')
+
+
+def split_list_in_batches_iter(input_list: List[X], batch_size: int) -> Iterable[List[X]]:
+    """ Copyright (c) 2019-2021 PyKEEN Project Team https://github.com/pykeen/pykeen
+    Split a list of instances in batches of size batch_size.
+    """
+    return (
+        input_list[i:i + batch_size]
+        for i in range(0, len(input_list), batch_size)
+    )

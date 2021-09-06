@@ -8,7 +8,7 @@ from typing import cast, Iterable, Tuple
 import numpy as np
 import pandas as pd
 import torch
-from pykeen.utils import split_list_in_batches_iter
+from openbiolink.utils import split_list_in_batches_iter
 from tqdm import tqdm
 
 from openbiolink.graph_creation.file_downloader import FileDownloader

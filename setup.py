@@ -23,7 +23,6 @@ setuptools.setup(
         "click",
         "numpy",
         "pandas>=0.23.4",
-        "pykeen>0.0.26",
         "pytest>=5.0.1",
         "scikit-learn>=0.19.1",
         "tqdm>=4.29.1",
