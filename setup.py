@@ -5,10 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="openbiolink",
-    version="0.1.2",
+    version="0.1.3",
     author="Anna Breit, Matthias Samwald, Simon Ott, Laura Graf, Asan Agibetov",
     author_email="matthiassamwald@gmail.com",
-    description=" A framework for evaluating link prediction models on heterogeneous biomedical graph data",
+    description="A framework for the OpenBioLink knowledge graph",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/OpenBioLink/OpenBioLink",
@@ -23,11 +23,8 @@ setuptools.setup(
         "click",
         "numpy",
         "pandas>=0.23.4",
-        "pytest>=5.0.1",
-        "scikit-learn>=0.19.1",
         "tqdm>=4.29.1",
-        "sortedcontainers",
-		"pybel",
+        "torch"
     ],
     extras_require={
         "docs": [
@@ -40,5 +37,5 @@ setuptools.setup(
         ]
     },
     python_requires=">=3.6",
-    entry_points={"console_scripts": ["openbiolink = openbiolink.openBioLink:main",],},
+    entry_points={"console_scripts": ["openbiolink = openbiolink.openBioLink:main", ], },
 )

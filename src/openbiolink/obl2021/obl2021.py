@@ -226,8 +226,7 @@ class OBL2021Evaluator:
 
     def _save_test_submission(self, pred_top10):
 
-        #assert (pred_top10.shape == (361928, 10)), "Shape not (361928, 10) but " + str(pred_top10.shape)
-        print("Shape not (361928, 10) but " + str(pred_top10.shape))
+        assert (pred_top10.shape == (361928, 10)), "Shape not (361928, 10) but " + str(pred_top10.shape)
 
         if isinstance(pred_top10, torch.Tensor):
             pred_top10 = pred_top10.cpu().numpy()
