@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="openbiolink",
-    version="0.1.3",
+    version="0.1.4",
     author="Anna Breit, Matthias Samwald, Simon Ott, Laura Graf, Asan Agibetov",
     author_email="matthiassamwald@gmail.com",
     description="A framework for the OpenBioLink knowledge graph",
