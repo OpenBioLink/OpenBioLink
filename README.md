@@ -6,7 +6,28 @@
 
 ------------------------------------------------
 
-[![PyPI](https://img.shields.io/pypi/v/openbiolink)](https://pypi.org/project/openbiolink/) [![Documentation Status](https://readthedocs.org/projects/openbiolink/badge/?version=latest)](https://openbiolink.readthedocs.io/en/latest/?badge=latest) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/OpenBioLink/OpenBioLink/blob/master/LICENSE) [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/openbiolink-a-resource-and-benchmarking/link-prediction-on-openbiolink)](https://paperswithcode.com/sota/link-prediction-on-openbiolink?p=openbiolink-a-resource-and-benchmarking)
+<p align="center">
+  <a href="https://pypi.org/project/openbiolink/">
+    <img src="https://img.shields.io/pypi/v/openbiolink"
+         alt="pypi">
+  </a>
+  <a href="https://openbiolink.readthedocs.io/en/latest/?badge=latest">
+    <img src="https://readthedocs.org/projects/openbiolink/badge/?version=latest"
+         alt="docs">
+  </a>
+  <a href="https://github.com/OpenBioLink/OpenBioLink/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg"
+         alt="docs">
+  </a>
+  <a href="https://openbiolink.readthedocs.io/en/latest/?badge=latest">
+    <img src="https://readthedocs.org/projects/openbiolink/badge/?version=latest"
+         alt="docs">
+  </a>
+  <a href="https://nomisto.github.io/upptime/">
+    <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnomisto%2Fupptime%2Fmaster%2Fhistory%2Fsummary_badge.json"
+         alt="uptime">
+  </a>
+</p>
 
 <h3 align="center">:rocket: <b>The OpenBioLink2021 link prediction challenge is here with a price pool of 1000€! </b> :rocket:</h3>
 <h3 align="center">:boom: <b>More info at https://openbiolink.github.io/</b> :boom:</h3>
