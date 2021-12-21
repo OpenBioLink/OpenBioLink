@@ -29,9 +29,6 @@
   </a>
 </p>
 
-<h3 align="center">:rocket: <b>The OpenBioLink2021 link prediction challenge is here with a price pool of 1000€! </b> :rocket:</h3>
-<h3 align="center">:boom: <b>More info at https://openbiolink.github.io/</b> :boom:</h3>
-
 OpenBioLink is a resource and evaluation framework for evaluating link prediction models on heterogeneous biomedical graph data. It contains benchmark datasets as well as tools for creating custom benchmarks and evaluating models.
 
 <p align="center">
