@@ -102,25 +102,21 @@ Please note that the OpenBioLink benchmark files contain data derived from exter
 
  ## Baseline results    
 
-| Model     | Hits@10  | Hits@3  | Hits@1  |
-|-----------|----------|---------|---------|
-| RESCAL    | 0.615    | 0.479   | 0.407   |
-| TransR    | 0.592    | 0.451   | 0.369   |
-| DistMult  | 0.534    | 0.331   | 0.184   |
-| ComplEx   | 0.525    | 0.314   | 0.166   |
-| RotatE    | 0.522    | 0.315   | 0.156   |
-| TransE    | 0.441    | 0.268   | 0.128   |
+| |       Model        |     MRR     |       h@1       |    h@10     |
+|:-|:------------------|:-----------:|:---------------:|:-----------:|
+||||||
+|Latent|       RESCAL       |  **.320**   |      .212       |    .544     |
+||       TransE       |    .280     |      .175       |    .500     |
+||      DistMult      |    .300     |      .193       |    .521     |
+||      ComplEx       |    .319     |      .211       |  **.547**   |
+||       ConvE        |    .288     |      .186       |    .510     |
+||       RotatE       |    .286     |      .180       |    .511     |
+||||||
+|Interpretable| AnyBURL (Maximum)  |    .277     |      .192       |    .457     |
+|| AnyBURL (Noisy-OR) |    .159     |      .098       |    .295     |
+||      SAFRAN\*      | <u>.306</u> | <u>**.214**</u> | <u>.501</u> |
 
-Hyperparameter used to achieve these results using [dglke](https://github.com/awslabs/dgl-ke):
-
-|           | learning rate  | embedding   size  | regularization   coefficient  | gamma  | iterations         |
-|-----------|----------------|-------------------|-------------------------------|--------|--------------------|
-| RESCAL    | 0.05           | 300               | 3.00E-07                      |        | 350000   on 2 GPUs |
-| TransR    | 0.1            | 220               | 1.00E-08                      | 12     | 550000   on 2 GPUs |
-| ComplEx   | 0.1            | 380               | 2.00E-06                      |        | 360000   on 8 GPUs |
-| DistMult  | 0.1            | 380               | 4.00E-07                      |        | 950000   on 2 GPUs |
-| RotatE    | 0.05           | 128               | 1.00E-07                      | 12     | 550000   on 2 GPUs |
-| TransE    | 0.1            | 360               | 3.00E-09                      | 8      | 550000   on 2 GPUs |
+Results are from [(LinkExplorer: Predicting, explaining and exploring links in large biomedical knowledge graphs; Ott et al)](https://www.biorxiv.org/content/10.1101/2022.01.09.475537v2). Embedding approaches were trained using [LibKGE](https://github.com/uma-pi1/kge). Best hyperparameters after extensive hyperparameter search can be found in the [supplementary material](https://www.biorxiv.org/content/biorxiv/early/2022/01/31/2022.01.09.475537/DC1/embed/media-1.pdf?download=true) of the before mentioned paper.
 
 ## Installation
 
