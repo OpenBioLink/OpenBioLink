@@ -11,16 +11,11 @@
     <img src="https://img.shields.io/pypi/v/openbiolink"
          alt="pypi">
   </a>
-  <a href="https://openbiolink.readthedocs.io/en/latest/?badge=latest">
-    <img src="https://readthedocs.org/projects/openbiolink/badge/?version=latest"
-         alt="docs">
+  <a href='https://openbiolink.readthedocs.io/en/latest/?badge=latest'>
+    <img src='https://readthedocs.org/projects/openbiolink/badge/?version=latest' alt='Documentation Status' />
   </a>
   <a href="https://github.com/OpenBioLink/OpenBioLink/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg"
-         alt="docs">
-  </a>
-  <a href="https://openbiolink.readthedocs.io/en/latest/?badge=latest">
-    <img src="https://readthedocs.org/projects/openbiolink/badge/?version=latest"
          alt="docs">
   </a>
   <a href="https://nomisto.github.io/upptime/">
