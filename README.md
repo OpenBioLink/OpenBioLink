@@ -391,6 +391,10 @@ All original data in the benchmark files created by the OpenBioLink project (not
 
 We offer the benchmark files as-is and make no representations or warranties of any kind concerning the benchmark files, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
 
+# 2021 Mapping of relations to external datasets
+
+To aid with comparing the contents of OpenBioLink with other external knowledge graphs, we created an extensive mapping of relations. It is available as [Google sheet here](https://docs.google.com/spreadsheets/d/1mpRtVunuf4gZWiTQmBTS5ffQdA718IVenx6rWoaPsM0/edit?usp=sharing).
+
 # Citation
 
 ```bibtex
