@@ -4,7 +4,7 @@ from openbiolink.graph_creation.types.dbType import DbType
 
 class DbMetaEdgeGo(DbMetadataEdge):
     NAME = "Edge - GO - GO Annotations"
-    URL = "http://geneontology.org/gene-associations/goa_human.gaf.gz"
+    URL = "http://current.geneontology.org/annotations/goa_human.gaf.gz"
     OFILE_NAME = "GO_annotations.gaf.gz"
     COLS = [
         "DB",
