@@ -4,7 +4,6 @@ from openbiolink.graph_creation.types.dbType import DbType
 
 class DbMetaEdgeTnHpoDis(DbMetadataEdge):
     NAME = "Edge - HPO - Disease Phenotype (Negative)"
-
     URL = "http://purl.obolibrary.org/obo/hp/hpoa/phenotype_annotation_negated.tab"
     OFILE_NAME = "HPO_TN_disease_phenotype.tab"
     COLS = [
@@ -17,11 +16,12 @@ class DbMetaEdgeTnHpoDis(DbMetadataEdge):
         "evidence_code",
         "onsetMod",
         "freq",
-        "sex",
         "mod",
-        "aspect",
-        "date",
-        "assigned_by",
+        "sub_ontology",
+        "alt_names",
+        "curators",
+        "freqRaw",
+        "sex",
     ]
     FILTER_COLS = ["DB", "DOI", "HPO_ID", "evidence_code"]
     HEADER = 0

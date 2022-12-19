@@ -16,11 +16,12 @@ class DbMetaEdgeHpoDis(DbMetadataEdge):
         "evidence_code",
         "onsetMod",
         "freq",
-        "sex",
         "mod",
-        "aspect",
-        "date",
-        "assigned_by",
+        "sub_ontology",
+        "alt_names",
+        "curators",
+        "freqRaw",
+        "sex",
     ]
     FILTER_COLS = ["DB", "DOI", "HPO_ID", "evidence_code"]
     HEADER = 0

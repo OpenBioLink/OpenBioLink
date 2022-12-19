@@ -14,6 +14,8 @@ class DbMetaEdgeBgeeExpr(DbMetadataEdge):
         "anatomical_entity_name",
         "expression",
         "call_quality",
+        "FDR",
+        "expression_score",
         "expression_rank",
     ]
     FILTER_COLS = ["gene_id", "anatomical_entity", "expression", "call_quality"]
