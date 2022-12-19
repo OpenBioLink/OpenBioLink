@@ -59,7 +59,7 @@ class TrainTestSetWriter:
         logging.info(f"Writing {filename} ...")
         if path is None:
             path = self.folder_path
-        with open(os.path.join(path, filename), "w", newline="\n") as file:
+        with open(os.path.join(path, filename), "w", newline="\n", encoding="utf8") as file:
             file.writelines(list("\n".join(nodes)))
 
     def print_vanished_edges(self, vanished_edges):

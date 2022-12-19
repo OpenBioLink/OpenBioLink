@@ -32,12 +32,12 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
     def _output_graph_in_single_file(self, *, prefix, nodes, edges):
         if nodes is not None:
             sorted_nodes = self.sort_nodes(nodes)
-            with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + ".N3"), "w") as out_file:
+            with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + ".N3"), "w", encoding="utf8") as out_file:
                 for node in sorted_nodes:
                     out_file.write("<" + self.identifiersURL + node.resolved_id + "> a #" + str(node.type) + " .\n")
         if edges is not None:
             sorted_edges = self.sort_edges(edges)
-            with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + ".N3"), "w") as out_file:
+            with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + ".N3"), "w", encoding="utf8") as out_file:
                 for edge in sorted_edges:
                     if self.print_qscore:
                         out_file.write(
@@ -74,7 +74,7 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
         # write nodes
         for key, value in nodes.items():
             with open(
-                os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + "_" + key + ".N3"), "w"
+                os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + "_" + key + ".N3"), "w", encoding="utf8"
             ) as out_file:
                 for node in value:
                     out_file.write("<" + self.identifiersURL + node.id + "> a #" + str(node.type) + " .\n")
@@ -82,7 +82,7 @@ class GraphRDFWriter(OpenBioLinkGraphWriter):
         for key, value in edges.items():
 
             with open(
-                os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + "_" + key + ".N3"), "w"
+                os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + "_" + key + ".N3"), "w", encoding="utf8"
             ) as out_file:
                 for edge in value:
                     if self.print_qscore:

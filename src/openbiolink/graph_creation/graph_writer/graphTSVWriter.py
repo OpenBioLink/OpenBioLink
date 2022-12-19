@@ -34,12 +34,12 @@ class GraphTSVWriter(OpenBioLinkGraphWriter):
     def _output_graph_in_single_file(self, *, prefix, nodes, edges):
         if nodes is not None:
             sorted_nodes = self.sort_nodes(nodes)
-            with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + ".csv"), "w") as out_file:
+            with open(os.path.join(self.graph_dir_path, prefix + gcConst.NODES_FILE_PREFIX + ".csv"), "w", encoding="utf8") as out_file:
                 writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
                 for node in sorted_nodes:
                     writer.writerow([node.resolved_id, node.type])
         if edges is not None:
-            with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + ".csv"), "w") as out_file:
+            with open(os.path.join(self.graph_dir_path, prefix + gcConst.EDGES_FILE_PREFIX + ".csv"), "w", encoding="utf8") as out_file:
                 sorted_edges = self.sort_edges(edges)
                 writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
                 for edge in sorted_edges:
@@ -49,7 +49,7 @@ class GraphTSVWriter(OpenBioLinkGraphWriter):
         # write nodes
         for key, value in nodes.items():
             nodes_path = os.path.join(self.graph_dir_path, f"{prefix}{gcConst.NODES_FILE_PREFIX}_{key}.csv")
-            with open(nodes_path, "w") as out_file:
+            with open(nodes_path, "w", encoding="utf8") as out_file:
                 writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
                 for node in value:
                     writer.writerow(list(node))
@@ -57,7 +57,7 @@ class GraphTSVWriter(OpenBioLinkGraphWriter):
         # write edges
         for key, value in edges.items():
             edges_path = os.path.join(self.graph_dir_path, f"{prefix}{gcConst.EDGES_FILE_PREFIX}_{key}.csv")
-            with open(edges_path, "w") as out_file:
+            with open(edges_path, "w", encoding="utf8") as out_file:
                 writer = csv.writer(out_file, delimiter=self.file_sep, lineterminator="\n")
                 for edge in value:
                     writer.writerow(edge.to_list(self.print_qscore))

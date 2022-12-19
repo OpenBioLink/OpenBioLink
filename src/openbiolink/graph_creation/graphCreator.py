@@ -327,7 +327,7 @@ class GraphCreator:
         else:
             path_no_mappings = self.path_no_mappings
             path_stats = self.path_stats
-        with open(path_no_mappings, "a") as out_file:
+        with open(path_no_mappings, "a", encoding="utf8") as out_file:
             for id in stats_dic["ids1_no_mapping"]:
                 out_file.write("%s\t%s\n" % (id, edgeType))
             for id in stats_dic["ids2_no_mapping"]:
@@ -417,5 +417,5 @@ class GraphCreator:
             + str(1 - (len(stats_dic["ids2_no_mapping"]) / len(stats_dic["ids2"])))
             + "\n"
         )
-        with open(path_stats, "a") as out_file:
+        with open(path_stats, "a", encoding="utf8") as out_file:
             out_file.write(stats_string)

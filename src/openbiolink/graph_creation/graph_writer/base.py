@@ -50,14 +50,14 @@ class OpenBioLinkGraphWriter(GraphWriter):
             if not isinstance(v, str):
                 graph_prop_dict[k] = str(v)
 
-        with open(os.path.join(self.graph_dir_path, "graph_props.json"), "w") as file:
+        with open(os.path.join(self.graph_dir_path, "graph_props.json"), "w", encoding="utf8") as file:
             json.dump(graph_prop_dict, file, indent=2)
 
     def write_node_and_edge_list(self, prefix, nodes_list, edges_list):
-        with open(os.path.join(self.graph_dir_path, prefix + "nodes_list.csv"), "w") as out_file:
+        with open(os.path.join(self.graph_dir_path, prefix + "nodes_list.csv"), "w", encoding="utf8") as out_file:
             out_file.writelines(list("\n".join(nodes_list)))
 
-        with open(os.path.join(self.graph_dir_path, prefix + "edges_list.csv"), "w") as out_file:
+        with open(os.path.join(self.graph_dir_path, prefix + "edges_list.csv"), "w", encoding="utf8") as out_file:
             out_file.writelines(list("\n".join(edges_list)))
 
     @abstractmethod
