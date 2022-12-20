@@ -4,7 +4,7 @@ from openbiolink.graph_creation.types.dbType import DbType
 
 class DbMetaEdgeDrugCentral(DbMetadataEdge):
     NAME = "Edge/Mapping - DrugCentral - (Contra)Indications, Mapping:(dc --> pubchem)"
-    URL = "https://unmtid-shinyapps.net/download/DrugCentral/20180826/drugcentral.dump.08262018.sql.gz"
+    URL = "https://unmtid-shinyapps.net/download/drugcentral.dump.08222022.sql.gz"
     OFILE_NAME = "sql_dump.sql.gz"
 
     TABLE_NAME_IND = "public.omop_relationship"
