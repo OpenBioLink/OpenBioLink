@@ -14,8 +14,8 @@ class QualityType(Enum):
         qual = qual.lower()
         if qual in {"hq", "high", "h"}:
             return cls.HQ
-        if qual == {"mq", "medium", "m"}:
+        if qual in {"mq", "medium", "m"}:
             return cls.MQ
-        if qual == {"lq", "low", "l"}:
+        if qual in {"lq", "low", "l"}:
             return cls.LQ
         raise ValueError(f"Invalid QualityType: {qual}")
